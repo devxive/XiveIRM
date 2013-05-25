@@ -46,8 +46,9 @@ class Mc3prmModelPrmmasterdatas extends JModelList {
         $limitstart = JFactory::getApplication()->input->getInt('limitstart', 0);
         $this->setState('list.start', $limitstart);
         
-        
-        
+	$search = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
+	$this->setState('filter.search', preg_replace('/\s+/', ' ', $search));
+
         // List state information.
         parent::populateState($ordering, $direction);
     }
@@ -87,9 +88,11 @@ class Mc3prmModelPrmmasterdatas extends JModelList {
 		if (!empty($search)) {
 			if (stripos($search, 'id:') === 0) {
 				$query->where('a.id = '.(int) substr($search, 3));
+			} else if ($search === '09') {
+				$query->where('a.last_name NOT REGEXP \'^[[:alpha:]]\'');
 			} else {
-				$search = $db->Quote('%'.$db->escape($search, true).'%');
-                $query->where('( a.last_name LIKE '.$search.'  OR  a.first_name LIKE '.$search.' )');
+				$search = $db->Quote($db->escape($search, true).'%');
+				$query->where('a.last_name LIKE ' . $search);
 			}
 		}
         
