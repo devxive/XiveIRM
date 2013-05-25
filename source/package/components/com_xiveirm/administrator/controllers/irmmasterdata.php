@@ -6,13 +6,21 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  * @author      devXive <support@devxive.com> - http://devxive.com
  */
- 
+
 // No direct access
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controller');
+jimport('joomla.application.component.controllerform');
 
-class XiveirmController extends JControllerLegacy
+/**
+ * Irmmasterdata controller class.
+ */
+class XiveirmControllerIrmmasterdata extends JControllerForm
 {
+
+    function __construct() {
+        $this->view_list = 'irmmasterdatas';
+        parent::__construct();
+    }
 
 }

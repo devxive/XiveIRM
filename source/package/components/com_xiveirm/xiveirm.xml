@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="1.6.0" method="upgrade">
+    <name>com_xiveirm</name>
+    <creationDate>2013-05-25</creationDate>
+    <copyright>Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <author>devXive</author>
+    <authorEmail>support@devxive.com</authorEmail>
+    <authorUrl>http://devxive.com</authorUrl>
+    <version>3.0.2</version>
+    <description>Interoperable Relationship Management - the next Generation of CRM</description>
+    
+    <install> <!-- Runs on install -->
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    <uninstall> <!-- Runs on uninstall -->
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+
+    <files folder="site">
+        <filename>index.html</filename>
+        <filename>xiveirm.php</filename>
+        <filename>controller.php</filename>
+        <filename>router.php</filename>
+        <folder>views</folder>
+        <folder>models</folder>
+        <folder>controllers</folder>
+        <folder>helpers</folder>
+    </files>
+    <languages folder="site">
+        
+			<language tag="en-GB">language/en-GB.com_xiveirm.ini</language>
+    </languages>
+    <administration>
+        <menu img="components/com_xiveirm/assets/images/s_com_xiveirm.png" >COM_XIVEIRM</menu>
+        <submenu>
+            
+			<menu link="option=com_xiveirm&amp;view=irmmasterdatas" view="irmmasterdatas" img="components/com_xiveirm/assets/images/s_irmmasterdatas.png" alt="Xiveirm/Irmmasterdatas">COM_XIVEIRM_TITLE_IRMMASTERDATAS</menu>
+
+			<menu link="option=com_xiveirm&amp;view=additionalinformations" view="additionalinformations" img="components/com_xiveirm/assets/images/s_additionalinformations.png" alt="Xiveirm/Additionalinformations">COM_XIVEIRM_TITLE_ADDITIONALINFORMATIONS</menu>
+
+			<menu link="option=com_xiveirm&amp;view=selectlists" view="selectlists" img="components/com_xiveirm/assets/images/s_selectlists.png" alt="Xiveirm/Selectlists">COM_XIVEIRM_TITLE_SELECTLISTS</menu>
+
+			<menu link="option=com_xiveirm&amp;view=audits" view="audits" img="components/com_xiveirm/assets/images/s_audits.png" alt="Xiveirm/Audits">COM_XIVEIRM_TITLE_AUDITS</menu>
+
+        </submenu>
+        <files folder="administrator">
+            <filename>access.xml</filename>
+            <filename>config.xml</filename>
+            <filename>controller.php</filename>
+            <filename>index.html</filename>
+            <filename>xiveirm.php</filename>
+            <folder>controllers</folder>
+            <folder>assets</folder>
+            <folder>helpers</folder>
+            <folder>models</folder>
+            <folder>sql</folder>
+            <folder>tables</folder>
+            <folder>views</folder>
+        </files>
+        <languages folder="administrator">
+            
+			<language tag="en-GB">language/en-GB.com_xiveirm.ini</language>
+			<language tag="en-GB">language/en-GB.com_xiveirm.sys.ini</language>
+        </languages>
+    </administration>
+</extension>
+<!-- Component built by the Joomla Component Creator -->
+<!-- http://www.notwebdesign.com/joomla-component-creator/ -->

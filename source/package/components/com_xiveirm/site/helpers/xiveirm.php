@@ -6,13 +6,16 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  * @author      devXive <support@devxive.com> - http://devxive.com
  */
- 
-// No direct access
+
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controller');
-
-class XiveirmController extends JControllerLegacy
+abstract class XiveirmHelper
 {
+	public static function myFunction()
+	{
+		$result = 'Something';
+		return $result;
+	}
 
 }
+

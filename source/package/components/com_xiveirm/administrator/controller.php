@@ -1,7 +1,7 @@
 <?php
 /**
- * @version     3.0.0
- * @package     com_mc3prm
+ * @version     3.0.2
+ * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  * @author      devXive <support@devxive.com> - http://devxive.com
@@ -11,7 +11,7 @@
 // No direct access
 defined('_JEXEC') or die;
 
-class Mc3prmController extends JControllerLegacy
+class XiveirmController extends JControllerLegacy
 {
 	/**
 	 * Method to display a view.
@@ -24,9 +24,9 @@ class Mc3prmController extends JControllerLegacy
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
-		require_once JPATH_COMPONENT.'/helpers/mc3prm.php';
+		require_once JPATH_COMPONENT.'/helpers/xiveirm.php';
 
-		$view		= JFactory::getApplication()->input->getCmd('view', 'prmmasterdatas');
+		$view		= JFactory::getApplication()->input->getCmd('view', 'irmmasterdatas');
         JFactory::getApplication()->input->set('view', $view);
 
 		parent::display($cachable, $urlparams);

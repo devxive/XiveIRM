@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
 	<fieldset name="component"
-		label="COM_MC3PRM_COMPONENT_LABEL"
-		description="COM_MC3PRM_COMPONENT_DESC"
+		label="COM_XIVEIRM_COMPONENT_LABEL"
+		description="COM_XIVEIRM_COMPONENT_DESC"
 	>
 
         <field name="test"
              type="radio"
              default="1"
-             label="COM_MC3PRM_TEST_LABEL"
-             description="COM_MC3PRM_TEST_DESC">
+             label="COM_XIVEIRM_TEST_LABEL"
+             description="COM_XIVEIRM_TEST_DESC">
                  <option value="0">JHIDE</option>
                  <option value="1">JSHOW</option>
          </field>
@@ -24,7 +24,7 @@
 		<field 
             name="rules" 
             type="rules"
-			component="com_mc3prm"
+			component="com_xiveirm"
             class="inputbox"
 			filter="rules"
 			validate="rules"
