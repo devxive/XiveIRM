@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="1.6.0" method="upgrade">
+    <name>com_mc3prm</name>
+    <creationDate>2013-05-23</creationDate>
+    <copyright>Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <author>devXive</author>
+    <authorEmail>support@devxive.com</authorEmail>
+    <authorUrl>http://devxive.com</authorUrl>
+    <version>0.0.1</version>
+    <description>Patient Relationship Management - The base compoment to organize and add patients</description>
+    
+    <install> <!-- Runs on install -->
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    <uninstall> <!-- Runs on uninstall -->
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+
+    <files folder="site">
+        <filename>index.html</filename>
+        <filename>mc3prm.php</filename>
+        <filename>controller.php</filename>
+        <filename>router.php</filename>
+        <folder>views</folder>
+        <folder>models</folder>
+        <folder>controllers</folder>
+        <folder>helpers</folder>
+    </files>
+    <languages folder="site">
+        
+			<language tag="en-GB">language/en-GB.com_mc3prm.ini</language>
+			<language tag="de-DE">language/de-DE.com_mc3prm.ini</language>
+    </languages>
+    <administration>
+        <menu img="components/com_mc3prm/assets/images/s_com_mc3prm.png" >COM_MC3PRM</menu>
+        <submenu>
+            
+			<menu link="option=com_mc3prm&amp;view=prmmasterdatas" view="prmmasterdatas" img="components/com_mc3prm/assets/images/s_prmmasterdatas.png" alt="Mc3prm/Prmmasterdatas">COM_MC3PRM_TITLE_PRMMASTERDATAS</menu>
+
+			<menu link="option=com_mc3prm&amp;view=events" view="events" img="components/com_mc3prm/assets/images/s_events.png" alt="Mc3prm/Events">COM_MC3PRM_TITLE_EVENTS</menu>
+
+			<menu link="option=com_mc3prm&amp;view=physicalstates" view="physicalstates" img="components/com_mc3prm/assets/images/s_physicalstates.png" alt="Mc3prm/Physicalstates">COM_MC3PRM_TITLE_PHYSICALSTATES</menu>
+
+        </submenu>
+        <files folder="administrator">
+            <filename>access.xml</filename>
+            <filename>config.xml</filename>
+            <filename>controller.php</filename>
+            <filename>index.html</filename>
+            <filename>mc3prm.php</filename>
+            <folder>controllers</folder>
+            <folder>assets</folder>
+            <folder>helpers</folder>
+            <folder>models</folder>
+            <folder>sql</folder>
+            <folder>tables</folder>
+            <folder>views</folder>
+        </files>
+        <languages folder="administrator">
+            
+			<language tag="en-GB">language/en-GB.com_mc3prm.ini</language>
+			<language tag="en-GB">language/en-GB.com_mc3prm.sys.ini</language>
+			<language tag="de-DE">language/de-DE.com_mc3prm.ini</language>
+			<language tag="de-DE">language/de-DE.com_mc3prm.sys.ini</language>
+        </languages>
+    </administration>
+</extension>
+<!-- Component built by the Joomla Component Creator -->
+<!-- http://www.notwebdesign.com/joomla-component-creator/ -->
