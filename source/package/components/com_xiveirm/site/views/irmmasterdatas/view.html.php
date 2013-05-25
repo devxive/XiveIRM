@@ -106,7 +106,7 @@ $xap_scripts_loadBottomBody .= '
 			var oTable1 = $(\'#table_report\').dataTable( {
 				"aoColumns": [
 					{ "bSortable": false },
-					null, null,null, null, null,
+					null, null, null, null, null, null,
 					{ "bSortable": false }
 				]
 			});
