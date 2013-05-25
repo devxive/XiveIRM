@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fields name="xiveirmclientprofile">
+		<fieldset name="xiveirmclientprofile"
+			label="PLG_USER_XIVEIRMCLIENTPROFILE_SLIDER_LABEL"
+		>
+			<field
+				name="xiveirmclientid"
+				type="text"
+				id="xiveirmclientid"
+				description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_XIVEIRMCLIENTID_DESC"
+				filter="string"
+				label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_XIVEIRMCLIENTID_LABEL"
+				size="30"
+			/>
+
+			<field
+				name="jobtitle"
+				type="text"
+				id="jobtitle"
+				description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_DESC"
+				filter="string"
+				label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_LABEL"
+				size="30"
+			/>
+		</fieldset>
+	</fields>
+</form>
