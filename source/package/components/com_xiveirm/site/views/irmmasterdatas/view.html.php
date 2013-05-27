@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.0.2
+ * @version     3.0.3
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -91,39 +91,3 @@ class XiveirmViewIrmmasterdatas extends JViewLegacy
 	}    
     	
 }
-
-// Javascript added at template bottom
-$session = JFactory::getSession();
-
-$xap_scripts_loadBottomBody = '
-	<script type="text/javascript" src="/templates/xapptheme/assets/js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript" src="/templates/xapptheme/assets/js/jquery.dataTables.bootstrap.js"></script>
-';
-
-$xap_scripts_loadBottomBody .= '
-	<script type="text/javascript">
-		$(function() {
-			var oTable1 = $(\'#table_report\').dataTable( {
-				"aoColumns": [
-					{ "bSortable": false },
-					null, null, null, null, null, null,
-					{ "bSortable": false }
-				]
-			});
-	
-			$(\'table th input:checkbox\').on(\'click\' , function(){
-				var that = this;
-				$(this).closest(\'table\').find(\'tr > td:first-child input:checkbox\')
-				.each(function(){
-				this.checked = that.checked;
-				$(this).closest(\'tr\').toggleClass(\'selected\');
-			});
-			
-		});
-
-		$(\'[data-rel=tooltip]\').tooltip();
-		})
-		</script>
-';
-
-$session->set('xap_scripts_loadBottomBody', $xap_scripts_loadBottomBody);
