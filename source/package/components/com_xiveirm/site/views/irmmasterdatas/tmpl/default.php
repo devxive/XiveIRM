@@ -90,12 +90,12 @@ $search = $jinput->get('filter_search', '', 'filter');
 					<td class="center">
 						<label><input type="checkbox"><span class="lbl"></span></label>
 					</td>
-					<td class=" "><span data-rel="tooltip" data-placement="right" data-original-title="Last modified: <?php echo $item->modified; ?>"><?php echo $item->customer_id; ?></span> <?php if($item->checked_out): echo '<i class="icon-lock" data-rel="tooltip" data-placement="right" data-original-title="Checked out by: ' . $item->checked_out_by . '\n on' . $item->checked_out_time . '"></i>'; endif; ?></td>
-					<td class=" "><a href="<?php echo JRoute::_('index.php?option=com_xiveirm&view=irmmasterdata&id=' . (int)$item->id); ?>"><?php echo $item->last_name . ', ' . $item->first_name; ?></a></td>
+					<td class=" "><span data-rel="tooltip" data-placement="right" data-original-title="Last modified: <?php echo $item->modified; ?>"><?php echo $item->customer_id; ?></span> <?php if($item->checked_out): echo ' <i class="icon-lock red" data-rel="tooltip" data-placement="right" data-original-title="Checked out by: ' . $item->checked_out_by . ' on ' . $item->checked_out_time . '"></i>'; endif; ?></td>
+					<td class=" "><a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.edit&id='.$item->id); ?>"><?php echo $item->last_name . ', ' . $item->first_name; ?></a></td>
 					<td class=" "><?php if($item->gender == 'm'): echo '<i class="icon-user blue"></i>'; elseif($item->gender == 'f'): echo '<i class="icon-user red"></i>'; elseif($item->gender == 'c'): echo'<i class="icon-user green"></i>'; else: echo '<i class="icon-user"></i>'; endif; ?> <?php echo $item->dob; ?></td>
 					<td class="hidden-480 "><?php echo $item->address_street; ?> <?php echo $item->address_houseno; ?><br><?php echo $item->address_zip; ?> <?php echo $item->address_city; ?>, <?php echo $item->address_country; ?></td>
-					<td class="hidden-phone "><?php if($item->mobile != ''): echo '<i class="icon-mobile-phone"></i> ' . $item->mobile; endif; if($item->phone != ''): echo '<i class="icon-phone"></i> ' . $item->phone; endif; ?></td>
-					<td class="hidden-480 "><span class="label label-warning">NOSTATUS</span> <?php if($item->remarks): echo '<i class="icon-comment-alt" data-rel="tooltip" data-placement="left" data-original-title="' . $item->remarks . '">'; endif; ?></td>
+					<td class="hidden-phone "><?php if($item->mobile != ''): echo '<i class="icon-mobile-phone"></i> ' . $item->mobile . '<br>'; endif; if($item->phone != ''): echo '<i class="icon-phone"></i> ' . $item->phone; endif; ?></td>
+					<td class="hidden-480 "><?php if($item->remarks): echo '<i class="icon-comment-alt" data-rel="tooltip" data-placement="left" data-original-title="' . $item->remarks . '">'; endif; ?> <span class="label label-warning">NOSTATUS</span></td>
 					<td class=" ">
 						<div class="hidden-phone visible-desktop btn-group">
 							<?php if(JFactory::getUser()->authorise('core.edit.state','com_xiveirm')) : ?>
@@ -118,12 +118,67 @@ $search = $jinput->get('filter_search', '', 'filter');
 							<form id="form-irmmasterdata-state-<?php echo $item->id ?>" style="display:inline" action="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.save'); ?>" method="post" class="form-validate" enctype="multipart/form-data">
 								<input type="hidden" name="jform[id]" value="<?php echo $item->id; ?>" />
 								<input type="hidden" name="jform[state]" value="<?php echo (int)!((int)$item->state); ?>" />
+								<input type="hidden" name="jform[created]" value="<?php echo $item->created; ?>" />
+								<input type="hidden" name="jform[created_by]" value="<?php echo $item->created_by; ?>" />
+								<input type="hidden" name="jform[checked_out]" value="<?php echo $item->checked_out; ?>" />
+								<input type="hidden" name="jform[checked_out_time]" value="<?php echo $item->checked_out_time; ?>" />
+								<input type="hidden" name="jform[checked_out_by]" value="<?php echo $item->checked_out_by; ?>" />
+								<input type="hidden" name="jform[modified]" value="<?php echo $item->modified; ?>" />
+								<input type="hidden" name="jform[trash]" value="<?php echo $item->trash; ?>" />
+								<input type="hidden" name="jform[client_id]" value="<?php echo $item->client_id; ?>" />
+								<input type="hidden" name="jform[customer_id]" value="<?php echo $item->customer_id; ?>" />
+								<input type="hidden" name="jform[title]" value="<?php echo $item->title; ?>" />
+								<input type="hidden" name="jform[last_name]" value="<?php echo $item->last_name; ?>" />
+								<input type="hidden" name="jform[first_name]" value="<?php echo $item->first_name; ?>" />
+								<input type="hidden" name="jform[gender]" value="<?php echo $item->gender; ?>" />
+								<input type="hidden" name="jform[dob]" value="<?php echo $item->dob; ?>" />
+								<input type="hidden" name="jform[address_name]" value="<?php echo $item->address_name; ?>" />
+								<input type="hidden" name="jform[address_name_add]" value="<?php echo $item->address_name_add; ?>" />
+								<input type="hidden" name="jform[address_street]" value="<?php echo $item->address_street; ?>" />
+								<input type="hidden" name="jform[address_houseno]" value="<?php echo $item->address_houseno; ?>" />
+								<input type="hidden" name="jform[address_zip]" value="<?php echo $item->address_zip; ?>" />
+								<input type="hidden" name="jform[address_city]" value="<?php echo $item->address_city; ?>" />
+								<input type="hidden" name="jform[address_country]" value="<?php echo $item->address_country; ?>" />
+								<input type="hidden" name="jform[phone]" value="<?php echo $item->phone; ?>" />
+								<input type="hidden" name="jform[fax]" value="<?php echo $item->fax; ?>" />
+								<input type="hidden" name="jform[mobile]" value="<?php echo $item->mobile; ?>" />
+								<input type="hidden" name="jform[email]" value="<?php echo $item->email; ?>" />
+								<input type="hidden" name="jform[web]" value="<?php echo $item->web; ?>" />
+								<input type="hidden" name="jform[remarks]" value="<?php echo $item->remarks; ?>" />
 								<input type="hidden" name="option" value="com_xiveirm" />
 								<input type="hidden" name="task" value="irmmasterdata.save" />
 								<?php echo JHtml::_('form.token'); ?>
 							</form>
 							<form id="form-irmmasterdata-delete-<?php echo $item->id; ?>" style="display:inline" action="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.remove'); ?>" method="post" class="form-validate" enctype="multipart/form-data">
 								<input type="hidden" name="jform[id]" value="<?php echo $item->id; ?>" />
+								<input type="hidden" name="jform[state]" value="<?php echo (int)!((int)$item->state); ?>" />
+								<input type="hidden" name="jform[created]" value="<?php echo $item->created; ?>" />
+								<input type="hidden" name="jform[created_by]" value="<?php echo $item->created_by; ?>" />
+								<input type="hidden" name="jform[checked_out]" value="<?php echo $item->checked_out; ?>" />
+								<input type="hidden" name="jform[checked_out_time]" value="<?php echo $item->checked_out_time; ?>" />
+								<input type="hidden" name="jform[checked_out_by]" value="<?php echo $item->checked_out_by; ?>" />
+								<input type="hidden" name="jform[modified]" value="<?php echo $item->modified; ?>" />
+								<input type="hidden" name="jform[trash]" value="<?php echo $item->trash; ?>" />
+								<input type="hidden" name="jform[client_id]" value="<?php echo $item->client_id; ?>" />
+								<input type="hidden" name="jform[customer_id]" value="<?php echo $item->customer_id; ?>" />
+								<input type="hidden" name="jform[title]" value="<?php echo $item->title; ?>" />
+								<input type="hidden" name="jform[last_name]" value="<?php echo $item->last_name; ?>" />
+								<input type="hidden" name="jform[first_name]" value="<?php echo $item->first_name; ?>" />
+								<input type="hidden" name="jform[gender]" value="<?php echo $item->gender; ?>" />
+								<input type="hidden" name="jform[dob]" value="<?php echo $item->dob; ?>" />
+								<input type="hidden" name="jform[address_name]" value="<?php echo $item->address_name; ?>" />
+								<input type="hidden" name="jform[address_name_add]" value="<?php echo $item->address_name_add; ?>" />
+								<input type="hidden" name="jform[address_street]" value="<?php echo $item->address_street; ?>" />
+								<input type="hidden" name="jform[address_houseno]" value="<?php echo $item->address_houseno; ?>" />
+								<input type="hidden" name="jform[address_zip]" value="<?php echo $item->address_zip; ?>" />
+								<input type="hidden" name="jform[address_city]" value="<?php echo $item->address_city; ?>" />
+								<input type="hidden" name="jform[address_country]" value="<?php echo $item->address_country; ?>" />
+								<input type="hidden" name="jform[phone]" value="<?php echo $item->phone; ?>" />
+								<input type="hidden" name="jform[fax]" value="<?php echo $item->fax; ?>" />
+								<input type="hidden" name="jform[mobile]" value="<?php echo $item->mobile; ?>" />
+								<input type="hidden" name="jform[email]" value="<?php echo $item->email; ?>" />
+								<input type="hidden" name="jform[web]" value="<?php echo $item->web; ?>" />
+								<input type="hidden" name="jform[remarks]" value="<?php echo $item->remarks; ?>" />
 								<input type="hidden" name="option" value="com_xiveirm" />
 								<input type="hidden" name="task" value="irmmasterdata.remove" />
 								<?php echo JHtml::_('form.token'); ?>
@@ -136,16 +191,6 @@ $search = $jinput->get('filter_search', '', 'filter');
 		</table>
 	</div>
 </div>
-
-
-
-								<?php echo $item->checked_out; ?>
-								<?php echo $item->checked_out_time; ?>
-								<?php echo $item->checked_out_by; ?>
-								<?php echo $item->modified; ?>
-								<?php echo $item->customer_id; ?>
-								<?php echo $item->remarks; ?>
-
 
         <?php
         if (!$show):
@@ -162,7 +207,3 @@ $search = $jinput->get('filter_search', '', 'filter');
         <?php echo $this->pagination->getPagesLinks(); ?>
     </div>
 <?php endif; ?>
-
-
-									<?php if(JFactory::getUser()->authorise('core.create','com_xiveirm')): ?><a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.edit&id=0'); ?>"><?php echo JText::_("COM_XIVEIRM_ADD_ITEM"); ?></a>
-	<?php endif; ?>
