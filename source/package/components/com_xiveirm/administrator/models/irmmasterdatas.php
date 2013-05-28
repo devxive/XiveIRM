@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.0.2
+ * @version     3.0.4
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -32,7 +32,6 @@ class XiveirmModelirmmasterdatas extends JModelList
                 'state', 'a.state',
                 'created', 'a.created',
                 'created_by', 'a.created_by',
-                'checked_out_by', 'a.checked_out_by',
                 'modified', 'a.modified',
                 'trash', 'a.trash',
                 'client_id', 'a.client_id',
