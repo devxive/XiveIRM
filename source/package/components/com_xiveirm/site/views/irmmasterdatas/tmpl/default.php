@@ -17,23 +17,31 @@ $jinput = JFactory::getApplication()->input;
 $search = $jinput->get('filter_search', '', 'filter');
 ?>
 <div class="row-fluid">
-	<div class="row-fluid">
-		<h3 class="header smaller lighter blue">
-			<?php if($search == '') { ?>
-				List of all Customers in Database
-			<?php } else if($search == '09' || in_array($search, $letters)) { ?>
-				List of all Customers that last name starts with: <?php echo $search; ?>
-			<?php } else { ?>
-				List of all Customers named like: <?php echo $search; ?>
-				<?php $addLastName = $search; ?>
-			<?php } ?>
+	<div class="row-fluid header smaller lighter blue">
+		<h1>
 			<?php if(JFactory::getUser()->authorise('core.create','com_xiveirm')): ?>
-				<span class="pull-right">
-					<a class="btn btn-small btn-primary" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.edit&id=0'); ?>" data-rel="tooltip" data-placement="left" title data-original-title="<?php echo JText::_("COM_XIVEIRM_ADD_ITEM"); if(isset($addLastName)) { echo ' ' . $addLastName; } ?>"><i class="icon-plus"></i></a>
+				<span class="span7">
+			<?php endif; ?>
+				<i class="icon-group"></i>
+				<?php if($search == '') { ?>
+					List of all Customers in Database
+				<?php } else if($search == '09' || in_array($search, $letters)) { ?>
+					List of all Customers that last name starts with: <?php echo $search; ?>
+				<?php } else { ?>
+					List of all Customers named like: <?php echo $search; ?>
+					<?php $addLastName = $search; ?>
+				<?php } ?>
+			<?php if(JFactory::getUser()->authorise('core.create','com_xiveirm')): ?>
+				</span>
+				<span class="span5">
+					<span class="pull-right">
+						<a class="btn btn-small btn-primary pull-right inline" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.edit&id=0'); ?>" data-rel="tooltip" data-placement="left" title data-original-title="<?php echo JText::_("COM_XIVEIRM_ADD_ITEM"); if(isset($addLastName)) { echo ' ' . $addLastName; } ?>"><i class="icon-plus"></i></a>
+					</span>
 				</span>
 			<?php endif; ?>
-		</h3>
-	</div>
+		</h1>
+	</div><!--/page-header-->
+
 	<div class="center hidden-phone" style="background-color: #eff3f8;">
 		<div class="btn-group">
 			<?php
@@ -90,9 +98,9 @@ $search = $jinput->get('filter_search', '', 'filter');
 					<td class="center">
 						<label><input type="checkbox"><span class="lbl"></span></label>
 					</td>
-					<td class=" "><span data-rel="tooltip" data-placement="right" data-original-title="Last modified: <?php echo $item->modified; ?>"><?php echo $item->customer_id; ?></span> <?php if($item->checked_out): echo ' <i class="icon-lock red" data-rel="tooltip" data-placement="right" data-original-title="Checked out by: ' . $item->checked_out_by . ' on ' . $item->checked_out_time . '"></i>'; endif; ?></td>
+					<td class=" "><span data-rel="tooltip" data-placement="right" data-original-title="Last modified: <?php echo $item->modified; ?>"><?php echo $item->customer_id; ?></span> <?php if($item->checked_out): echo ' <i class="icon-lock red" data-rel="tooltip" data-placement="right" data-original-title="Checked out by: ' . IRMSystem::getUserName($item->checked_out) . ' on ' . $item->checked_out_time . '"></i>'; endif; ?></td>
 					<td class=" "><a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.edit&id='.$item->id); ?>"><?php echo $item->last_name . ', ' . $item->first_name; ?></a></td>
-					<td class=" "><?php if($item->gender == 'm'): echo '<i class="icon-user blue"></i>'; elseif($item->gender == 'f'): echo '<i class="icon-user red"></i>'; elseif($item->gender == 'c'): echo'<i class="icon-user green"></i>'; else: echo '<i class="icon-user"></i>'; endif; ?> <?php echo $item->dob; ?></td>
+					<td class=" "><?php if($item->gender == 'm'): echo '<i class="icon-user blue"></i>'; elseif($item->gender == 'f'): echo '<i class="icon-user red"></i>'; elseif($item->gender == 'c'): echo'<i class="icon-user green"></i>'; else: echo '<i class="icon-user"></i>'; endif; ?> <?php echo date(JText::_('DATE_FORMAT_LC4'), strtotime($item->dob)); ?></td>
 					<td class="hidden-480 "><?php echo $item->address_street; ?> <?php echo $item->address_houseno; ?><br><?php echo $item->address_zip; ?> <?php echo $item->address_city; ?>, <?php echo $item->address_country; ?></td>
 					<td class="hidden-phone "><?php if($item->mobile != ''): echo '<i class="icon-mobile-phone"></i> ' . $item->mobile . '<br>'; endif; if($item->phone != ''): echo '<i class="icon-phone"></i> ' . $item->phone; endif; ?></td>
 					<td class="hidden-480 "><?php if($item->remarks): echo '<i class="icon-comment-alt" data-rel="tooltip" data-placement="left" data-original-title="' . $item->remarks . '">'; endif; ?> <span class="label label-warning">NOSTATUS</span></td>
