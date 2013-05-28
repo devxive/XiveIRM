@@ -14,15 +14,6 @@
             label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_CREATED_BY"
             description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_CREATED_BY"  /> 
 
-       <field name="checked_out_by" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_CHECKED_OUT_BY"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_CHECKED_OUT_BY" 
-        
-        
-        
-        filter="safehtml" /> 
-
        <field name="modified" type="timeupdated" default="" 
             label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_MODIFIED"
             description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_MODIFIED"  hidden="true" /> 
@@ -100,14 +91,14 @@
                 <option value="c">Company</option>
         </field> 
 
-       <field name="dob" type="calendar"
-                
+       <field name="dob" type="calendar" class="inputbox"
+        
+        
+        
+        
             label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_DOB"
             description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_DOB" 
-                
-                
-                
-            filter="string" /> 
+        filter="safehtml" /> 
 
        <field name="address_name" type="text"
                 
