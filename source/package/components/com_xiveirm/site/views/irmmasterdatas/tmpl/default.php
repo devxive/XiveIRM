@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.0.2
+ * @version     3.0.4
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -122,7 +122,6 @@ $search = $jinput->get('filter_search', '', 'filter');
 								<input type="hidden" name="jform[created_by]" value="<?php echo $item->created_by; ?>" />
 								<input type="hidden" name="jform[checked_out]" value="<?php echo $item->checked_out; ?>" />
 								<input type="hidden" name="jform[checked_out_time]" value="<?php echo $item->checked_out_time; ?>" />
-								<input type="hidden" name="jform[checked_out_by]" value="<?php echo $item->checked_out_by; ?>" />
 								<input type="hidden" name="jform[modified]" value="<?php echo $item->modified; ?>" />
 								<input type="hidden" name="jform[trash]" value="<?php echo $item->trash; ?>" />
 								<input type="hidden" name="jform[client_id]" value="<?php echo $item->client_id; ?>" />
@@ -156,7 +155,6 @@ $search = $jinput->get('filter_search', '', 'filter');
 								<input type="hidden" name="jform[created_by]" value="<?php echo $item->created_by; ?>" />
 								<input type="hidden" name="jform[checked_out]" value="<?php echo $item->checked_out; ?>" />
 								<input type="hidden" name="jform[checked_out_time]" value="<?php echo $item->checked_out_time; ?>" />
-								<input type="hidden" name="jform[checked_out_by]" value="<?php echo $item->checked_out_by; ?>" />
 								<input type="hidden" name="jform[modified]" value="<?php echo $item->modified; ?>" />
 								<input type="hidden" name="jform[trash]" value="<?php echo $item->trash; ?>" />
 								<input type="hidden" name="jform[client_id]" value="<?php echo $item->client_id; ?>" />
