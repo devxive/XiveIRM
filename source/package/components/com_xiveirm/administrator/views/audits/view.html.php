@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.0.2
+ * @version     3.0.4
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -113,9 +113,9 @@ class XiveirmViewAudits extends JViewLegacy
         
 			//Filter for the field created
 			$this->extra_sidebar .= '<small><label for="filter_from_created">From Created</label></small>';
-			$this->extra_sidebar .= JHtml::_('calendar', $this->state->get('filter.created.from'), 'filter_created_from', 'filter_from_created', '%Y-%m-%d', 'style="width:142px;" onchange="this.form.submit();"');
+			$this->extra_sidebar .= JHtml::_('calendar', $this->state->get('filter.created.from'), 'filter_from_created', 'filter_from_created', '%Y-%m-%d', 'style="width:142px;" onchange="this.form.submit();"');
 			$this->extra_sidebar .= '<small><label for="filter_to_created">To Created</label></small>';
-			$this->extra_sidebar .= JHtml::_('calendar', $this->state->get('filter.created.to'), 'filter_created_to', 'filter_to_created', '%Y-%m-%d', 'style="width:142px;" onchange="this.form.submit();"');
+			$this->extra_sidebar .= JHtml::_('calendar', $this->state->get('filter.created.to'), 'filter_to_created', 'filter_to_created', '%Y-%m-%d', 'style="width:142px;" onchange="this.form.submit();"');
 			$this->extra_sidebar .= '<hr class="hr-condensed">';
 
 		//Filter for the field created_by
