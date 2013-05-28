@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.0.2
+ * @version     3.0.4
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -63,7 +63,6 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
 
 				<?php } ?>				<input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
 				<input type="hidden" name="jform[checked_out_time]" value="<?php echo $this->item->checked_out_time; ?>" />
-				<input type="hidden" name="jform[checked_out_by]" value="<?php echo $this->item->checked_out_by; ?>" />
 
 				<?php echo $this->form->getInput('modified'); ?>				<input type="hidden" name="jform[trash]" value="<?php echo $this->item->trash; ?>" />
 			<div class="control-group">
