@@ -9,11 +9,11 @@
 
 defined('_JEXEC') or die;
 
-abstract class XiveIRMHelper
+class IRMSystem
 {
-	public static function myFunction()
-	{
-		$result = 'Something';
-		return $result;
+	public function getUserName($id) {
+		return JFactory::getUser($id)->name;
 	}
+
 }
+
