@@ -7,7 +7,7 @@
     <author>devXive</author>
     <authorEmail>support@devxive.com</authorEmail>
     <authorUrl>http://devxive.com</authorUrl>
-    <version>3.0.4</version>
+    <version>3.1.0</version>
     <description>Interoperable Relationship Management - the next Generation of CRM</description>
     
     <install> <!-- Runs on install -->
@@ -34,6 +34,7 @@
     <languages folder="site">
         
 			<language tag="en-GB">language/en-GB.com_xiveirm.ini</language>
+			<language tag="de-DE">language/de-DE.com_xiveirm.ini</language>
     </languages>
     <administration>
         <menu img="components/com_xiveirm/assets/images/s_com_xiveirm.png" >COM_XIVEIRM</menu>
@@ -66,6 +67,8 @@
             
 			<language tag="en-GB">language/en-GB.com_xiveirm.ini</language>
 			<language tag="en-GB">language/en-GB.com_xiveirm.sys.ini</language>
+			<language tag="de-DE">language/de-DE.com_xiveirm.ini</language>
+			<language tag="de-DE">language/de-DE.com_xiveirm.sys.ini</language>
         </languages>
     </administration>
 </extension>
