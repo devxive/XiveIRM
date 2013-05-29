@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.0.4
+ * @version     3.1.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -13,9 +13,9 @@ defined('_JEXEC') or die;
 require_once JPATH_COMPONENT.'/controller.php';
 
 /**
- * Additionaloperation controller class.
+ * Api controller class.
  */
-class XiveirmControllerAdditionaloperationForm extends XiveirmController
+class XiveirmControllerApiForm extends XiveirmController
 {
 
 	/**
@@ -28,14 +28,14 @@ class XiveirmControllerAdditionaloperationForm extends XiveirmController
 		$app			= JFactory::getApplication();
 
 		// Get the previous edit id (if any) and the current edit id.
-		$previousId = (int) $app->getUserState('com_xiveirm.edit.additionaloperation.id');
+		$previousId = (int) $app->getUserState('com_xiveirm.edit.api.id');
 		$editId	= JFactory::getApplication()->input->getInt('id', null, 'array');
 
 		// Set the user id for the user to edit in the session.
-		$app->setUserState('com_xiveirm.edit.additionaloperation.id', $editId);
+		$app->setUserState('com_xiveirm.edit.api.id', $editId);
 
 		// Get the model.
-		$model = $this->getModel('AdditionaloperationForm', 'XiveirmModel');
+		$model = $this->getModel('ApiForm', 'XiveirmModel');
 
 		// Check out the item
 		if ($editId) {
@@ -48,7 +48,7 @@ class XiveirmControllerAdditionaloperationForm extends XiveirmController
 		}
 
 		// Redirect to the edit screen.
-		$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=additionaloperation&layout=edit', false));
+		$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=api&layout=edit', false));
 	}
 
 	/**
@@ -64,7 +64,7 @@ class XiveirmControllerAdditionaloperationForm extends XiveirmController
 
 		// Initialise variables.
 		$app	= JFactory::getApplication();
-		$model = $this->getModel('AdditionaloperationForm', 'XiveirmModel');
+		$model = $this->getModel('ApiForm', 'XiveirmModel');
 
 		// Get the user data.
 		$data = JFactory::getApplication()->input->get('jform', array(), 'array');
@@ -94,11 +94,11 @@ class XiveirmControllerAdditionaloperationForm extends XiveirmController
 			}
 
 			// Save the data in the session.
-			$app->setUserState('com_xiveirm.edit.additionaloperation.data', JRequest::getVar('jform'),array());
+			$app->setUserState('com_xiveirm.edit.api.data', JRequest::getVar('jform'),array());
 
 			// Redirect back to the edit screen.
-			$id = (int) $app->getUserState('com_xiveirm.edit.additionaloperation.id');
-			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=additionaloperationform&layout=edit&id='.$id, false));
+			$id = (int) $app->getUserState('com_xiveirm.edit.api.id');
+			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=apiform&layout=edit&id='.$id, false));
 			return false;
 		}
 
@@ -108,12 +108,12 @@ class XiveirmControllerAdditionaloperationForm extends XiveirmController
 		// Check for errors.
 		if ($return === false) {
 			// Save the data in the session.
-			$app->setUserState('com_xiveirm.edit.additionaloperation.data', $data);
+			$app->setUserState('com_xiveirm.edit.api.data', $data);
 
 			// Redirect back to the edit screen.
-			$id = (int)$app->getUserState('com_xiveirm.edit.additionaloperation.id');
+			$id = (int)$app->getUserState('com_xiveirm.edit.api.id');
 			$this->setMessage(JText::sprintf('Save failed', $model->getError()), 'warning');
-			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=additionaloperationform&layout=edit&id='.$id, false));
+			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=apiform&layout=edit&id='.$id, false));
 			return false;
 		}
 
@@ -124,7 +124,7 @@ class XiveirmControllerAdditionaloperationForm extends XiveirmController
         }
         
         // Clear the profile id from the session.
-        $app->setUserState('com_xiveirm.edit.additionaloperation.id', null);
+        $app->setUserState('com_xiveirm.edit.api.id', null);
 
         // Redirect to the list screen.
         $this->setMessage(JText::_('COM_XIVEIRM_ITEM_SAVED_SUCCESSFULLY'));
@@ -133,7 +133,7 @@ class XiveirmControllerAdditionaloperationForm extends XiveirmController
         $this->setRedirect(JRoute::_($item->link, false));
 
 		// Flush the data from the session.
-		$app->setUserState('com_xiveirm.edit.additionaloperation.data', null);
+		$app->setUserState('com_xiveirm.edit.api.data', null);
 	}
     
     
@@ -150,7 +150,7 @@ class XiveirmControllerAdditionaloperationForm extends XiveirmController
 
 		// Initialise variables.
 		$app	= JFactory::getApplication();
-		$model = $this->getModel('AdditionaloperationForm', 'XiveirmModel');
+		$model = $this->getModel('ApiForm', 'XiveirmModel');
 
 		// Get the user data.
 		$data = JFactory::getApplication()->input->get('jform', array(), 'array');
@@ -180,11 +180,11 @@ class XiveirmControllerAdditionaloperationForm extends XiveirmController
 			}
 
 			// Save the data in the session.
-			$app->setUserState('com_xiveirm.edit.additionaloperation.data', $data);
+			$app->setUserState('com_xiveirm.edit.api.data', $data);
 
 			// Redirect back to the edit screen.
-			$id = (int) $app->getUserState('com_xiveirm.edit.additionaloperation.id');
-			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=additionaloperation&layout=edit&id='.$id, false));
+			$id = (int) $app->getUserState('com_xiveirm.edit.api.id');
+			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=api&layout=edit&id='.$id, false));
 			return false;
 		}
 
@@ -194,12 +194,12 @@ class XiveirmControllerAdditionaloperationForm extends XiveirmController
 		// Check for errors.
 		if ($return === false) {
 			// Save the data in the session.
-			$app->setUserState('com_xiveirm.edit.additionaloperation.data', $data);
+			$app->setUserState('com_xiveirm.edit.api.data', $data);
 
 			// Redirect back to the edit screen.
-			$id = (int)$app->getUserState('com_xiveirm.edit.additionaloperation.id');
+			$id = (int)$app->getUserState('com_xiveirm.edit.api.id');
 			$this->setMessage(JText::sprintf('Delete failed', $model->getError()), 'warning');
-			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=additionaloperation&layout=edit&id='.$id, false));
+			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=api&layout=edit&id='.$id, false));
 			return false;
 		}
 
@@ -210,7 +210,7 @@ class XiveirmControllerAdditionaloperationForm extends XiveirmController
         }
         
         // Clear the profile id from the session.
-        $app->setUserState('com_xiveirm.edit.additionaloperation.id', null);
+        $app->setUserState('com_xiveirm.edit.api.id', null);
 
         // Redirect to the list screen.
         $this->setMessage(JText::_('COM_XIVEIRM_ITEM_DELETED_SUCCESSFULLY'));
@@ -219,7 +219,7 @@ class XiveirmControllerAdditionaloperationForm extends XiveirmController
         $this->setRedirect(JRoute::_($item->link, false));
 
 		// Flush the data from the session.
-		$app->setUserState('com_xiveirm.edit.additionaloperation.data', null);
+		$app->setUserState('com_xiveirm.edit.api.data', null);
 	}
     
     

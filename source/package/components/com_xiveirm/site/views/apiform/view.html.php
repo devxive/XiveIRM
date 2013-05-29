@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version     3.0.4
+ * @version     3.1.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -15,7 +15,7 @@ jimport('joomla.application.component.view');
 /**
  * View to edit
  */
-class XiveirmViewAdditionaloperationForm extends JViewLegacy {
+class XiveirmViewApiForm extends JViewLegacy {
 
     protected $state;
     protected $item;

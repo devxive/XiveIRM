@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.0.4
+ * @version     3.1.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -16,7 +16,7 @@ jimport('joomla.event.dispatcher');
 /**
  * Xiveirm model.
  */
-class XiveirmModelAdditionaloperation extends JModelForm
+class XiveirmModelApiForm extends JModelForm
 {
     
     var $_item = null;
@@ -34,18 +34,18 @@ class XiveirmModelAdditionaloperation extends JModelForm
 
 		// Load state from the request userState on edit or from the passed variable on default
         if (JFactory::getApplication()->input->get('layout') == 'edit') {
-            $id = JFactory::getApplication()->getUserState('com_xiveirm.edit.additionaloperation.id');
+            $id = JFactory::getApplication()->getUserState('com_xiveirm.edit.api.id');
         } else {
             $id = JFactory::getApplication()->input->get('id');
-            JFactory::getApplication()->setUserState('com_xiveirm.edit.additionaloperation.id', $id);
+            JFactory::getApplication()->setUserState('com_xiveirm.edit.api.id', $id);
         }
-		$this->setState('additionaloperation.id', $id);
+		$this->setState('api.id', $id);
 
 		// Load the parameters.
-		$params = $app->getParams();
+        $params = $app->getParams();
         $params_array = $params->toArray();
         if(isset($params_array['item_id'])){
-            $this->setState('additionaloperation.id', $params_array['item_id']);
+            $this->setState('api.id', $params_array['item_id']);
         }
 		$this->setState('params', $params);
 
@@ -66,7 +66,7 @@ class XiveirmModelAdditionaloperation extends JModelForm
 			$this->_item = false;
 
 			if (empty($id)) {
-				$id = $this->getState('additionaloperation.id');
+				$id = $this->getState('api.id');
 			}
 
 			// Get a level row instance.
@@ -75,6 +75,18 @@ class XiveirmModelAdditionaloperation extends JModelForm
 			// Attempt to load the row.
 			if ($table->load($id))
 			{
+                
+                $user = JFactory::getUser();
+                $id = $table->id;
+                $canEdit = $user->authorise('core.edit', 'com_xiveirm') || $user->authorise('core.create', 'com_xiveirm');
+                if (!$canEdit && $user->authorise('core.edit.own', 'com_xiveirm')) {
+                    $canEdit = $user->id == $table->created_by;
+                }
+
+                if (!$canEdit) {
+                    JError::raiseError('500', JText::_('JERROR_ALERTNOAUTHOR'));
+                }
+                
 				// Check published state.
 				if ($published = $this->getState('filter.published'))
 				{
@@ -94,7 +106,7 @@ class XiveirmModelAdditionaloperation extends JModelForm
 		return $this->_item;
 	}
     
-	public function getTable($type = 'Additionaloperation', $prefix = 'XiveirmTable', $config = array())
+	public function getTable($type = 'Api', $prefix = 'XiveirmTable', $config = array())
 	{   
         $this->addTablePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
         return JTable::getInstance($type, $prefix, $config);
@@ -111,7 +123,7 @@ class XiveirmModelAdditionaloperation extends JModelForm
 	public function checkin($id = null)
 	{
 		// Get the id.
-		$id = (!empty($id)) ? $id : (int)$this->getState('additionaloperation.id');
+		$id = (!empty($id)) ? $id : (int)$this->getState('api.id');
 
 		if ($id) {
             
@@ -140,7 +152,7 @@ class XiveirmModelAdditionaloperation extends JModelForm
 	public function checkout($id = null)
 	{
 		// Get the user id.
-		$id = (!empty($id)) ? $id : (int)$this->getState('additionaloperation.id');
+		$id = (!empty($id)) ? $id : (int)$this->getState('api.id');
 
 		if ($id) {
             
@@ -175,7 +187,7 @@ class XiveirmModelAdditionaloperation extends JModelForm
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Get the form.
-		$form = $this->loadForm('com_xiveirm.additionaloperation', 'additionaloperation', array('control' => 'jform', 'load_data' => $loadData));
+		$form = $this->loadForm('com_xiveirm.api', 'apiform', array('control' => 'jform', 'load_data' => $loadData));
 		if (empty($form)) {
 			return false;
 		}
@@ -191,7 +203,10 @@ class XiveirmModelAdditionaloperation extends JModelForm
 	 */
 	protected function loadFormData()
 	{
-		$data = $this->getData(); 
+		$data = JFactory::getApplication()->getUserState('com_xiveirm.edit.api.data', array());
+        if (empty($data)) {
+            $data = $this->getData();
+        }
         
         return $data;
 	}
@@ -205,7 +220,7 @@ class XiveirmModelAdditionaloperation extends JModelForm
 	 */
 	public function save($data)
 	{
-		$id = (!empty($data['id'])) ? $data['id'] : (int)$this->getState('additionaloperation.id');
+		$id = (!empty($data['id'])) ? $data['id'] : (int)$this->getState('api.id');
         $state = (!empty($data['state'])) ? 1 : 0;
         $user = JFactory::getUser();
 
@@ -239,7 +254,7 @@ class XiveirmModelAdditionaloperation extends JModelForm
     
      function delete($data)
     {
-        $id = (!empty($data['id'])) ? $data['id'] : (int)$this->getState('additionaloperation.id');
+        $id = (!empty($data['id'])) ? $data['id'] : (int)$this->getState('api.id');
         if(JFactory::getUser()->authorise('core.delete', 'com_xiveirm') !== true){
             JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
             return false;
@@ -252,17 +267,6 @@ class XiveirmModelAdditionaloperation extends JModelForm
         }
         
         return true;
-    }
-    
-    function getCategoryName($id){
-        $db = JFactory::getDbo();
-        $query = $db->getQuery(true);
-        $query 
-            ->select('title')
-            ->from('#__categories')
-            ->where('id = ' . $id);
-        $db->setQuery($query);
-        return $db->loadObject();
     }
     
 }

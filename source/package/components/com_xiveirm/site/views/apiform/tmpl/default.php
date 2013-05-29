@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.0.4
+ * @version     3.1.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -87,7 +87,7 @@ $lang->load('com_xiveirm', JPATH_ADMINISTRATOR);
     getScript('//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',function() {
         js = jQuery.noConflict();
         js(document).ready(function(){
-            js('#form-additionaloperation').submit(function(event){
+            js('#form-api').submit(function(event){
                  
             }); 
         
@@ -97,7 +97,7 @@ $lang->load('com_xiveirm', JPATH_ADMINISTRATOR);
     
 </script>
 
-<div class="additionaloperation-edit front-end-edit">
+<div class="api-edit front-end-edit">
     <?php if (!empty($this->item->id)): ?>
         <h1>Edit <?php echo $this->item->id; ?></h1>
     <?php else: ?>
