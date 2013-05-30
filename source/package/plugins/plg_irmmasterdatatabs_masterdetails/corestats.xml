@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.1" type="plugin" group="irmmasterdatawidgets" method="upgrade">
+	<name>plg_irmmasterdatawidgets_corestats</name>
+	<author>devXive</author>
+	<creationDate>May 2013</creationDate>
+	<copyright>(C) 1997 - 2013 devXive - research and development. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>support@devxive.com</authorEmail>
+	<authorUrl>www.devxive.com</authorUrl>
+	<version>0.0.1</version>
+	<description>PLG_IRMMASTERDATAWIDGETS_CORESTATS_XML_DESCRIPTION</description>
+	<files>
+		<filename plugin="corestats">corestats.php</filename>
+		<filename>index.html</filename>
+	</files>
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.plg_irmmasterdatawidgets_corestats.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_irmmasterdatawidgets_corestats.sys.ini</language>
+		<language tag="de-DE">de-DE/de-DE.plg_irmmasterdatawidgets_corestats.ini</language>
+		<language tag="de-DE">de-DE/de-DE.plg_irmmasterdatawidgets_corestats.sys.ini</language>
+	</languages>
+	<config>
+		<fields name="params">
+
+			<fieldset name="basic">
+
+			</fieldset>
+		</fields>
+	</config>
+</extension>
