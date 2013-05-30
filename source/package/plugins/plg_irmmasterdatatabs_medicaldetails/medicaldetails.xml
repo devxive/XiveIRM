@@ -19,60 +19,9 @@
 	</languages>
 	<config>
 		<fields name="params">
-
-			<fieldset name="basic"
-				addfieldpath="/administrator/components/com_content/models/fields">
-
-				<field name="register-require-user" type="spacer" class="text"
-					label="PLG_IRMMASTERDATATABS_MEDICALDETAILS_FIELD_NAME_REGISTER_REQUIRE_USER"
-				/>
-
-				<field name="register-xiveirmclientid" type="list" default="2"
-					description="PLG_IRMMASTERDATATABS_MEDICALDETAILS_FIELD_XIVEIRMCLIENTID_DESC"
-					label="PLG_IRMMASTERDATATABS_MEDICALDETAILS_FIELD_XIVEIRMCLIENTID_LABEL"
-				>
-					<option value="2">JOPTION_REQUIRED</option>
-					<option value="1">JOPTION_OPTIONAL</option>
-					<option value="0">JDISABLED</option>
-				</field>
-
-				<field name="register-jobtitle" type="list" default="1"
-					description="PLG_IRMMASTERDATATABS_MEDICALDETAILS_FIELD_JOBTITLE_DESC"
-					label="PLG_IRMMASTERDATATABS_MEDICALDETAILS_FIELD_JOBTITLE_LABEL"
-				>
-					<option value="2">JOPTION_REQUIRED</option>
-					<option value="1">JOPTION_OPTIONAL</option>
-					<option value="0">JDISABLED</option>
-				</field>
-
-				<field name="spacer1" type="spacer"
-					hr="true"
-				/>
-
-				<field name="profile-require-user" type="spacer" class="text"
-					label="PLG_IRMMASTERDATATABS_MEDICALDETAILS_FIELD_NAME_PROFILE_REQUIRE_USER"
-				/>
-
-				<field name="profile-xiveirmclientid" type="list" default="2"
-					description="PLG_IRMMASTERDATATABS_MEDICALDETAILS_FIELD_XIVEIRMCLIENTID_DESC"
-					label="PLG_IRMMASTERDATATABS_MEDICALDETAILS_FIELD_XIVEIRMCLIENTID_LABEL"
-				>
-					<option value="2">JOPTION_REQUIRED</option>
-					<option value="1">JOPTION_OPTIONAL</option>
-					<option value="0">JDISABLED</option>
-				</field>
-
-				<field name="profile-jobtitle" type="list" default="1"
-					description="PLG_IRMMASTERDATATABS_MEDICALDETAILS_FIELD_JOBTITLE_DESC"
-					label="PLG_IRMMASTERDATATABS_MEDICALDETAILS_FIELD_JOBTITLE_LABEL"
-				>
-					<option value="2">JOPTION_REQUIRED</option>
-					<option value="1">JOPTION_OPTIONAL</option>
-					<option value="0">JDISABLED</option>
-				</field>
+			<fieldset name="basic">
 
 			</fieldset>
-
 		</fields>
 	</config>
 </extension>
