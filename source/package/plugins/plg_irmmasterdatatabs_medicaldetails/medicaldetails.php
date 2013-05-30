@@ -19,6 +19,78 @@ defined('JPATH_BASE') or die;
 class PlgIrmmasterdatatabsMedicaldetails extends JPlugin
 {
 	/**
+	 * Stores the tab name
+	 * @var	tabId
+	 * @since	3.1
+	 */
+	var $tabId;
+
+	/**
+	 * INITIATE THE CONSTRUCTOR
+	 */
+	public function __construct(& $subject, $config)
+	{
+		parent::__construct($subject, $config);
+		$this->tabId = 'medicaldetails';
+		$this->loadLanguage();
+	}
+
+	/**
+	 * @param   integer    $itemId     The id from #__xiveirm_masterdata
+	 *
+	 * @return  array			tabId = The tab identification, tabName = Translateable string from .ini file
+	 *
+	 * @since   3.0
+	 */
+	public function loadTabButton($itemId = null)
+	{
+		$tabName = '<i class="icon-medkit red"></i> ' . JText::_('PLG_IRMMASTERDATATABS_MEDICALDETAILS_TABNAME');
+
+		$tabButton = array(
+			'tabId' => $this->tabId,
+			'tabName' => $tabName
+		);
+
+		return $tabButton;
+	}
+
+	/**
+	 * @param   integer    $itemId     The id from #__xiveirm_masterdata
+	 *
+	 * @return  array			tabId = The tab identification, tabContent = Summary of the tabForms
+	 *
+	 * @since   3.0
+	 */
+	public function loadTabContainer($itemId = null)
+	{
+		$tabForm = '';
+		$tabForm .= '';
+		$tabForm .= '';
+		$tabForm .= '';
+		$tabForm .= '';
+		$tabForm .= '';
+		$tabForm .= '';
+		$tabForm .= '';
+		$tabForm .= '';
+		$tabForm .= '';
+		$tabForm .= '';
+		$tabForm .= '';
+		$tabForm .= '';
+		$tabForm .= '';
+		$tabForm .= '';
+		$tabForm .= '';
+		$tabForm .= '';
+		$tabForm .= '';
+
+		$tabContent = array(
+			'tabId' => $this->tabId,
+			'tabContent' => $tabForm
+		);
+
+		return $tabContent;
+	}
+
+	/**
 	 * @param   string     $context  The context for the data
 	 * @param   integer    $data     The user id
 	 *
