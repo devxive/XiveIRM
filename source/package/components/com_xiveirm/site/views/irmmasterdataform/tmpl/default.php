@@ -19,7 +19,6 @@ $lang->load('com_xiveirm', JPATH_ADMINISTRATOR);
 
 JPluginHelper::importPlugin( 'irmmasterdatatabs' ); // returned 1 if get successfully loaded
 $dispatcher = JDispatcher::getInstance();
-
 ?>
 <style>
 	input {margin-bottom:10px !important;}
@@ -32,7 +31,7 @@ $dispatcher = JDispatcher::getInstance();
 				<?php if (!empty($this->item->id)): ?>
 					<?php echo ' ' . $this->item->last_name; ?>, <?php echo $this->item->first_name; ?> <?php if($this->item->customer_id): echo '<small><i class="icon-double-angle-right"></i> (#' . $this->item->customer_id . ')</small>'; endif; ?>
 				<?php else: ?>
-					<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADD_NEW_CONTACT'); ?>
+					<?php echo ' ' . JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADD_NEW_CONTACT'); ?>
 				<?php endif; ?>
 			</span>
 			<span class="span5">
@@ -67,7 +66,16 @@ $dispatcher = JDispatcher::getInstance();
 			<li class="active"><a data-toggle="tab" href="#base-data"><i class="green icon-home bigger-110"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TAB_BASICDATA'); ?></a></li>
 			<li><a data-toggle="tab" href="#kv-data">KV-Daten</a></li>
 			<li><a data-toggle="tab" href="#messages">Aufgaben <span class="badge badge-important">4</span></a></li>
-			<?php $dispatcher->trigger( 'loadTabButton', array() ); ?>
+	<!-- TAB.PLUGIN_BUTTON -->
+			<?php
+				foreach($dispatcher->trigger( 'loadTabButton', array() ) as $tabButton)
+				{
+					echo '<li><a data-toggle="tab" href="#' . $tabButton['tabId'] . '">';
+					echo $tabButton['tabName'];
+					echo '</a></li>';
+				}
+			?>
+	<!-- TAB.PLUGIN_BUTTON -->
 			<li class="dropdown">
 				<a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TAB_MORE'); ?> <b class="caret"></b></a>
 				<ul class="dropdown-menu dropdown-info">
@@ -230,9 +238,16 @@ $dispatcher = JDispatcher::getInstance();
 			<div id="dropdown2" class="tab-pane">
 				<p>Trust fund seitan letterpress, keytar raw denim keffiyeh etsy art party before they sold out master cleanse gluten-free squid scenester freegan cosby sweater. Fanny pack portland seitan DIY, art party locavore wolf cliche high life echo park Austin.</p>
 			</div>
-	<!-- TAB_CONTENT -->
-			<?php $dispatcher->trigger( 'loadTabContent', array() ); ?>
-	<!-- TAB_CONTENT -->
+	<!-- TAB.PLUGIN_CONTENT -->
+			<?php
+				foreach($dispatcher->trigger( 'loadTabContainer', array() ) as $tabContainer)
+				{
+					echo '<div id="' . $tabContainer['tabId'] . '">';
+					echo $tabContainer['tabContent'];
+					echo '</div>';
+				}
+			?>
+	<!-- TAB.PLUGIN_CONTENT -->
 		</div>
 	</div>
 	<!-- MASTER_TAP_PANE_PLUGINSTYLED -->
@@ -241,9 +256,13 @@ $dispatcher = JDispatcher::getInstance();
 
 
 
+<textarea style="width: 100%; height: 250px;">
+	<?php print_r($dispatcher->trigger( 'loadTabButton', array() )); ?>
+</textarea>
 
-
-
+<textarea style="width: 100%; height: 250px;">
+	<?php print_r($dispatcher->trigger( 'loadTabContent', array() )); ?>
+</textarea>
 
 
 
