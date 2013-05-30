@@ -18,6 +18,7 @@ $lang = JFactory::getLanguage();
 $lang->load('com_xiveirm', JPATH_ADMINISTRATOR);
 
 JPluginHelper::importPlugin( 'irmmasterdatatabs' ); // returned 1 if get successfully loaded
+JPluginHelper::importPlugin( 'irmmasterdatawidgets' ); // returned 1 if get successfully loaded
 $dispatcher = JDispatcher::getInstance();
 ?>
 <style>
@@ -211,7 +212,22 @@ $dispatcher = JDispatcher::getInstance();
 						<input type="hidden" name="task" value="irmmasterdataform.save" />
 						<?php echo JHtml::_('form.token'); ?>
 					</div>
-					<div class="span5"><div class="well">RECHTS</div></div>
+					<div class="span5">
+						<div class="well">
+							
+						<!-- TAB.PLUGIN_MAIN-WIDGETS -->
+						<?php
+							foreach($dispatcher->trigger( 'loadInBasedataContainer', array() ) as $inBaseWidget)
+							{
+								echo '<div id="#' . $inBaseWidget['tabId'] . '">';
+								echo $inBaseWidget['tabContent'];
+								echo '</div>';
+							}
+						?>
+						<!-- TAB.PLUGIN_MAIN-WIDGETS -->
+
+						</div>
+					</div>
 				</div>
 					<div class="form-actions">
 						<button type="submit" class="validate btn btn-info" type="submit" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_SUBMIT_CHECKIN_TIP'); ?>"><i class="icon-ok"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_SUBMIT_CHECKIN'); ?></button>
@@ -242,7 +258,7 @@ $dispatcher = JDispatcher::getInstance();
 			<?php
 				foreach($dispatcher->trigger( 'loadTabContainer', array() ) as $tabContainer)
 				{
-					echo '<div id="' . $tabContainer['tabId'] . '">';
+					echo '<div id="' . $tabContainer['tabId'] . '" class="tab-pane">';
 					echo $tabContainer['tabContent'];
 					echo '</div>';
 				}
@@ -261,7 +277,7 @@ $dispatcher = JDispatcher::getInstance();
 </textarea>
 
 <textarea style="width: 100%; height: 250px;">
-	<?php print_r($dispatcher->trigger( 'loadTabContent', array() )); ?>
+	<?php print_r($dispatcher->trigger( 'loadTabContainer', array() )); ?>
 </textarea>
 
 
