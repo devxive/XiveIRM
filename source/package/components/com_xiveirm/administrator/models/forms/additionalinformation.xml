@@ -19,24 +19,33 @@
         
         filter="safehtml" /> 
 
-       <field name="plugin_key" type="text" size="40" class="inputbox"
+       <field name="tab_name" type="text" size="40" class="inputbox"
         
-            label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_PLUGIN_KEY"
-            description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_PLUGIN_KEY" 
+            label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_TAB_NAME"
+            description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_TAB_NAME" 
         
         
         
         filter="safehtml" /> 
 
-       <field name="plugin_value" type="editor" buttons="true"
+       <field name="form_field" type="text" size="40" class="inputbox"
+        
+            label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_FORM_FIELD"
+            description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_FORM_FIELD" 
+        
+        
+        
+        filter="safehtml" /> 
+
+       <field name="form_value" type="editor" buttons="true"
         class="inputbox"
         filter="safehtml"
         
         
         
         
-            label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_PLUGIN_VALUE"
-            description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_PLUGIN_VALUE"  /> 
+            label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_FORM_VALUE"
+            description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_FORM_VALUE"  /> 
 
          <field
         name="state"

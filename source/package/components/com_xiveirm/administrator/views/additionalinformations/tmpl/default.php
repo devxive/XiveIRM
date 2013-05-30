@@ -114,10 +114,13 @@ if (!empty($this->extra_sidebar)) {
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_ADDITIONALINFORMATIONS_ITEM_ID', 'a.item_id', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_ADDITIONALINFORMATIONS_PLUGIN_KEY', 'a.plugin_key', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_ADDITIONALINFORMATIONS_TAB_NAME', 'a.tab_name', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_ADDITIONALINFORMATIONS_PLUGIN_VALUE', 'a.plugin_value', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_ADDITIONALINFORMATIONS_FORM_FIELD', 'a.form_field', $listDirn, $listOrder); ?>
+				</th>
+				<th class='left'>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_ADDITIONALINFORMATIONS_FORM_VALUE', 'a.form_value', $listDirn, $listOrder); ?>
 				</th>
                     
                     
@@ -192,14 +195,18 @@ if (!empty($this->extra_sidebar)) {
 				<?php endif; ?>
 				<?php if ($canEdit) : ?>
 					<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=additionalinformation.edit&id='.(int) $item->id); ?>">
-					<?php echo $this->escape($item->plugin_key); ?></a>
+					<?php echo $this->escape($item->tab_name); ?></a>
 				<?php else : ?>
-					<?php echo $this->escape($item->plugin_key); ?>
+					<?php echo $this->escape($item->tab_name); ?>
 				<?php endif; ?>
 				</td>
 				<td>
 
-					<?php echo $item->plugin_value; ?>
+					<?php echo $item->form_field; ?>
+				</td>
+				<td>
+
+					<?php echo $item->form_value; ?>
 				</td>
 
 

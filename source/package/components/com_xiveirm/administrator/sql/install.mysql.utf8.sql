@@ -37,8 +37,9 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_masterdata_add` (
 `created` DATETIME NOT NULL ,
 `state` TINYINT(1)  NOT NULL DEFAULT '1',
 `item_id` INT(11)  NOT NULL ,
-`plugin_key` VARCHAR(100)  NOT NULL ,
-`plugin_value` TEXT NOT NULL ,
+`tab_name` VARCHAR(100)  NOT NULL ,
+`form_field` VARCHAR(100)  NOT NULL ,
+`form_value` TEXT NOT NULL ,
 `ordering` INT(11)  NOT NULL ,
 PRIMARY KEY (`id`)
 ) DEFAULT COLLATE=utf8_general_ci;

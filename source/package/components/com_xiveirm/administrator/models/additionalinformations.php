@@ -32,8 +32,9 @@ class XiveirmModeladditionalinformations extends JModelList
                 'created', 'a.created',
                 'state', 'a.state',
                 'item_id', 'a.item_id',
-                'plugin_key', 'a.plugin_key',
-                'plugin_value', 'a.plugin_value',
+                'tab_name', 'a.tab_name',
+                'form_field', 'a.form_field',
+                'form_value', 'a.form_value',
                 'ordering', 'a.ordering',
 
             );

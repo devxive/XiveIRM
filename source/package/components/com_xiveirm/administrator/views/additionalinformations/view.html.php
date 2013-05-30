@@ -130,8 +130,9 @@ class XiveirmViewAdditionalinformations extends JViewLegacy
 		'a.id' => JText::_('JGRID_HEADING_ID'),
 		'a.state' => JText::_('JSTATUS'),
 		'a.item_id' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_ITEM_ID'),
-		'a.plugin_key' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_PLUGIN_KEY'),
-		'a.plugin_value' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_PLUGIN_VALUE'),
+		'a.tab_name' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_TAB_NAME'),
+		'a.form_field' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_FORM_FIELD'),
+		'a.form_value' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_FORM_VALUE'),
 		);
 	}
 
