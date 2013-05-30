@@ -16,6 +16,10 @@ defined('_JEXEC') or die;
 //Load admin language file
 $lang = JFactory::getLanguage();
 $lang->load('com_xiveirm', JPATH_ADMINISTRATOR);
+
+JPluginHelper::importPlugin( 'irmmasterdatatabs' ); // returned 1 if get successfully loaded
+$dispatcher = JDispatcher::getInstance();
+
 ?>
 <style>
 	input {margin-bottom:10px !important;}
@@ -63,6 +67,7 @@ $lang->load('com_xiveirm', JPATH_ADMINISTRATOR);
 			<li class="active"><a data-toggle="tab" href="#base-data"><i class="green icon-home bigger-110"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TAB_BASICDATA'); ?></a></li>
 			<li><a data-toggle="tab" href="#kv-data">KV-Daten</a></li>
 			<li><a data-toggle="tab" href="#messages">Aufgaben <span class="badge badge-important">4</span></a></li>
+			<?php $dispatcher->trigger( 'loadTabButton', array() ); ?>
 			<li class="dropdown">
 				<a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TAB_MORE'); ?> <b class="caret"></b></a>
 				<ul class="dropdown-menu dropdown-info">
@@ -225,6 +230,9 @@ $lang->load('com_xiveirm', JPATH_ADMINISTRATOR);
 			<div id="dropdown2" class="tab-pane">
 				<p>Trust fund seitan letterpress, keytar raw denim keffiyeh etsy art party before they sold out master cleanse gluten-free squid scenester freegan cosby sweater. Fanny pack portland seitan DIY, art party locavore wolf cliche high life echo park Austin.</p>
 			</div>
+	<!-- TAB_CONTENT -->
+			<?php $dispatcher->trigger( 'loadTabContent', array() ); ?>
+	<!-- TAB_CONTENT -->
 		</div>
 	</div>
 	<!-- MASTER_TAP_PANE_PLUGINSTYLED -->
