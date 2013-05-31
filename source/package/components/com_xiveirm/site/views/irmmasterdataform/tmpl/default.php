@@ -69,7 +69,7 @@ $dispatcher = JDispatcher::getInstance();
 			<li><a data-toggle="tab" href="#messages">Aufgaben <span class="badge badge-important">4</span></a></li>
 	<!-- TAB.PLUGIN_BUTTON -->
 			<?php
-				foreach($dispatcher->trigger( 'loadTabButton', array() ) as $tabButton)
+				foreach($dispatcher->trigger( 'loadTabButton', array(&$this->item) ) as $tabButton)
 				{
 					echo '<li><a data-toggle="tab" href="#' . $tabButton['tabId'] . '">';
 					echo $tabButton['tabName'];
@@ -217,7 +217,7 @@ $dispatcher = JDispatcher::getInstance();
 							
 						<!-- TAB.PLUGIN_MAIN-WIDGETS -->
 						<?php
-							foreach($dispatcher->trigger( 'loadInBasedataContainer', array() ) as $inBaseWidget)
+							foreach($dispatcher->trigger( 'loadInBasedataContainer', array(&$this->item) ) as $inBaseWidget)
 							{
 								echo '<div id="#' . $inBaseWidget['tabId'] . '">';
 								echo $inBaseWidget['tabContent'];
@@ -256,7 +256,7 @@ $dispatcher = JDispatcher::getInstance();
 			</div>
 	<!-- TAB.PLUGIN_CONTENT -->
 			<?php
-				foreach($dispatcher->trigger( 'loadTabContainer', array() ) as $tabContainer)
+				foreach($dispatcher->trigger( 'loadTabContainer', array(&$this->item) ) as $tabContainer)
 				{
 					echo '<div id="' . $tabContainer['tabId'] . '" class="tab-pane">';
 					echo $tabContainer['tabContent'];

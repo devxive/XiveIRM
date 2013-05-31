@@ -36,13 +36,13 @@ class PlgIrmmasterdatatabsMedicaldetails extends JPlugin
 	}
 
 	/**
-	 * @param   integer    $itemId     The id from #__xiveirm_masterdata
+	 * @param   object	&$item		The item referenced object which includes the system id of this contact
 	 *
 	 * @return  array			tabId = The tab identification, tabName = Translateable string from .ini file
 	 *
 	 * @since   3.0
 	 */
-	public function loadTabButton($itemId = null)
+	public function loadTabButton(&$item = null)
 	{
 		$tabName = '<i class="icon-medkit red"></i> ' . JText::_('PLG_IRMMASTERDATATABS_MEDICALDETAILS_TABNAME');
 
@@ -55,13 +55,13 @@ class PlgIrmmasterdatatabsMedicaldetails extends JPlugin
 	}
 
 	/**
-	 * @param   integer    $itemId     The id from #__xiveirm_masterdata
+	 * @param   object	&$item		The item referenced object which includes the system id of this contact
 	 *
 	 * @return  array			tabId = The tab identification, tabContent = Summary of the tabForms
 	 *
 	 * @since   3.0
 	 */
-	public function loadTabContainer($itemId = null)
+	public function loadTabContainer(&$item = null)
 	{
 		$tabForm = '';
 		$tabForm .= '';
