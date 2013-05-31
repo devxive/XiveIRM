@@ -101,92 +101,88 @@ $dispatcher = JDispatcher::getInstance();
 		<div class="tab-content">
 	<!-- BASE-DATA_TAB_CORE -->
 			<div id="base-data" class="tab-pane active">
-				<form id="form-irmmasterdata" action="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.save'); ?>" method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
-					<div class="row-fluid">
+				<div class="row-fluid">
 					<div class="span7">
+					<form id="form-irmmasterdata" action="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.save'); ?>" method="post" class="form-validate form-horizontal" enctype="multipart/form-data">
+						<?php if($this->item->id): ?>
+							<div class="control-group">
+								<label id="input-control-button" class="control-label red"><b>Edit form</b></label>
+								<div class="controls">
+									<input id="id-disable-check" class="ace-switch ace-switch-7" type="checkbox"><span class="lbl"></span>
+								</div>
+							</div>
+						<?php endif; ?>
+						
 						<div class="control-group">
-							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_CUSTOMER_ID_LABEL'); ?></label>
+							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_CUSTOMER_ID_LABEL'); ?>, <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_NAME_LABEL'); ?></label>
 							<div class="controls controls-row">
-								<input type="text" name="jform[customer_id]" class="span6" id="prependedInput" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_CUSTOMER_ID'); ?>" value="<?php echo $this->item->customer_id; ?>">
-								<?php if($this->item->modified): ?>
-									<span class="visible-desktop span6 help-inline"><small><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_LAST_MODIFIED'); ?> <?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($this->item->modified)); ?></small></span>
-								<?php endif; ?>
+								<input type="text" name="jform[customer_id]" class="input-control span6" id="prependedInput" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_CUSTOMER_ID'); ?>" value="<?php echo $this->item->customer_id; ?>">
+								<input type="text" class="span3" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_NAME_SALUTATION'); ?>" value="" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_NAME_HELP_TIP'); ?>" disabled>
+								<input type="text" name="jform[title]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_NAME_TITLE'); ?>" value="<?php echo $this->item->title; ?>">
+							</div>
+							<div class="controls controls-row">
+								<input type="text" name="jform[last_name]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_LAST_NAME'); ?>" value="<?php echo $this->item->last_name; ?>" autofocus>
+								<input type="text" name="jform[first_name]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_FIRST_NAME'); ?>" value="<?php echo $this->item->first_name; ?>">
 							</div>
 						</div>
 						
 						<div class="control-group">
-							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_NAME_LABEL'); ?> <span class="help-button" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_NAME_HELP_TIP'); ?>">?</span></label>
+							<label class="control-label" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TRAIT_GENDER_DESC'); ?>"><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TRAIT_LABEL'); ?></label>
 							<div class="controls controls-row">
-								<input type="text" class="span3" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_NAME_SALUTATION'); ?>" value="" disabled>
-								<span class="visible-desktop span3 help-inline"></span>
-								<input type="text" name="jform[title]" class="span3" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_NAME_TITLE'); ?>" value="<?php echo $this->item->title; ?>">
-								<span class="visible-desktop span3 help-inline"><small><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_NAME_TITLE_DESC'); ?></small></span>
-							</div>
-							<div class="controls controls-row">
-								<input type="text" name="jform[last_name]" class="span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_LAST_NAME'); ?>" value="<?php echo $this->item->last_name; ?>">
-								<input type="text" name="jform[first_name]" class="span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_FIRST_NAME'); ?>" value="<?php echo $this->item->first_name; ?>">
-							</div>
-						</div>
-						
-						<div class="control-group">
-							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TRAIT_LABEL'); ?></label>
-							<div class="controls controls-row">
-								<select name="jform[gender]" class="span3" required>
+								<select name="jform[gender]" class="input-control span3" required>
 									<option value=""<?php if(!$this->item->gender): echo ' selected'; endif; ?>><?php echo JText::_('COM_CIVEIRM_SELECT'); ?></option>
 									<option value="u"<?php if($this->item->gender == 'u'): echo ' selected'; endif; ?>><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TRAIT_GENDER_UNKNOWN'); ?></option>
 									<option value="f"<?php if($this->item->gender == 'f'): echo ' selected'; endif; ?>><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TRAIT_GENDER_FEMALE'); ?></option>
 									<option value="m"<?php if($this->item->gender == 'm'): echo ' selected'; endif; ?>><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TRAIT_GENDER_MALE'); ?></option>
 									<option value="c"<?php if($this->item->gender == 'c'): echo ' selected'; endif; ?>><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TRAIT_GENDER_COMPANY'); ?></option>
 								</select>
-								<span class="visible-desktop span3 help-inline"><small><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TRAIT_GENDER_DESC'); ?></small></span>
-								<input type="date" name="jform[dob]" class="span3" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TRAIT_DOB'); ?>" value="<?php echo $this->item->dob; ?>" required>
-								<span class="visible-desktop span3 help-inline"><small><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TRAIT_DOB_DESC'); ?></small></span>
+								<input type="date" name="jform[dob]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TRAIT_DOB'); ?>" value="<?php echo $this->item->dob; ?>" required>
 							</div>
 						</div>
 						
 						<div class="control-group">
 							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADDRESS_LABEL'); ?></label>
 							<div class="controls">
-								<input type="text" name="jform[address_name]" class="span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->address_name; ?>">
+								<input type="text" name="jform[address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->address_name; ?>">
 							</div>
 							<div class="controls">
-								<input type="text" name="jform[address_name_add]" class="span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->address_name_add; ?>">
+								<input type="text" name="jform[address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->address_name_add; ?>">
 							</div>
 							<div class="controls controls-row">
-								<input type="text" name="jform[address_street]" class="span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->address_street; ?>">
-								<input type="text" name="jform[address_houseno]" class="span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->address_houseno; ?>">
+								<input type="text" name="jform[address_street]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->address_street; ?>">
+								<input type="text" name="jform[address_houseno]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->address_houseno; ?>">
 							</div>
 							<div class="controls controls-row">
-								<input type="text" name="jform[address_zip]" class="span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->address_zip; ?>">
-								<input type="text" name="jform[address_city]" class="span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->address_city; ?>">
+								<input type="text" name="jform[address_zip]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->address_zip; ?>">
+								<input type="text" name="jform[address_city]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->address_city; ?>">
 							</div>
 							<div class="controls">
-								<input type="text" name="jform[address_country]" class="span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->address_country; ?>">
+								<input type="text" name="jform[address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->address_country; ?>">
 							</div>
 						</div>
 						
 						<div class="control-group">
 							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_PHONE_NUMBERS_LABEL'); ?></label>
 							<div class="controls controls-row">
-								<input type="text" name="jform[phone]" class="span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_PHONE'); ?>" value="<?php echo $this->item->phone; ?>">
-								<input type="text" name="jform[fax]" class="span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_FAX'); ?>" value="<?php echo $this->item->fax; ?>">
+								<input type="text" name="jform[phone]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_PHONE'); ?>" value="<?php echo $this->item->phone; ?>">
+								<input type="text" name="jform[fax]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_FAX'); ?>" value="<?php echo $this->item->fax; ?>">
 							</div>
 							<div class="controls">
-								<input type="text" name="jform[mobile]" class="span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_MOBILE'); ?>" value="<?php echo $this->item->mobile; ?>">
+								<input type="text" name="jform[mobile]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_MOBILE'); ?>" value="<?php echo $this->item->mobile; ?>">
 							</div>
 						</div>
 						<div class="control-group">
 							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_WEB_LABEL'); ?></label>
 							<div class="controls controls-row">
-								<input type="text" name="jform[email]" class="span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_EMAIL'); ?>" value="<?php echo $this->item->email; ?>">
-								<input type="text" name="jform[web]" class="span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_WEB'); ?>" value="<?php echo $this->item->web; ?>">
+								<input type="text" name="jform[email]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_EMAIL'); ?>" value="<?php echo $this->item->email; ?>">
+								<input type="text" name="jform[web]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_WEB'); ?>" value="<?php echo $this->item->web; ?>">
 							</div>
 						</div>
 						
 						<div class="control-group">
 							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_INTERNAL_REMARKS'); ?></label>
 							<div class="controls">
-								<textarea name="jform[remarks]" class="span12" rows="5" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_INTERNAL_REMARKS_DESC'); ?>"><?php echo $this->item->remarks; ?></textarea>
+								<textarea name="jform[remarks]" class="input-control span12" rows="5" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_INTERNAL_REMARKS_DESC'); ?>"><?php echo $this->item->remarks; ?></textarea>
 							</div>
 						</div>
 						
@@ -211,6 +207,14 @@ $dispatcher = JDispatcher::getInstance();
 						<input type="hidden" name="option" value="com_xiveirm" />
 						<input type="hidden" name="task" value="irmmasterdataform.save" />
 						<?php echo JHtml::_('form.token'); ?>
+						<div class="form-actions">
+							<button type="submit" class="validate btn btn-info" type="submit" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_SUBMIT_CHECKIN_TIP'); ?>"><i class="icon-ok"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_SUBMIT_CHECKIN'); ?></button>
+							&nbsp; &nbsp; &nbsp;
+							<button class="btn" type="reset" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_RESET_TIP'); ?>"><i class="icon-undo"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_RESET'); ?></button>
+							&nbsp; &nbsp; &nbsp;
+							<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.cancel'); ?>"  data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_CANCEL_CHECKIN_TIP'); ?>" class="btn btn-danger"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_CANCEL_CHECKIN'); ?></a>
+						</div>
+					</form>
 					</div>
 					<div class="span5">
 						<div class="well">
@@ -219,7 +223,7 @@ $dispatcher = JDispatcher::getInstance();
 						<?php
 							foreach($dispatcher->trigger( 'loadInBasedataContainer', array(&$this->item) ) as $inBaseWidget)
 							{
-								echo '<div id="#' . $inBaseWidget['tabId'] . '">';
+								echo '<div id="' . $inBaseWidget['tabId'] . '">';
 								echo $inBaseWidget['tabContent'];
 								echo '</div>';
 							}
@@ -229,15 +233,6 @@ $dispatcher = JDispatcher::getInstance();
 						</div>
 					</div>
 				</div>
-					<div class="form-actions">
-						<button type="submit" class="validate btn btn-info" type="submit" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_SUBMIT_CHECKIN_TIP'); ?>"><i class="icon-ok"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_SUBMIT_CHECKIN'); ?></button>
-						&nbsp; &nbsp; &nbsp;
-						<button class="btn" type="reset" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_RESET_TIP'); ?>"><i class="icon-undo"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_RESET'); ?></button>
-						&nbsp; &nbsp; &nbsp;
-						<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.cancel'); ?>"  data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_CANCEL_CHECKIN_TIP'); ?>" class="btn btn-danger"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_CANCEL_CHECKIN'); ?></a>
-					</div>
-				</form>
-				
 			</div>
 	<!-- BASE-DATA_TAB_CORE -->
 	<!-- KV-DATA_TAB_ADD -->
@@ -269,17 +264,26 @@ $dispatcher = JDispatcher::getInstance();
 	<!-- MASTER_TAP_PANE_PLUGINSTYLED -->
 </div>
 
-
-
-
-<textarea style="width: 100%; height: 250px;">
-	<?php print_r($dispatcher->trigger( 'loadTabButton', array() )); ?>
-</textarea>
-
-<textarea style="width: 100%; height: 250px;">
-	<?php print_r($dispatcher->trigger( 'loadTabContainer', array() )); ?>
-</textarea>
-
-
-
+<?php if($this->item->id): ?>
+	<script>
+	// XAP-TODO: Have to set more functions to the edit form, such as a DB-checkout on activate and checkin on save or check in on deactivate !!!!
+		jQuery(function() {
+			$("#form-irmmasterdata .input-control").attr("disabled", true);
+			var inp = $('.input-control').get(0);
+			var classInp = $('#input-control-button').get(0);
+	
+			$('#id-disable-check').on('click', function() {
+				if(inp.hasAttribute('disabled')) {
+					$("#form-irmmasterdata .input-control").attr("disabled", false);
+					classInp.removeAttribute('class', 'red');
+					classInp.setAttribute('class' , 'control-label green');
+				} else {
+					$("#form-irmmasterdata .input-control").attr("disabled", true);
+					classInp.removeAttribute('class', 'green');
+					classInp.setAttribute('class' , 'control-label red');
+				}
+			});
+		});
+	</script>
+<?php endif; ?>
 
