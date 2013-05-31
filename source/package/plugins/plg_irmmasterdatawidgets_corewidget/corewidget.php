@@ -50,11 +50,11 @@ class PlgIrmmasterdatawidgetsCorewidget extends JPlugin
 		ob_start();
 		?>
 		<!---------- Begin output buffering: <?php echo $this->tabId; ?> ---------->
-		<div class="alert alert-error">
+		<div class="alert alert-error center">
 			<h4>Please note:</h4>
 			This is just a demo widget without any functions!
 		</div>
-		<input id="pinput" name="test" class="span6" />
+
 		<div class="widget-box light-border">
 			<div class="widget-header header-color-dark">
 				<h5 class="smaller">Core Widget</h5>
