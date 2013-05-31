@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     XAP.Plugin
- * @subpackage  IRMMasterDataWidgets.corestats
+ * @subpackage  IRMMasterDataWidgets.corewidget
  *
  * @copyright   Copyright (C) 1997 - 2013 devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -13,10 +13,10 @@ defined('JPATH_BASE') or die;
  * An example custom profile plugin.
  *
  * @package     XAP.Plugin
- * @subpackage  IRMMasterDataWidgets.corestats
+ * @subpackage  IRMMasterDataWidgets.corewidget
  * @since       3.0
  */
-class PlgIrmmasterdatawidgetsCorestats extends JPlugin
+class PlgIrmmasterdatawidgetsCorewidget extends JPlugin
 {
 	/**
 	 * Stores the tab name
@@ -31,7 +31,7 @@ class PlgIrmmasterdatawidgetsCorestats extends JPlugin
 	public function __construct(& $subject, $config)
 	{
 		parent::__construct($subject, $config);
-		$this->tabId = 'corestats';
+		$this->tabId = 'corewidget';
 		$this->loadLanguage();
 	}
 
@@ -44,17 +44,20 @@ class PlgIrmmasterdatawidgetsCorestats extends JPlugin
 	 */
 	public function loadInBasedataContainer(&$item = null, &$params = null)
 	{
+//		$plzUrl = 'http://www.postdirekt.de/plzserver/PlzSearchServlet?app=miniapp&amp;w=350&amp;h=315&amp;fr=0&amp;frc=000000&amp;bg=FFFFFF&amp;hl2=A5A5A5&amp;fc=000000&amp;lc=000000&amp;ff=Arial&amp;fs=10&amp;lnc=000000&amp;hdc=000000&amp;app=miniapp&amp;loc=http%3A//plzkarte.com/plz-suche/';
+		$plzUrl = 'http://www.postdirekt.de/plzserver/PlzSearchServlet?app=miniapp&fr=0&bg=FFF&hl2=FC0&fc=000&lc=000000&ff=Verdana&fs=10&lnc=000000&hdc=000000';
+
 		ob_start();
 		?>
 		<!---------- Begin output buffering: <?php echo $this->tabId; ?> ---------->
-
 		<div class="alert alert-error">
 			<h4>Please note:</h4>
 			This is just a demo widget without any functions!
 		</div>
+		<input id="pinput" name="test" class="span6" />
 		<div class="widget-box light-border">
 			<div class="widget-header header-color-dark">
-				<h5 class="smaller">Core Statistics</h5>
+				<h5 class="smaller">Core Widget</h5>
 				<div class="widget-toolbar">
 					<span class="badge badge-important" data-rel="tooltip" data-placement="bottom" data-original-title="Patient hat akute Infektionen!">Infektionsgefahr</span>
 				</div>
@@ -93,6 +96,19 @@ class PlgIrmmasterdatawidgetsCorestats extends JPlugin
 				<div class="widget-toolbox padding-5 clearfix">
 					<div class="center">
 						<small>Dieses und weitere n&uuml;tzliche Widgets finden Sie auf unserer Website <a href="#">devXive - research and development</a></small>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="widget-box small-margin-top">
+			<div class="widget-header" style="background: url(/images/system/widgets/logo_deutschepost.png) 95% 40% no-repeat #FC0; height: 31px;">
+				<h5 onClick="hanna()">Postleitzahlsuche</h5>
+			</div>
+			<div class="widget-body">
+				<div class="widget-body-inner" style="">
+					<div class="widget-main">
+						<iframe id="plzsifr" name="plzsifr" src="<?php echo $plzUrl; ?>" style="width:100%; height:315px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" vspace="0"></iframe>
 					</div>
 				</div>
 			</div>
