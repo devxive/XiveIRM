@@ -34,12 +34,10 @@ PRIMARY KEY (`id`)
 CREATE TABLE IF NOT EXISTS `#__xiveirm_masterdata_add` (
 `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 
-`created` DATETIME NOT NULL ,
+`tab_id` VARCHAR(100)  NOT NULL ,
+`tab_field_id` VARCHAR(100)  NOT NULL ,
+`tab_value` TEXT NOT NULL ,
 `state` TINYINT(1)  NOT NULL DEFAULT '1',
-`item_id` INT(11)  NOT NULL ,
-`tab_name` VARCHAR(100)  NOT NULL ,
-`form_field` VARCHAR(100)  NOT NULL ,
-`form_value` TEXT NOT NULL ,
 `ordering` INT(11)  NOT NULL ,
 PRIMARY KEY (`id`)
 ) DEFAULT COLLATE=utf8_general_ci;

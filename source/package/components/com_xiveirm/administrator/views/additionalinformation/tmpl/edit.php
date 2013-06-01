@@ -48,29 +48,20 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
             <fieldset class="adminform">
 
                 			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('id'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('id'); ?></div>
+				<div class="control-label"><?php echo $this->form->getLabel('tab_id'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('tab_id'); ?></div>
 			</div>
-
-				<?php echo $this->form->getInput('created'); ?>			<div class="control-group">
+			<div class="control-group">
+				<div class="control-label"><?php echo $this->form->getLabel('tab_field_id'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('tab_field_id'); ?></div>
+			</div>
+			<div class="control-group">
+				<div class="control-label"><?php echo $this->form->getLabel('tab_value'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('tab_value'); ?></div>
+			</div>
+			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('state'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('state'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('item_id'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('item_id'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('tab_name'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('tab_name'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('form_field'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('form_field'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('form_value'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('form_value'); ?></div>
 			</div>
 				<input type="hidden" name="jform[ordering]" value="<?php echo $this->item->ordering; ?>" />
 

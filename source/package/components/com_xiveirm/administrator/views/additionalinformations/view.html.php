@@ -127,12 +127,9 @@ class XiveirmViewAdditionalinformations extends JViewLegacy
 	protected function getSortFields()
 	{
 		return array(
-		'a.id' => JText::_('JGRID_HEADING_ID'),
+		'a.tab_id' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_TAB_ID'),
+		'a.tab_value' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_TAB_VALUE'),
 		'a.state' => JText::_('JSTATUS'),
-		'a.item_id' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_ITEM_ID'),
-		'a.tab_name' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_TAB_NAME'),
-		'a.form_field' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_FORM_FIELD'),
-		'a.form_value' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_FORM_VALUE'),
 		);
 	}
 

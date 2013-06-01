@@ -28,13 +28,10 @@ class XiveirmModeladditionalinformations extends JModelList
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
-                                'id', 'a.id',
-                'created', 'a.created',
+                                'tab_id', 'a.tab_id',
+                'tab_field_id', 'a.tab_field_id',
+                'tab_value', 'a.tab_value',
                 'state', 'a.state',
-                'item_id', 'a.item_id',
-                'tab_name', 'a.tab_name',
-                'form_field', 'a.form_field',
-                'form_value', 'a.form_value',
                 'ordering', 'a.ordering',
 
             );
@@ -68,7 +65,7 @@ class XiveirmModeladditionalinformations extends JModelList
 		$this->setState('params', $params);
 
 		// List state information.
-		parent::populateState('a.id', 'asc');
+		parent::populateState('a.tab_id', 'asc');
 	}
 
 	/**
@@ -131,7 +128,7 @@ class XiveirmModeladditionalinformations extends JModelList
 				$query->where('a.id = '.(int) substr($search, 3));
 			} else {
 				$search = $db->Quote('%'.$db->escape($search, true).'%');
-                
+                $query->where('( a.tab_id LIKE '.$search.' )');
 			}
 		}
         

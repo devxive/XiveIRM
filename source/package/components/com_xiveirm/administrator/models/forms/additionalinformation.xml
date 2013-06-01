@@ -2,50 +2,33 @@
 <form>
 	<fieldset>
 
-              <field name="id" type="text" default="0" label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_ID"
-            readonly="true" class="readonly"
-            description="JGLOBAL_FIELD_ID_DESC" /> 
-
-       <field name="created" type="timecreated" default="" 
-            label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_CREATED"
-            description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_CREATED"  hidden="true" /> 
-
-       <field name="item_id" type="text" size="40" class="inputbox"
+              <field name="tab_id" type="text" size="40" class="inputbox"
         
-            label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_ITEM_ID"
-            description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_ITEM_ID" 
+            label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_TAB_ID"
+            description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_TAB_ID" 
+        
+        
+         required="true" 
+        filter="safehtml" /> 
+
+       <field name="tab_field_id" type="text" size="40" class="inputbox"
+        
+            label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_TAB_FIELD_ID"
+            description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_TAB_FIELD_ID" 
         
         
         
         filter="safehtml" /> 
 
-       <field name="tab_name" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_TAB_NAME"
-            description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_TAB_NAME" 
-        
-        
-        
-        filter="safehtml" /> 
-
-       <field name="form_field" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_FORM_FIELD"
-            description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_FORM_FIELD" 
-        
-        
-        
-        filter="safehtml" /> 
-
-       <field name="form_value" type="editor" buttons="true"
+       <field name="tab_value" type="editor" buttons="true"
         class="inputbox"
         filter="safehtml"
         
         
         
         
-            label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_FORM_VALUE"
-            description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_FORM_VALUE"  /> 
+            label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_TAB_VALUE"
+            description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_TAB_VALUE"  /> 
 
          <field
         name="state"
