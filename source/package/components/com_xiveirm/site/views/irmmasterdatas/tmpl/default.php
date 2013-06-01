@@ -13,8 +13,7 @@ $letters = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'
 $letters_am = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M');
 $letters_nz = array('N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
-$jinput = JFactory::getApplication()->input;
-$search = $jinput->get('filter_search', '', 'filter');
+$search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 ?>
 <div class="row-fluid">
 	<div class="row-fluid header smaller lighter blue">
