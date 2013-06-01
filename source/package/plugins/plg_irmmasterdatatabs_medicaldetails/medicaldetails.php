@@ -211,9 +211,11 @@ class PlgIrmmasterdatatabsMedicaldetails extends JPlugin
 			</div>
 			<div id="message_post"></div>
 			<div class="form-actions">
-				<input type="hidden" name="itemid" value="<?php echo $item->id; ?>">
-				<input type="hidden" name="tabid" value="<?php echo $this->tabId; ?>">
-				<input type="hidden" name="" value="">
+				<input type="hidden" name="tabForm[direction]" value="api">
+				<input type="hidden" name="tabForm[format]" value="json">
+				<input type="hidden" name="tabForm[itemid]" value="<?php echo $item->id; ?>">
+				<input type="hidden" name="tabForm[tabid]" value="<?php echo $this->tabId; ?>">
+				<?php echo JHtml::_('form.token'); ?>
 				<button class="btn btn-info" type="submit"><i class="icon-ok"></i> Submit</button>
 				&nbsp; &nbsp; &nbsp;
 				<button class="btn" type="reset"><i class="icon-undo"></i> Reset</button>
@@ -224,13 +226,13 @@ class PlgIrmmasterdatatabsMedicaldetails extends JPlugin
 		<center>
 			<span class="help-button ace-popover" data-trigger="hover" data-placement="top" data-content="Informations given here are used in other applications, such as the despatching app => order form. Use this as help to minimize inputs during remaining phone orders." data-original-title="Info about cross referencing!"><i class="icon-random"></i></span>
 		</center>
-
+<?php echo JRoute::_('index.php?option=com_xiveirm&task=api.save'); ?>
 		<script>
 			jQuery(function(){
 				$("#form-tab-<?php echo $this->tabId; ?>").submit(function(e){
 					e.preventDefault();
 
-					$.post("<?php echo JRoute::_('index.php?option=com_xiveirm&task=api.save'); ?>", $("#form-tab-<?php echo $this->tabId; ?>").serialize(),
+					$.post("/plugins/irmmasterdatatabs/medicaldetails/process.php", $("#form-tab-<?php echo $this->tabId; ?>").serialize(),
 					function(data){
 						if(data.email_check == 'invalid'){
 							$("#message_post").html("<div class='errorMessage'>Sorry " + data.name + ", " + data.email + " is NOT a valid e-mail address. Try again.</div>");
