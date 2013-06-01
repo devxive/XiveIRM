@@ -45,11 +45,23 @@ class PlgIrmmasterdatawidgetsCorewidget extends JPlugin
 	public function loadInBasedataContainer(&$item = null, &$params = null)
 	{
 //		$plzUrl = 'http://www.postdirekt.de/plzserver/PlzSearchServlet?app=miniapp&amp;w=350&amp;h=315&amp;fr=0&amp;frc=000000&amp;bg=FFFFFF&amp;hl2=A5A5A5&amp;fc=000000&amp;lc=000000&amp;ff=Arial&amp;fs=10&amp;lnc=000000&amp;hdc=000000&amp;app=miniapp&amp;loc=http%3A//plzkarte.com/plz-suche/';
+	// w = width 200-350px
+	// h = height 315-450px
+	// fr = border-width
+	// frc = border-color
+	// bg = background-color
+	// hl2 = search-field box
+	// fc = text-color
+	// lc = lnk-color
+	// ff = font-type - standard Arial
+	// fs = fontsize - standard 11
+
 		$plzUrl = 'http://www.postdirekt.de/plzserver/PlzSearchServlet?app=miniapp&fr=0&bg=FFF&hl2=FC0&fc=000&lc=000000&ff=Verdana&fs=10&lnc=000000&hdc=000000';
 
 		ob_start();
 		?>
 		<!---------- Begin output buffering: <?php echo $this->tabId; ?> ---------->
+
 		<div class="alert alert-error center">
 			<h4>Please note:</h4>
 			This is just a demo widget without any functions!
