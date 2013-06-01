@@ -63,31 +63,196 @@ class PlgIrmmasterdatatabsMedicaldetails extends JPlugin
 	 */
 	public function loadTabContainer(&$item = null)
 	{
-		$tabForm = '';
-		$tabForm .= '';
-		$tabForm .= '';
-		$tabForm .= '';
-		$tabForm .= '';
-		$tabForm .= '';
-		$tabForm .= '';
-		$tabForm .= '';
-		$tabForm .= '';
-		$tabForm .= '';
-		$tabForm .= '';
-		$tabForm .= '';
-		$tabForm .= '';
-		$tabForm .= '';
-		$tabForm .= '';
-		$tabForm .= '';
-		$tabForm .= '';
-		$tabForm .= '';
+		ob_start();
+		?>
+		<!---------- Begin output buffering: <?php echo $this->tabId; ?> ---------->
+		<style>
+			#chzn-select .chzn-container, #chzn-select .chzn-container-multi, #chzn-select .chzn-drop {width: 99.6% !important;}
+			.widget-toolbar .popover {width: 220px;}
+			.widget-toolbar .popover .popover-content {line-height: 15px;}
+		</style>
 
-		$tabContent = array(
+		<form id="form-tab-<?php echo $this->tabId; ?>" class="form-horizontal">
+			<div class="row-fluid">
+			<div class="span6">
+				<div class="widget-box">
+					<div class="widget-header">
+						<h4><i class="icon-random"></i> Transportation info</h4>
+						<span class="widget-toolbar">
+							<span class="help-button"><i class="icon-random"></i></span>
+						</span>
+					</div>
+					<div class="widget-body">
+						<div class="widget-body-inner">
+							<div class="widget-main">
+								<div class="control-group">
+									<label class="control-label">Transportmittel</label>
+									<div class="controls">
+										<input name="" type="text" placeholder="Enter Informations here to activate!" required>
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label">Transportart</label>
+									<div class="controls">
+										<input name="" type="text" placeholder="Enter Informations here to activate!" required>
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label">Additional Persons</label>
+									<div class="controls">
+										<input name="add_person" type="text" placeholder="Enter Informations here to activate!">
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label">Mobile Oxigen</label>
+									<div class="controls">
+										<input name="" type="text" placeholder="Enter Informations here to activate!">
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label">Vacuum Mattress</label>
+									<div class="controls">
+										<input name="" type="text" placeholder="Enter Informations here to activate!">
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label">Other Helpmittel</label>
+									<div class="controls">
+										<input name="" type="text" placeholder="Enter Informations here to activate!">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="span6">
+				<div class="widget-box">
+					<div class="widget-header">
+						<h4><i class="icon-tags"></i>Infects, Illness & Adipositas</h4>
+						<span class="widget-toolbar">
+							<span class="help-button"><i class="icon-random"></i></span>
+						</span>
+					</div>
+					<div class="widget-body">
+						<div class="widget-body-inner">
+							<div class="widget-main">
+								<div class="control-group">
+									<label class="control-label">MRE <i class="icon-tags red"></i></label>
+									<div id="chzn-select" class="controls">
+										<select multiple data-placeholder="Select Informations here to activate!" class="chzn-select">
+											<option value=""></option>
+											<option value="mrsa">MRSA</option>
+											<option value="vre">VRE</option>
+											<option value="esbl">ESBL</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="control-group">
+									<label class="control-label">HEP <i class="icon-tag red"></i></label>
+									<div class="controls">
+										<input name="mre" type="text" class="span12" placeholder="Enter Informations here to activate!">
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label">HIV <i class="icon-tag red"></i></label>
+									<div class="controls">
+										<input name="mre" type="text" class="span12" placeholder="Enter Informations here to activate!">
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label">Umkehrisolation <i class="icon-tag red"></i></label>
+									<div class="controls">
+										<input name="mre" type="text" class="span12" placeholder="Enter Informations here to activate!">
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label">Sonstiges <i class="icon-tag red"></i></label>
+									<div class="controls">
+										<input name="mre" type="text" class="span12" placeholder="Enter Informations here to activate!">
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label">Obese 120KG+ <i class="icon-tag orange"></i></label>
+									<div class="controls">
+										<input name="120kg" type="text" placeholder="Enter Informations here to activate!">
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label">Sonstiges <i class="icon-tag orange"></i></label>
+									<div class="controls">
+										<input name="120kg" type="text" placeholder="Enter Informations here to activate!">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="widget-box small-margin-top">
+					<div class="widget-header">
+						<h5><i class="icon-tag orange"></i>Transportation related Informations</h5>
+					</div>
+					<div class="widget-body">
+						<div class="widget-body-inner">
+							<div class="widget-main">
+								<div class="control-group">
+									<label class="control-label">Additional Persons</label>
+									<div class="controls">
+										<input name="add_person" type="text" placeholder="Enter Informations here">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			</div>
+			<div id="message_post"></div>
+			<div class="form-actions">
+				<input type="hidden" name="itemid" value="<?php echo $item->id; ?>">
+				<input type="hidden" name="tabid" value="<?php echo $this->tabId; ?>">
+				<input type="hidden" name="" value="">
+				<button class="btn btn-info" type="submit"><i class="icon-ok"></i> Submit</button>
+				&nbsp; &nbsp; &nbsp;
+				<button class="btn" type="reset"><i class="icon-undo"></i> Reset</button>
+			</div>
+		</form>
+
+		<div class="hr"></div>
+		<center>
+			<span class="help-button ace-popover" data-trigger="hover" data-placement="top" data-content="Informations given here are used in other applications, such as the despatching app => order form. Use this as help to minimize inputs during remaining phone orders." data-original-title="Info about cross referencing!"><i class="icon-random"></i></span>
+		</center>
+
+		<script>
+			jQuery(function(){
+				$("#form-tab-<?php echo $this->tabId; ?>").submit(function(e){
+					e.preventDefault();
+
+					$.post("<?php echo JRoute::_('index.php?option=com_xiveirm&task=api.save'); ?>", $("#form-tab-<?php echo $this->tabId; ?>").serialize(),
+					function(data){
+						if(data.email_check == 'invalid'){
+							$("#message_post").html("<div class='errorMessage'>Sorry " + data.name + ", " + data.email + " is NOT a valid e-mail address. Try again.</div>");
+						} else {
+							$("#message_post").html("<div class='successMessage'>" + data.email + " is a valid e-mail address. Thank you, " + data.name + ".</div>");
+						}
+					}, "json");
+				});
+			});
+		</script>
+
+		<!---------- End output buffering: <?php echo $this->tabId; ?> ---------->
+		<?php
+
+		$tabContent = ob_get_clean();
+
+		$tabContainer = array(
 			'tabId' => $this->tabId,
-			'tabContent' => $tabForm
+			'tabContent' => $tabContent
 		);
 
-		return $tabContent;
+		return $tabContainer;
 	}
 
 	/**
