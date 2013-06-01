@@ -182,7 +182,7 @@ $dispatcher = JDispatcher::getInstance();
 						<div class="control-group">
 							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_INTERNAL_REMARKS'); ?></label>
 							<div class="controls">
-								<textarea name="jform[remarks]" class="input-control span12" rows="5" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_INTERNAL_REMARKS_DESC'); ?>"><?php echo $this->item->remarks; ?></textarea>
+								<textarea name="jform[remarks]" class="input-control span12 limited" max-data-length="250" maxlength="250" rows="5" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_INTERNAL_REMARKS_DESC'); ?>"><?php echo $this->item->remarks; ?></textarea>
 							</div>
 						</div>
 						
