@@ -65,14 +65,12 @@ $dispatcher = JDispatcher::getInstance();
 	<div class="tabbable">
 		<ul class="nav nav-tabs" id="myTab">
 			<li class="active"><a data-toggle="tab" href="#base-data"><i class="green icon-home bigger-110"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TAB_BASICDATA'); ?></a></li>
-			<li><a data-toggle="tab" href="#kv-data">KV-Daten</a></li>
-			<li><a data-toggle="tab" href="#messages">Aufgaben <span class="badge badge-important">4</span></a></li>
 	<!-- TAB.PLUGIN_BUTTON -->
 			<?php
 				foreach($dispatcher->trigger( 'loadTabButton', array(&$this->item) ) as $tabButton)
 				{
-					echo '<li><a data-toggle="tab" href="#' . $tabButton['tabId'] . '">';
-					echo $tabButton['tabName'];
+					echo '<li><a data-toggle="tab" href="#' . $tabButton['tabAppId'] . '">';
+					echo $tabButton['tabButtonName'];
 					echo '</a></li>';
 				}
 			?>
@@ -81,20 +79,8 @@ $dispatcher = JDispatcher::getInstance();
 				<a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_TAB_MORE'); ?> <b class="caret"></b></a>
 				<ul class="dropdown-menu dropdown-info">
 					<li><a data-toggle="tab" href="#dropdown1">@Anwendung 4</a></li>
-					<li><a data-toggle="tab" href="#dropdown1">@Anwendung 5</a></li>
+					<li><a data-toggle="tab" href="#dropdown2">@Anwendung 5</a></li>
 					<li><a data-toggle="tab" href="#">@Anwendung 6</a></li>
-					<li><a data-toggle="tab" href="#">@Anwendung 7</a></li>
-					<li><a data-toggle="tab" href="#">@Anwendung 8</a></li>
-					<li><a data-toggle="tab" href="#">@Anwendung 9</a></li>
-					<li><a data-toggle="tab" href="#">@Anwendung 10</a></li>
-					<li><a data-toggle="tab" href="#">@Anwendung 11</a></li>
-					<li><a data-toggle="tab" href="#">@Anwendung 12</a></li>
-					<li><a data-toggle="tab" href="#">@Anwendung 13</a></li>
-					<li><a data-toggle="tab" href="#">@Anwendung 14</a></li>
-					<li><a data-toggle="tab" href="#">@Anwendung 15</a></li>
-					<li><a data-toggle="tab" href="#">@Anwendung 16</a></li>
-					<li><a data-toggle="tab" href="#">@Anwendung 17</a></li>
-					<li><a data-toggle="tab" href="#">@Anwendung 18</a></li>
 				</ul>
 			</li>
 		</ul>
@@ -221,9 +207,21 @@ $dispatcher = JDispatcher::getInstance();
 							
 						<!-- TAB.PLUGIN_MAIN-WIDGETS -->
 						<?php
+							foreach($dispatcher->trigger( 'loadInBasedataContainerFirst', array(&$this->item) ) as $inBaseWidget)
+							{
+								echo '<div id="' . $inBaseWidget['tabAppId'] . '">';
+								echo $inBaseWidget['tabContent'];
+								echo '</div>';
+							}
 							foreach($dispatcher->trigger( 'loadInBasedataContainer', array(&$this->item) ) as $inBaseWidget)
 							{
-								echo '<div id="' . $inBaseWidget['tabId'] . '">';
+								echo '<div id="' . $inBaseWidget['tabAppId'] . '">';
+								echo $inBaseWidget['tabContent'];
+								echo '</div>';
+							}
+							foreach($dispatcher->trigger( 'loadInBasedataContainerLast', array(&$this->item) ) as $inBaseWidget)
+							{
+								echo '<div id="' . $inBaseWidget['tabAppId'] . '">';
 								echo $inBaseWidget['tabContent'];
 								echo '</div>';
 							}
@@ -235,14 +233,6 @@ $dispatcher = JDispatcher::getInstance();
 				</div>
 			</div>
 	<!-- BASE-DATA_TAB_CORE -->
-	<!-- KV-DATA_TAB_ADD -->
-			<div id="kv-data" class="tab-pane">
-				<p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid.</p>
-			</div>
-	<!-- KV-DATA_TAB_ADD -->
-			<div id="messages" class="tab-pane">
-				<p>Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic lomo retro fanny pack lo-fi farm-to-table readymade.</p>
-			</div>
 			<div id="dropdown1" class="tab-pane">
 				<p>Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic lomo retro fanny pack lo-fi farm-to-table readymade.</p>
 			</div>
@@ -253,7 +243,7 @@ $dispatcher = JDispatcher::getInstance();
 			<?php
 				foreach($dispatcher->trigger( 'loadTabContainer', array(&$this->item) ) as $tabContainer)
 				{
-					echo '<div id="' . $tabContainer['tabId'] . '" class="tab-pane">';
+					echo '<div id="' . $tabContainer['tabAppId'] . '" class="tab-pane">';
 					echo $tabContainer['tabContent'];
 					echo '</div>';
 				}
