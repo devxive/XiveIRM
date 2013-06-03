@@ -75,6 +75,11 @@ class PlgIrmmasterdatatabsMedicaldetails extends JPlugin
 						<span class="badge badge-important" data-rel="tooltip" data-placement="bottom" data-original-title="Patient hat akute Infektionen!">Achtung Infektionsgefahr!</span>
 					</div>
 				<?php endif; ?>
+				<?php if(isset($tabData->tab_value->reserve_isolation)): ?>
+					<div class="widget-toolbar">
+						<span class="label label-large label-info arrowed-in-right arrowed" data-rel="tooltip" data-placement="bottom" data-original-title="Bitte Hinweise zur Umkehrisolation beachten!"><i class="icon-refresh"></i> Achtung Umkehrisolation!</span>
+					</div>
+				<?php endif; ?>
 			</div>
 			<div class="widget-body">
 				<div class="widget-main padding-5">
@@ -143,6 +148,15 @@ class PlgIrmmasterdatatabsMedicaldetails extends JPlugin
 							</ul>
 						</p>
 					<?php } ?>
+					<?php if(isset($tabData->tab_value->reserve_isolation)): ?>
+						<p>
+							<ul style="list-style: none;">
+								<li style="background: url(http://www.pflegewiki.de/favicon.ico) 0% 50% no-repeat; background-size: 3%; padding-left: 25px;">
+									<a href="http://www.pflegewiki.de/wiki/Infektionspflege#Umkehrisolation" target="_blank">Hinweise zur Infektionspflege => Umkehrisolation - Pflegewiki</a>
+								</li>
+							</ul>
+						</p>
+					<?php endif; ?>
 				</div>
 				<div class="widget-toolbox padding-5 clearfix">
 					<div class="center">
