@@ -44,6 +44,48 @@ class PlgIrmmasterdatawidgetsCorewidget extends JPlugin
 	 */
 	public function loadInBasedataContainerFirst(&$item = null, &$params = null)
 	{
+		$counter = 0;
+		if(!empty($item->customer_id)) { $counter = $counter + 1; }
+		if(!empty($item->last_name)) { $counter = $counter + 1; }
+		if(!empty($item->first_name)) { $counter = $counter + 1; }
+		if(!empty($item->gender)) { $counter = $counter + 1; }
+		if(!empty($item->dob)) { $counter = $counter + 1; }
+		if(!empty($item->address_name)) { $counter = $counter + 1; }
+		if(!empty($item->address_name_add)) { $counter = $counter + 1; }
+		if(!empty($item->address_street)) { $counter = $counter + 1; }
+		if(!empty($item->address_houseno)) { $counter = $counter + 1; }
+		if(!empty($item->address_zip)) { $counter = $counter + 1; }
+		if(!empty($item->address_city)) { $counter = $counter + 1; }
+		if(!empty($item->address_country)) { $counter = $counter + 1; }
+		if(!empty($item->phone)) { $counter = $counter + 1; }
+		if(!empty($item->fax)) { $counter = $counter + 1; }
+		if(!empty($item->mobile)) { $counter = $counter + 1; }
+		if(!empty($item->email)) { $counter = $counter + 1; }
+		if(!empty($item->web)) { $counter = $counter + 1; }
+		if(!empty($item->remarks)) { $counter = $counter + 1; }
+
+		if($counter <= 0) { $percent = 0; $barClass = 'progress-danger progress-striped active'; }
+		if($counter == 1) { $percent = 2; $barClass = 'progress-danger progress-striped active'; }
+		if($counter == 2) { $percent = 5; $barClass = 'progress-danger progress-striped active'; }
+		if($counter == 3) { $percent = 10; $barClass = 'progress-danger progress-striped active'; }
+		if($counter == 4) { $percent = 20; $barClass = 'progress-danger progress-striped active'; }
+		if($counter == 5) { $percent = 25; $barClass = 'progress-danger progress-striped active'; }
+		if($counter == 6) { $percent = 30; $barClass = 'progress-danger progress-striped active'; }
+		if($counter == 7) { $percent = 35; $barClass = 'progress-warning progress-striped'; }
+		if($counter == 8) { $percent = 40; $barClass = 'progress-warning progress-striped'; }
+		if($counter == 9) { $percent = 45; $barClass = 'progress-warning progress-striped'; }
+		if($counter == 10) { $percent = 50; $barClass = 'progress-warning progress-striped'; }
+		if($counter == 11) { $percent = 55; $barClass = 'progress-info progress-striped'; }
+		if($counter == 12) { $percent = 60; $barClass = 'progress-info'; }
+		if($counter == 13) { $percent = 70; $barClass = 'progress-info'; }
+		if($counter == 14) { $percent = 80; $barClass = 'progress-info'; }
+		if($counter == 15) { $percent = 90; $barClass = 'progress-success progress-striped'; }
+		if($counter == 16) { $percent = 95; $barClass = 'progress-success progress-striped'; }
+		if($counter >= 17) { $percent = 100; $barClass = 'progress-success'; }
+
+//		echo '<pre>';
+//		print_r($item);
+//		echo '</pre>';
 		ob_start();
 		?>
 		<!---------- Begin output buffering: <?php echo $this->tabAppId; ?> ---------->
@@ -56,8 +98,8 @@ class PlgIrmmasterdatawidgetsCorewidget extends JPlugin
  					<span class="badge badge-info" data-rel="tooltip" data-placement="bottom" data-original-title="Leichter R&uuml;ckgang der Fahrauftr&auml;ge im vergleich zum Vorjahreszeitraum">info</span>
 	 			</div>
  				<div class="widget-toolbar">
-					<div class="progress progress-mini progress-danger progress-striped active" style="width:100px;" data-percent="61%" data-rel="tooltip" data-placement="bottom" data-original-title="Vollst&auml;ndigkeit des Kundenprofil">
-						<div class="bar" style="width:61%"></div>
+					<div class="progress <?php echo $barClass; ?>" style="width:100px;" data-percent="<?php echo $percent; ?>%" data-rel="tooltip" data-placement="bottom" data-original-title="Vollst&auml;ndigkeit des Kundenprofil">
+						<div class="bar" style="width:<?php echo $percent; ?>%"></div>
 					</div>
 	 			</div>
 			</div>
