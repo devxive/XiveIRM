@@ -21,9 +21,6 @@ JPluginHelper::importPlugin( 'irmmasterdatatabs' ); // returned 1 if get success
 JPluginHelper::importPlugin( 'irmmasterdatawidgets' ); // returned 1 if get successfully loaded
 $dispatcher = JDispatcher::getInstance();
 ?>
-<style>
-	input {margin-bottom:10px !important;}
-</style>
 <div class="row-fluid">
 	<div class="row-fluid header smaller lighter blue">
 		<h1>
@@ -44,14 +41,14 @@ $dispatcher = JDispatcher::getInstance();
 	<!-- CHECK_OUT MESSAGE -->
 	<?php if($this->item->checked_out): ?>
 		<?php if(IRMSystem::getUserName($this->item->checked_out) == IRMSystem::getUserName(null)): ?>
-			<div class="alert alert-info">
+			<div id="checkout-info" class="alert alert-info" style="display: none;">
 				<button type="button" class="close" data-dismiss="alert">
 					<i class="icon-remove"></i>
 				</button>
 				<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_CHECKED_OUT_ALERT_INFO'); ?>
 			</div>
 		<?php else : ?>
-			<div class="alert alert-error">
+			<div id="checkout-info" class="alert alert-error" style="display: none;">
 				<button type="button" class="close" data-dismiss="alert">
 					<i class="icon-remove"></i>
 				</button>
@@ -193,11 +190,13 @@ $dispatcher = JDispatcher::getInstance();
 						<input type="hidden" name="task" value="irmmasterdataform.save" />
 						<?php echo JHtml::_('form.token'); ?>
 						<div class="form-actions">
-							<button type="submit" class="validate btn btn-info" type="submit" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_SUBMIT_CHECKIN_TIP'); ?>"><i class="icon-ok"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_SUBMIT_CHECKIN'); ?></button>
-							&nbsp; &nbsp; &nbsp;
-							<button class="btn" type="reset" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_RESET_TIP'); ?>"><i class="icon-undo"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_RESET'); ?></button>
-							&nbsp; &nbsp; &nbsp;
-							<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.cancel'); ?>"  data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_CANCEL_CHECKIN_TIP'); ?>" class="btn btn-danger"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_CANCEL_CHECKIN'); ?></a>
+							<span id="form-buttons" class="hidden">
+								<button class="validate btn btn-info" type="submit" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_SUBMIT_CHECKIN_TIP'); ?>"><i class="icon-ok"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_SUBMIT_CHECKIN'); ?></button>
+								&nbsp; &nbsp; &nbsp;
+								<button class="btn" type="reset" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_RESET_TIP'); ?>"><i class="icon-undo"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_RESET'); ?></button>
+								&nbsp; &nbsp; &nbsp;
+							</span>
+							<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.cancel'); ?>" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_CANCEL_CHECKIN_TIP'); ?>" class="btn btn-danger"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_CANCEL_CHECKIN'); ?></a>
 						</div>
 					</form>
 					</div>
@@ -272,13 +271,28 @@ $dispatcher = JDispatcher::getInstance();
 					$("#form-irmmasterdata .input-control").attr("readonly", false);
 					classInp.removeAttribute('class', 'red');
 					classInp.setAttribute('class' , 'control-label green');
+					$("#form-buttons").removeClass("hidden");
 				} else {
 					$("#form-irmmasterdata .input-control").attr("readonly", true);
 					classInp.removeAttribute('class', 'green');
 					classInp.setAttribute('class' , 'control-label red');
+					$("#form-buttons").addClass("hidden");
+				}
+				if ($("#checkout-info").is(":hidden")) {
+					setTimeout(function () {
+							$("#checkout-info").slideDown("slow");
+					}, 2000)
+				} else {
+					$("#checkout-info").slideUp("slow");
+					setTimeout(function () {
+						$.gritter.add({
+							title: 'Successfully checked-in',
+							text: 'You have successfully checked-in this contact, so other user can edit now',
+							class_name: 'gritter-success'
+						});
+					}, 2000)
 				}
 			});
 		});
 	</script>
 <?php endif; ?>
-
