@@ -99,23 +99,21 @@ $search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 					</td>
 
 					<td class=" ">
-						<span>
-							<?php echo $item->customer_id ? '<i class="icon-barcode" data-rel="tooltip" data-placement="right" data-original-title="Customer ID"></i> ' . $item->customer_id : '<i class="icon-code-fork" data-rel="tooltip" data-placement="right" data-original-title="System ID"></i> ' . $item->id; ?>
-						</span>
+						<span><?php if((int) $item->customer_id): echo '<i class="icon-barcode"></i> ' . $item->customer_id; elseif(!(int)  $item->customer_id): echo '<i class="icon-qrcode"></i> ' . $item->customer_id; else: echo '<i class="icon-code-fork"></i> ' . $item->id; endif; ?></span>
 						<?php if($item->checked_out):
 							echo ' <i class="icon-lock red" data-rel="tooltip" data-placement="right" data-original-title="Checked out by: ' . IRMSystem::getUserName($item->checked_out) . ' on ' . $item->checked_out_time . '"></i>';
 						endif; ?>
 					</td>
 
 					<td class=" "><a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.edit&id='.$item->id); ?>"><?php echo $item->last_name . ', ' . $item->first_name; ?></a></td>
-					<td class=" "><?php if($item->gender == 'm'): echo '<i class="icon-user blue"></i>'; elseif($item->gender == 'f'): echo '<i class="icon-user red"></i>'; elseif($item->gender == 'c'): echo'<i class="icon-user green"></i>'; else: echo '<i class="icon-user"></i>'; endif; ?> <?php echo date(JText::_('DATE_FORMAT_LC4'), strtotime($item->dob)); ?></td>
+					<td class=" "><?php if($item->gender == 'm'): echo '<i class="icon-user blue"></i>'; elseif($item->gender == 'f'): echo '<i class="icon-user red"></i>'; elseif($item->gender == 'c'): echo'<i class="icon-user green"></i>'; else: echo '<i class="icon-user"></i>'; endif; ?> <?php if(strtotime($item->dob) != -62135600400): echo date(JText::_('DATE_FORMAT_LC4'), strtotime($item->dob)); endif; ?></td>
 					<td class="hidden-480 "><?php echo $item->address_street; ?> <?php echo $item->address_houseno; ?><br><?php echo $item->address_zip; ?> <?php echo $item->address_city; ?>, <?php echo $item->address_country; ?></td>
 					<td class="hidden-phone "><?php if($item->mobile != ''): echo '<i class="icon-mobile-phone"></i> ' . $item->mobile . '<br>'; endif; if($item->phone != ''): echo '<i class="icon-phone"></i> ' . $item->phone; endif; ?></td>
 					<td class="hidden-480 ">
-						<?php if($item->remarks): echo '<i class="icon-comment-alt" data-rel="tooltip" data-placement="left" data-original-title="' . $item->remarks . '">'; endif; ?>
 						<?php if(strtotime($item->modified) >= (time() - 86400)): ?>
-							<span class="label label-warning" data-rel="tooltip" data-original-title="Last modified: <?php echo date(JText::_('DATE_FORMAT_LC4'), strtotime($item->modified)); ?>">Modified <abbr class="timeago" data-time="<?php echo $item->modified; ?>"></abbr></span>
+							<span class="label label-warning" data-rel="tooltip" data-original-title="<?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)); ?>"><i class="icon-time"></i> Modified <abbr class="timeago" data-time="<?php echo $item->modified; ?>"></abbr></span>
 						<?php endif; ?>
+						<?php if($item->remarks): echo ' <span class="label label-info" data-rel="tooltip" data-placement="left" data-original-title="' . $item->remarks . '"><i class="icon-comment-alt"></i> Intern</span>'; endif; ?>
 					</td>
 					<td class=" ">
 						<div class="hidden-phone visible-desktop btn-group">
@@ -208,6 +206,23 @@ $search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 			<?php endforeach; ?>
 			</tbody>
 		</table>
+	</div>
+	<div class="row-fluid center legend">
+		<i class="icon-barcode" data-rel="tooltip" data-original-title="This is a numeric ID"></i>
+		&nbsp;&nbsp;&nbsp;
+		<i class="icon-qrcode" data-rel="tooltip" data-original-title="This is an alphanumeric ID"></i>
+		&nbsp;&nbsp;&nbsp;
+		<i class="icon-code-fork" data-rel="tooltip" data-original-title="This is a system ID"></i>
+		&nbsp;&nbsp;&nbsp;
+		<i class="icon-user" data-rel="tooltip" data-original-title="The gender is unknown"></i>
+		&nbsp;&nbsp;&nbsp;
+		<i class="icon-user red" data-rel="tooltip" data-original-title="This is a female gender"></i>
+		&nbsp;&nbsp;&nbsp;
+		<i class="icon-user blue" data-rel="tooltip" data-original-title="This is a male gender"></i>
+		&nbsp;&nbsp;&nbsp;
+		<i class="icon-user green" data-rel="tooltip" data-original-title="No gender, this is a company. Set the date of birth to 01.01.0001 (Tip: Hit 8 times key 0 in chrome)"></i>
+		&nbsp;&nbsp;&nbsp;
+		<i class="icon-comment-alt" data-rel="tooltip" data-original-title="Internal remarks the customer won't see, ever!"></i>
 	</div>
 </div>
 
