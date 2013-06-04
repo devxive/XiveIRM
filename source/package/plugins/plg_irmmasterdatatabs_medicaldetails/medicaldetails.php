@@ -365,7 +365,7 @@ class PlgIrmmasterdatatabsMedicaldetails extends JPlugin
 				<input type="hidden" name="option" value="com_xiveirm" />
 				<input type="hidden" name="task" value="api.save" />
 				<?php echo JHtml::_('form.token'); ?>
-				<button id="loading-btn" class="btn btn-info" data-loading-text="Please wait..." type="submit"><i class="icon-ok"></i> <?php echo isset($tabData->id) ? 'Update' : 'Submit'; ?></button>
+				<button id="loading-btn-recall" data-loading-text="Please wait..." data-complete-text="Saved"  data-error-text="Error!" class="btn btn-info" type="submit"><i class="icon-ok"></i> <?php echo isset($tabData->id) ? 'Update' : 'Submit'; ?></button>
 				&nbsp; &nbsp; &nbsp;
 				<button class="btn" type="reset"><i class="icon-undo"></i> Reset</button>
 			</div>
@@ -380,27 +380,43 @@ class PlgIrmmasterdatatabsMedicaldetails extends JPlugin
 				$("#form-tab-<?php echo $this->tabAppId; ?>").submit(function(e){
 					e.preventDefault();
 
+					$("#loading-btn-recall").addClass("btn-warning");
+					$("#loading-btn-recall").button("loading");
+
 					$.post('index.php?option=com_xiveirm&task=api.save&tmpl=component', $("#form-tab-<?php echo $this->tabAppId; ?>").serialize(),
 					function(data){
 						if(data.apiReturnCode === 'SAVED'){
 							$.gritter.add({
 								title: 'Successfully saved',
 								text: 'You have successfully saved all items for the customer <?php echo $item->first_name . ' ' . $item->last_name; ?>',
-								class_name: 'gritter-success'
+								icon: 'icon-check',
+								class_name: 'alert-success'
 							});
 							$('#tabId').val(data.apiReturnRowId);
+							$("#loading-btn-recall").removeClass("btn-warning");
+							$("#loading-btn-recall").button("complete");
+							$("#loading-btn-recall").button("reset");
 						} else if(data.apiReturnCode === 'UPDATED'){
 							$.gritter.add({
 								title: 'Successfully updated',
 								text: 'You have successfully saved all items for the customer <?php echo $item->first_name . ' ' . $item->last_name; ?>',
-								class_name: 'gritter-info'
+								icon: 'icon-globe',
+								class_name: 'alert-info'
 							});
+							$("#loading-btn-recall").removeClass("btn-warning");
+							$("#loading-btn-recall").button("complete");
+							$("#loading-btn-recall").button("reset");
 						} else {
 							$.gritter.add({
 								title: 'An error occured',
-								text: 'An error occured while trying to save or update the data. If this error returns so far please let us now the following<br>error code: ' + data.apiReturnCode + '<br>and the following<br>error message: ' + data.apiReturnMessage,
-								class_name: 'gritter-error'
+								text: 'An error occured while trying to save or update. <br><br>Error code: ' + data.apiReturnCode + '<br><br>error message: ' + data.apiReturnMessage + '<br><br>If this error is persistant, please contact the support immediately with the given error!',
+								icon: 'icon-warning-sign',
+								sticky: true,
+								class_name: 'alert-error'
 							});
+							$("#loading-btn-recall").removeClass("btn-warning");
+							$("#loading-btn-recall").button("error");
+							$("#loading-btn-recall").addClass("btn-danger");
 						}
 					}, "json");
 				});
