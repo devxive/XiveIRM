@@ -68,7 +68,7 @@ $search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 						<label><input type="checkbox"><span class="lbl"></span></label>
 					</th>
 					<th class="sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Customer ID: activate to sort column ascending">
-						<i class="icon-barcode"></i><span class="hidden-phone"> ID</span>
+						ID
 					</th>
 					<th class="sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending">
 						<i class="icon-user"></i><span class="hidden-phone"> Name</span>
@@ -97,12 +97,26 @@ $search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 					<td class="center">
 						<label><input type="checkbox"><span class="lbl"></span></label>
 					</td>
-					<td class=" "><span data-rel="tooltip" data-placement="right" data-original-title="Last modified: <?php echo $item->modified; ?>"><?php echo $item->customer_id; ?></span> <?php if($item->checked_out): echo ' <i class="icon-lock red" data-rel="tooltip" data-placement="right" data-original-title="Checked out by: ' . IRMSystem::getUserName($item->checked_out) . ' on ' . $item->checked_out_time . '"></i>'; endif; ?></td>
+
+					<td class=" ">
+						<span>
+							<?php echo $item->customer_id ? '<i class="icon-barcode" data-rel="tooltip" data-placement="right" data-original-title="Customer ID"></i> ' . $item->customer_id : '<i class="icon-code-fork" data-rel="tooltip" data-placement="right" data-original-title="System ID"></i> ' . $item->id; ?>
+						</span>
+						<?php if($item->checked_out):
+							echo ' <i class="icon-lock red" data-rel="tooltip" data-placement="right" data-original-title="Checked out by: ' . IRMSystem::getUserName($item->checked_out) . ' on ' . $item->checked_out_time . '"></i>';
+						endif; ?>
+					</td>
+
 					<td class=" "><a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.edit&id='.$item->id); ?>"><?php echo $item->last_name . ', ' . $item->first_name; ?></a></td>
 					<td class=" "><?php if($item->gender == 'm'): echo '<i class="icon-user blue"></i>'; elseif($item->gender == 'f'): echo '<i class="icon-user red"></i>'; elseif($item->gender == 'c'): echo'<i class="icon-user green"></i>'; else: echo '<i class="icon-user"></i>'; endif; ?> <?php echo date(JText::_('DATE_FORMAT_LC4'), strtotime($item->dob)); ?></td>
 					<td class="hidden-480 "><?php echo $item->address_street; ?> <?php echo $item->address_houseno; ?><br><?php echo $item->address_zip; ?> <?php echo $item->address_city; ?>, <?php echo $item->address_country; ?></td>
 					<td class="hidden-phone "><?php if($item->mobile != ''): echo '<i class="icon-mobile-phone"></i> ' . $item->mobile . '<br>'; endif; if($item->phone != ''): echo '<i class="icon-phone"></i> ' . $item->phone; endif; ?></td>
-					<td class="hidden-480 "><?php if($item->remarks): echo '<i class="icon-comment-alt" data-rel="tooltip" data-placement="left" data-original-title="' . $item->remarks . '">'; endif; ?> <span class="label label-warning">NOSTATUS</span></td>
+					<td class="hidden-480 ">
+						<?php if($item->remarks): echo '<i class="icon-comment-alt" data-rel="tooltip" data-placement="left" data-original-title="' . $item->remarks . '">'; endif; ?>
+						<?php if(strtotime($item->modified) >= (time() - 86400)): ?>
+							<span class="label label-warning" data-rel="tooltip" data-original-title="Last modified: <?php echo date(JText::_('DATE_FORMAT_LC4'), strtotime($item->modified)); ?>">Modified <abbr class="timeago" data-time="<?php echo $item->modified; ?>"></abbr></span>
+						<?php endif; ?>
+					</td>
 					<td class=" ">
 						<div class="hidden-phone visible-desktop btn-group">
 							<?php if(JFactory::getUser()->authorise('core.edit.state','com_xiveirm')) : ?>
