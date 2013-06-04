@@ -103,8 +103,7 @@ $dispatcher = JDispatcher::getInstance();
 							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_CUSTOMER_ID_LABEL'); ?>, <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_NAME_LABEL'); ?></label>
 							<div class="controls controls-row">
 								<input type="text" name="jform[customer_id]" class="input-control span6" id="prependedInput" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_CUSTOMER_ID'); ?>" value="<?php echo $this->item->customer_id; ?>">
-								<input type="text" class="span3" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_NAME_SALUTATION'); ?>" value="" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_NAME_HELP_TIP'); ?>" disabled>
-								<input type="text" name="jform[title]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_NAME_TITLE'); ?>" value="<?php echo $this->item->title; ?>">
+								<input type="text" name="jform[title]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_NAME_TITLE'); ?>" value="<?php echo $this->item->title; ?>">
 							</div>
 							<div class="controls controls-row">
 								<input type="text" name="jform[last_name]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_LAST_NAME'); ?>" value="<?php echo $this->item->last_name; ?>" autofocus>
@@ -258,17 +257,23 @@ $dispatcher = JDispatcher::getInstance();
 	<script>
 	// XAP-TODO: Have to set more functions to the edit form, such as a DB-checkout on activate and checkin on save or check in on deactivate !!!!
 		jQuery(function() {
-			$("#form-irmmasterdata .input-control").attr("disabled", true);
+			// Prevent submit on enter (keycode 13) event in form fields
+			$("#form-irmmasterdata").bind('keypress keydown keyup', function(e) {
+				if(e.keyCode == 13) { e.preventDefault(); }
+			});
+
+			// Enable edit event button
+			$("#form-irmmasterdata .input-control").attr("readonly", true);
 			var inp = $('.input-control').get(0);
 			var classInp = $('#input-control-button').get(0);
 	
 			$('#id-disable-check').on('click', function() {
-				if(inp.hasAttribute('disabled')) {
-					$("#form-irmmasterdata .input-control").attr("disabled", false);
+				if(inp.hasAttribute('readonly')) {
+					$("#form-irmmasterdata .input-control").attr("readonly", false);
 					classInp.removeAttribute('class', 'red');
 					classInp.setAttribute('class' , 'control-label green');
 				} else {
-					$("#form-irmmasterdata .input-control").attr("disabled", true);
+					$("#form-irmmasterdata .input-control").attr("readonly", true);
 					classInp.removeAttribute('class', 'green');
 					classInp.setAttribute('class' , 'control-label red');
 				}
