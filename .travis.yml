@@ -4,4 +4,9 @@ php:
   - "5.3"
 
 before_script:
-  - composer install
+  - phpenv rehash
+  - mysql -e 'create database xap_ut;'
+  - mysql xap_ut < tests/unit/database/mysql.sql
+
+script:
+  - phpunit --configuration travisci-phpunit.xml
