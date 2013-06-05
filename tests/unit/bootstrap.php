@@ -3,10 +3,10 @@
 /**
  * Prepares a minimalist framework for unit testing.
  *
- * XAP is assumed to include the /unittest/ directory.
+ * XiveIRM is assumed to include the /unittest/ directory.
  * eg, /path/to/xap/unittest/
  *
- * @package     XAP.UnitTest
+ * @package     XiveIRM.UnitTest
  *
  * @copyright   Copyright (C) 1997 - 2013 devXive - reseach and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE

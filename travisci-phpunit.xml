@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit bootstrap="tests/unit/bootstrap.php" colors="true">
 	<php>
-		<const name="JTEST_DATABASE_MYSQL_DSN" value="host=localhost;dbname=xap_ut;user=root;pass=" />
-		<const name="JTEST_DATABASE_MYSQLI_DSN" value="host=localhost;dbname=xap_ut;user=root;pass=" />
+		<const name="JTEST_DATABASE_MYSQL_DSN" value="host=localhost;dbname=xirm_ut;user=root;pass=" />
+		<const name="JTEST_DATABASE_MYSQLI_DSN" value="host=localhost;dbname=xirm_ut;user=root;pass=" />
 	</php>
 
 	<testsuites>
-		<testsuite name="Xive-Application-Platform">
+		<testsuite name="XiveIRM">
 			<directory>tests/unit</directory>
 		</testsuite>
 		<testsuite name="installer">
