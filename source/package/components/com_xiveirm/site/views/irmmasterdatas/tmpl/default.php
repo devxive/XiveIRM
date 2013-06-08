@@ -142,7 +142,6 @@ $search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 								<input type="hidden" name="jform[checked_out]" value="<?php echo $item->checked_out; ?>" />
 								<input type="hidden" name="jform[checked_out_time]" value="<?php echo $item->checked_out_time; ?>" />
 								<input type="hidden" name="jform[modified]" value="<?php echo $item->modified; ?>" />
-								<input type="hidden" name="jform[trash]" value="<?php echo $item->trash; ?>" />
 								<input type="hidden" name="jform[client_id]" value="<?php echo $item->client_id; ?>" />
 								<input type="hidden" name="jform[customer_id]" value="<?php echo $item->customer_id; ?>" />
 								<input type="hidden" name="jform[title]" value="<?php echo $item->title; ?>" />
@@ -175,7 +174,6 @@ $search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 								<input type="hidden" name="jform[checked_out]" value="<?php echo $item->checked_out; ?>" />
 								<input type="hidden" name="jform[checked_out_time]" value="<?php echo $item->checked_out_time; ?>" />
 								<input type="hidden" name="jform[modified]" value="<?php echo $item->modified; ?>" />
-								<input type="hidden" name="jform[trash]" value="<?php echo $item->trash; ?>" />
 								<input type="hidden" name="jform[client_id]" value="<?php echo $item->client_id; ?>" />
 								<input type="hidden" name="jform[customer_id]" value="<?php echo $item->customer_id; ?>" />
 								<input type="hidden" name="jform[title]" value="<?php echo $item->title; ?>" />
