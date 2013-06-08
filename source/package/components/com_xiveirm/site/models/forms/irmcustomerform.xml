@@ -1,162 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
 	<fieldset>
+		<field name="id" type="text" default="0" label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_ID"
+			readonly="true" class="readonly"
+			description="JGLOBAL_FIELD_ID_DESC" />
 
-       <field name="id" type="text" default="0" label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_ID"
-            readonly="true" class="readonly"
-            description="JGLOBAL_FIELD_ID_DESC" /> 
+		<field name="created" type="timecreated" default=""
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_CREATED"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_CREATED"  hidden="true" />
 
-       <field name="created" type="timecreated" default="" 
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_CREATED"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_CREATED"  hidden="true" /> 
+		<field name="created_by" type="createdby" default=""
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_CREATED_BY"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_CREATED_BY"  />
 
-       <field name="created_by" type="createdby" default="" 
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_CREATED_BY"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_CREATED_BY"  /> 
+		<field name="modified" type="timeupdated" default=""
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_MODIFIED"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_MODIFIED"  hidden="true" />
 
-       <field name="modified" type="timeupdated" default="" 
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_MODIFIED"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_MODIFIED"  hidden="true" /> 
+		<field name="client_id" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_CLIENT_ID"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_CLIENT_ID"
+			filter="string"
+			maxlength="50" />
 
-       <field name="client_id" type="text"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_CLIENT_ID"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_CLIENT_ID" 
-            filter="string"
-            maxlength="50" /> 
+		<field name="customer_id" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_CUSTOMER_ID"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_CUSTOMER_ID"
+			filter="string"
+			maxlength="25" />
 
-       <field name="customer_id" type="text"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_CUSTOMER_ID"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_CUSTOMER_ID" 
-            filter="string"
-            maxlength="25" /> 
+		<field name="title" type="text" size="40" class="inputbox"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_TITLE"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_TITLE"
+			filter="safehtml" />
 
-       <field name="title" type="text" size="40" class="inputbox"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_TITLE"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_TITLE" 
-        filter="safehtml" /> 
+		<field name="last_name" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_LAST_NAME"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_LAST_NAME"
+			filter="string"
+			maxlength="150" />
 
-       <field name="last_name" type="text"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_LAST_NAME"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_LAST_NAME" 
-            filter="string"
-            maxlength="150" /> 
+		<field name="first_name" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_FIRST_NAME"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_FIRST_NAME"
+			filter="string"
+			maxlength="150" />
 
-       <field name="first_name" type="text"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_FIRST_NAME"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_FIRST_NAME" 
-            filter="string"
-            maxlength="150" /> 
+		<field name="gender" type="list"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_GENDER"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_GENDER"
+			filter="raw"
+			multiple="false">
+				<option value="u">Unknown</option>
+				<option value="f">Female</option>
+				<option value="m">Male</option>
+				<option value="c">Company</option>
+		</field>
 
-       <field name="gender" type="list"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_GENDER"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_GENDER" 
-            filter="raw"
-            multiple="false">
-                <option value="u">Unknown</option>
-                <option value="f">Female</option>
-                <option value="m">Male</option>
-                <option value="c">Company</option>
-        </field> 
+		<field name="dob" type="calendar" class="inputbox"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_DOB"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_DOB"
+			filter="safehtml" />
 
-       <field name="dob" type="calendar" class="inputbox"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_DOB"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_DOB" 
-        filter="safehtml" /> 
+		<field name="address_name" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_ADDRESS_NAME"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_ADDRESS_NAME"
+			filter="string"
+			maxlength="150" />
 
-       <field name="address_name" type="text"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_ADDRESS_NAME"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_ADDRESS_NAME" 
-            filter="string"
-            maxlength="150" /> 
+		<field name="address_name_add" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_ADDRESS_NAME_ADD"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_ADDRESS_NAME_ADD"
+			filter="string"
+			maxlength="100" />
 
-       <field name="address_name_add" type="text"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_ADDRESS_NAME_ADD"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_ADDRESS_NAME_ADD" 
-            filter="string"
-            maxlength="100" /> 
+		<field name="address_street" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_ADDRESS_STREET"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_ADDRESS_STREET"
+			filter="string"
+			maxlength="100" />
 
-       <field name="address_street" type="text"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_ADDRESS_STREET"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_ADDRESS_STREET" 
-            filter="string"
-            maxlength="100" /> 
+		<field name="address_houseno" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_ADDRESS_HOUSENO"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_ADDRESS_HOUSENO"
+			filter="string"
+			maxlength="10" />
 
-       <field name="address_houseno" type="text"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_ADDRESS_HOUSENO"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_ADDRESS_HOUSENO" 
-            filter="string"
-            maxlength="10" /> 
+		<field name="address_zip" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_ADDRESS_ZIP"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_ADDRESS_ZIP"
+			filter="string"
+			maxlength="10" />
 
-       <field name="address_zip" type="text"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_ADDRESS_ZIP"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_ADDRESS_ZIP" 
-            filter="string"
-            maxlength="10" /> 
+		<field name="address_city" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_ADDRESS_CITY"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_ADDRESS_CITY"
+			filter="string"
+			maxlength="100" />
 
-       <field name="address_city" type="text"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_ADDRESS_CITY"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_ADDRESS_CITY" 
-            filter="string"
-            maxlength="100" /> 
+		<field name="address_country" type="text" size="40" class="inputbox"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_ADDRESS_COUNTRY"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_ADDRESS_COUNTRY"
+			required="true"
+			filter="safehtml" />
 
-       <field name="address_country" type="text" size="40" class="inputbox"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_ADDRESS_COUNTRY"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_ADDRESS_COUNTRY" 
-         required="true" 
-        filter="safehtml" /> 
+		<field name="phone" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_PHONE"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_PHONE"
+			filter="string"
+			maxlength="25" />
 
-       <field name="phone" type="text"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_PHONE"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_PHONE" 
-            filter="string"
-            maxlength="25" /> 
+		<field name="fax" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_FAX"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_FAX"
+			filter="string"
+			maxlength="25" />
 
-       <field name="fax" type="text"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_FAX"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_FAX" 
-            filter="string"
-            maxlength="25" /> 
+		<field name="mobile" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_MOBILE"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_MOBILE"
+			filter="string"
+			maxlength="25" />
 
-       <field name="mobile" type="text"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_MOBILE"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_MOBILE" 
-            filter="string"
-            maxlength="25" /> 
+		<field name="email" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_EMAIL"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_EMAIL"
+			filter="safehtml"
+			maxlength="100" />
 
-       <field name="email" type="text"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_EMAIL"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_EMAIL" 
-            filter="safehtml"
-            maxlength="100" /> 
+		<field name="web" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_WEB"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_WEB"
+			filter="url"
+			maxlength="150" />
 
-       <field name="web" type="text"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_WEB"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_WEB" 
-            filter="url"
-            maxlength="150" /> 
+		<field name="remarks" type="textarea"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_REMARKS"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_REMARKS"
+			cols="100"
+			rows="8"
+			filter="safehtml" />
 
-       <field name="remarks" type="textarea"
-            label="COM_XIVEIRM_FORM_LBL_IRMMASTERDATA_REMARKS"
-            description="COM_XIVEIRM_FORM_DESC_IRMMASTERDATA_REMARKS" 
-            cols="100"
-            rows="8"
-            filter="safehtml" /> 
+		<field
+			name="state"
+			type="list"
+			label="JSTATUS"
+			description="JFIELD_PUBLISHED_DESC"
+			class="inputbox"
+			size="1"
+			default="1">
+				<option value="1">JPUBLISHED</option>
+				<option value="0">JUNPUBLISHED</option>
+		</field>
 
-         <field
-        name="state"
-        type="list"
-        label="JSTATUS"
-        description="JFIELD_PUBLISHED_DESC"
-        class="inputbox"
-        size="1"
-        default="1">
-        <option value="1">JPUBLISHED</option>
-        <option value="0">JUNPUBLISHED</option>
-    </field> 
+		<field name="checked_out" type="hidden"
+			filter="unset" />
 
-                        <field name="checked_out" type="hidden" filter="unset" />
-        <field name="checked_out_time" type="hidden" filter="unset" />
+		<field name="checked_out_time" type="hidden"
+			filter="unset" />
+	</fieldset> 
+	<fieldset name="accesscontrol">
+		<field name="asset_id" type="hidden"
+			filter="unset" />
 
+		<field name="rules"
+			type="rules"
+			label="JFIELD_RULES_LABEL"
+			translate_label="false"
+			filter="rules"
+			validate="rules"
+			class="inputbox"
+			component="com_xiveirm"
+			section="irmcustomer"/>
 	</fieldset>
-
 </form>
