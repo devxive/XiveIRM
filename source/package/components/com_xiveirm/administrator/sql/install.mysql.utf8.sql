@@ -1,12 +1,12 @@
 CREATE TABLE IF NOT EXISTS `#__xiveirm_customer` (
 `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-`access_id` VARCHAR(50) UNSIGNED NOT NULL DEFAULT '0',
 `state` TINYINT(1) NOT NULL DEFAULT '1',
 `created` DATETIME NOT NULL,
 `created_by` INT(11) NOT NULL,
 `checked_out` INT(11) NOT NULL,
 `checked_out_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 `modified` DATETIME NOT NULL,
+`access_id` VARCHAR(50) NOT NULL DEFAULT '0',
 `client_id` VARCHAR(50) NOT NULL,
 `customer_id` VARCHAR(25) NOT NULL,
 `company_name` VARCHAR(150) NOT NULL,

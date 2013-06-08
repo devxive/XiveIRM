@@ -326,35 +326,3 @@ $dispatcher = JDispatcher::getInstance();
 		});
 	</script>
 <?php endif; ?>
-
-
-
-
-
-
-
-
-<div class="fltlft" <?php if (!JFactory::getUser()->authorise('core.admin','xiveirm')): ?> style="display:none;" <?php endif; ?> >
-	<?php echo JHtml::_('sliders.start', 'permissions-sliders-'.$this->item->id, array('useCookie'=>1)); ?>
-	<?php echo JHtml::_('sliders.panel', JText::_('ACL Configuration'), 'access-rules'); ?>
-		<fieldset class="panelform">
-			<?php echo $this->form->getLabel('rules'); ?>
-			<?php echo $this->form->getInput('rules'); ?>
-		</fieldset>
-	<?php echo JHtml::_('sliders.end'); ?>
-</div>
-<?php if (!JFactory::getUser()->authorise('core.admin','xiveirm')): ?>
-	<script type="text/javascript">
-		jQuery.noConflict();
-		jQuery('.tab-pane select').each(function(){
-			var option_selected = jQuery(this).find(':selected');
-			var input = document.createElement("input");
-			input.setAttribute("type", "hidden");
-			input.setAttribute("name", jQuery(this).attr('name'));
-			input.setAttribute("value", option_selected.val());
-			document.getElementById("form-irmcustomer").appendChild(input);
-			jQuery(this).attr('disabled',true);
-		});
-	</script>
-<?php endif; ?>
-

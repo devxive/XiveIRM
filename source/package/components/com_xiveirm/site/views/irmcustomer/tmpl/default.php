@@ -12,8 +12,8 @@ defined('_JEXEC') or die;
 //Load admin language file
 $lang = JFactory::getLanguage();
 $lang->load('com_xiveirm', JPATH_ADMINISTRATOR);
-$canEdit = JFactory::getUser()->authorise('core.edit', 'com_xiveirm.' . $this->item->id);
-if (!$canEdit && JFactory::getUser()->authorise('core.edit.own', 'com_xiveirm' . $this->item->id)) {
+$canEdit = JFactory::getUser()->authorise('core.edit', 'com_xiveirm');
+if (!$canEdit && JFactory::getUser()->authorise('core.edit.own', 'com_xiveirm')) {
 	$canEdit = JFactory::getUser()->id == $this->item->created_by;
 }
 ?>
@@ -85,7 +85,7 @@ if (!$canEdit && JFactory::getUser()->authorise('core.edit.own', 'com_xiveirm' .
     <?php if($canEdit): ?>
 		<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmcustomer.edit&id='.$this->item->id); ?>"><?php echo JText::_("COM_XIVEIRM_EDIT_ITEM"); ?></a>
 	<?php endif; ?>
-								<?php if(JFactory::getUser()->authorise('core.delete','com_xiveirm.irmcustomer.'.$this->item->id)):
+								<?php if(JFactory::getUser()->authorise('core.delete','com_xiveirm')):
 								?>
 									<a href="javascript:document.getElementById('form-irmcustomer-delete-<?php echo $this->item->id ?>').submit()"><?php echo JText::_("COM_XIVEIRM_DELETE_ITEM"); ?></a>
 									<form id="form-irmcustomer-delete-<?php echo $this->item->id; ?>" style="display:inline" action="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmcustomer.remove'); ?>" method="post" class="form-validate" enctype="multipart/form-data">
