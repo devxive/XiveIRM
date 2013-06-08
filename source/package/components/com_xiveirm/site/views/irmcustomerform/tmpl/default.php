@@ -143,7 +143,7 @@ $dispatcher = JDispatcher::getInstance();
 							<label class="control-label" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_TRAIT_GENDER_DESC'); ?>"><?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_TRAIT_LABEL'); ?></label>
 							<div class="controls controls-row">
 								<select name="jform[gender]" class="input-control span3" required>
-									<option value=""<?php if(!$this->item->gender): echo ' selected'; endif; ?>><?php echo JText::_('COM_CIVEIRM_SELECT'); ?></option>
+									<option value=""<?php if(!$this->item->gender): echo ' selected'; endif; ?>><?php echo JText::_('COM_XIVEIRM_SELECT'); ?></option>
 									<option value="u"<?php if($this->item->gender == 'u'): echo ' selected'; endif; ?>><?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_TRAIT_GENDER_UNKNOWN'); ?></option>
 									<option value="f"<?php if($this->item->gender == 'f'): echo ' selected'; endif; ?>><?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_TRAIT_GENDER_FEMALE'); ?></option>
 									<option value="m"<?php if($this->item->gender == 'm'): echo ' selected'; endif; ?>><?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_TRAIT_GENDER_MALE'); ?></option>
