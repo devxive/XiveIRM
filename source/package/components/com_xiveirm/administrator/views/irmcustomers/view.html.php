@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -15,7 +15,7 @@ jimport('joomla.application.component.view');
 /**
  * View class for a list of Xiveirm.
  */
-class XiveirmViewIrmmasterdatas extends JViewLegacy
+class XiveirmViewIrmcustomers extends JViewLegacy
 {
 	protected $items;
 	protected $pagination;
@@ -35,7 +35,7 @@ class XiveirmViewIrmmasterdatas extends JViewLegacy
 			throw new Exception(implode("\n", $errors));
 		}
         
-		XiveirmHelper::addSubmenu('irmmasterdatas');
+		XiveirmHelper::addSubmenu('irmcustomers');
         
 		$this->addToolbar();
         
@@ -55,18 +55,18 @@ class XiveirmViewIrmmasterdatas extends JViewLegacy
 		$state	= $this->get('State');
 		$canDo	= XiveirmHelper::getActions($state->get('filter.category_id'));
 
-		JToolBarHelper::title(JText::_('COM_XIVEIRM_TITLE_IRMMASTERDATAS'), 'irmmasterdatas.png');
+		JToolBarHelper::title(JText::_('COM_XIVEIRM_TITLE_IRMCUSTOMERS'), 'irmcustomers.png');
 
         //Check if the form exists before showing the add/edit buttons
-        $formPath = JPATH_COMPONENT_ADMINISTRATOR.'/views/irmmasterdata';
+        $formPath = JPATH_COMPONENT_ADMINISTRATOR.'/views/irmcustomer';
         if (file_exists($formPath)) {
 
             if ($canDo->get('core.create')) {
-			    JToolBarHelper::addNew('irmmasterdata.add','JTOOLBAR_NEW');
+			    JToolBarHelper::addNew('irmcustomer.add','JTOOLBAR_NEW');
 		    }
 
 		    if ($canDo->get('core.edit') && isset($this->items[0])) {
-			    JToolBarHelper::editList('irmmasterdata.edit','JTOOLBAR_EDIT');
+			    JToolBarHelper::editList('irmcustomer.edit','JTOOLBAR_EDIT');
 		    }
 
         }
@@ -75,29 +75,29 @@ class XiveirmViewIrmmasterdatas extends JViewLegacy
 
             if (isset($this->items[0]->state)) {
 			    JToolBarHelper::divider();
-			    JToolBarHelper::custom('irmmasterdatas.publish', 'publish.png', 'publish_f2.png','JTOOLBAR_PUBLISH', true);
-			    JToolBarHelper::custom('irmmasterdatas.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
+			    JToolBarHelper::custom('irmcustomers.publish', 'publish.png', 'publish_f2.png','JTOOLBAR_PUBLISH', true);
+			    JToolBarHelper::custom('irmcustomers.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
             } else if (isset($this->items[0])) {
                 //If this component does not use state then show a direct delete button as we can not trash
-                JToolBarHelper::deleteList('', 'irmmasterdatas.delete','JTOOLBAR_DELETE');
+                JToolBarHelper::deleteList('', 'irmcustomers.delete','JTOOLBAR_DELETE');
             }
 
             if (isset($this->items[0]->state)) {
 			    JToolBarHelper::divider();
-			    JToolBarHelper::archiveList('irmmasterdatas.archive','JTOOLBAR_ARCHIVE');
+			    JToolBarHelper::archiveList('irmcustomers.archive','JTOOLBAR_ARCHIVE');
             }
             if (isset($this->items[0]->checked_out)) {
-            	JToolBarHelper::custom('irmmasterdatas.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);
+            	JToolBarHelper::custom('irmcustomers.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);
             }
 		}
         
         //Show trash and delete for components that uses the state field
         if (isset($this->items[0]->state)) {
 		    if ($state->get('filter.state') == -2 && $canDo->get('core.delete')) {
-			    JToolBarHelper::deleteList('', 'irmmasterdatas.delete','JTOOLBAR_EMPTY_TRASH');
+			    JToolBarHelper::deleteList('', 'irmcustomers.delete','JTOOLBAR_EMPTY_TRASH');
 			    JToolBarHelper::divider();
 		    } else if ($canDo->get('core.edit.state')) {
-			    JToolBarHelper::trash('irmmasterdatas.trash','JTOOLBAR_TRASH');
+			    JToolBarHelper::trash('irmcustomers.trash','JTOOLBAR_TRASH');
 			    JToolBarHelper::divider();
 		    }
         }
@@ -107,7 +107,7 @@ class XiveirmViewIrmmasterdatas extends JViewLegacy
 		}
         
         //Set sidebar action - New in 3.0
-		JHtmlSidebar::setAction('index.php?option=com_xiveirm&view=irmmasterdatas');
+		JHtmlSidebar::setAction('index.php?option=com_xiveirm&view=irmcustomers');
         
         $this->extra_sidebar = '';
         
@@ -129,13 +129,12 @@ class XiveirmViewIrmmasterdatas extends JViewLegacy
 		return array(
 		'a.id' => JText::_('JGRID_HEADING_ID'),
 		'a.state' => JText::_('JSTATUS'),
-		'a.trash' => JText::_('COM_XIVEIRM_IRMMASTERDATAS_TRASH'),
-		'a.client_id' => JText::_('COM_XIVEIRM_IRMMASTERDATAS_CLIENT_ID'),
-		'a.customer_id' => JText::_('COM_XIVEIRM_IRMMASTERDATAS_CUSTOMER_ID'),
-		'a.last_name' => JText::_('COM_XIVEIRM_IRMMASTERDATAS_LAST_NAME'),
-		'a.first_name' => JText::_('COM_XIVEIRM_IRMMASTERDATAS_FIRST_NAME'),
-		'a.gender' => JText::_('COM_XIVEIRM_IRMMASTERDATAS_GENDER'),
-		'a.dob' => JText::_('COM_XIVEIRM_IRMMASTERDATAS_DOB'),
+		'a.client_id' => JText::_('COM_XIVEIRM_IRMCUSTOMERS_CLIENT_ID'),
+		'a.customer_id' => JText::_('COM_XIVEIRM_IRMCUSTOMERS_CUSTOMER_ID'),
+		'a.last_name' => JText::_('COM_XIVEIRM_IRMCUSTOMERS_LAST_NAME'),
+		'a.first_name' => JText::_('COM_XIVEIRM_IRMCUSTOMERS_FIRST_NAME'),
+		'a.gender' => JText::_('COM_XIVEIRM_IRMCUSTOMERS_GENDER'),
+		'a.dob' => JText::_('COM_XIVEIRM_IRMCUSTOMERS_DOB'),
 		);
 	}
 

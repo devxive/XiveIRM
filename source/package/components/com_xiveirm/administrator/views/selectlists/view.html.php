@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -117,6 +117,7 @@ class XiveirmViewSelectlists extends JViewLegacy
 	protected function getSortFields()
 	{
 		return array(
+		'a.client_id' => JText::_('COM_XIVEIRM_SELECTLISTS_CLIENT_ID'),
 		'a.sl_key' => JText::_('COM_XIVEIRM_SELECTLISTS_SL_KEY'),
 		'a.sl_value' => JText::_('COM_XIVEIRM_SELECTLISTS_SL_VALUE'),
 		'a.sl_string' => JText::_('COM_XIVEIRM_SELECTLISTS_SL_STRING'),

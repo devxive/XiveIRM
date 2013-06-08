@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -111,7 +111,10 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_ADDITIONALINFORMATIONS_TAB_ID', 'a.tab_id', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_ADDITIONALINFORMATIONS_CUSTOMER_DB_ID', 'a.customer_db_id', $listDirn, $listOrder); ?>
+				</th>
+				<th class='left'>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_ADDITIONALINFORMATIONS_TAB_KEY', 'a.tab_key', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_ADDITIONALINFORMATIONS_TAB_VALUE', 'a.tab_value', $listDirn, $listOrder); ?>
@@ -180,14 +183,18 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<td>
+
+					<?php echo $item->customer_db_id; ?>
+				</td>
+				<td>
 				<?php if (isset($item->checked_out) && $item->checked_out) : ?>
 					<?php echo JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'additionalinformations.', $canCheckin); ?>
 				<?php endif; ?>
 				<?php if ($canEdit) : ?>
 					<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=additionalinformation.edit&id='.(int) $item->id); ?>">
-					<?php echo $this->escape($item->tab_id); ?></a>
+					<?php echo $this->escape($item->tab_key); ?></a>
 				<?php else : ?>
-					<?php echo $this->escape($item->tab_id); ?>
+					<?php echo $this->escape($item->tab_key); ?>
 				<?php endif; ?>
 				</td>
 				<td>

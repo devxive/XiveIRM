@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -27,13 +27,14 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
     
     Joomla.submitbutton = function(task)
     {
-        if(task == 'irmmasterdata.cancel'){
-            Joomla.submitform(task, document.getElementById('irmmasterdata-form'));
+        if(task == 'irmcustomer.cancel'){
+            Joomla.submitform(task, document.getElementById('irmcustomer-form'));
         }
         else{
             
-            if (task != 'irmmasterdata.cancel' && document.formvalidator.isValid(document.id('irmmasterdata-form'))) {
-                Joomla.submitform(task, document.getElementById('irmmasterdata-form'));
+            if (task != 'irmcustomer.cancel' && document.formvalidator.isValid(document.id('irmcustomer-form'))) {
+                
+                Joomla.submitform(task, document.getElementById('irmcustomer-form'));
             }
             else {
                 alert('<?php echo $this->escape(JText::_('JGLOBAL_VALIDATION_FORM_FAILED')); ?>');
@@ -42,7 +43,7 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
     }
 </script>
 
-<form action="<?php echo JRoute::_('index.php?option=com_xiveirm&layout=edit&id=' . (int) $this->item->id); ?>" method="post" enctype="multipart/form-data" name="adminForm" id="irmmasterdata-form" class="form-validate">
+<form action="<?php echo JRoute::_('index.php?option=com_xiveirm&layout=edit&id=' . (int) $this->item->id); ?>" method="post" enctype="multipart/form-data" name="adminForm" id="irmcustomer-form" class="form-validate">
     <div class="row-fluid">
         <div class="span10 form-horizontal">
             <fieldset class="adminform">
@@ -64,8 +65,7 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
 				<?php } ?>				<input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
 				<input type="hidden" name="jform[checked_out_time]" value="<?php echo $this->item->checked_out_time; ?>" />
 
-				<?php echo $this->form->getInput('modified'); ?>				<input type="hidden" name="jform[trash]" value="<?php echo $this->item->trash; ?>" />
-			<div class="control-group">
+				<?php echo $this->form->getInput('modified'); ?>			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('client_id'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('client_id'); ?></div>
 			</div>
@@ -150,7 +150,18 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
             </fieldset>
         </div>
 
-        
+        <div class="clr"></div>
+
+<?php if (JFactory::getUser()->authorise('core.admin','xiveirm')): ?>
+	<div class="fltlft" style="width:86%;">
+		<fieldset class="panelform">
+			<?php echo JHtml::_('sliders.start', 'permissions-sliders-'.$this->item->id, array('useCookie'=>1)); ?>
+			<?php echo JHtml::_('sliders.panel', JText::_('ACL Configuration'), 'access-rules'); ?>
+			<?php echo $this->form->getInput('rules'); ?>
+			<?php echo JHtml::_('sliders.end'); ?>
+		</fieldset>
+	</div>
+<?php endif; ?>
 
         <input type="hidden" name="task" value="" />
         <?php echo JHtml::_('form.token'); ?>

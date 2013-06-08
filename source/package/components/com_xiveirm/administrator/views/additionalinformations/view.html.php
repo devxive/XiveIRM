@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -111,25 +111,15 @@ class XiveirmViewAdditionalinformations extends JViewLegacy
         
         $this->extra_sidebar = '';
         
-		JHtmlSidebar::addFilter(
-
-			JText::_('JOPTION_SELECT_PUBLISHED'),
-
-			'filter_published',
-
-			JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), "value", "text", $this->state->get('filter.state'), true)
-
-		);
-
         
 	}
     
 	protected function getSortFields()
 	{
 		return array(
-		'a.tab_id' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_TAB_ID'),
+		'a.customer_db_id' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_CUSTOMER_DB_ID'),
+		'a.tab_key' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_TAB_KEY'),
 		'a.tab_value' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_TAB_VALUE'),
-		'a.state' => JText::_('JSTATUS'),
 		);
 	}
 

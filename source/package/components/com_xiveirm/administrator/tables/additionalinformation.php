@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -21,7 +21,7 @@ class XiveirmTableadditionalinformation extends JTable {
      * @param JDatabase A database connector object
      */
     public function __construct(&$db) {
-        parent::__construct('#__xiveirm_masterdata_add', 'id', $db);
+        parent::__construct('#__xiveirm_customer_add', 'id', $db);
     }
 
     /**
@@ -35,11 +35,6 @@ class XiveirmTableadditionalinformation extends JTable {
     public function bind($array, $ignore = '') {
 
         
-		$input = JFactory::getApplication()->input;
-		$task = $input->getString('task', '');
-		if(($task == 'save' || $task == 'apply') && (!JFactory::getUser()->authorise('core.edit.state','com_xiveirm') && $array['state'] == 1)){
-			$array['state'] = 0;
-		}
 
         if (isset($array['params']) && is_array($array['params'])) {
             $registry = new JRegistry();

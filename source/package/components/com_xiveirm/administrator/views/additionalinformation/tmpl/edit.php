@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -33,6 +33,7 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
         else{
             
             if (task != 'additionalinformation.cancel' && document.formvalidator.isValid(document.id('additionalinformation-form'))) {
+                
                 Joomla.submitform(task, document.getElementById('additionalinformation-form'));
             }
             else {
@@ -48,20 +49,16 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
             <fieldset class="adminform">
 
                 			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('tab_id'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('tab_id'); ?></div>
+				<div class="control-label"><?php echo $this->form->getLabel('customer_db_id'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('customer_db_id'); ?></div>
 			</div>
 			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('tab_field_id'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('tab_field_id'); ?></div>
+				<div class="control-label"><?php echo $this->form->getLabel('tab_key'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('tab_key'); ?></div>
 			</div>
 			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('tab_value'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('tab_value'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('state'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('state'); ?></div>
 			</div>
 				<input type="hidden" name="jform[ordering]" value="<?php echo $this->item->ordering; ?>" />
 
@@ -69,7 +66,18 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
             </fieldset>
         </div>
 
-        
+        <div class="clr"></div>
+
+<?php if (JFactory::getUser()->authorise('core.admin','xiveirm')): ?>
+	<div class="fltlft" style="width:86%;">
+		<fieldset class="panelform">
+			<?php echo JHtml::_('sliders.start', 'permissions-sliders-'.$this->item->id, array('useCookie'=>1)); ?>
+			<?php echo JHtml::_('sliders.panel', JText::_('ACL Configuration'), 'access-rules'); ?>
+			<?php echo $this->form->getInput('rules'); ?>
+			<?php echo JHtml::_('sliders.end'); ?>
+		</fieldset>
+	</div>
+<?php endif; ?>
 
         <input type="hidden" name="task" value="" />
         <?php echo JHtml::_('form.token'); ?>

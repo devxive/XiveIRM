@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -33,6 +33,7 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
         else{
             
             if (task != 'selectlist.cancel' && document.formvalidator.isValid(document.id('selectlist-form'))) {
+                
                 Joomla.submitform(task, document.getElementById('selectlist-form'));
             }
             else {
@@ -48,6 +49,10 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
             <fieldset class="adminform">
 
                 			<div class="control-group">
+				<div class="control-label"><?php echo $this->form->getLabel('client_id'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('client_id'); ?></div>
+			</div>
+			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('sl_key'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('sl_key'); ?></div>
 			</div>
@@ -59,6 +64,7 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
 				<div class="control-label"><?php echo $this->form->getLabel('sl_string'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('sl_string'); ?></div>
 			</div>
+				<input type="hidden" name="jform[ordering]" value="<?php echo $this->item->ordering; ?>" />
 
 
             </fieldset>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -15,7 +15,7 @@ jimport('joomla.application.component.view');
 /**
  * View to edit
  */
-class XiveirmViewIrmmasterdata extends JViewLegacy
+class XiveirmViewIrmcustomer extends JViewLegacy
 {
 	protected $state;
 	protected $item;
@@ -55,27 +55,27 @@ class XiveirmViewIrmmasterdata extends JViewLegacy
         }
 		$canDo		= XiveirmHelper::getActions();
 
-		JToolBarHelper::title(JText::_('COM_XIVEIRM_TITLE_IRMMASTERDATA'), 'irmmasterdata.png');
+		JToolBarHelper::title(JText::_('COM_XIVEIRM_TITLE_IRMCUSTOMER'), 'irmcustomer.png');
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit')||($canDo->get('core.create'))))
 		{
 
-			JToolBarHelper::apply('irmmasterdata.apply', 'JTOOLBAR_APPLY');
-			JToolBarHelper::save('irmmasterdata.save', 'JTOOLBAR_SAVE');
+			JToolBarHelper::apply('irmcustomer.apply', 'JTOOLBAR_APPLY');
+			JToolBarHelper::save('irmcustomer.save', 'JTOOLBAR_SAVE');
 		}
 		if (!$checkedOut && ($canDo->get('core.create'))){
-			JToolBarHelper::custom('irmmasterdata.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+			JToolBarHelper::custom('irmcustomer.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 		}
 		// If an existing item, can save to a copy.
 		if (!$isNew && $canDo->get('core.create')) {
-			JToolBarHelper::custom('irmmasterdata.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+			JToolBarHelper::custom('irmcustomer.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 		}
 		if (empty($this->item->id)) {
-			JToolBarHelper::cancel('irmmasterdata.cancel', 'JTOOLBAR_CANCEL');
+			JToolBarHelper::cancel('irmcustomer.cancel', 'JTOOLBAR_CANCEL');
 		}
 		else {
-			JToolBarHelper::cancel('irmmasterdata.cancel', 'JTOOLBAR_CLOSE');
+			JToolBarHelper::cancel('irmcustomer.cancel', 'JTOOLBAR_CLOSE');
 		}
 
 	}

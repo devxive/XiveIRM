@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -111,6 +111,9 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<th class='left'>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_SELECTLISTS_CLIENT_ID', 'a.client_id', $listDirn, $listOrder); ?>
+				</th>
+				<th class='left'>
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_SELECTLISTS_SL_KEY', 'a.sl_key', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
@@ -182,6 +185,10 @@ if (!empty($this->extra_sidebar)) {
 					</td>
                 <?php endif; ?>
                     
+				<td>
+
+					<?php echo $item->client_id; ?>
+				</td>
 				<td>
 				<?php if (isset($item->checked_out) && $item->checked_out) : ?>
 					<?php echo JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'selectlists.', $canCheckin); ?>
