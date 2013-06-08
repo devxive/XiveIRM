@@ -76,13 +76,14 @@ class XiveirmControllerApi extends XiveirmController
  		// Get the tabForm data.
 		$data = JFactory::getApplication()->input->get('tabForm', array(), 'array');
 
-		// Attempt to save the data.
-		$return = $model->save($data);
+		// Attempt to save the tabdata.
+		$return = $model->savetab($data);
 
 		echo json_encode($return);
 
 //		// Flush the data from the session.
 //		$app->setUserState('com_xiveirm.edit.api.data', null);
+// NUR INFO FÜR MODEL, WEIL ERST PATIENT GESPEICHERT WERDEN MUSS, DANN DIE TABS MIT 'NER SCHLEIFE $apiReturnRowId = $db->insertid();
 
 		JFactory::getApplication()->close();
 	}
