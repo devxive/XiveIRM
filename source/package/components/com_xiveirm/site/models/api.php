@@ -116,9 +116,9 @@ class XiveirmModelApi extends JModelForm
 		{
 			// Perform the return array
 			$return_arr = array();
-			$return_arr["apiReturnCode"] = 505;
+			$return_arr["apiReturnCode"] = 1000;
 			$return_arr["apiReturnRowId"] = null;
-			$return_arr["apiReturnMessage"] = 'There is eiter an api nor an app request given!';
+			$return_arr["apiReturnMessage"] = 'The form is completely empty: Neither an appId, a tabId nor a masterdataId is given!';
 
 			return $return_arr;
 		}
@@ -131,12 +131,12 @@ class XiveirmModelApi extends JModelForm
 		// set the tab_id for the database
 		$tabId = $tabAppId . '.' . $masterDataItemId;
 
-		// exclude system based infos for the new array
+		// exclude system based form infos for the new array
 		unset($data['id']);
 		unset($data['tabappid']);
 		unset($data['masterdataitemid']);
 
-		// Check if in all the datas are values and/or nested arrays from multiselect and reinject the val as key
+		// Check if in all the datas are values and/or nested arrays from multiselect and reinject the val as key, save all as a clean new array
 		$newDataArray = array();
 		foreach($data as $key => $val)
 		{
@@ -157,10 +157,10 @@ class XiveirmModelApi extends JModelForm
 			}
 		}
 
-		// Build a clean new array of the form values
+		// JSONize the new array
 		$newData = json_encode($newDataArray);
 
-		// Lets save the data in the database
+		// Init database vars
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
 
