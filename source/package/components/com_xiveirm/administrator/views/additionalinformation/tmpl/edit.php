@@ -49,8 +49,8 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
             <fieldset class="adminform">
 
                 			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('customer_db_id'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('customer_db_id'); ?></div>
+				<div class="control-label"><?php echo $this->form->getLabel('customer_cid'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('customer_cid'); ?></div>
 			</div>
 			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('tab_key'); ?></div>

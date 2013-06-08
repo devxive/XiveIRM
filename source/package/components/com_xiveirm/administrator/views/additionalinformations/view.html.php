@@ -117,7 +117,7 @@ class XiveirmViewAdditionalinformations extends JViewLegacy
 	protected function getSortFields()
 	{
 		return array(
-		'a.customer_db_id' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_CUSTOMER_DB_ID'),
+		'a.customer_cid' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_CUSTOMER_CID'),
 		'a.tab_key' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_TAB_KEY'),
 		'a.tab_value' => JText::_('COM_XIVEIRM_ADDITIONALINFORMATIONS_TAB_VALUE'),
 		);

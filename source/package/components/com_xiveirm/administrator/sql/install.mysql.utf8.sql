@@ -32,11 +32,11 @@ PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_customer_add` (
-`customer_db_id` INT(11) NOT NULL,
+`customer_cid` INT(11) NOT NULL,
 `tab_key` VARCHAR(100) NOT NULL,
 `tab_value` MEDIUMTEXT NOT NULL,
 `ordering` INT(11) NOT NULL DEFAULT '0',
-UNIQUE KEY `idx_masterdata_id_tab_key` (`customer_db_id`,`tab_key`)
+UNIQUE KEY `idx_customer_cid_tab_key` (`customer_cid`,`tab_key`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Extensive customer data storage table';
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_selectlists` (

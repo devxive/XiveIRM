@@ -28,7 +28,7 @@ class XiveirmModeladditionalinformations extends JModelList
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
-                                'customer_db_id', 'a.customer_db_id',
+                                'customer_cid', 'a.customer_cid',
                 'tab_key', 'a.tab_key',
                 'tab_value', 'a.tab_value',
                 'ordering', 'a.ordering',
@@ -64,7 +64,7 @@ class XiveirmModeladditionalinformations extends JModelList
 		$this->setState('params', $params);
 
 		// List state information.
-		parent::populateState('a.customer_db_id', 'asc');
+		parent::populateState('a.customer_cid', 'asc');
 	}
 
 	/**
@@ -119,7 +119,7 @@ class XiveirmModeladditionalinformations extends JModelList
 				$query->where('a.id = '.(int) substr($search, 3));
 			} else {
 				$search = $db->Quote('%'.$db->escape($search, true).'%');
-                $query->where('( a.customer_db_id LIKE '.$search.'  OR  a.tab_key LIKE '.$search.' )');
+                $query->where('( a.customer_cid LIKE '.$search.'  OR  a.tab_key LIKE '.$search.' )');
 			}
 		}
         

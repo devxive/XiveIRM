@@ -111,7 +111,7 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_ADDITIONALINFORMATIONS_CUSTOMER_DB_ID', 'a.customer_db_id', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_ADDITIONALINFORMATIONS_CUSTOMER_CID', 'a.customer_cid', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_ADDITIONALINFORMATIONS_TAB_KEY', 'a.tab_key', $listDirn, $listOrder); ?>
@@ -184,7 +184,7 @@ if (!empty($this->extra_sidebar)) {
                     
 				<td>
 
-					<?php echo $item->customer_db_id; ?>
+					<?php echo $item->customer_cid; ?>
 				</td>
 				<td>
 				<?php if (isset($item->checked_out) && $item->checked_out) : ?>

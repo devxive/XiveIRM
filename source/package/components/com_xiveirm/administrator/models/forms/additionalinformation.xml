@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
 	<fieldset>
-		<field name="customer_db_id" type="text"
+		<field name="customer_cid" type="text"
 			size="40"
 			class="inputbox"
-			label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_CUSTOMER_DB_ID"
-			description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_CUSTOMER_DB_ID"
+			label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_CUSTOMER_CID"
+			description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_CUSTOMER_CID"
 			filter="safehtml" />
 
 		<field name="tab_key" type="text"
