@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -34,7 +34,7 @@ $search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 				</span>
 				<span class="span5">
 					<span class="pull-right">
-						<a class="btn btn-small btn-primary pull-right inline" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.edit&id=0'); ?>" data-rel="tooltip" data-placement="left" title data-original-title="<?php echo JText::_("COM_XIVEIRM_ADD_ITEM"); if(isset($addLastName)) { echo ' ' . $addLastName; } ?>"><i class="icon-plus"></i></a>
+						<a class="btn btn-small btn-primary pull-right inline" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmcustomer.edit&id=0'); ?>" data-rel="tooltip" data-placement="left" title data-original-title="<?php echo JText::_("COM_XIVEIRM_ADD_ITEM"); if(isset($addLastName)) { echo ' ' . $addLastName; } ?>"><i class="icon-plus"></i></a>
 					</span>
 				</span>
 			<?php endif; ?>
@@ -105,7 +105,7 @@ $search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 						endif; ?>
 					</td>
 
-					<td class=" "><a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.edit&id='.$item->id); ?>"><?php echo $item->last_name . ', ' . $item->first_name; ?></a></td>
+					<td class=" "><a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmcustomer.edit&id='.$item->id); ?>"><?php echo $item->last_name . ', ' . $item->first_name; ?></a></td>
 					<td class=" "><?php if($item->gender == 'm'): echo '<i class="icon-user blue"></i>'; elseif($item->gender == 'f'): echo '<i class="icon-user red"></i>'; elseif($item->gender == 'c'): echo'<i class="icon-user green"></i>'; else: echo '<i class="icon-user"></i>'; endif; ?> <?php if(strtotime($item->dob) != -62135600400): echo date(JText::_('DATE_FORMAT_LC4'), strtotime($item->dob)); endif; ?></td>
 					<td class="hidden-480 "><?php echo $item->address_street; ?> <?php echo $item->address_houseno; ?><br><?php echo $item->address_zip; ?> <?php echo $item->address_city; ?>, <?php echo $item->address_country; ?></td>
 					<td class="hidden-phone "><?php if($item->mobile != ''): echo '<i class="icon-mobile-phone"></i> ' . $item->mobile . '<br>'; endif; if($item->phone != ''): echo '<i class="icon-phone"></i> ' . $item->phone; endif; ?></td>
@@ -118,9 +118,9 @@ $search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 					<td class=" ">
 						<div class="hidden-phone visible-desktop btn-group">
 							<?php if(JFactory::getUser()->authorise('core.edit.state','com_xiveirm')) : ?>
-								<a class="btn btn-mini <?php if($item->state == 1): echo 'btn-success'; endif; ?>" title="<?php if($item->state == 1): echo JText::_("COM_XIVEIRM_UNPUBLISH_ITEM"); else: echo JText::_("COM_XIVEIRM_PUBLISH_ITEM"); endif; ?>" href="javascript:document.getElementById('form-irmmasterdata-state-<?php echo $item->id; ?>').submit()"><?php if($item->state == 1): echo '<i class="icon-ok"></i>'; else: echo '<i class="icon-remove"></i>'; endif; ?></a>
+								<a class="btn btn-mini <?php if($item->state == 1): echo 'btn-success'; endif; ?>" title="<?php if($item->state == 1): echo JText::_("COM_XIVEIRM_UNPUBLISH_ITEM"); else: echo JText::_("COM_XIVEIRM_PUBLISH_ITEM"); endif; ?>" href="javascript:document.getElementById('form-irmcustomer-state-<?php echo $item->id; ?>').submit()"><?php if($item->state == 1): echo '<i class="icon-ok"></i>'; else: echo '<i class="icon-remove"></i>'; endif; ?></a>
 							<?php endif; if(JFactory::getUser()->authorise('core.delete','com_xiveirm')) : ?>
-								<a class="btn btn-mini btn-danger" title="<?php echo JText::_("COM_XIVEIRM_DELETE_ITEM"); ?>" href="javascript:document.getElementById('form-irmmasterdata-delete-<?php echo $item->id; ?>').submit()"><i class="icon-trash"></i></a>
+								<a class="btn btn-mini btn-danger" title="<?php echo JText::_("COM_XIVEIRM_DELETE_ITEM"); ?>" href="javascript:document.getElementById('form-irmcustomer-delete-<?php echo $item->id; ?>').submit()"><i class="icon-trash"></i></a>
 							<?php endif; ?>
 							<button class="btn btn-mini btn-info"><i class="icon-edit"></i></button>
 							<button class="btn btn-mini btn-warning"><i class="icon-flag"></i></button>
@@ -129,12 +129,12 @@ $search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 							<div class="inline position-relative">
 								<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown"><i class="icon-caret-down icon-only"></i></button>
 								<ul class="dropdown-menu dropdown-icon-only dropdown-yellow pull-right dropdown-caret dropdown-close">
-									<li><a class="<?php if($item->state == 1): echo 'tooltip-success'; endif; ?>" data-rel="tooltip" title="" data-placement="left" data-original-title="<?php if($item->state == 1): echo JText::_("COM_XIVEIRM_UNPUBLISH_ITEM"); else: echo JText::_("COM_XIVEIRM_PUBLISH_ITEM"); endif; ?>" href="javascript:document.getElementById('form-irmmasterdata-state-<?php echo $item->id; ?>').submit()"><?php if($item->state == 1): echo '<span class="green"><i class="icon-ok"></i></span>'; else: echo '<span class="gray"><i class="icon-remove"></i></span>'; endif; ?></a></li>
-									<li><a class="tooltip-error" data-rel="tooltip" title="" data-placement="left" data-original-title="<?php echo JText::_("COM_XIVEIRM_DELETE_ITEM"); ?>" href="javascript:document.getElementById('form-irmmasterdata-delete-<?php echo $item->id; ?>').submit()"><span class="red"><i class="icon-trash"></i></span></a></li>
+									<li><a class="<?php if($item->state == 1): echo 'tooltip-success'; endif; ?>" data-rel="tooltip" title="" data-placement="left" data-original-title="<?php if($item->state == 1): echo JText::_("COM_XIVEIRM_UNPUBLISH_ITEM"); else: echo JText::_("COM_XIVEIRM_PUBLISH_ITEM"); endif; ?>" href="javascript:document.getElementById('form-irmcustomer-state-<?php echo $item->id; ?>').submit()"><?php if($item->state == 1): echo '<span class="green"><i class="icon-ok"></i></span>'; else: echo '<span class="gray"><i class="icon-remove"></i></span>'; endif; ?></a></li>
+									<li><a class="tooltip-error" data-rel="tooltip" title="" data-placement="left" data-original-title="<?php echo JText::_("COM_XIVEIRM_DELETE_ITEM"); ?>" href="javascript:document.getElementById('form-irmcustomer-delete-<?php echo $item->id; ?>').submit()"><span class="red"><i class="icon-trash"></i></span></a></li>
 								</ul>
 							</div>
 						</div>
-							<form id="form-irmmasterdata-state-<?php echo $item->id ?>" style="display:inline" action="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.save'); ?>" method="post" class="form-validate" enctype="multipart/form-data">
+							<form id="form-irmcustomer-state-<?php echo $item->id ?>" style="display:inline" action="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmcustomer.save'); ?>" method="post" class="form-validate" enctype="multipart/form-data">
 								<input type="hidden" name="jform[id]" value="<?php echo $item->id; ?>" />
 								<input type="hidden" name="jform[state]" value="<?php echo (int)!((int)$item->state); ?>" />
 								<input type="hidden" name="jform[created]" value="<?php echo $item->created; ?>" />
@@ -163,10 +163,10 @@ $search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 								<input type="hidden" name="jform[web]" value="<?php echo $item->web; ?>" />
 								<input type="hidden" name="jform[remarks]" value="<?php echo $item->remarks; ?>" />
 								<input type="hidden" name="option" value="com_xiveirm" />
-								<input type="hidden" name="task" value="irmmasterdata.save" />
+								<input type="hidden" name="task" value="irmcustomer.save" />
 								<?php echo JHtml::_('form.token'); ?>
 							</form>
-							<form id="form-irmmasterdata-delete-<?php echo $item->id; ?>" style="display:inline" action="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmmasterdata.remove'); ?>" method="post" class="form-validate" enctype="multipart/form-data">
+							<form id="form-irmcustomer-delete-<?php echo $item->id; ?>" style="display:inline" action="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmcustomer.remove'); ?>" method="post" class="form-validate" enctype="multipart/form-data">
 								<input type="hidden" name="jform[id]" value="<?php echo $item->id; ?>" />
 								<input type="hidden" name="jform[state]" value="<?php echo (int)!((int)$item->state); ?>" />
 								<input type="hidden" name="jform[created]" value="<?php echo $item->created; ?>" />
@@ -195,7 +195,7 @@ $search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 								<input type="hidden" name="jform[web]" value="<?php echo $item->web; ?>" />
 								<input type="hidden" name="jform[remarks]" value="<?php echo $item->remarks; ?>" />
 								<input type="hidden" name="option" value="com_xiveirm" />
-								<input type="hidden" name="task" value="irmmasterdata.remove" />
+								<input type="hidden" name="task" value="irmcustomer.remove" />
 								<?php echo JHtml::_('form.token'); ?>
 							</form>
 					</td>
