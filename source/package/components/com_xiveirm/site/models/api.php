@@ -109,7 +109,7 @@ class XiveirmModelApi extends JModelForm
 	public function save($data)
 	{
 		// Now we get raw $data from the controller and have to perform the save request
-		// first we have to split the data into separate values
+		// first we have to check if we got any datas and split the data into separate values
 
 		//check if we get any data
 		if(!$data)
@@ -123,12 +123,10 @@ class XiveirmModelApi extends JModelForm
 			return $return_arr;
 		}
 
-		// Store the identifier vars
+		// Split and store the identifier vars
 		$dataTabId		= $data['id']; // This is the data tab id, the id from the masterdata_add db row
 		$tabAppId		= $data['tabappid']; // This is the tab identifier (a lowercase name => the same as in plugins/masterdatatabs)
 		$masterDataItemId	= $data['masterdataitemid']; // This is the item dbId from the #__xiveirm_masterdata table
-		$direction		= $data['direction']; // This is the api direction (where the data come from "ajax" or "in future whatever" we use at this time only the ajax variant)
-		$valueFormat		= $data['valueformat']; // The format we use to store the submitted values in the database
 
 		// set the tab_id for the database
 		$tabId = $tabAppId . '.' . $masterDataItemId;
@@ -137,8 +135,6 @@ class XiveirmModelApi extends JModelForm
 		unset($data['id']);
 		unset($data['tabappid']);
 		unset($data['masterdataitemid']);
-		unset($data['direction']);
-		unset($data['valueformat']);
 
 		// Check if in all the datas are values and/or nested arrays from multiselect and reinject the val as key
 		$newDataArray = array();
@@ -161,17 +157,14 @@ class XiveirmModelApi extends JModelForm
 			}
 		}
 
-		// Build a new array if stored in a single row or as json encoded values || At this time json is the only way to store values in the database
-		if($valueFormat == 'json')
-		{
-			$newData = json_encode($newDataArray);
-		}
+		// Build a clean new array of the form values
+		$newData = json_encode($newDataArray);
 
 		// Lets save the data in the database
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
 
-		// Lets have a look if we have already a tab saved for this customer! Happens if the user attemp to click more than once on save
+		// Lets have a look first if we have already a tab saved for this customer! Happens if the user attemp to click more than once on save
 		if($dataTabId == '0')
 		{
 			$query
@@ -201,8 +194,8 @@ class XiveirmModelApi extends JModelForm
 			try
 			{
 				$db->execute();
-				$apiReturnCode = 'SAVED';
 				$apiReturnRowId = $db->insertid();
+				$apiReturnCode = 'SAVED';
 				$apiReturnMessage = 'Succesfully saved';
 			} catch (Exception $e) {
 				$apiReturnRowId = null;
@@ -245,9 +238,6 @@ class XiveirmModelApi extends JModelForm
 			$apiReturnRowId = null;
 			$apiReturnCode = 666;
 			$apiReturnMessage = 'The dataTabId is either 0 nor an integer greater than 0';
-
-//			JError::raiseError(500, 'There is either an api nor an app request given!');
-//			return false;
 		}
 
 		// Perform the return array
