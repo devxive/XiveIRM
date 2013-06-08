@@ -1,33 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
 	<fieldset>
-		<field name="tab_id" type="text" size="40" class="inputbox"
-			label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_TAB_ID"
-			description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_TAB_ID" 
-			required="true" 
-			filter="safehtml" /> 
+		<field name="customer_db_id" type="text"
+			size="40"
+			class="inputbox"
+			label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_CUSTOMER_DB_ID"
+			description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_CUSTOMER_DB_ID"
+			filter="safehtml" />
 
-		<field name="tab_field_id" type="text" size="40" class="inputbox"
-			label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_TAB_FIELD_ID"
-			description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_TAB_FIELD_ID" 
-			filter="safehtml" /> 
+		<field name="tab_key" type="text"
+			size="40"
+			class="inputbox"
+			label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_TAB_KEY"
+			description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_TAB_KEY"
+			filter="safehtml" />
 
-		<field name="tab_value" type="editor" buttons="true"
+		<field name="tab_value" type="editor"
+			buttons="true"
 			class="inputbox"
 			filter="safehtml"
 			label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_TAB_VALUE"
-			description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_TAB_VALUE"  /> 
+			description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_TAB_VALUE" />
+	</fieldset> 
+	<fieldset name="accesscontrol">
+		<field name="asset_id" type="hidden"
+			filter="unset" />
 
-		<field
-			name="state"
-			type="list"
-			label="JSTATUS"
-			description="JFIELD_PUBLISHED_DESC"
+		<field name="rules"
+			type="rules"
+			label="JFIELD_RULES_LABEL"
+			translate_label="false"
+			filter="rules"
+			validate="rules"
 			class="inputbox"
-			size="1"
-			default="1">
-				<option value="1">JPUBLISHED</option>
-				<option value="0">JUNPUBLISHED</option>
-		</field>
+			component="com_xiveirm"
+			section="additionalinformation" />
 	</fieldset>
 </form>

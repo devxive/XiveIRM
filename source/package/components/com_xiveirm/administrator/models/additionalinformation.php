@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -112,7 +112,7 @@ class XiveirmModeladditionalinformation extends JModelAdmin
 			// Set ordering to the last item if not set
 			if (@$table->ordering === '') {
 				$db = JFactory::getDbo();
-				$db->setQuery('SELECT MAX(ordering) FROM #__xiveirm_masterdata_add');
+				$db->setQuery('SELECT MAX(ordering) FROM #__xiveirm_customer_add');
 				$max = $db->loadResult();
 				$table->ordering = $max+1;
 			}

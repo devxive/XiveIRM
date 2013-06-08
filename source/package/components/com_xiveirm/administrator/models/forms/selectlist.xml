@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
 	<fieldset>
-		<field name="client_id" type="text" size="11" class="inputbox"
+		<field name="client_id" type="text" size="40" class="inputbox"
 			label="COM_XIVEIRM_FORM_LBL_SELECTLIST_CLIENT_ID"
 			description="COM_XIVEIRM_FORM_DESC_SELECTLIST_CLIENT_ID" 
 			filter="int" /> 

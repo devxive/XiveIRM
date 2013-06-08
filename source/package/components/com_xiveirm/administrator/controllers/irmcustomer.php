@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -13,13 +13,13 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.controllerform');
 
 /**
- * Irmmasterdata controller class.
+ * Irmcustomer controller class.
  */
-class XiveirmControllerIrmmasterdata extends JControllerForm
+class XiveirmControllerIrmcustomer extends JControllerForm
 {
 
     function __construct() {
-        $this->view_list = 'irmmasterdatas';
+        $this->view_list = 'irmcustomers';
         parent::__construct();
     }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -21,9 +21,9 @@ class XiveirmHelper
 	public static function addSubmenu($vName = '')
 	{
 		JHtmlSidebar::addEntry(
-			JText::_('COM_XIVEIRM_TITLE_IRMMASTERDATAS'),
-			'index.php?option=com_xiveirm&view=irmmasterdatas',
-			$vName == 'irmmasterdatas'
+			JText::_('COM_XIVEIRM_TITLE_IRMCUSTOMERS'),
+			'index.php?option=com_xiveirm&view=irmcustomers',
+			$vName == 'irmcustomers'
 		);
 		JHtmlSidebar::addEntry(
 			JText::_('COM_XIVEIRM_TITLE_ADDITIONALINFORMATIONS'),
@@ -35,6 +35,7 @@ class XiveirmHelper
 			'index.php?option=com_xiveirm&view=selectlists',
 			$vName == 'selectlists'
 		);
+
 	}
 
 	/**

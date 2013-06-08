@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -26,7 +26,7 @@ class XiveirmController extends JControllerLegacy
 	{
 		require_once JPATH_COMPONENT.'/helpers/xiveirm.php';
 
-		$view		= JFactory::getApplication()->input->getCmd('view', 'irmmasterdatas');
+		$view		= JFactory::getApplication()->input->getCmd('view', 'irmcustomers');
         JFactory::getApplication()->input->set('view', $view);
 
 		parent::display($cachable, $urlparams);

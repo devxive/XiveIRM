@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -28,9 +28,11 @@ class XiveirmModelselectlists extends JModelList
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
-                                'sl_key', 'a.sl_key',
+                                'client_id', 'a.client_id',
+                'sl_key', 'a.sl_key',
                 'sl_value', 'a.sl_value',
                 'sl_string', 'a.sl_string',
+                'ordering', 'a.ordering',
 
             );
         }
@@ -63,7 +65,7 @@ class XiveirmModelselectlists extends JModelList
 		$this->setState('params', $params);
 
 		// List state information.
-		parent::populateState('a.id', 'asc');
+		parent::populateState('a.client_id', 'asc');
 	}
 
 	/**
@@ -118,7 +120,7 @@ class XiveirmModelselectlists extends JModelList
 				$query->where('a.id = '.(int) substr($search, 3));
 			} else {
 				$search = $db->Quote('%'.$db->escape($search, true).'%');
-                
+                $query->where('( a.client_id LIKE '.$search.' )');
 			}
 		}
         

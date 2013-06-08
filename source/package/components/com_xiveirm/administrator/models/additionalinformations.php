@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -28,10 +28,9 @@ class XiveirmModeladditionalinformations extends JModelList
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
-                                'tab_id', 'a.tab_id',
-                'tab_field_id', 'a.tab_field_id',
+                                'customer_db_id', 'a.customer_db_id',
+                'tab_key', 'a.tab_key',
                 'tab_value', 'a.tab_value',
-                'state', 'a.state',
                 'ordering', 'a.ordering',
 
             );
@@ -65,7 +64,7 @@ class XiveirmModeladditionalinformations extends JModelList
 		$this->setState('params', $params);
 
 		// List state information.
-		parent::populateState('a.tab_id', 'asc');
+		parent::populateState('a.customer_db_id', 'asc');
 	}
 
 	/**
@@ -107,19 +106,11 @@ class XiveirmModeladditionalinformations extends JModelList
 				'a.*'
 			)
 		);
-		$query->from('`#__xiveirm_masterdata_add` AS a');
+		$query->from('`#__xiveirm_customer_add` AS a');
 
 
 
 
-    // Filter by published state
-    $published = $this->getState('filter.state');
-    if (is_numeric($published)) {
-        $query->where('a.state = '.(int) $published);
-    } else if ($published === '') {
-        $query->where('(a.state IN (0, 1))');
-    }
-    
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
@@ -128,7 +119,7 @@ class XiveirmModeladditionalinformations extends JModelList
 				$query->where('a.id = '.(int) substr($search, 3));
 			} else {
 				$search = $db->Quote('%'.$db->escape($search, true).'%');
-                $query->where('( a.tab_id LIKE '.$search.' )');
+                $query->where('( a.customer_db_id LIKE '.$search.'  OR  a.tab_key LIKE '.$search.' )');
 			}
 		}
         
