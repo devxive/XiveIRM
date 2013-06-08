@@ -17,35 +17,56 @@ require_once JPATH_COMPONENT.'/controller.php';
  */
 class XiveirmControllerApi extends XiveirmController
 {
-
 	/**
-	 * Method to check out an item for editing and redirect to the edit form.
+	 * Checkout an item if the edit button is clicked and report message in JSON format, for AJAX requests
 	 *
-	 * @since	1.6
+	 * @return void
+	 *
+	 * @since 3.1
 	 */
-	public function edit()
+	public function ajaxcheckout()
 	{
 	}
 
 	/**
-	 * Method to save a user's profile data.
+	 * Checkin an item if the edit button is clicked again and report message in JSON format, for AJAX requests
 	 *
-	 * @return	void
-	 * @since	1.6
+	 * @return void
+	 *
+	 * @since 3.1
 	 */
-	public function save()
+	public function ajaxcheckin()
 	{
-		$data = array('direction' => 'ajax');
+	}
 
-		// Check for request forgeries.
-		if($data['direction'] == 'ajax')
+	/**
+	 * Fetch form data push to model and report message in JSON format, for AJAX requests
+	 *
+	 * XiveIRM-TODO: Check the checked_out state before!
+	 *	Description: 	If the item has a checked_out state: within the last 10 minutes, report to the customer, that he can't save the item, unless the item is checked in. The core app already give some notice about the item and the other user, who checked out the item
+	 *			If the item has a checked_out state: over 10 minutes ad ago, give the customer the opportunity to check in (with the task=api.ajaxcheckin call) In this case the user itself take care of correct datas ;)
+	 *
+	 * @return void
+	 *
+	 * @since 3.1
+	 */
+	public function ajaxsave()
+	{
+		/*
+		 * Note: we don't do a token check as we're fetching information
+		 * asynchronously. This means that between requests the token might
+		 * change, making it impossible for AJAX to work.
+		 */
+
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+
+		$cache_timeout = $this->input->getInt('cache_timeout', 0);
+		if ($cache_timeout == 0)
 		{
-			// This is the api direction (where the data come from "ajax" or "in future whatever" we use at this time only the ajax variant)
-			// The problem with JSession token check have to be resolved!
-		}
-		else
-		{
-			JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+			$component = JComponentHelper::getComponent('com_xiveirm');
+			$params = $component->params;
+			$cache_timeout = $params->get('cachetimeout', 6, 'int');
+			$cache_timeout = 3600 * $cache_timeout;
 		}
 
 		// Initialise variables.
@@ -58,22 +79,19 @@ class XiveirmControllerApi extends XiveirmController
 		// Attempt to save the data.
 		$return = $model->save($data);
 
-//		echo json_encode($return);
-
-//		// XAP-TODO: Not so nice and have to be updated to the right things
-		$returnUrl = '/components/com_xiveirm/helpers/api_return.php?string=' . json_encode($return);
-		header('Location: ' . $returnUrl);
+		echo json_encode($return);
 
 //		// Flush the data from the session.
 //		$app->setUserState('com_xiveirm.edit.api.data', null);
+
+		JFactory::getApplication()->close();
 	}
-    
-    
-	function cancel()
+
+	function ajaxcancel()
 	{
 	}
 
-	public function remove()
+	public function ajaxremove()
 	{
 	}
 }
