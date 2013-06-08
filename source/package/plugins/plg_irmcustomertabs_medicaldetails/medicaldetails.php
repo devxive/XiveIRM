@@ -20,10 +20,10 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 {
 	/**
 	 * Stores the tab app name
-	 * @var	tabAppId
+	 * @var	tab_key
 	 * @since	3.1
 	 */
-	var $tabAppId;
+	var $tab_key;
 
 	/**
 	 * INITIATE THE CONSTRUCTOR
@@ -31,24 +31,24 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 	public function __construct(& $subject, $config)
 	{
 		parent::__construct($subject, $config);
-		$this->tabAppId = 'medicaldetails';
+		$this->tab_key = 'medicaldetails';
 		$this->loadLanguage();
 	}
 
 	/**
 	 * @param   object	&$item		The item referenced object which includes the system id of this contact
 	 *
-	 * @return  array			tabAppId = The tab identification, tabContent = Content of the Container
+	 * @return  array			tab_key = The tab identification, tabContent = Content of the Container
 	 *
 	 * @since   3.0
 	 */
 	public function loadInBasedataContainer(&$item = null, &$params = null)
 	{
-		$tabData = IRMSystem::getTabData($this->tabAppId, $item->id, false);
+		$tabData = IRMSystem::getTabData($item->id, $this->tab_key);
 
 		ob_start();
 		?>
-		<!---------- Begin output buffering: <?php echo $this->tabAppId; ?> ---------->
+		<!---------- Begin output buffering: <?php echo $this->tab_key; ?> ---------->
 		<div class="widget-box light-border small-margin-top">
 			<div class="widget-header red hidden-phone visible-desktop">
 				<h5 class="smaller">Actiontoolbar</h5>
@@ -166,13 +166,13 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 			</div>
 		</div>
 
-		<!---------- End output buffering: <?php echo $this->tabAppId; ?> ---------->
+		<!---------- End output buffering: <?php echo $this->tab_key; ?> ---------->
 		<?php
 
 		$tabContent = ob_get_clean();
 
 		$inMasterContainer = array(
-			'tabAppId' => $this->tabAppId . '-widget',
+			'tab_key' => $this->tab_key . '-widget',
 			'tabContent' => $tabContent
 		);
 
@@ -182,14 +182,14 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 	/**
 	 * @param   object	&$item		The item referenced object which includes the system id of this contact
 	 *
-	 * @return  array			tabAppId = The tab identification, tabName = Translateable string from .ini file
+	 * @return  array			tab_key = The tab identification, tabName = Translateable string from .ini file
 	 *
 	 * @since   3.0
 	 */
 	public function loadTabButton(&$item = null)
 	{
 		$tabButton = array(
-			'tabAppId' => $this->tabAppId,
+			'tab_key' => $this->tab_key,
 			'tabButtonName' => '<i class="icon-medkit red"></i> ' . JText::_('PLG_IRMCUSTOMERTABS_MEDICALDETAILS_TABNAME')
 		);
 
@@ -199,28 +199,28 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 	/**
 	 * @param   object	&$item		The item referenced object which includes the system id of this contact
 	 *
-	 * @return  array			tabAppId = The tab identification, tabContent = Summary of the tabForms
+	 * @return  array			tab_key = The tab identification, tabContent = Summary of the tabForms
 	 *
 	 * @since   3.0
 	 */
 	public function loadTabContainer(&$item = null)
 	{
 		// Get the values from database
-		$tabData = IRMSystem::getTabData($this->tabAppId, $item->id, false);
+		$tabData = IRMSystem::getTabData($item->id, $this->tab_key);
 
 //		echo '<pre>';
 //		print_r($tabData);
 //		echo '</pre>';
 		ob_start();
 		?>
-		<!---------- Begin output buffering: <?php echo $this->tabAppId; ?> ---------->
+		<!---------- Begin output buffering: <?php echo $this->tab_key; ?> ---------->
 		<style>
 			#chzn-select .chzn-container, #chzn-select .chzn-container-multi, #chzn-select .chzn-drop {width: 99.6% !important;}
 			.widget-toolbar .popover {width: 220px;}
 			.widget-toolbar .popover .popover-content {line-height: 15px;}
 		</style>
 
-		<form id="form-tab-<?php echo $this->tabAppId; ?>" class="form-horizontal">
+		<form id="form-tab-<?php echo $this->tab_key; ?>" class="form-horizontal">
 			<div class="row-fluid">
 			<div class="span6">
 				<div class="widget-box">
@@ -356,7 +356,7 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 			</div>
 			</div>
 			<div class="form-actions">
-				<input type="hidden" name="tabForm[tabkey]" value="<?php echo $this->tabAppId; ?>">
+				<input type="hidden" name="tabForm[tabkey]" value="<?php echo $this->tab_key; ?>">
 				<input type="hidden" name="tabForm[customercid]" value="<?php echo isset($item->id) ? $item->id : '0'; ?>">
 				<?php echo JHtml::_('form.token'); ?>
 
@@ -372,13 +372,13 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 		</center>
 		<script>
 			jQuery(function(){
-				$("#form-tab-<?php echo $this->tabAppId; ?>").submit(function(e){
+				$("#form-tab-<?php echo $this->tab_key; ?>").submit(function(e){
 					e.preventDefault();
 
 					$("#loading-btn-recall").addClass("btn-warning");
 					$("#loading-btn-recall").button("loading");
 
-					$.post('index.php?option=com_xiveirm&task=api.ajaxsave', $("#form-tab-<?php echo $this->tabAppId; ?>").serialize(),
+					$.post('index.php?option=com_xiveirm&task=api.ajaxsave', $("#form-tab-<?php echo $this->tab_key; ?>").serialize(),
 					function(data){
 						if(data.apiReturnCode === 'SAVED'){
 							$.gritter.add({
@@ -422,19 +422,18 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 	 * example {"apiReturnCode":"SAVED","apiReturnRowId":"173","apiReturnMessage":"Successfully saved"}
 	 * 
 	 * apiReturnCode could be: SAVED, UPDATED or an Error Number ie. 666
-	 * apiReturnRowId: returns the id from the database on which this tab entry is saved! this feature may deprecated in future versions, since we have already a unique tabId "medicaldetails.dbIdFromCustomer"
 	 * apiReturnMessage: returns a informal message, should be used for debugging and not in production use. returns the database or php errors
 	 */
 ?>
 		</script>
 
-		<!---------- End output buffering: <?php echo $this->tabAppId; ?> ---------->
+		<!---------- End output buffering: <?php echo $this->tab_key; ?> ---------->
 		<?php
 
 		$tabContent = ob_get_clean();
 
 		$tabContainer = array(
-			'tabAppId' => $this->tabAppId,
+			'tab_key' => $this->tab_key,
 			'tabContent' => $tabContent
 		);
 

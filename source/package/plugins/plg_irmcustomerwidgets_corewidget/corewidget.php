@@ -20,10 +20,10 @@ class PlgIrmCustomerWidgetsCorewidget extends JPlugin
 {
 	/**
 	 * Stores the tab app name
-	 * @var	tabAppId
+	 * @var	tab_key
 	 * @since	3.1
 	 */
-	var $tabAppId;
+	var $tab_key;
 
 	/**
 	 * INITIATE THE CONSTRUCTOR
@@ -31,14 +31,14 @@ class PlgIrmCustomerWidgetsCorewidget extends JPlugin
 	public function __construct(& $subject, $config)
 	{
 		parent::__construct($subject, $config);
-		$this->tabAppId = 'corewidget';
+		$this->tab_key = 'corewidget';
 		$this->loadLanguage();
 	}
 
 	/**
 	 * @param   object	&$item		The item referenced object which includes the system id of this contact
 	 *
-	 * @return  array			tabAppId = The tab identification, tabContent = Content of the Container
+	 * @return  array			tab_key = The tab identification, tabContent = Content of the Container
 	 *
 	 * @since   3.0
 	 */
@@ -88,7 +88,7 @@ class PlgIrmCustomerWidgetsCorewidget extends JPlugin
 //		echo '</pre>';
 		ob_start();
 		?>
-		<!---------- Begin output buffering: <?php echo $this->tabAppId; ?> ---------->
+		<!---------- Begin output buffering: <?php echo $this->tab_key; ?> ---------->
 
 		<div class="widget-box light-border">
 			<div class="widget-header header-color-dark">
@@ -116,13 +116,13 @@ class PlgIrmCustomerWidgetsCorewidget extends JPlugin
 			</div>
 		</div>
 
-		<!---------- End output buffering: <?php echo $this->tabAppId; ?> ---------->
+		<!---------- End output buffering: <?php echo $this->tab_key; ?> ---------->
 		<?php
 
 		$tabContent = ob_get_clean();
 
 		$inMasterContainer = array(
-			'tabAppId' => $this->tabAppId,
+			'tab_key' => $this->tab_key,
 			'tabContent' => $tabContent
 		);
 
@@ -132,7 +132,7 @@ class PlgIrmCustomerWidgetsCorewidget extends JPlugin
 	/**
 	 * @param   object	&$item		The item referenced object which includes the system id of this contact
 	 *
-	 * @return  array			tabAppId = The tab identification, tabContent = Content of the Container
+	 * @return  array			tab_key = The tab identification, tabContent = Content of the Container
 	 *
 	 * @since   3.0
 	 */
@@ -143,7 +143,7 @@ class PlgIrmCustomerWidgetsCorewidget extends JPlugin
 
 		ob_start();
 		?>
-		<!---------- Begin output buffering: <?php echo $this->tabAppId; ?> ---------->
+		<!---------- Begin output buffering: <?php echo $this->tab_key; ?> ---------->
 
 		<div class="widget-box small-margin-top">
 			<div class="widget-header" style="background: url(/images/system/widgets/logo_deutschepost.png) 95% 40% no-repeat #FC0; height: 31px;">
@@ -158,13 +158,13 @@ class PlgIrmCustomerWidgetsCorewidget extends JPlugin
 			</div>
 		</div>
 
-		<!---------- End output buffering: <?php echo $this->tabAppId; ?> ---------->
+		<!---------- End output buffering: <?php echo $this->tab_key; ?> ---------->
 		<?php
 
 		$tabContent = ob_get_clean();
 
 		$inMasterContainer = array(
-			'tabAppId' => $this->tabAppId,
+			'tab_key' => $this->tab_key,
 			'tabContent' => $tabContent
 		);
 
