@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3.1" type="plugin" group="irmmasterdatawidgets" method="upgrade">
-	<name>plg_irmmasterdatawidgets_corewidget</name>
+<extension version="3.1" type="plugin" group="irmcustomerwidgets" method="upgrade">
+	<name>plg_irmcustomerwidgets_corewidget</name>
 	<author>devXive</author>
 	<creationDate>May 2013</creationDate>
 	<copyright>(C) 1997 - 2013 devXive - research and development. All rights reserved.</copyright>
@@ -8,16 +8,16 @@
 	<authorEmail>support@devxive.com</authorEmail>
 	<authorUrl>www.devxive.com</authorUrl>
 	<version>0.0.1</version>
-	<description>PLG_IRMMASTERDATAWIDGETS_COREWIDGET_XML_DESCRIPTION</description>
+	<description>PLG_IRMCUSTOMERWIDGETS_COREWIDGET_XML_DESCRIPTION</description>
 	<files>
 		<filename plugin="corewidget">corewidget.php</filename>
 		<filename>index.html</filename>
 	</files>
 	<languages folder="language">
-		<language tag="en-GB">en-GB/en-GB.plg_irmmasterdatawidgets_corewidget.ini</language>
-		<language tag="en-GB">en-GB/en-GB.plg_irmmasterdatawidgets_corewidget.sys.ini</language>
-		<language tag="de-DE">de-DE/de-DE.plg_irmmasterdatawidgets_corewidget.ini</language>
-		<language tag="de-DE">de-DE/de-DE.plg_irmmasterdatawidgets_corewidget.sys.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_irmcustomerwidgets_corewidget.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_irmcustomerwidgets_corewidget.sys.ini</language>
+		<language tag="de-DE">de-DE/de-DE.plg_irmcustomerwidgets_corewidget.ini</language>
+		<language tag="de-DE">de-DE/de-DE.plg_irmcustomerwidgets_corewidget.sys.ini</language>
 	</languages>
 	<config>
 		<fields name="params">
