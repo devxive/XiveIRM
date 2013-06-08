@@ -7,7 +7,7 @@
     <author>devXive</author>
     <authorEmail>support@devxive.com</authorEmail>
     <authorUrl>http://devxive.com</authorUrl>
-    <version>3.2.0</version>
+    <version>3.3.0</version>
     <description>Interoperable Relationship Management - the next Generation of CRM</description>
     
     <install> <!-- Runs on install -->
@@ -38,7 +38,7 @@
         <menu img="components/com_xiveirm/assets/images/s_com_xiveirm.png" >COM_XIVEIRM</menu>
         <submenu>
             
-			<menu link="option=com_xiveirm&amp;view=irmmasterdatas" view="irmmasterdatas" img="components/com_xiveirm/assets/images/s_irmmasterdatas.png" alt="Xiveirm/Irmmasterdatas">COM_XIVEIRM_TITLE_IRMMASTERDATAS</menu>
+			<menu link="option=com_xiveirm&amp;view=irmcustomers" view="irmcustomers" img="components/com_xiveirm/assets/images/s_irmcustomers.png" alt="Xiveirm/Irmcustomers">COM_XIVEIRM_TITLE_IRMCUSTOMERS</menu>
 
 			<menu link="option=com_xiveirm&amp;view=additionalinformations" view="additionalinformations" img="components/com_xiveirm/assets/images/s_additionalinformations.png" alt="Xiveirm/Additionalinformations">COM_XIVEIRM_TITLE_ADDITIONALINFORMATIONS</menu>
 
