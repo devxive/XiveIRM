@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -16,7 +16,7 @@ jimport('joomla.event.dispatcher');
 /**
  * Xiveirm model.
  */
-class XiveirmModelIrmmasterdata extends JModelForm
+class XiveirmModelIrmcustomer extends JModelForm
 {
     
     var $_item = null;
@@ -34,18 +34,18 @@ class XiveirmModelIrmmasterdata extends JModelForm
 
 		// Load state from the request userState on edit or from the passed variable on default
         if (JFactory::getApplication()->input->get('layout') == 'edit') {
-            $id = JFactory::getApplication()->getUserState('com_xiveirm.edit.irmmasterdata.id');
+            $id = JFactory::getApplication()->getUserState('com_xiveirm.edit.irmcustomer.id');
         } else {
             $id = JFactory::getApplication()->input->get('id');
-            JFactory::getApplication()->setUserState('com_xiveirm.edit.irmmasterdata.id', $id);
+            JFactory::getApplication()->setUserState('com_xiveirm.edit.irmcustomer.id', $id);
         }
-		$this->setState('irmmasterdata.id', $id);
+		$this->setState('irmcustomer.id', $id);
 
 		// Load the parameters.
 		$params = $app->getParams();
         $params_array = $params->toArray();
         if(isset($params_array['item_id'])){
-            $this->setState('irmmasterdata.id', $params_array['item_id']);
+            $this->setState('irmcustomer.id', $params_array['item_id']);
         }
 		$this->setState('params', $params);
 
@@ -66,7 +66,7 @@ class XiveirmModelIrmmasterdata extends JModelForm
 			$this->_item = false;
 
 			if (empty($id)) {
-				$id = $this->getState('irmmasterdata.id');
+				$id = $this->getState('irmcustomer.id');
 			}
 
 			// Get a level row instance.
@@ -94,7 +94,7 @@ class XiveirmModelIrmmasterdata extends JModelForm
 		return $this->_item;
 	}
     
-	public function getTable($type = 'Irmmasterdata', $prefix = 'XiveirmTable', $config = array())
+	public function getTable($type = 'Irmcustomer', $prefix = 'XiveirmTable', $config = array())
 	{   
         $this->addTablePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
         return JTable::getInstance($type, $prefix, $config);
@@ -111,7 +111,7 @@ class XiveirmModelIrmmasterdata extends JModelForm
 	public function checkin($id = null)
 	{
 		// Get the id.
-		$id = (!empty($id)) ? $id : (int)$this->getState('irmmasterdata.id');
+		$id = (!empty($id)) ? $id : (int)$this->getState('irmcustomer.id');
 
 		if ($id) {
             
@@ -140,7 +140,7 @@ class XiveirmModelIrmmasterdata extends JModelForm
 	public function checkout($id = null)
 	{
 		// Get the user id.
-		$id = (!empty($id)) ? $id : (int)$this->getState('irmmasterdata.id');
+		$id = (!empty($id)) ? $id : (int)$this->getState('irmcustomer.id');
 
 		if ($id) {
             
@@ -175,7 +175,7 @@ class XiveirmModelIrmmasterdata extends JModelForm
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Get the form.
-		$form = $this->loadForm('com_xiveirm.irmmasterdata', 'irmmasterdata', array('control' => 'jform', 'load_data' => $loadData));
+		$form = $this->loadForm('com_xiveirm.irmcustomer', 'irmcustomer', array('control' => 'jform', 'load_data' => $loadData));
 		if (empty($form)) {
 			return false;
 		}
@@ -205,20 +205,20 @@ class XiveirmModelIrmmasterdata extends JModelForm
 	 */
 	public function save($data)
 	{
-		$id = (!empty($data['id'])) ? $data['id'] : (int)$this->getState('irmmasterdata.id');
+		$id = (!empty($data['id'])) ? $data['id'] : (int)$this->getState('irmcustomer.id');
         $state = (!empty($data['state'])) ? 1 : 0;
         $user = JFactory::getUser();
 
         if($id) {
             //Check the user can edit this item
-            $authorised = $user->authorise('core.edit', 'com_xiveirm') || $authorised = $user->authorise('core.edit.own', 'com_xiveirm');
-            if($user->authorise('core.edit.state', 'com_xiveirm') !== true && $state == 1){ //The user cannot edit the state of the item.
+            $authorised = $user->authorise('core.edit', 'com_xiveirm.irmcustomer.'.$id) || $authorised = $user->authorise('core.edit.own', 'com_xiveirm.irmcustomer.'.$id);
+            if($user->authorise('core.edit.state', 'com_xiveirm.irmcustomer.'.$id) !== true && $state == 1){ //The user cannot edit the state of the item.
                 $data['state'] = 0;
             }
         } else {
             //Check the user can create new items in this section
             $authorised = $user->authorise('core.create', 'com_xiveirm');
-            if($user->authorise('core.edit.state', 'com_xiveirm') !== true && $state == 1){ //The user cannot edit the state of the item.
+            if($user->authorise('core.edit.state', 'com_xiveirm.irmcustomer.'.$id) !== true && $state == 1){ //The user cannot edit the state of the item.
                 $data['state'] = 0;
             }
         }
@@ -239,8 +239,8 @@ class XiveirmModelIrmmasterdata extends JModelForm
     
      function delete($data)
     {
-        $id = (!empty($data['id'])) ? $data['id'] : (int)$this->getState('irmmasterdata.id');
-        if(JFactory::getUser()->authorise('core.delete', 'com_xiveirm') !== true){
+        $id = (!empty($data['id'])) ? $data['id'] : (int)$this->getState('irmcustomer.id');
+        if(JFactory::getUser()->authorise('core.delete', 'com_xiveirm.irmcustomer.'.$id) !== true){
             JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
             return false;
         }

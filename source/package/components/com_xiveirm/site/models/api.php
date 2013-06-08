@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -58,7 +58,24 @@ class XiveirmModelApi extends JModelForm
 	 */
 	public function checkin($id = null)
 	{
-		echo '<h1>YOU ARE HERE => model->checkin</h1>';
+		// Get the id.
+		$id = (!empty($id)) ? $id : (int)$this->getState('api.id');
+
+		if ($id)
+		{
+			// Initialise the table
+			$table = $this->getTable();
+
+			// Attempt to check the row in.
+			if (method_exists($table, 'checkin')) {
+				if (!$table->checkin($id)) {
+					$this->setError($table->getError());
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -70,9 +87,29 @@ class XiveirmModelApi extends JModelForm
 	 */
 	public function checkout($id = null)
 	{
-		echo '<h1>YOU ARE HERE => model->checkout</h1>';
-	}    
+		// Get the user id.
+		$id = (!empty($id)) ? $id : (int)$this->getState('api.id');
 
+		if ($id)
+		{
+			// Initialise the table
+			$table = $this->getTable();
+
+			// Get the current user object.
+			$user = JFactory::getUser();
+
+			// Attempt to check the row out.
+			if (method_exists($table, 'checkout')) {
+				if (!$table->checkout($user->get('id'), $id)) {
+					$this->setError($table->getError());
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}    
+    
 	/**
 	 * Method to get the profile form.
 	 *
@@ -251,11 +288,26 @@ class XiveirmModelApi extends JModelForm
 
 	function delete($data)
 	{
-		echo '<h1>YOU ARE HERE => model->delete</h1>';
+		$id = (!empty($data['id'])) ? $data['id'] : (int)$this->getState('api.id');
+
+		if(JFactory::getUser()->authorise('core.delete', 'com_xiveirm') !== true){
+			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
+			return false;
+		}
+
+		$table = $this->getTable();
+
+		if ($table->delete($data['id']) === true) {
+			return $id;
+		} else {
+			return false;
+		}
+
+		return true;
 	}
 
 	function getCategoryName($id)
 	{
-		echo '<h1>YOU ARE HERE => model->getCategoryName</h1>';
+		echo '<h1>YOU ARE HERE => model->delete</h1>';
 	}
 }

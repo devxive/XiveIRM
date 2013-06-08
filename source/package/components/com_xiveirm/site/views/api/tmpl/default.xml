@@ -2,7 +2,7 @@
 <metadata>
     <layout title="COM_XIVEIRM_TITLE_ITEM_VIEW_API" option="View">
         <message>
-                        <![CDATA[COM_XIVEIRM_TITLE_FORM_VIEW_API_DESC]]>
+                        <![CDATA[COM_XIVEIRM_TITLE_ITEM_VIEW_API_DESC]]>
         </message>
     </layout>
     <fields name="params">

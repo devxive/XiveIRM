@@ -1,6 +1,7 @@
 <?php
+
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -13,7 +14,7 @@ jimport('joomla.application.component.modellist');
 /**
  * Methods supporting a list of Xiveirm records.
  */
-class XiveirmModelIrmmasterdatas extends JModelList {
+class XiveirmModelIrmcustomers extends JModelList {
 
     /**
      * Constructor.
@@ -70,7 +71,7 @@ class XiveirmModelIrmmasterdatas extends JModelList {
                 )
         );
         
-        $query->from('`#__xiveirm_masterdata` AS a');
+        $query->from('`#__xiveirm_customer` AS a');
         
 
     // Join over the users for the checked out user.
