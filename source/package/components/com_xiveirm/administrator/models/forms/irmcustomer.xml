@@ -17,6 +17,12 @@
 			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_MODIFIED"
 			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_MODIFIED"  hidden="true" />
 
+		<field name="access_id" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_ACCESS_ID"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_ACCESS_ID"
+			filter="string"
+			maxlength="50" />
+
 		<field name="client_id" type="text"
 			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_CLIENT_ID"
 			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_CLIENT_ID"
@@ -28,6 +34,12 @@
 			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_CUSTOMER_ID"
 			filter="string"
 			maxlength="25" />
+
+		<field name="company_name" type="text"
+			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_COMPANY_NAME"
+			description="COM_XIVEIRM_FORM_DESC_IRMCUSTOMER_COMPANY_NAME"
+			filter="string"
+			maxlength="150" />
 
 		<field name="title" type="text" size="40" class="inputbox"
 			label="COM_XIVEIRM_FORM_LBL_IRMCUSTOMER_TITLE"
@@ -157,18 +169,5 @@
 
 		<field name="checked_out_time" type="hidden"
 			filter="unset" />
-	</fieldset>
-	<fieldset name="accesscontrol">
-		<field name="asset_id" type="hidden"
-			filter="unset" />
-
-		<field name="rules" type="rules"
-			label="JFIELD_RULES_LABEL"
-			translate_label="false"
-			filter="rules"
-			validate="rules"
-			class="inputbox"
-			component="com_xiveirm"
-			section="irmcustomer" />
 	</fieldset>
 </form>

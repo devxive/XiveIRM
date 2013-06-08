@@ -22,18 +22,4 @@
 			label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_TAB_VALUE"
 			description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_TAB_VALUE" />
 	</fieldset> 
-	<fieldset name="accesscontrol">
-		<field name="asset_id" type="hidden"
-			filter="unset" />
-
-		<field name="rules"
-			type="rules"
-			label="JFIELD_RULES_LABEL"
-			translate_label="false"
-			filter="rules"
-			validate="rules"
-			class="inputbox"
-			component="com_xiveirm"
-			section="additionalinformation" />
-	</fieldset>
 </form>
