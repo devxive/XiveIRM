@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     3.3.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -13,15 +13,15 @@ defined('_JEXEC') or die;
 require_once JPATH_COMPONENT.'/controller.php';
 
 /**
- * Irmmasterdatas list controller class.
+ * Irmcustomers list controller class.
  */
-class XiveirmControllerIrmmasterdatas extends XiveirmController
+class XiveirmControllerIrmcustomers extends XiveirmController
 {
 	/**
 	 * Proxy for getModel.
 	 * @since	1.6
 	 */
-	public function &getModel($name = 'Irmmasterdatas', $prefix = 'XiveirmModel')
+	public function &getModel($name = 'Irmcustomers', $prefix = 'XiveirmModel')
 	{
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
 		return $model;
