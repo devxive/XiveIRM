@@ -356,9 +356,8 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 			</div>
 			</div>
 			<div class="form-actions">
-				<input type="hidden" name="tabForm[id]" id="tabId" value="<?php echo isset($tabData->id) ? $tabData->id : '0'; ?>">
-				<input type="hidden" name="tabForm[tabappid]" value="<?php echo $this->tabAppId; ?>">
-				<input type="hidden" name="tabForm[masterdataitemid]" value="<?php echo $item->id; ?>">
+				<input type="hidden" name="tabForm[tabkey]" value="<?php echo $this->tabAppId; ?>">
+				<input type="hidden" name="tabForm[customercid]" value="<?php echo isset($item->id) ? $item->id : '0'; ?>">
 				<?php echo JHtml::_('form.token'); ?>
 
 				<button id="loading-btn-recall" data-loading-text="Please wait..." data-complete-text="Saved"  data-error-text="Error!" class="btn btn-info" type="submit"><i class="icon-ok"></i> <?php echo isset($tabData->id) ? 'Update' : 'Submit'; ?></button>
@@ -388,8 +387,6 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 								icon: 'icon-check',
 								class_name: 'alert-success'
 							});
-
-							$("#tabId").val(data.apiReturnRowId);
 
 							$("#loading-btn-recall").removeClass("btn-warning");
 							$("#loading-btn-recall").button("complete");
