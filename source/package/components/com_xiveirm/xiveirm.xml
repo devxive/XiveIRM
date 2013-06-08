@@ -46,8 +46,6 @@
 
 			<menu link="option=com_xiveirm&amp;view=selectlists" view="selectlists" img="components/com_xiveirm/assets/images/s_selectlists.png" alt="Xiveirm/Selectlists">COM_XIVEIRM_TITLE_SELECTLISTS</menu>
 
-			<menu link="option=com_xiveirm&amp;view=audits" view="audits" img="components/com_xiveirm/assets/images/s_audits.png" alt="Xiveirm/Audits">COM_XIVEIRM_TITLE_AUDITS</menu>
-
         </submenu>
         <files folder="administrator">
             <filename>access.xml</filename>

@@ -35,12 +35,6 @@ class XiveirmHelper
 			'index.php?option=com_xiveirm&view=selectlists',
 			$vName == 'selectlists'
 		);
-		JHtmlSidebar::addEntry(
-			JText::_('COM_XIVEIRM_TITLE_AUDITS'),
-			'index.php?option=com_xiveirm&view=audits',
-			$vName == 'audits'
-		);
-
 	}
 
 	/**
