@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     XAP.Plugin
- * @subpackage  IRMMasterDataTabs.medicaldetails
+ * @subpackage  IRMCustomerTabs.medicaldetails
  *
  * @copyright   Copyright (C) 1997 - 2013 devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -13,10 +13,10 @@ defined('JPATH_BASE') or die;
  * An example custom profile plugin.
  *
  * @package     XAP.Plugin
- * @subpackage  IRMMasterDataTabs.medicaldetails
+ * @subpackage  IRMCustomerTabs.medicaldetails
  * @since       3.0
  */
-class PlgIrmmasterdatatabsMedicaldetails extends JPlugin
+class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 {
 	/**
 	 * Stores the tab app name
@@ -69,7 +69,7 @@ class PlgIrmmasterdatatabsMedicaldetails extends JPlugin
 
 		<div class="widget-box light-border">
 			<div class="widget-header red small-margin-top">
-				<h5 class="smaller"><?php echo JText::_('PLG_IRMMASTERDATATABS_MEDICALDETAILS_TABNAME'); ?> Widget</h5>
+				<h5 class="smaller"><?php echo JText::_('PLG_IRMCUSTOMERTABS_MEDICALDETAILS_TABNAME'); ?> Widget</h5>
 				<?php if(isset($tabData->tab_value->infections_set)): ?>
 					<div class="widget-toolbar">
 						<span class="badge badge-important" data-rel="tooltip" data-placement="bottom" data-original-title="Patient hat akute Infektionen!">Achtung Infektionsgefahr!</span>
@@ -190,7 +190,7 @@ class PlgIrmmasterdatatabsMedicaldetails extends JPlugin
 	{
 		$tabButton = array(
 			'tabAppId' => $this->tabAppId,
-			'tabButtonName' => '<i class="icon-medkit red"></i> ' . JText::_('PLG_IRMMASTERDATATABS_MEDICALDETAILS_TABNAME')
+			'tabButtonName' => '<i class="icon-medkit red"></i> ' . JText::_('PLG_IRMCUSTOMERTABS_MEDICALDETAILS_TABNAME')
 		);
 
 		return $tabButton;
