@@ -97,7 +97,7 @@ $dispatcher = JDispatcher::getInstance();
 			<?php
 				foreach($dispatcher->trigger( 'loadTabButton', array(&$this->item) ) as $tabButton)
 				{
-					echo '<li><a data-toggle="tab" href="#' . $tabButton['tabAppId'] . '">';
+					echo '<li><a data-toggle="tab" href="#' . $tabButton['tab_key'] . '">';
 					echo $tabButton['tabButtonName'];
 					echo '</a></li>';
 				}
@@ -237,19 +237,19 @@ $dispatcher = JDispatcher::getInstance();
 						<?php
 							foreach($dispatcher->trigger( 'loadInBasedataContainerFirst', array(&$this->item) ) as $inBaseWidget)
 							{
-								echo '<div id="' . $inBaseWidget['tabAppId'] . '">';
+								echo '<div id="' . $inBaseWidget['tab_key'] . '">';
 								echo $inBaseWidget['tabContent'];
 								echo '</div>';
 							}
 							foreach($dispatcher->trigger( 'loadInBasedataContainer', array(&$this->item) ) as $inBaseWidget)
 							{
-								echo '<div id="' . $inBaseWidget['tabAppId'] . '">';
+								echo '<div id="' . $inBaseWidget['tab_key'] . '">';
 								echo $inBaseWidget['tabContent'];
 								echo '</div>';
 							}
 							foreach($dispatcher->trigger( 'loadInBasedataContainerLast', array(&$this->item) ) as $inBaseWidget)
 							{
-								echo '<div id="' . $inBaseWidget['tabAppId'] . '">';
+								echo '<div id="' . $inBaseWidget['tab_key'] . '">';
 								echo $inBaseWidget['tabContent'];
 								echo '</div>';
 							}
@@ -271,7 +271,7 @@ $dispatcher = JDispatcher::getInstance();
 			<?php
 				foreach($dispatcher->trigger( 'loadTabContainer', array(&$this->item) ) as $tabContainer)
 				{
-					echo '<div id="' . $tabContainer['tabAppId'] . '" class="tab-pane">';
+					echo '<div id="' . $tabContainer['tab_key'] . '" class="tab-pane">';
 					echo $tabContainer['tabContent'];
 					echo '</div>';
 				}

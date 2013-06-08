@@ -143,7 +143,7 @@ class XiveirmModelApi extends JModelForm
 	 * @return	mixed		The user id on success, false on failure.
 	 * @since	1.6
 	 */
-	public function save($data)
+	public function savetab($data)
 	{
 		// Now we get raw $data from the controller and have to perform the save request
 		// first we have to check if we got any datas and split the data into separate values
@@ -154,24 +154,18 @@ class XiveirmModelApi extends JModelForm
 			// Perform the return array
 			$return_arr = array();
 			$return_arr["apiReturnCode"] = 1000;
-			$return_arr["apiReturnRowId"] = null;
 			$return_arr["apiReturnMessage"] = 'The form is completely empty: Neither an appId, a tabId nor a masterdataId is given!';
 
 			return $return_arr;
 		}
 
 		// Split and store the identifier vars
-		$dataTabId		= $data['id']; // This is the data tab id, the id from the masterdata_add db row
-		$tabAppId		= $data['tabappid']; // This is the tab identifier (a lowercase name => the same as in plugins/masterdatatabs)
-		$masterDataItemId	= $data['masterdataitemid']; // This is the item dbId from the #__xiveirm_masterdata table
-
-		// set the tab_id for the database
-		$tabId = $tabAppId . '.' . $masterDataItemId;
+		$tab_key	= $data['tabkey']; // This is the tab identifier (a lowercase name => the same as in plugins/masterdatatabs)
+		$customer_cid	= $data['customercid']; // This is the item dbId from the #__xiveirm_customer table
 
 		// exclude system based form infos for the new array
-		unset($data['id']);
-		unset($data['tabappid']);
-		unset($data['masterdataitemid']);
+		unset($data['tabkey']);
+		unset($data['customercid']);
 
 		// Check if in all the datas are values and/or nested arrays from multiselect and reinject the val as key, save all as a clean new array
 		$newDataArray = array();
@@ -201,28 +195,36 @@ class XiveirmModelApi extends JModelForm
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
 
-		// Lets have a look first if we have already a tab saved for this customer! Happens if the user attemp to click more than once on save
-		if($dataTabId == '0')
-		{
-			$query
-				->select('*')
-				->from('#__xiveirm_masterdata_add')
-				->where('tab_id = ' . $db->quote($tabId) . '');
-			$db->setQuery($query);
+		// Lets have a look first if we have already a tab with that tab_key saved for this customer! Happens if the user attemp to click more than once on save
+		$query
+			->select('*')
+			->from('#__xiveirm_customer_add')
+			->where('customer_cid = ' . $db->quote($customer_cid) . '')
+			->where('tab_key = ' . $db->quote($tab_key) . '');
 
-			$dataTabId = $db->loadObject()->id;
+		$db->setQuery($query);
+		$result = $db->loadObject();
+
+		if($result) {
+			$tab_exist = true;
+
+			// Ok, tab exist, if the array is empty, the user try to delete all values. Lets kill the row!
+			// XiveIRM-TODO: Delete the row!
+			
+		} else {
+			$tab_exist = false;
 		}
 
-		if($dataTabId == '0' || !$dataTabId)
+		if(!$tab_exist && $customer_cid != 0)
 		{
 			// Set the columns
-			$columns = array('tab_id', 'tab_field_id', 'tab_value', 'state', 'ordering');
+			$columns = array('customer_cid', 'tab_key', 'tab_value', 'ordering');
 
 			// Set the values
-			$values = array($db->quote($tabId), 0, $db->quote($newData), 1, 0);
+			$values = array($db->quote($customer_cid), $db->quote($tab_key), $db->quote($newData), 0);
 
 			$query
-				->insert($db->quoteName('#__xiveirm_masterdata_add'))
+				->insert($db->quoteName('#__xiveirm_customer_add'))
 				->columns($db->quoteName($columns))
 				->values(implode(',', $values));
 			$db->setQuery($query);
@@ -231,29 +233,27 @@ class XiveirmModelApi extends JModelForm
 			try
 			{
 				$db->execute();
-				$apiReturnRowId = $db->insertid();
 				$apiReturnCode = 'SAVED';
 				$apiReturnMessage = 'Succesfully saved';
 			} catch (Exception $e) {
-				$apiReturnRowId = null;
 				$apiReturnCode = (int)$e->getCode();
 				$apiReturnMessage = $e->getMessage();
 			}
 		}
-		else if($dataTabId > '0')
+		else if($tab_exist && $customer_cid != 0)
 		{
 			// Set the fields
 			$fields = array(
-				'tab_id = ' . $db->quote($tabId) . '',
-				'tab_field_id = 0',
+				'customer_cid = ' . $db->quote($customer_cid) . '',
+				'tab_key = ' . $db->quote($tab_key) . '',
 				'tab_value = ' . $db->quote($newData) . '',
-				'state = 1',
 				'ordering = 0');
 
 			$query
-				->update($db->quoteName('#__xiveirm_masterdata_add'))
+				->update($db->quoteName('#__xiveirm_customer_add'))
 				->set($fields)
-				->where('id = ' . $db->quote($dataTabId) . '');
+				->where('customer_cid = ' . $db->quote($customer_cid) . '')
+				->where('tab_key = ' . $db->quote($tab_key) . '');
 
 			$db->setQuery($query);
 
@@ -262,25 +262,21 @@ class XiveirmModelApi extends JModelForm
 			{
 				$db->execute();
 				$apiReturnCode = 'UPDATED';
-				$apiReturnRowId = $dataTabId;
 				$apiReturnMessage = 'Succesfully updated';
 			} catch (Exception $e) {
 				$apiReturnCode = (int)$e->getCode();
-				$apiReturnRowId = null;
 				$apiReturnMessage = $e->getMessage();
 			}
 		}
 		else
 		{
-			$apiReturnRowId = null;
-			$apiReturnCode = 666;
-			$apiReturnMessage = 'The dataTabId is either 0 nor an integer greater than 0';
+			$apiReturnCode = '1666';
+			$apiReturnMessage = 'Unbekannter Fehler';
 		}
 
 		// Perform the return array
 		$return_arr = array();
 		$return_arr["apiReturnCode"] = $apiReturnCode;
-		$return_arr["apiReturnRowId"] = $apiReturnRowId;
 		$return_arr["apiReturnMessage"] = $apiReturnMessage;
 
 		return $return_arr;

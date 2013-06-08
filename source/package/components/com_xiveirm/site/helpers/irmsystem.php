@@ -20,23 +20,21 @@ class IRMSystem
 	 * 
 	 * returns a prepared array
 	 */
-	public function getTabData($tabAppId, $masterDataItemId, $json = false)
+	public function getTabData($customer_cid, $tab_key)
 	{
-		if(!$tabAppId || !$masterDataItemId)
+		if(!$customer_cid || !$tab_key)
 		{
 			return false;
 		}
-
-		// set the tab_id for the where clause
-		$tabId = $tabAppId . '.' . $masterDataItemId;
 
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
 
 		$query
 			->select('*')
-			->from('#__xiveirm_masterdata_add')
-			->where('tab_id = ' . $db->quote($tabId) . '');
+			->from('#__xiveirm_customer_add')
+			->where('customer_cid = ' . $db->quote($customer_cid) . '')
+			->where('tab_key = ' . $db->quote($tab_key) . '');
 		$db->setQuery($query);
 
 		// Try to get the data or the error code for debugging
@@ -44,11 +42,12 @@ class IRMSystem
 		{
 			$result = $db->loadObject();
 
-			if($json == false && $result)
-			{
+			if($result) {
 				$tab_value = json_decode($result->tab_value);
 				$result->tab_value = $tab_value;
-			}			
+			} else {
+				$result = new stdClass;
+			}
 
 			return $result;
 		} catch (Exception $e) {
