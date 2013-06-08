@@ -185,12 +185,11 @@ $dispatcher = JDispatcher::getInstance();
 						<input type="hidden" name="jform[checked_out_time]" value="<?php echo $this->item->checked_out_time; ?>" />
 						<input type="hidden" name="jform[modified]" value="<?php echo $this->item->modified; ?>" />
 						<input type="hidden" name="jform[state]" value="<?php echo $this->item->state; ?>" />
-						<input type="hidden" name="jform[trash]" value="<?php echo $this->item->trash; ?>" />
 						<input type="hidden" name="option" value="com_xiveirm" />
 						<input type="hidden" name="task" value="irmmasterdataform.save" />
 						<?php echo JHtml::_('form.token'); ?>
 						<div class="form-actions">
-							<span id="form-buttons" class="hidden">
+							<span id="form-buttons" class="<?php echo empty($this->item->id) ? '' : 'hidden'; ?>">
 								<button class="validate btn btn-info" type="submit" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_SUBMIT_CHECKIN_TIP'); ?>"><i class="icon-ok"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_SUBMIT_CHECKIN'); ?></button>
 								&nbsp; &nbsp; &nbsp;
 								<button class="btn" type="reset" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_RESET_TIP'); ?>"><i class="icon-undo"></i> <?php echo JText::_('COM_XIVEIRM_IRMMASTERDATA_FORM_RESET'); ?></button>
