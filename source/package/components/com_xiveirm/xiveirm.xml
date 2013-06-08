@@ -32,9 +32,7 @@
         <folder>helpers</folder>
     </files>
     <languages folder="site">
-        
-			<language tag="en-GB">language/en-GB.com_xiveirm.ini</language>
-			<language tag="de-DE">language/de-DE.com_xiveirm.ini</language>
+		<language tag="en-GB">language/en-GB.com_xiveirm.ini</language>
     </languages>
     <administration>
         <menu img="components/com_xiveirm/assets/images/s_com_xiveirm.png" >COM_XIVEIRM</menu>
@@ -62,13 +60,8 @@
             <folder>views</folder>
         </files>
         <languages folder="administrator">
-            
-			<language tag="en-GB">language/en-GB.com_xiveirm.ini</language>
-			<language tag="en-GB">language/en-GB.com_xiveirm.sys.ini</language>
-			<language tag="de-DE">language/de-DE.com_xiveirm.ini</language>
-			<language tag="de-DE">language/de-DE.com_xiveirm.sys.ini</language>
+		<language tag="en-GB">language/en-GB.com_xiveirm.ini</language>
+		<language tag="en-GB">language/en-GB.com_xiveirm.sys.ini</language>
         </languages>
     </administration>
 </extension>
-<!-- Component built by the Joomla Component Creator -->
-<!-- http://www.notwebdesign.com/joomla-component-creator/ -->
