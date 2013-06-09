@@ -105,7 +105,22 @@ $search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 						endif; ?>
 					</td>
 
-					<td class=" "><a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmcustomer.edit&id='.$item->id); ?>"><?php echo $item->last_name . ', ' . $item->first_name; ?></a></td>
+					<td class=" ">
+						<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmcustomer.edit&id='.$item->id); ?>">
+							<?php 
+								if(!empty($item->company_name)) {
+									echo $item->company_name . '<br>';
+								} else {
+								}
+								if(!empty($item->last_name) && !empty($item->first_name)) {
+									echo $item->last_name . ', ' . $item->first_name;
+								} else {
+									echo !empty($item->last_name) ? $item->last_name : '';
+									echo !empty($item->first_name) ? $item->first_name : '';
+								}
+							?>
+						</a>
+					</td>
 					<td class=" "><?php if($item->gender == 'm'): echo '<i class="icon-user blue"></i>'; elseif($item->gender == 'f'): echo '<i class="icon-user red"></i>'; elseif($item->gender == 'c'): echo'<i class="icon-user green"></i>'; else: echo '<i class="icon-user"></i>'; endif; ?> <?php if(strtotime($item->dob) != -62135600400): echo date(JText::_('DATE_FORMAT_LC4'), strtotime($item->dob)); endif; ?></td>
 					<td class="hidden-480 "><?php echo $item->address_street; ?> <?php echo $item->address_houseno; ?><br><?php echo $item->address_zip; ?> <?php echo $item->address_city; ?>, <?php echo $item->address_country; ?></td>
 					<td class="hidden-phone "><?php if($item->mobile != ''): echo '<i class="icon-mobile-phone"></i> ' . $item->mobile . '<br>'; endif; if($item->phone != ''): echo '<i class="icon-phone"></i> ' . $item->phone; endif; ?></td>
