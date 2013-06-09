@@ -262,13 +262,12 @@ $dispatcher = JDispatcher::getInstance();
 				?>
 				<!-- ---------- ---------- ---------- ---------- ---------- END TAB.PLUGINS_CONTENT ---------- ---------- ---------- ---------- ---------- -->
 
+				<input type="hidden" name="coreform[id]" id="customer_cid" value="<?php echo isset($this->item->id) ? $this->item->id : '0'; ?>" />
 				<input type="hidden" name="coreform[client_id]" value="<?php echo $this->item->client_id; ?>" maxlength="50" />
 				
-				<?php if(empty($this->item->id)){ ?>
+				<?php if(empty($this->item->id)): ?>
 					<input type="hidden" name="coreform[created_by]" value="0" />
-				<?php } else { ?>
-					<input type="hidden" name="coreform[id]" value="<?php echo $this->item->id; ?>" />
-				<?php } ?>
+				<?php endif ?>
 				<input type="hidden" name="coreform[created]" value="<?php echo $this->item->created; ?>" />
 				<?php if(empty($this->item->created_by)){ ?>
 					<input type="hidden" name="coreform[created_by]" value="<?php echo JFactory::getUser()->id; ?>" />
@@ -372,6 +371,7 @@ $dispatcher = JDispatcher::getInstance();
 								icon: 'icon-check',
 								class_name: 'alert-success'
 							});
+							$("#customer_cid").val(data.apiReturnId);
 
 							$("#loading-btn-recall").removeClass("btn-warning");
 							$("#loading-btn-recall").button("complete");

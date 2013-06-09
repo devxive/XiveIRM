@@ -130,6 +130,7 @@ class XiveirmModelApi extends JModelForm
 		{
 			// Perform the return array
 			$return_arr = array();
+			$return_arr["apiReturnId"] = 0;
 			$return_arr["apiReturnCode"] = 1000;
 			$return_arr["apiReturnMessage"] = 'The form is completely empty: Neither an appId, a tabId nor a masterdataId is given!';
 
@@ -261,7 +262,7 @@ class XiveirmModelApi extends JModelForm
 				try
 				{
 					$db->execute();
-					$apiReturnId = $db->insertid();
+					$apiReturnId = (int)$db->insertid();
 					$apiReturnCode = 'SAVED';
 					$apiReturnMessage = 'Succesfully saved';
 				} catch (Exception $e) {
@@ -338,7 +339,7 @@ class XiveirmModelApi extends JModelForm
 				try
 				{
 					$db->execute();
-					$apiReturnId = $id;
+					$apiReturnId = (int)$id;
 					$apiReturnCode = 'UPDATED';
 					$apiReturnMessage = 'Succesfully updated';
 				} catch (Exception $e) {
@@ -351,7 +352,7 @@ class XiveirmModelApi extends JModelForm
 		else
 		{
 			$apiReturnId = null;
-			$apiReturnCode = '1666';
+			$apiReturnCode = 1666;
 			$apiReturnMessage = 'Unbekannter Fehler';
 		}
 	
@@ -381,6 +382,7 @@ class XiveirmModelApi extends JModelForm
 		{
 			// Perform the return array
 			$return_arr = array();
+			$return_arr["apiReturnId"] = (int)$customer_cid;
 			$return_arr["apiReturnCode"] = 1000;
 			$return_arr["apiReturnMessage"] = 'The form is completely empty: Neither an appId, a tabId nor a masterdataId is given!';
 
@@ -453,9 +455,11 @@ class XiveirmModelApi extends JModelForm
 			try
 			{
 				$db->execute();
+				$apiReturnId = (int)$customer_cid;
 				$apiReturnCode = 'SAVED';
 				$apiReturnMessage = 'Succesfully saved';
 			} catch (Exception $e) {
+				$apiReturnId = null;
 				$apiReturnCode = (int)$e->getCode();
 				$apiReturnMessage = $e->getMessage();
 			}
@@ -481,21 +485,25 @@ class XiveirmModelApi extends JModelForm
 			try
 			{
 				$db->execute();
+				$apiReturnId = (int)$customer_cid;
 				$apiReturnCode = 'UPDATED';
 				$apiReturnMessage = 'Succesfully updated';
 			} catch (Exception $e) {
+				$apiReturnId = null;
 				$apiReturnCode = (int)$e->getCode();
 				$apiReturnMessage = $e->getMessage();
 			}
 		}
 		else
 		{
-			$apiReturnCode = '1666';
+			$apiReturnId = (int)$customer_cid;
+			$apiReturnCode = 1666;
 			$apiReturnMessage = 'Unbekannter Fehler';
 		}
 
 		// Perform the return array
 		$return_arr = array();
+		$return_arr["apiReturnId"] = (int)$customer_cid;
 		$return_arr["apiReturnCode"] = $apiReturnCode;
 		$return_arr["apiReturnMessage"] = $apiReturnMessage;
 
