@@ -382,5 +382,22 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 
 		return $tabContainer;
 	}
+
+	/**
+	 * Push Formfields in the core form. Useful for recommended fields. used parts at controls-row!
+	 *
+	 * @return  array			tab_key = The tab identification, tabName = Translateable string from .ini file
+	 *
+	 * @since   3.0
+	 */
+	public function loadInCoreformForm()
+	{
+		$inForm = array(
+			'formLabel' => 'Medical Details',
+			'formFields' => '<input type="text" class="input-control span6" name="' . $this->tab_key . '[insurance]">'
+		);
+
+		return $inForm;
+	}
 }
 ?>

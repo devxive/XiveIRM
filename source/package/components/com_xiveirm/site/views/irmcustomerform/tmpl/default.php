@@ -184,6 +184,24 @@ $dispatcher = JDispatcher::getInstance();
 								</div>
 							</div>
 							
+							<!-- ---------- ---------- ---------- ---------- ---------- BEGIN INCORE-FORM RECOMMENDED FORMFIELDS ---------- ---------- ---------- ---------- ---------- -->
+
+							<?php
+								foreach($dispatcher->trigger( 'loadInCoreformForm', array() ) as $formFields)
+								{
+							?>
+							<div class="control-group">
+								<label class="control-label"><?php echo $formFields['formLabel']; ?></label>
+								<div class="controls controls-row">
+									<?php echo $formFields['formFields']; ?>
+								</div>
+							</div>
+							<?php
+								}
+							?>
+
+							<!-- ---------- ---------- ---------- ---------- ---------- BEGIN INCORE-FORM RECOMMENDED FORMFIELDS ---------- ---------- ---------- ---------- ---------- -->
+
 							<div class="control-group">
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_PHONE_NUMBERS_LABEL'); ?></label>
 								<div class="controls controls-row">
