@@ -42,7 +42,7 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 	 */
 	public function registerApp()
 	{
-		return $tab_key;
+		return $this->tab_key;
 	}
 
 	/**
@@ -230,212 +230,145 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 			.widget-toolbar .popover .popover-content {line-height: 15px;}
 		</style>
 
-		<form id="form-tab-<?php echo $this->tab_key; ?>" class="form-horizontal">
-			<div class="row-fluid">
-			<div class="span6">
-				<div class="widget-box">
-					<div class="widget-header">
-						<h4><i class="icon-random"></i> Transportation info</h4>
-						<span class="widget-toolbar">
-							<span class="help-button"><i class="icon-random"></i></span>
-						</span>
-					</div>
-					<div class="widget-body">
-						<div class="widget-body-inner">
-							<div class="widget-main">
-								<div class="control-group">
-									<label class="control-label">Transportmittel</label>
-									<div class="controls">
-										<input name="<?php echo $this->tab_key; ?>[transport_type]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->transport_type) ? 'value="' . $tabData->tab_value->transport_type . '"' : ''; ?>>
-									</div>
+		<div class="row-fluid">
+		<div class="span6">
+			<div class="widget-box">
+				<div class="widget-header">
+					<h4><i class="icon-random"></i> Transportation info</h4>
+					<span class="widget-toolbar">
+						<span class="help-button"><i class="icon-random"></i></span>
+					</span>
+				</div>
+				<div class="widget-body">
+					<div class="widget-body-inner">
+						<div class="widget-main">
+							<div class="control-group">
+								<label class="control-label">Transportmittel</label>
+								<div class="controls">
+									<input name="<?php echo $this->tab_key; ?>[transport_type]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->transport_type) ? 'value="' . $tabData->tab_value->transport_type . '"' : ''; ?>>
 								</div>
-								<div class="control-group">
-									<label class="control-label">Transportart</label>
-									<div class="controls">
-										<input name="<?php echo $this->tab_key; ?>[transport_properties]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->transport_properties) ? 'value="' . $tabData->tab_value->transport_properties . '"' : ''; ?>>
-									</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label">Transportart</label>
+								<div class="controls">
+									<input name="<?php echo $this->tab_key; ?>[transport_properties]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->transport_properties) ? 'value="' . $tabData->tab_value->transport_properties . '"' : ''; ?>>
 								</div>
-								<div class="control-group">
-									<label class="control-label">Accompaniment</label>
-									<div class="controls">
-										<input name="<?php echo $this->tab_key; ?>[companion]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->companion) ? 'value="' . $tabData->tab_value->companion . '"' : ''; ?>>
-									</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label">Accompaniment</label>
+								<div class="controls">
+									<input name="<?php echo $this->tab_key; ?>[companion]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->companion) ? 'value="' . $tabData->tab_value->companion . '"' : ''; ?>>
 								</div>
-								<div class="control-group">
-									<label class="control-label">Mobile Oxigen</label>
-									<div class="controls">
-										<input name="<?php echo $this->tab_key; ?>[oxygen]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->oxygen) ? 'value="' . $tabData->tab_value->oxygen . '"' : ''; ?>>
-									</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label">Mobile Oxigen</label>
+								<div class="controls">
+									<input name="<?php echo $this->tab_key; ?>[oxygen]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->oxygen) ? 'value="' . $tabData->tab_value->oxygen . '"' : ''; ?>>
 								</div>
-								<div class="control-group">
-									<label class="control-label">Vacuum Mattress</label>
-									<div class="controls">
-										<input name="<?php echo $this->tab_key; ?>[vacuum_mattress]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->vacuum_mattress) ? 'value="' . $tabData->tab_value->vacuum_mattress . '"' : ''; ?>>
-									</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label">Vacuum Mattress</label>
+								<div class="controls">
+									<input name="<?php echo $this->tab_key; ?>[vacuum_mattress]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->vacuum_mattress) ? 'value="' . $tabData->tab_value->vacuum_mattress . '"' : ''; ?>>
 								</div>
-								<div class="control-group">
-									<label class="control-label">Other Aids</label>
-									<div class="controls">
-										<input name="<?php echo $this->tab_key; ?>[other_aids]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->other_aids) ? 'value="' . $tabData->tab_value->other_aids . '"' : ''; ?>>
-									</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label">Other Aids</label>
+								<div class="controls">
+									<input name="<?php echo $this->tab_key; ?>[other_aids]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->other_aids) ? 'value="' . $tabData->tab_value->other_aids . '"' : ''; ?>>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="span6">
-				<div class="widget-box">
-					<div class="widget-header">
-						<h4><i class="icon-tags"></i>Infects, Illness & Adipositas</h4>
-						<span class="widget-toolbar">
-							<span class="help-button"><i class="icon-random"></i></span>
-						</span>
-					</div>
-					<div class="widget-body">
-						<div class="widget-body-inner">
-							<div class="widget-main">
-								<div class="control-group">
-									<label class="control-label">Infections <i class="icon-tags red"></i></label>
-									<div id="chzn-select" class="controls">
-										<select multiple name="<?php echo $this->tab_key; ?>[infections][]" data-placeholder="Select Informations here to activate!" class="chzn-select">
-											<option value=""></option>
-											<option value="mrsa" <?php echo isset($tabData->tab_value->infections_set->mrsa) ? 'selected' : ''; ?>>MRSA</option>
-											<option value="vre" <?php echo isset($tabData->tab_value->infections_set->vre) ? 'selected' : ''; ?>>VRE</option>
-											<option value="esbl" <?php echo isset($tabData->tab_value->infections_set->esbl) ? 'selected' : ''; ?>>ESBL</option>
-											<option value="hepa" <?php echo isset($tabData->tab_value->infections_set->hepa) ? 'selected' : ''; ?>>HEP A</option>
-											<option value="hepb" <?php echo isset($tabData->tab_value->infections_set->hepb) ? 'selected' : ''; ?>>HEP B</option>
-											<option value="hepc" <?php echo isset($tabData->tab_value->infections_set->hepc) ? 'selected' : ''; ?>>HEP C</option>
-											<option value="hepd" <?php echo isset($tabData->tab_value->infections_set->hepd) ? 'selected' : ''; ?>>HEP D</option>
-											<option value="hepe" <?php echo isset($tabData->tab_value->infections_set->hepe) ? 'selected' : ''; ?>>HEP E</option>
-											<option value="hiv" <?php echo isset($tabData->tab_value->infections_set->hiv) ? 'selected' : ''; ?>>HIV</option>
-											<option value="clostdiff" <?php echo isset($tabData->tab_value->infections_set->clostdiff) ? 'selected' : ''; ?>>Clostr. Difficile</option>
-										</select>
-									</div>
+		</div>
+		<div class="span6">
+			<div class="widget-box">
+				<div class="widget-header">
+					<h4><i class="icon-tags"></i>Infects, Illness & Adipositas</h4>
+					<span class="widget-toolbar">
+						<span class="help-button"><i class="icon-random"></i></span>
+					</span>
+				</div>
+				<div class="widget-body">
+					<div class="widget-body-inner">
+						<div class="widget-main">
+							<div class="control-group">
+								<label class="control-label">Infections <i class="icon-tags red"></i></label>
+								<div id="chzn-select" class="controls">
+									<select multiple name="<?php echo $this->tab_key; ?>[infections][]" data-placeholder="Select Informations here to activate!" class="chzn-select">
+										<option value=""></option>
+										<option value="mrsa" <?php echo isset($tabData->tab_value->infections_set->mrsa) ? 'selected' : ''; ?>>MRSA</option>
+										<option value="vre" <?php echo isset($tabData->tab_value->infections_set->vre) ? 'selected' : ''; ?>>VRE</option>
+										<option value="esbl" <?php echo isset($tabData->tab_value->infections_set->esbl) ? 'selected' : ''; ?>>ESBL</option>
+										<option value="hepa" <?php echo isset($tabData->tab_value->infections_set->hepa) ? 'selected' : ''; ?>>HEP A</option>
+										<option value="hepb" <?php echo isset($tabData->tab_value->infections_set->hepb) ? 'selected' : ''; ?>>HEP B</option>
+										<option value="hepc" <?php echo isset($tabData->tab_value->infections_set->hepc) ? 'selected' : ''; ?>>HEP C</option>
+										<option value="hepd" <?php echo isset($tabData->tab_value->infections_set->hepd) ? 'selected' : ''; ?>>HEP D</option>
+										<option value="hepe" <?php echo isset($tabData->tab_value->infections_set->hepe) ? 'selected' : ''; ?>>HEP E</option>
+										<option value="hiv" <?php echo isset($tabData->tab_value->infections_set->hiv) ? 'selected' : ''; ?>>HIV</option>
+										<option value="clostdiff" <?php echo isset($tabData->tab_value->infections_set->clostdiff) ? 'selected' : ''; ?>>Clostr. Difficile</option>
+									</select>
 								</div>
-								<div class="control-group">
-									<label class="control-label">Umkehrisolation <i class="icon-tag red"></i></label>
-									<div class="controls">
-										<input name="<?php echo $this->tab_key; ?>[reserve_isolation]" type="checkbox" class="ace-switch ace-switch-6" <?php echo isset($tabData->tab_value->reserve_isolation) ? 'checked' : ''; ?>>
-										<span class="lbl"> </span>
-									</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label">Umkehrisolation <i class="icon-tag red"></i></label>
+								<div class="controls">
+									<input name="<?php echo $this->tab_key; ?>[reserve_isolation]" type="checkbox" class="ace-switch ace-switch-6" <?php echo isset($tabData->tab_value->reserve_isolation) ? 'checked' : ''; ?>>
+									<span class="lbl"> </span>
 								</div>
-								<div class="control-group">
-									<label class="control-label">Sonstiges <i class="icon-tag red"></i></label>
-									<div class="controls">
-										<input name="<?php echo $this->tab_key; ?>[other_infect]" type="text" class="span12" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->other_infect) ? 'value="' . $tabData->tab_value->other_infect . '"' : ''; ?>>
-									</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label">Sonstiges <i class="icon-tag red"></i></label>
+								<div class="controls">
+									<input name="<?php echo $this->tab_key; ?>[other_infect]" type="text" class="span12" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->other_infect) ? 'value="' . $tabData->tab_value->other_infect . '"' : ''; ?>>
 								</div>
-								<div class="control-group">
-									<label class="control-label">Obese 120KG+ <i class="icon-tag orange"></i></label>
-									<div class="controls">
-										<input name="<?php echo $this->tab_key; ?>[obese_120]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->obese_120) ? 'value="' . $tabData->tab_value->obese_120 . '"' : ''; ?>>
-									</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label">Obese 120KG+ <i class="icon-tag orange"></i></label>
+								<div class="controls">
+									<input name="<?php echo $this->tab_key; ?>[obese_120]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->obese_120) ? 'value="' . $tabData->tab_value->obese_120 . '"' : ''; ?>>
 								</div>
-								<div class="control-group">
-									<label class="control-label">Sonstiges <i class="icon-tag orange"></i></label>
-									<div class="controls">
-										<input name="<?php echo $this->tab_key; ?>[obese_other]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->obese_other) ? 'value="' . $tabData->tab_value->obese_other . '"' : ''; ?>>
-									</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label">Sonstiges <i class="icon-tag orange"></i></label>
+								<div class="controls">
+									<input name="<?php echo $this->tab_key; ?>[obese_other]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->obese_other) ? 'value="' . $tabData->tab_value->obese_other . '"' : ''; ?>>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+			</div>
 
-				<div class="widget-box small-margin-top">
-					<div class="widget-header">
-						<h5><i class="icon-tag orange"></i>Transportation related Informations</h5>
-					</div>
-					<div class="widget-body">
-						<div class="widget-body-inner">
-							<div class="widget-main">
-								<div class="control-group">
-									<label class="control-label">Insurance</label>
-									<div class="controls">
-										<input name="<?php echo $this->tab_key; ?>[insurance]" type="text" placeholder="Enter Informations here" <?php echo isset($tabData->tab_value->insurance) ? 'value="' . $tabData->tab_value->insurance . '"' : ''; ?>>
-										<input name="<?php echo $this->tab_key; ?>[supervisor_name]" type="text" placeholder="Supervisor Name" />
-										<input name="<?php echo $this->tab_key; ?>[supervisor_phone]" type="text" placeholder="Supervisor Phone" />
-										<input name="<?php echo $this->tab_key; ?>[supervisor_desc]" type="text" placeholder="Supervisor Description" />
-									</div>
+			<div class="widget-box small-margin-top">
+				<div class="widget-header">
+					<h5><i class="icon-tag orange"></i>Transportation related Informations</h5>
+				</div>
+				<div class="widget-body">
+					<div class="widget-body-inner">
+						<div class="widget-main">
+							<div class="control-group">
+								<label class="control-label">Insurance</label>
+								<div class="controls">
+									<input name="<?php echo $this->tab_key; ?>[insurance]" type="text" placeholder="Enter Informations here" <?php echo isset($tabData->tab_value->insurance) ? 'value="' . $tabData->tab_value->insurance . '"' : ''; ?>>
+									<input name="<?php echo $this->tab_key; ?>[supervisor_name]" type="text" placeholder="Supervisor Name" />
+									<input name="<?php echo $this->tab_key; ?>[supervisor_phone]" type="text" placeholder="Supervisor Phone" />
+									<input name="<?php echo $this->tab_key; ?>[supervisor_desc]" type="text" placeholder="Supervisor Description" />
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			</div>
-			<div class="form-actions">
-				<input type="hidden" name="<?php echo $this->tab_key; ?>[tabkey]" value="<?php echo $this->tab_key; ?>">
-				<input type="hidden" name="<?php echo $this->tab_key; ?>[customercid]" value="<?php echo isset($item->id) ? $item->id : '0'; ?>">
-				<?php echo JHtml::_('form.token'); ?>
-
-				<button id="loading-btn-recall" data-loading-text="Please wait..." data-complete-text="Saved"  data-error-text="Error!" class="btn btn-info" type="submit"><i class="icon-ok"></i> <?php echo isset($tabData->id) ? 'Update' : 'Submit'; ?></button>
-				&nbsp; &nbsp; &nbsp;
-				<button class="btn" type="reset"><i class="icon-undo"></i> Reset</button>
-			</div>
-		</form>
+		</div>
+		</div>
 
 		<div class="hr"></div>
 		<center>
 			<span class="help-button ace-popover" data-trigger="hover" data-placement="top" data-content="Informations given here are used in other applications, such as the despatching app => order form. Use this as help to minimize inputs during remaining phone orders." data-original-title="Info about cross referencing!"><i class="icon-random"></i></span>
 		</center>
-		<script>
-			jQuery(function(){
-				$("#form-tab-<?php echo $this->tab_key; ?>").submit(function(e){
-					e.preventDefault();
-
-					$("#loading-btn-recall").addClass("btn-warning");
-					$("#loading-btn-recall").button("loading");
-
-					$.post('index.php?option=com_xiveirm&task=api.ajaxsave', $("#form-tab-<?php echo $this->tab_key; ?>").serialize(),
-					function(data){
-						if(data.apiReturnCode === 'SAVED'){
-							$.gritter.add({
-								title: 'Successfully saved',
-								text: 'You have successfully saved all items for the customer <?php echo $item->first_name . ' ' . $item->last_name; ?>',
-								icon: 'icon-check',
-								class_name: 'alert-success'
-							});
-
-							$("#loading-btn-recall").removeClass("btn-warning");
-							$("#loading-btn-recall").button("complete");
-							$("#loading-btn-recall").button("reset");
-						} else if(data.apiReturnCode === 'UPDATED'){
-							$.gritter.add({
-								title: 'Successfully updated',
-								text: 'You have successfully saved all items for the customer <?php echo $item->first_name . ' ' . $item->last_name; ?>',
-								icon: 'icon-globe',
-								class_name: 'alert-info'
-							});
-							$("#loading-btn-recall").removeClass("btn-warning");
-							$("#loading-btn-recall").button("complete");
-							$("#loading-btn-recall").button("reset");
-						} else {
-							$.gritter.add({
-								title: 'An error occured',
-								text: 'An error occured while trying to save or update. <br><br>Error code: ' + data.apiReturnCode + '<br><br>error message: ' + data.apiReturnMessage + '<br><br>If this error is persistant, please contact the support immediately with the given error!',
-								icon: 'icon-warning-sign',
-								sticky: true,
-								class_name: 'alert-error'
-							});
-							$("#loading-btn-recall").removeClass("btn-warning");
-							$("#loading-btn-recall").button("error");
-							$("#loading-btn-recall").addClass("btn-danger");
-						}
-					}, "json");
-				});
-			});
-<?php
-	/*
-	 * Returns from API in json format
-	 * example {"apiReturnCode":"SAVED","apiReturnRowId":"173","apiReturnMessage":"Successfully saved"}
-	 * 
-	 * apiReturnCode could be: SAVED, UPDATED or an Error Number ie. 666
-	 * apiReturnMessage: returns a informal message, should be used for debugging and not in production use. returns the database or php errors
-	 */
-?>
-		</script>
 
 		<!---------- End output buffering: <?php echo $this->tab_key; ?> ---------->
 		<?php
