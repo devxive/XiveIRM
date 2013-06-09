@@ -58,7 +58,7 @@ class XiveirmControllerApi extends XiveirmController
 		 * change, making it impossible for AJAX to work.
 		 */
 
-//		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		// Import plugins, set event dispatcher
 		JPluginHelper::importPlugin( 'irmcustomertabs' ); // returned 1 if get successfully loaded
