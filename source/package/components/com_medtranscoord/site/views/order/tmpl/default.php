@@ -37,10 +37,12 @@ if (!$canEdit && JFactory::getUser()->authorise('core.edit.own', 'com_medtransco
 			<?php echo $this->item->checked_out_time; ?></li>
 			<li><?php echo JText::_('COM_MEDTRANSCOORD_FORM_LBL_ORDER_MODIFIED'); ?>:
 			<?php echo $this->item->modified; ?></li>
+			<li><?php echo JText::_('COM_MEDTRANSCOORD_FORM_LBL_ORDER_ACCESS_ID'); ?>:
+			<?php echo $this->item->access_id; ?></li>
 			<li><?php echo JText::_('COM_MEDTRANSCOORD_FORM_LBL_ORDER_CLIENT_ID'); ?>:
 			<?php echo $this->item->client_id; ?></li>
-			<li><?php echo JText::_('COM_MEDTRANSCOORD_FORM_LBL_ORDER_MASTERDATA_ID'); ?>:
-			<?php echo $this->item->masterdata_id; ?></li>
+			<li><?php echo JText::_('COM_MEDTRANSCOORD_FORM_LBL_ORDER_CUSTOMER_CID'); ?>:
+			<?php echo $this->item->customer_cid; ?></li>
 			<li><?php echo JText::_('COM_MEDTRANSCOORD_FORM_LBL_ORDER_ORDER_ID'); ?>:
 			<?php echo $this->item->order_id; ?></li>
 			<li><?php echo JText::_('COM_MEDTRANSCOORD_FORM_LBL_ORDER_CUSTOMER_FULLNAME'); ?>:
@@ -116,8 +118,9 @@ if (!$canEdit && JFactory::getUser()->authorise('core.edit.own', 'com_medtransco
 										<input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
 										<input type="hidden" name="jform[checked_out_time]" value="<?php echo $this->item->checked_out_time; ?>" />
 										<input type="hidden" name="jform[modified]" value="<?php echo $this->item->modified; ?>" />
+										<input type="hidden" name="jform[access_id]" value="<?php echo $this->item->access_id; ?>" />
 										<input type="hidden" name="jform[client_id]" value="<?php echo $this->item->client_id; ?>" />
-										<input type="hidden" name="jform[masterdata_id]" value="<?php echo $this->item->masterdata_id; ?>" />
+										<input type="hidden" name="jform[customer_cid]" value="<?php echo $this->item->customer_cid; ?>" />
 										<input type="hidden" name="jform[order_id]" value="<?php echo $this->item->order_id; ?>" />
 										<input type="hidden" name="jform[customer_fullname]" value="<?php echo $this->item->customer_fullname; ?>" />
 										<input type="hidden" name="jform[transport_timestamp]" value="<?php echo $this->item->transport_timestamp; ?>" />

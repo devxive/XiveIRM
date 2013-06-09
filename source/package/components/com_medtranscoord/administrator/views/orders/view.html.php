@@ -157,7 +157,7 @@ class MedtranscoordViewOrders extends JViewLegacy
 		'a.id' => JText::_('JGRID_HEADING_ID'),
 		'a.state' => JText::_('JSTATUS'),
 		'a.client_id' => JText::_('COM_MEDTRANSCOORD_ORDERS_CLIENT_ID'),
-		'a.masterdata_id' => JText::_('COM_MEDTRANSCOORD_ORDERS_MASTERDATA_ID'),
+		'a.customer_cid' => JText::_('COM_MEDTRANSCOORD_ORDERS_CUSTOMER_CID'),
 		'a.order_id' => JText::_('COM_MEDTRANSCOORD_ORDERS_ORDER_ID'),
 		'a.transport_timestamp' => JText::_('COM_MEDTRANSCOORD_ORDERS_TRANSPORT_TIMESTAMP'),
 		'a.distcalc_device' => JText::_('COM_MEDTRANSCOORD_ORDERS_DISTCALC_DEVICE'),

@@ -141,13 +141,14 @@ $lang->load('com_medtranscoord', JPATH_ADMINISTRATOR);
 				<div class="control-label"><?php echo $this->form->getLabel('modified'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('modified'); ?></div>
 			</div>
+				<input type="hidden" name="jform[access_id]" value="<?php echo $this->item->access_id; ?>" />
 			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('client_id'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('client_id'); ?></div>
 			</div>
 			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('masterdata_id'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('masterdata_id'); ?></div>
+				<div class="control-label"><?php echo $this->form->getLabel('customer_cid'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('customer_cid'); ?></div>
 			</div>
 			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('order_id'); ?></div>

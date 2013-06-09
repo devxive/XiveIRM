@@ -21,7 +21,7 @@ defined('_JEXEC') or die;
 						$show = true;
 						?>
 							<li>
-								<a href="<?php echo JRoute::_('index.php?option=com_medtranscoord&view=order&id=' . (int)$item->id); ?>"><?php echo $item->client_id; ?></a>
+								<a href="<?php echo JRoute::_('index.php?option=com_medtranscoord&view=order&id=' . (int)$item->id); ?>"><?php echo $item->access_id; ?></a>
 								<?php
 									if(JFactory::getUser()->authorise('core.edit.state','com_medtranscoord')):
 									?>
@@ -33,8 +33,9 @@ defined('_JEXEC') or die;
 											<input type="hidden" name="jform[checked_out]" value="<?php echo $item->checked_out; ?>" />
 											<input type="hidden" name="jform[checked_out_time]" value="<?php echo $item->checked_out_time; ?>" />
 											<input type="hidden" name="jform[modified]" value="<?php echo $item->modified; ?>" />
+											<input type="hidden" name="jform[access_id]" value="<?php echo $item->access_id; ?>" />
 											<input type="hidden" name="jform[client_id]" value="<?php echo $item->client_id; ?>" />
-											<input type="hidden" name="jform[masterdata_id]" value="<?php echo $item->masterdata_id; ?>" />
+											<input type="hidden" name="jform[customer_cid]" value="<?php echo $item->customer_cid; ?>" />
 											<input type="hidden" name="jform[order_id]" value="<?php echo $item->order_id; ?>" />
 											<input type="hidden" name="jform[customer_fullname]" value="<?php echo $item->customer_fullname; ?>" />
 											<input type="hidden" name="jform[transport_timestamp]" value="<?php echo $item->transport_timestamp; ?>" />
@@ -80,8 +81,9 @@ defined('_JEXEC') or die;
 											<input type="hidden" name="jform[checked_out]" value="<?php echo $item->checked_out; ?>" />
 											<input type="hidden" name="jform[checked_out_time]" value="<?php echo $item->checked_out_time; ?>" />
 											<input type="hidden" name="jform[modified]" value="<?php echo $item->modified; ?>" />
+											<input type="hidden" name="jform[access_id]" value="<?php echo $item->access_id; ?>" />
 											<input type="hidden" name="jform[client_id]" value="<?php echo $item->client_id; ?>" />
-											<input type="hidden" name="jform[masterdata_id]" value="<?php echo $item->masterdata_id; ?>" />
+											<input type="hidden" name="jform[customer_cid]" value="<?php echo $item->customer_cid; ?>" />
 											<input type="hidden" name="jform[order_id]" value="<?php echo $item->order_id; ?>" />
 											<input type="hidden" name="jform[customer_fullname]" value="<?php echo $item->customer_fullname; ?>" />
 											<input type="hidden" name="jform[transport_timestamp]" value="<?php echo $item->transport_timestamp; ?>" />

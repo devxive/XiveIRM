@@ -114,7 +114,7 @@ if (!empty($this->extra_sidebar)) {
 				<?php echo JHtml::_('grid.sort',  'COM_MEDTRANSCOORD_ORDERS_CLIENT_ID', 'a.client_id', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_MEDTRANSCOORD_ORDERS_MASTERDATA_ID', 'a.masterdata_id', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_MEDTRANSCOORD_ORDERS_CUSTOMER_CID', 'a.customer_cid', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
 				<?php echo JHtml::_('grid.sort',  'COM_MEDTRANSCOORD_ORDERS_ORDER_ID', 'a.order_id', $listDirn, $listOrder); ?>
@@ -195,19 +195,12 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<td>
-				<?php if (isset($item->checked_out) && $item->checked_out) : ?>
-					<?php echo JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'orders.', $canCheckin); ?>
-				<?php endif; ?>
-				<?php if ($canEdit) : ?>
-					<a href="<?php echo JRoute::_('index.php?option=com_medtranscoord&task=order.edit&id='.(int) $item->id); ?>">
-					<?php echo $this->escape($item->client_id); ?></a>
-				<?php else : ?>
-					<?php echo $this->escape($item->client_id); ?>
-				<?php endif; ?>
+
+					<?php echo $item->client_id; ?>
 				</td>
 				<td>
 
-					<?php echo $item->masterdata_id; ?>
+					<?php echo $item->customer_cid; ?>
 				</td>
 				<td>
 

@@ -33,8 +33,9 @@ class MedtranscoordModelorders extends JModelList
                 'created', 'a.created',
                 'created_by', 'a.created_by',
                 'modified', 'a.modified',
+                'access_id', 'a.access_id',
                 'client_id', 'a.client_id',
-                'masterdata_id', 'a.masterdata_id',
+                'customer_cid', 'a.customer_cid',
                 'order_id', 'a.order_id',
                 'customer_fullname', 'a.customer_fullname',
                 'transport_timestamp', 'a.transport_timestamp',
@@ -168,7 +169,7 @@ class MedtranscoordModelorders extends JModelList
 				$query->where('a.id = '.(int) substr($search, 3));
 			} else {
 				$search = $db->Quote('%'.$db->escape($search, true).'%');
-                $query->where('( a.client_id LIKE '.$search.'  OR  a.masterdata_id LIKE '.$search.'  OR  a.order_id LIKE '.$search.' )');
+                $query->where('( a.client_id LIKE '.$search.'  OR  a.customer_cid LIKE '.$search.'  OR  a.order_id LIKE '.$search.' )');
 			}
 		}
         

@@ -18,6 +18,15 @@
             label="COM_MEDTRANSCOORD_FORM_LBL_ORDER_MODIFIED"
             description="COM_MEDTRANSCOORD_FORM_DESC_ORDER_MODIFIED"  /> 
 
+       <field name="access_id" type="text" size="40" class="inputbox"
+        
+            label="COM_MEDTRANSCOORD_FORM_LBL_ORDER_ACCESS_ID"
+            description="COM_MEDTRANSCOORD_FORM_DESC_ORDER_ACCESS_ID" 
+         default="0" 
+        
+        
+        filter="safehtml" /> 
+
        <field name="client_id" type="text"
                 
             label="COM_MEDTRANSCOORD_FORM_LBL_ORDER_CLIENT_ID"
@@ -28,10 +37,10 @@
             filter="string"
             maxlength="50" /> 
 
-       <field name="masterdata_id" type="text" size="40" class="inputbox"
+       <field name="customer_cid" type="text" size="40" class="inputbox"
         
-            label="COM_MEDTRANSCOORD_FORM_LBL_ORDER_MASTERDATA_ID"
-            description="COM_MEDTRANSCOORD_FORM_DESC_ORDER_MASTERDATA_ID" 
+            label="COM_MEDTRANSCOORD_FORM_LBL_ORDER_CUSTOMER_CID"
+            description="COM_MEDTRANSCOORD_FORM_DESC_ORDER_CUSTOMER_CID" 
         
         
         
