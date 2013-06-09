@@ -36,6 +36,16 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 	}
 
 	/**
+	 * Register App to know which tabApp to be load. Should be used for later check if clients have paid for it.
+	 * This is also used in the controller to know which additional datas (tabs) we have to save.
+	 * Since all form fields are used in one form we have to identify the form fields by using <input name="<?php echo $this->tab_key; ?>[FORMNAME]" />
+	 */
+	public function registerApp()
+	{
+		return $tab_key;
+	}
+
+	/**
 	 * @param   object	&$item		The item referenced object which includes the system id of this contact
 	 *
 	 * @return  array			tab_key = The tab identification, tabContent = Content of the Container
@@ -236,37 +246,37 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 								<div class="control-group">
 									<label class="control-label">Transportmittel</label>
 									<div class="controls">
-										<input name="tabForm[transport_type]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->transport_type) ? 'value="' . $tabData->tab_value->transport_type . '"' : ''; ?>>
+										<input name="<?php echo $this->tab_key; ?>[transport_type]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->transport_type) ? 'value="' . $tabData->tab_value->transport_type . '"' : ''; ?>>
 									</div>
 								</div>
 								<div class="control-group">
 									<label class="control-label">Transportart</label>
 									<div class="controls">
-										<input name="tabForm[transport_properties]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->transport_properties) ? 'value="' . $tabData->tab_value->transport_properties . '"' : ''; ?>>
+										<input name="<?php echo $this->tab_key; ?>[transport_properties]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->transport_properties) ? 'value="' . $tabData->tab_value->transport_properties . '"' : ''; ?>>
 									</div>
 								</div>
 								<div class="control-group">
 									<label class="control-label">Accompaniment</label>
 									<div class="controls">
-										<input name="tabForm[companion]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->companion) ? 'value="' . $tabData->tab_value->companion . '"' : ''; ?>>
+										<input name="<?php echo $this->tab_key; ?>[companion]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->companion) ? 'value="' . $tabData->tab_value->companion . '"' : ''; ?>>
 									</div>
 								</div>
 								<div class="control-group">
 									<label class="control-label">Mobile Oxigen</label>
 									<div class="controls">
-										<input name="tabForm[oxygen]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->oxygen) ? 'value="' . $tabData->tab_value->oxygen . '"' : ''; ?>>
+										<input name="<?php echo $this->tab_key; ?>[oxygen]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->oxygen) ? 'value="' . $tabData->tab_value->oxygen . '"' : ''; ?>>
 									</div>
 								</div>
 								<div class="control-group">
 									<label class="control-label">Vacuum Mattress</label>
 									<div class="controls">
-										<input name="tabForm[vacuum_mattress]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->vacuum_mattress) ? 'value="' . $tabData->tab_value->vacuum_mattress . '"' : ''; ?>>
+										<input name="<?php echo $this->tab_key; ?>[vacuum_mattress]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->vacuum_mattress) ? 'value="' . $tabData->tab_value->vacuum_mattress . '"' : ''; ?>>
 									</div>
 								</div>
 								<div class="control-group">
 									<label class="control-label">Other Aids</label>
 									<div class="controls">
-										<input name="tabForm[other_aids]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->other_aids) ? 'value="' . $tabData->tab_value->other_aids . '"' : ''; ?>>
+										<input name="<?php echo $this->tab_key; ?>[other_aids]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->other_aids) ? 'value="' . $tabData->tab_value->other_aids . '"' : ''; ?>>
 									</div>
 								</div>
 							</div>
@@ -288,7 +298,7 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 								<div class="control-group">
 									<label class="control-label">Infections <i class="icon-tags red"></i></label>
 									<div id="chzn-select" class="controls">
-										<select multiple name="tabForm[infections][]" data-placeholder="Select Informations here to activate!" class="chzn-select">
+										<select multiple name="<?php echo $this->tab_key; ?>[infections][]" data-placeholder="Select Informations here to activate!" class="chzn-select">
 											<option value=""></option>
 											<option value="mrsa" <?php echo isset($tabData->tab_value->infections_set->mrsa) ? 'selected' : ''; ?>>MRSA</option>
 											<option value="vre" <?php echo isset($tabData->tab_value->infections_set->vre) ? 'selected' : ''; ?>>VRE</option>
@@ -306,26 +316,26 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 								<div class="control-group">
 									<label class="control-label">Umkehrisolation <i class="icon-tag red"></i></label>
 									<div class="controls">
-										<input name="tabForm[reserve_isolation]" type="checkbox" class="ace-switch ace-switch-6" <?php echo isset($tabData->tab_value->reserve_isolation) ? 'checked' : ''; ?>>
+										<input name="<?php echo $this->tab_key; ?>[reserve_isolation]" type="checkbox" class="ace-switch ace-switch-6" <?php echo isset($tabData->tab_value->reserve_isolation) ? 'checked' : ''; ?>>
 										<span class="lbl"> </span>
 									</div>
 								</div>
 								<div class="control-group">
 									<label class="control-label">Sonstiges <i class="icon-tag red"></i></label>
 									<div class="controls">
-										<input name="tabForm[other_infect]" type="text" class="span12" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->other_infect) ? 'value="' . $tabData->tab_value->other_infect . '"' : ''; ?>>
+										<input name="<?php echo $this->tab_key; ?>[other_infect]" type="text" class="span12" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->other_infect) ? 'value="' . $tabData->tab_value->other_infect . '"' : ''; ?>>
 									</div>
 								</div>
 								<div class="control-group">
 									<label class="control-label">Obese 120KG+ <i class="icon-tag orange"></i></label>
 									<div class="controls">
-										<input name="tabForm[obese_120]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->obese_120) ? 'value="' . $tabData->tab_value->obese_120 . '"' : ''; ?>>
+										<input name="<?php echo $this->tab_key; ?>[obese_120]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->obese_120) ? 'value="' . $tabData->tab_value->obese_120 . '"' : ''; ?>>
 									</div>
 								</div>
 								<div class="control-group">
 									<label class="control-label">Sonstiges <i class="icon-tag orange"></i></label>
 									<div class="controls">
-										<input name="tabForm[obese_other]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->obese_other) ? 'value="' . $tabData->tab_value->obese_other . '"' : ''; ?>>
+										<input name="<?php echo $this->tab_key; ?>[obese_other]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->obese_other) ? 'value="' . $tabData->tab_value->obese_other . '"' : ''; ?>>
 									</div>
 								</div>
 							</div>
@@ -343,10 +353,10 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 								<div class="control-group">
 									<label class="control-label">Insurance</label>
 									<div class="controls">
-										<input name="tabForm[insurance]" type="text" placeholder="Enter Informations here" <?php echo isset($tabData->tab_value->insurance) ? 'value="' . $tabData->tab_value->insurance . '"' : ''; ?>>
-										<input name="tabForm[supervisor_name]" type="text" placeholder="Supervisor Name" />
-										<input name="tabForm[supervisor_phone]" type="text" placeholder="Supervisor Phone" />
-										<input name="tabForm[supervisor_desc]" type="text" placeholder="Supervisor Description" />
+										<input name="<?php echo $this->tab_key; ?>[insurance]" type="text" placeholder="Enter Informations here" <?php echo isset($tabData->tab_value->insurance) ? 'value="' . $tabData->tab_value->insurance . '"' : ''; ?>>
+										<input name="<?php echo $this->tab_key; ?>[supervisor_name]" type="text" placeholder="Supervisor Name" />
+										<input name="<?php echo $this->tab_key; ?>[supervisor_phone]" type="text" placeholder="Supervisor Phone" />
+										<input name="<?php echo $this->tab_key; ?>[supervisor_desc]" type="text" placeholder="Supervisor Description" />
 									</div>
 								</div>
 							</div>
@@ -356,8 +366,8 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 			</div>
 			</div>
 			<div class="form-actions">
-				<input type="hidden" name="tabForm[tabkey]" value="<?php echo $this->tab_key; ?>">
-				<input type="hidden" name="tabForm[customercid]" value="<?php echo isset($item->id) ? $item->id : '0'; ?>">
+				<input type="hidden" name="<?php echo $this->tab_key; ?>[tabkey]" value="<?php echo $this->tab_key; ?>">
+				<input type="hidden" name="<?php echo $this->tab_key; ?>[customercid]" value="<?php echo isset($item->id) ? $item->id : '0'; ?>">
 				<?php echo JHtml::_('form.token'); ?>
 
 				<button id="loading-btn-recall" data-loading-text="Please wait..." data-complete-text="Saved"  data-error-text="Error!" class="btn btn-info" type="submit"><i class="icon-ok"></i> <?php echo isset($tabData->id) ? 'Update' : 'Submit'; ?></button>
