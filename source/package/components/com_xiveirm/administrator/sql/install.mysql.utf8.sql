@@ -44,6 +44,6 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_selectlists` (
 `sl_key` VARCHAR(100) NOT NULL,
 `sl_value` VARCHAR(100) NOT NULL,
 `sl_string` VARCHAR(255) NOT NULL,
-`ordering` INT(11)  NOT NULL,
+`ordering` INT(11) NOT NULL,
 UNIQUE KEY `idx_client_id_sl_key` (`client_id`,`sl_key`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Simple or client related select list storage table';
