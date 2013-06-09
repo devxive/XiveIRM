@@ -58,7 +58,15 @@ class XiveirmControllerApi extends XiveirmController
 		 * change, making it impossible for AJAX to work.
 		 */
 
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+//		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+
+		// Import plugins, set event dispatcher
+		JPluginHelper::importPlugin( 'irmcustomertabs' ); // returned 1 if get successfully loaded
+		$dispatcher = JDispatcher::getInstance();
+
+		// Initialise variables.
+		$app = JFactory::getApplication();
+		$model = $this->getModel('Api', 'XiveirmModel');
 
 		$cache_timeout = $this->input->getInt('cache_timeout', 0);
 		if ($cache_timeout == 0)
@@ -69,21 +77,37 @@ class XiveirmControllerApi extends XiveirmController
 			$cache_timeout = 3600 * $cache_timeout;
 		}
 
-		// Initialise variables.
-		$app = JFactory::getApplication();
-		$model = $this->getModel('Api', 'XiveirmModel');
+		// ------------------------------------------------------------- GET AND PROCESS THE CORE FORM DATAS
+		$data = $app->input->get('coreform', array(), 'array');
+		$return = $model->savecore($data); // If return isn't false, we got the item row id for further processing the tab datas
 
- 		// Get the tabForm data.
-		$data = JFactory::getApplication()->input->get('tabForm', array(), 'array');
+		if($return["apiReturnCode"] != 'ERROR' && $return["apiReturnId"] > 0)
+		{
+			// Check if we have tabApps and perform processing for each tabApp
+			foreach($dispatcher->trigger( 'registerApp', array() ) as $tabApp)
+			{
+		 		// Get the tabForm data.
+				$data = JFactory::getApplication()->input->get($tabApp, array(), 'array');
+	
+				// Attempt to save the tabdata.
+				$return = $model->savetab($data, $return["apiReturnId"], $tabApp);
+			}
+		} else {
+			return false; // We got no row id from customer table
 
-		// Attempt to save the tabdata.
-		$return = $model->savetab($data);
+			// Perform the return array
+			$return_arr = array();
+			$return_arr["apiReturnId"] = 0;
+			$return_arr["apiReturnCode"] = ERROR;
+			$return_arr["apiReturnMessage"] = 'Cant get a row id from the customer db table to perform tabApp save/create processing';
+
+			$return = $return_arr;
+		}
 
 		echo json_encode($return);
 
 //		// Flush the data from the session.
 //		$app->setUserState('com_xiveirm.edit.api.data', null);
-// NUR INFO FÜR MODEL, WEIL ERST PATIENT GESPEICHERT WERDEN MUSS, DANN DIE TABS MIT 'NER SCHLEIFE $apiReturnRowId = $db->insertid();
 
 		JFactory::getApplication()->close();
 	}
