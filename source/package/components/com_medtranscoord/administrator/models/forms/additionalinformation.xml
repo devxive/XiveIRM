@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset>
+
+              <field name="order_cid" type="text" size="40" class="inputbox"
+        
+            label="COM_MEDTRANSCOORD_FORM_LBL_ADDITIONALINFORMATION_ORDER_CID"
+            description="COM_MEDTRANSCOORD_FORM_DESC_ADDITIONALINFORMATION_ORDER_CID" 
+        
+        
+        
+        filter="safehtml" /> 
+
+       <field name="tab_key" type="text" size="40" class="inputbox"
+        
+            label="COM_MEDTRANSCOORD_FORM_LBL_ADDITIONALINFORMATION_TAB_KEY"
+            description="COM_MEDTRANSCOORD_FORM_DESC_ADDITIONALINFORMATION_TAB_KEY" 
+        
+        
+        
+        filter="safehtml" /> 
+
+       <field name="tab_value" type="editor" buttons="true"
+        class="inputbox"
+        filter="safehtml"
+        
+        
+        
+        
+            label="COM_MEDTRANSCOORD_FORM_LBL_ADDITIONALINFORMATION_TAB_VALUE"
+            description="COM_MEDTRANSCOORD_FORM_DESC_ADDITIONALINFORMATION_TAB_VALUE"  /> 
+
+         <field
+        name="state"
+        type="list"
+        label="JSTATUS"
+        description="JFIELD_PUBLISHED_DESC"
+        class="inputbox"
+        size="1"
+        default="1">
+        <option value="1">JPUBLISHED</option>
+        <option value="0">JUNPUBLISHED</option>
+    </field>
+
+	</fieldset>
+
+</form>
