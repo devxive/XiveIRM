@@ -59,5 +59,80 @@ class IRMSystem
 		}
 		
 	}
+
+
+	/*
+	 * return the current date, based on the timezone, given either in the user or the system config object.
+	 * @format	switch the format, sql datetime format, unix timestamp, date, datetime
+	 * @value	default now, other formats not supportet at this time
+	 * @mode	switch the mode (default: USER_UTC): SERVER_UTC, USER_UTC (USER_UTC with fallback to system, if the timezone is set to Global)
+	 */
+	public function getDate($format = 'UNIX', $value = 'now', $mode = 'USER_UTC')
+	{
+		// Get some system objects.
+		$config = JFactory::getConfig();
+		$user = JFactory::getUser();
+
+		$date = JFactory::getDate($value, 'UTC');
+
+		// Set the timezone
+		switch ($mode)
+		{
+			case 'SERVER_UTC':
+				// Convert a date to UTC based on the server timezone.
+				$date->setTimezone(new DateTimeZone($config->get('offset')));
+				break;
+
+			case 'USER_UTC':
+				// Convert a date to UTC based on the user timezone (Fallback, system config timezome, if user tz is set to global).
+				$date->setTimezone(new DateTimeZone($user->getParam('timezone', $config->get('offset'))));
+				break;
+		}
+
+		// Transform the date string
+		switch ($format)
+		{
+			case 'MySQL':
+				$value = $date->format('Y-m-d H:i:s', true, false);
+				break;
+
+			case 'UNIX':
+				$value = strtotime($date->format('Y-m-d H:i:s', true, false));
+				break;
+
+			case 'TIME':
+				$value = $date->format('H:i', true, false);
+				break;
+
+			case 'TIMES':
+				$value = $date->format('H:i:s', true, false);
+				break;
+
+			case 'LC':
+			case 'LC1':
+			case 'JLC':
+			case 'JLC1': // Wednesday, 12 June 2013 
+				$value = $date->format('l, d F Y', true, false);
+				break;
+
+			case 'LC2':
+			case 'JLC2': // Wednesday, 12 June 2013 15:20
+				$value = $date->format('l, d F Y H:i', true, false);
+				break;
+
+			case 'LC3':
+			case 'JLC3':
+				$value = $date->format('d F Y', true, false); // 12 June 2013
+				break;
+
+			case 'DATE':
+			case 'LC4':
+			case 'JLC4':
+				$value = $date->format('Y-m-d', true, false); // 2013-06-12
+				break;
+		}
+
+		return $value;
+	}
 }
 
