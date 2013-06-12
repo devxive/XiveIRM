@@ -27,27 +27,53 @@ class XiveirmModelApi extends JModelForm
 	 * @return	boolean		True on success, false on failure.
 	 * @since	1.6
 	 */
-	public function checkin($id = null)
+	public function checkin($id, $user)
 	{
-//		// Get the id.
-//		$id = (!empty($id)) ? $id : (int)$this->getState('api.id');
-//
-//		if ($id)
-//		{
-//			// Initialise the table
-//			$table = $this->getTable();
-//
-//			// Attempt to check the row in.
-//			if (method_exists($table, 'checkin')) {
-//				if (!$table->checkin($id)) {
-//					$this->setError($table->getError());
-//					return false;
-//				}
-//			}
-//
-//		}
-//
-//		return true;
+		if($user != 0)
+		{
+			$user = 0;
+			$datetime = '0000-00-00 00:00:00';
+
+			// Init database object.
+			$db = JFactory::getDBO();
+			$query = $db->getQuery(true);
+
+			// Set the fields
+			$fields = array(
+				'checked_out = ' . $db->quote($user) . '',
+				'checked_out_time = ' . $db->quote($datetime) . '');
+
+			$query
+				->update($db->quoteName('#__xiveirm_customer'))
+				->set($fields)
+				->where('id = ' . $db->quote($id) . '');
+
+			$db->setQuery($query);
+
+			// Try to store or get the error code for debugging
+			try
+			{
+				$db->execute();
+				$apiReturnId = $id;
+				$apiReturnCode = 'IN';
+				$apiReturnMessage = 'Succesfully checked in';
+			} catch (Exception $e) {
+				$apiReturnCode = (int)$e->getCode();
+				$apiReturnMessage = $e->getMessage();
+			}
+		} else {
+			$apiReturnId = null;
+			$apiReturnCode = 'ERROR';
+			$apiReturnMessage = 'We can\'t check in the item because we have no user id!';
+		}
+
+		// Perform the return array
+		$return_arr = array();
+		$return_arr["apiReturnId"] = (int)$apiReturnId;
+		$return_arr["apiReturnCode"] = $apiReturnCode;
+		$return_arr["apiReturnMessage"] = $apiReturnMessage;
+
+		return $return_arr;
 	}
 
 	/**
@@ -57,60 +83,51 @@ class XiveirmModelApi extends JModelForm
 	 * @return	boolean		True on success, false on failure.
 	 * @since	1.6
 	 */
-	public function checkout($id = null, $row)
+	// table, table_id, user_id, MySQL datetime
+	public function checkout($id, $user, $datetime)
 	{
-//		// Get the user id.
-//		$id = (!empty($id)) ? $id : (int)$this->getState('api.id');
-//
-//		if (empty($row)) {
-//			return false;
-//		}
-//
-//	// Set the fields
-//	$fields = array(
-//		'customer_cid = ' . $db->quote($customer_cid) . '',
-//		'tab_key = ' . $db->quote($tab_key) . '');
-//
-//	$query
-//		->update($db->quoteName('#__xiveirm_customer'))
-//		->set($fields)
-//		->where('id = ' . $db->quote($row) . '');
-//
-//	$db->setQuery($query);
-//
-//	// Try to store or get the error code for debugging
-//	try
-//	{
-//		$db->execute();
-//		$apiReturnCode = 'OUT';
-//		$apiReturnMessage = 'Succesfully updated';
-//	} catch (Exception $e) {
-//		$apiReturnCode = (int)$e->getCode();
-//		$apiReturnMessage = $e->getMessage();
-//	}
-//
-//		if ($id)
-//		{
-//			// Initialise the table
-//			$table = $this->getTable();
-//
-//			// Init database object.
-//			$db = JFactory::getDBO();
-//			$query = $db->getQuery(true);
-//
-//			// Get the current user object.
-//			$user = JFactory::getUser();
-//
-//			// Attempt to check the row out.
-//			if (method_exists($table, 'checkout')) {
-//				if (!$table->checkout($user->get('id'), $id)) {
-//					$this->setError($table->getError());
-//					return false;
-//				}
-//			}
-//		}
-//
-//		return true;
+		if($user != 0)
+		{
+			// Init database object.
+			$db = JFactory::getDBO();
+			$query = $db->getQuery(true);
+
+			// Set the fields
+			$fields = array(
+				'checked_out = ' . $db->quote($user) . '',
+				'checked_out_time = ' . $db->quote($datetime) . '');
+
+			$query
+				->update($db->quoteName('#__xiveirm_customer'))
+				->set($fields)
+				->where('id = ' . $db->quote($id) . '');
+
+			$db->setQuery($query);
+
+			// Try to store or get the error code for debugging
+			try
+			{
+				$db->execute();
+				$apiReturnId = $id;
+				$apiReturnCode = 'OUT';
+				$apiReturnMessage = 'Succesfully checked out';
+			} catch (Exception $e) {
+				$apiReturnCode = (int)$e->getCode();
+				$apiReturnMessage = $e->getMessage();
+			}
+		} else {
+			$apiReturnId = null;
+			$apiReturnCode = 'ERROR';
+			$apiReturnMessage = 'We can\'t check out the item because we have no user id!';
+		}
+
+		// Perform the return array
+		$return_arr = array();
+		$return_arr["apiReturnId"] = (int)$apiReturnId;
+		$return_arr["apiReturnCode"] = $apiReturnCode;
+		$return_arr["apiReturnMessage"] = $apiReturnMessage;
+
+		return $return_arr;
 	}    
     
 	/**

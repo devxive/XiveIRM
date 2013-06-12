@@ -17,15 +17,53 @@ require_once JPATH_COMPONENT.'/controller.php';
  */
 class XiveirmControllerApi extends XiveirmController
 {
+
+	var $app;
+	var $model;
+	var $user;
+
+	/**
+	 * INITIATE THE CONSTRUCTOR
+	 */
+	public function __construct()
+	{
+		// Initialise variables.
+		$this->app = JFactory::getApplication();
+		$this->model = $this->getModel('Api', 'XiveirmModel');
+		$this->user = JFactory::getUser();
+
+		parent::__construct();
+	}
+
 	/**
 	 * Checkout an item if the edit button is clicked and report message in JSON format, for AJAX requests
 	 *
 	 * @return void
 	 *
-	 * @since 3.1
+	 * @since 3.3
 	 */
 	public function ajaxcheckout()
 	{
+		/*
+		 * Note: we don't do a token check as we're fetching information
+		 * asynchronously. This means that between requests the token might
+		 * change, making it impossible for AJAX to work.
+		 */
+
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+
+
+		$model = $this->getModel('Api', 'XiveirmModel');
+
+		// ------------------------------------------------------------- GET AND PROCESS THE CORE FORM DATAS
+		$data = $this->app->input->get('cica', array(), 'array');
+
+		// table_id, user_id, MySQL datetime
+		$return = $model->checkout($data['id'], $this->user->id, IRMSystem::getDate('MySQL'));
+
+		echo json_encode($return);
+
+		$this->app->close();
 	}
 
 	/**
@@ -33,10 +71,30 @@ class XiveirmControllerApi extends XiveirmController
 	 *
 	 * @return void
 	 *
-	 * @since 3.1
+	 * @since 3.3
 	 */
 	public function ajaxcheckin()
 	{
+		/*
+		 * Note: we don't do a token check as we're fetching information
+		 * asynchronously. This means that between requests the token might
+		 * change, making it impossible for AJAX to work.
+		 */
+
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+
+
+		$model = $this->getModel('Api', 'XiveirmModel');
+
+		// ------------------------------------------------------------- GET AND PROCESS THE CORE FORM DATAS
+		$data = $this->app->input->get('cica', array(), 'array');
+
+		// table_id, user_id
+		$return = $model->checkin($data['id'], $this->user->id);
+
+		echo json_encode($return);
+
+		$this->app->close();
 	}
 
 	/**
@@ -60,13 +118,11 @@ class XiveirmControllerApi extends XiveirmController
 
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
+	$model = $this->getModel('Api', 'XiveirmModel');
+
 		// Import plugins, set event dispatcher
 		JPluginHelper::importPlugin( 'irmcustomertabs' ); // returned 1 if get successfully loaded
 		$dispatcher = JDispatcher::getInstance();
-
-		// Initialise variables.
-		$app = JFactory::getApplication();
-		$model = $this->getModel('Api', 'XiveirmModel');
 
 		$cache_timeout = $this->input->getInt('cache_timeout', 0);
 		if ($cache_timeout == 0)
@@ -78,7 +134,7 @@ class XiveirmControllerApi extends XiveirmController
 		}
 
 		// ------------------------------------------------------------- GET AND PROCESS THE CORE FORM DATAS
-		$data = $app->input->get('coreform', array(), 'array');
+		$data = $this->app->input->get('coreform', array(), 'array');
 		$return = $model->savecore($data); // If return isn't false, we got the item row id for further processing the tab datas
 
 		if($return["apiReturnCode"] != 'ERROR' && $return["apiReturnId"] > 0)
@@ -93,8 +149,6 @@ class XiveirmControllerApi extends XiveirmController
 				$return = $model->savetab($data, $return["apiReturnId"], $tabApp);
 			}
 		} else {
-			return false; // We got no row id from customer table
-
 			// Perform the return array
 			$return_arr = array();
 			$return_arr["apiReturnId"] = 0;
@@ -107,9 +161,9 @@ class XiveirmControllerApi extends XiveirmController
 		echo json_encode($return);
 
 //		// Flush the data from the session.
-//		$app->setUserState('com_xiveirm.edit.api.data', null);
+//		$this->app->setUserState('com_xiveirm.edit.api.data', null);
 
-		JFactory::getApplication()->close();
+		$this->app->close();
 	}
 
 	function ajaxcancel()
