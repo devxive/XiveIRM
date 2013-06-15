@@ -57,7 +57,7 @@ class PlgSystemXiveIrm extends JPlugin
 					$db = JFactory::getDBO();
 
 		// GET INFORMATIONS FROM DB, WHAT CLIENT ID THE USER HAVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+		// If we cant find a client_id we have to ensure that the user can't do anything until he have one. the last case is to close the getApplication immediately!
 					$client_id = '120700';
 					$xiveIrmSystemArray['client_id'] = $client_id;
 				}
