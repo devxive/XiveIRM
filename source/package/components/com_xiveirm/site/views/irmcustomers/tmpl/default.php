@@ -34,7 +34,7 @@ $search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 				</span>
 				<span class="span5">
 					<span class="pull-right">
-						<a class="btn btn-small btn-primary pull-right inline" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmcustomer.edit&id=0'); ?>" data-rel="tooltip" data-placement="left" title data-original-title="<?php echo JText::_("COM_XIVEIRM_ADD_ITEM"); if(isset($addLastName)) { echo ' ' . $addLastName; } ?>"><i class="icon-plus"></i></a>
+						<a class="btn btn-small btn-primary pull-right inline" href="<?php echo JRoute::_('index.php?task=irmcustomerform.edit&id=0'); ?>" data-rel="tooltip" data-placement="left" title data-original-title="<?php echo JText::_("COM_XIVEIRM_ADD_ITEM"); if(isset($addLastName)) { echo ' ' . $addLastName; } ?>"><i class="icon-plus"></i></a>
 					</span>
 				</span>
 			<?php endif; ?>
@@ -101,12 +101,12 @@ $search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 					<td class=" ">
 						<span><?php if((int) $item->customer_id): echo '<i class="icon-barcode"></i> ' . $item->customer_id; elseif(!(int)  $item->customer_id): echo '<i class="icon-qrcode"></i> ' . $item->customer_id; else: echo '<i class="icon-code-fork"></i> ' . $item->id; endif; ?></span>
 						<?php if($item->checked_out):
-							echo ' <i class="icon-lock red" data-rel="tooltip" data-placement="right" data-original-title="Checked out by: ' . IRMSystem::getUserName($item->checked_out) . ' on ' . $item->checked_out_time . '"></i>';
+							echo ' <i class="icon-lock red" data-rel="tooltip" data-placement="right" data-original-title="Checked out by: ' . JFactory::getUser($item->checked_out)->name . ' on ' . $item->checked_out_time . '"></i>';
 						endif; ?>
 					</td>
 
 					<td class=" ">
-						<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmcustomer.edit&id='.$item->id); ?>">
+						<a href="<?php echo JRoute::_('index.php?task=irmcustomerform.edit&id='.$item->id); ?>">
 							<?php 
 								if(!empty($item->company_name)) {
 									echo $item->company_name . '<br>';
