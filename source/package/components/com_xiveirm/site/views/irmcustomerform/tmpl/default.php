@@ -25,7 +25,7 @@ $dispatcher = JDispatcher::getInstance();
 $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 
 // check if the customer is checked out and compare user id. If customer is checked out by the same user, show no info! TODO: Future versions may show a message that the user have to save or click cancel!!!!
-if($this->item->checked_out != 0 && IRMSystem::getUserName($this->item->checked_out) != IRMSystem::getUserName(null)) { $checked_out = true; } else { $checked_out = false; }
+if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUser()->id) { $checked_out = true; } else { $checked_out = false; }
 
 ?>
 <!--
@@ -74,9 +74,9 @@ if($this->item->checked_out != 0 && IRMSystem::getUserName($this->item->checked_
 			<span class="span5">
 				<div class="btn-group pull-right inline">
 					<?php if($this->item->id && !$checked_out): ?>
-						<a onClick="enableForm()" id="loading-btn-edit" data-loading-text="<?php echo JText::_('COM_XIVEIRM_API_PLEASE_WAIT_BUTTON'); ?>" data-error-text="<?php echo JText::_('COM_XIVEIRM_API_ERROR_TRY_AGAIN_BUTTON'); ?>" class="btn btn-warning btn-mini edit-form-button"><i class="icon-edit"></i> <?php echo JText::_('COM_XIVEIRM_EDIT_ITEM'); ?></a>
+						<a onClick="enableEdit()" id="loading-btn-edit" data-loading-text="<?php echo JText::_('COM_XIVEIRM_API_PLEASE_WAIT_BUTTON'); ?>" data-error-text="<?php echo JText::_('COM_XIVEIRM_API_ERROR_TRY_AGAIN_BUTTON'); ?>" class="btn btn-warning btn-mini edit-form-button"><i class="icon-edit"></i> <?php echo JText::_('COM_XIVEIRM_EDIT_ITEM'); ?></a>
 					<?php endif; ?>
-					<a class="btn btn-danger btn-mini" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmcustomer.cancel'); ?>"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_CANCEL_ITEM'); ?></a>
+					<a class="btn btn-danger btn-mini" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=api.cancel&id=' . $this->item->id); ?>"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_CANCEL_ITEM'); ?></a>
 				</div>
 			</span>
 		</h1>
@@ -133,14 +133,40 @@ if($this->item->checked_out != 0 && IRMSystem::getUserName($this->item->checked_
 					<div class="row-fluid">
 						<div class="span7">
 							<div class="control-group">
-								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_CUSTOMER_ID_LABEL'); ?>, <?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_NAME_LABEL'); ?></label>
+								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_CONTACTGROUP_LABEL'); ?></label>
 								<div class="controls controls-row">
-									<input type="text" name="coreform[customer_id]" class="input-control span6" id="prependedInput" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_CUSTOMER_ID'); ?>" value="<?php echo $this->item->customer_id; ?>">
-									<input type="text" name="coreform[company_name]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_COMPANY_NAME'); ?>" value="<?php echo $this->item->title; ?>">
+									<select name="coreform[type]" class="chzn-selects input-control span6" data-placeholder="Choose a Type..." required>
+										<option value=""><?php echo JText::_('COM_XIVEIRM_SELECT'); ?></option>
+										<?php
+											$options = NFactory::getOptionArray('xiveirm_selectlists', 'customertype', 120700);
+
+											if($options->client) {
+												echo '<optgroup label="Eigene Kontakttypen"></optgroup>';
+													foreach ($options->client as $key => $val) {
+														echo '<option value="' . $key . '">&nbsp;&nbsp;&nbsp;&nbsp;' . $val . '</option>';
+													}
+												echo '</optgroup>';
+											}
+											if($options->global) {
+												echo '<optgroup label="System (Global)"></optgroup>';
+													foreach ($options->global as $key => $val) {
+														echo '<option value="' . $key . '">&nbsp;&nbsp;&nbsp;&nbsp;' . $val . '</option>';
+													}
+												echo '</optgroup>';
+											}
+										?>
+									</select>
 								</div>
 							</div>
-								<div class="control-group">
-								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_CUSTOMER_ID_LABEL'); ?>, <?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_NAME_LABEL'); ?></label>
+							<div class="control-group">
+								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_CUSTOMER_ID_LABEL'); ?>, <?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_COMPANY_NAME_LABEL'); ?></label>
+								<div class="controls controls-row">
+									<input type="text" name="coreform[customer_id]" class="input-control span6" id="prependedInput" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_CUSTOMER_ID'); ?>" value="<?php echo $this->item->customer_id; ?>">
+									<input type="text" name="coreform[company_name]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_COMPANY_NAME'); ?>" value="<?php echo $this->item->company_name; ?>">
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_NAME_LABEL'); ?></label>
 								<div class="controls controls-row">
 									<input type="text" name="coreform[title]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_NAME_TITLE'); ?>" value="<?php echo $this->item->title; ?>">
 								</div>
@@ -295,6 +321,7 @@ if($this->item->checked_out != 0 && IRMSystem::getUserName($this->item->checked_
 				<?php } ?>
 				<input type="hidden" name="coreform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
 				<input type="hidden" name="coreform[checked_out_time]" value="<?php echo $this->item->checked_out_time; ?>" />
+				<input type="hidden" id="checkEditForm" name="checkEditForm" value="0" />
 				<input type="hidden" name="coreform[modified]" value="<?php echo $this->item->modified; ?>" />
 				<input type="hidden" name="coreform[state]" value="<?php echo $this->item->state; ?>" />
 				<?php echo JHtml::_('form.token'); ?>
@@ -306,7 +333,7 @@ if($this->item->checked_out != 0 && IRMSystem::getUserName($this->item->checked_
 						<button class="btn" type="reset" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_RESET_TIP'); ?>"><i class="icon-undo"></i> <?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_RESET'); ?></button>
 						&nbsp; &nbsp; &nbsp;
 					</span>
-					<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=irmcustomer.cancel'); ?>" class="btn btn-danger"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_CANCEL_ITEM'); ?></a>
+					<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=api.cancel&id=' . $this->item->id); ?>" class="btn btn-danger"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_CANCEL_ITEM'); ?></a>
 				</div>
 			</div>
 			<!-- ---------- ---------- ---------- ---------- ---------- BEGIN master-tab-pane-container ---------- ---------- ---------- ---------- ---------- -->
@@ -373,6 +400,15 @@ if($this->item->checked_out != 0 && IRMSystem::getUserName($this->item->checked_
 					$("#loading-btn-save").removeClass("btn-warning");
 					$("#loading-btn-save").button("complete");
 					$("#loading-btn-save").button("reset");
+
+					$("#loading-btn-edit").removeClass("hidden");
+					$("#loading-btn-edit").button("complete");
+					$("#loading-btn-edit").button("reset");
+
+					$("#form-irmcustomer .input-control").attr("readonly", true);
+					$("#form-buttons").addClass("hidden");
+					$(".widget-box .btn").attr("disabled", false);
+
 				} else {
 					$.gritter.add({
 						title: 'An error occured',
@@ -401,16 +437,19 @@ if($this->item->checked_out != 0 && IRMSystem::getUserName($this->item->checked_
 	jQuery("#form-irmcustomer .input-control").attr("readonly", true);
 
 	// XAP-TODO: Have to set more functions to the edit form, such as a DB-checkout on activate and checkin on save or check in on deactivate !!!!
-	function enableForm() {
+	function cancelEdit() {
+	}
+
+	// XAP-TODO: Have to set more functions to the edit form, such as a DB-checkout on activate and checkin on save or check in on deactivate !!!!
+	function enableEdit() {
 		var inp = $('.input-control').get(0);
-		var editBtn = $('.edit-form-button').get(0);
 
 		$("#loading-btn-edit").addClass("btn-warning");
 		$("#loading-btn-edit").button("loading");
 
 		jQuery.post('index.php?option=com_xiveirm&task=api.ajaxcheckout', $("#form-irmcustomer-cica").serialize(),
 			function(data){
-				if(data.apiReturnCode === 'OUT'){
+				if(data.apiReturnCode === 'TRUE'){
 					$.gritter.add({
 						title: '<?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_CHECKED_OUT_INFO_TITLE'); ?>',
 						text: '<?php echo JText::sprintf('COM_XIVEIRM_IRMCUSTOMER_FORM_CHECKED_OUT_INFO_BODY', $full_name); ?>',
@@ -418,17 +457,19 @@ if($this->item->checked_out != 0 && IRMSystem::getUserName($this->item->checked_
 						class_name: 'alert-warning'
 					});
 
-					// Remove all readonly fields if we got an "OUT" response from the api
+					// Remove all readonly fields if we got a "TRUE" response from the api and set the id="ckeckeditform" to 1 for form checks on leaving site
 					if(inp.hasAttribute('readonly')) {
 						$("#form-irmcustomer .input-control").attr("readonly", false);
-						editBtn.setAttribute("class", "hidden");
+						$("#loading-btn-edit").addClass("hidden");
 						$("#form-buttons").removeClass("hidden");
 						$(".widget-box .btn").attr("disabled", true);
+
+						$("#checkEditForm").val("1");
 					}
 				} else {
 					$.gritter.add({
 						title: 'An error occured',
-						text: 'An error occured while trying to check out for editing. <br><br>Error code: ' + data.apiReturnCode + '<br><br>error message: ' + data.apiReturnMessage + '<br><br>If this error is persistant, please contact the support immediately with the given error!',
+						text: 'An error occured while trying to check out for editing. <br><br>Error code: ' + data.apiReturnCode + '<br><br>Error message: ' + data.apiReturnMessage + '<br><br>If this error is persistant, please contact the support immediately with the given error!',
 						icon: 'icon-warning-sign',
 						sticky: true,
 						class_name: 'alert-error'
@@ -441,6 +482,8 @@ if($this->item->checked_out != 0 && IRMSystem::getUserName($this->item->checked_
 			},
 		"json");
 	}
+	<?php else: ?>
+		jQuery(".widget-box .btn").attr("disabled", true);
 	<?php endif; ?>
 
 	/*
