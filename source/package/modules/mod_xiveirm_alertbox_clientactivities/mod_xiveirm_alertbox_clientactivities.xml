@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.1" type="module" client="site" method="upgrade">
+	<name>mod_xiveirm_alertbox_clientactivities</name>
+	<author>devXive</author>
+	<creationDate>May 2013</creationDate>
+	<copyright>(C) 1997 - 2013 devXive - research and development. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>support@devxive.com</authorEmail>
+	<authorUrl>www.devxive.com</authorUrl>
+	<version>0.0.1</version>
+	<description>MOD_XAPPTHEME_SIDEBARSHORTCUTS_XML_DESCRIPTION</description>
+	<files>
+		<filename module="mod_xiveirm_alertbox_clientactivities">mod_xiveirm_alertbox_clientactivities.php</filename>
+		<filename>index.html</filename>
+		<folder>tmpl</folder>
+	</files>
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.mod_xiveirm_alertbox_clientactivities.ini</language>
+		<language tag="en-GB">en-GB/en-GB.mod_xiveirm_alertbox_clientactivities.sys.ini</language>
+	</languages>
+
+	<help key="JHELP_EXTENSIONS_MODULE_MANAGER_CUSTOM_HTML" />
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field
+					name="icon1_icon"
+					type="text"
+					default="icon-signal"
+					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_ICON_LABEL"
+					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_ICON_DESC" />
+				<field
+					name="icon1_color"
+					type="text"
+					default="btn-success"
+					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_COLOR_LABEL"
+					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_COLOR_DESC" />
+				<field
+					name="icon1_title"
+					type="text"
+					default="Shortcut"
+					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_TITLE_LABEL"
+					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_TITLE_DESC" />
+				<field
+					name="icon1_link"
+					type="menuitem"
+					default=""
+					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_LINK_LABEL"
+					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_LINK_DESC" />
+
+
+				<field
+					name="icon2_icon"
+					type="text"
+					default="icon-pencil"
+					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_ICON_LABEL"
+					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_ICON_DESC" />
+				<field
+					name="icon2_color"
+					type="text"
+					default="btn-info"
+					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_COLOR_LABEL"
+					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_COLOR_DESC" />
+				<field
+					name="icon2_title"
+					type="text"
+					default="Shortcut"
+					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_TITLE_LABEL"
+					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_TITLE_DESC" />
+				<field
+					name="icon2_link"
+					type="menuitem"
+					default=""
+					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_LINK_LABEL"
+					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_LINK_DESC" />
+
+
+				<field
+					name="icon3_icon"
+					type="text"
+					default="icon-group"
+					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_ICON_LABEL"
+					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_ICON_DESC" />
+				<field
+					name="icon3_color"
+					type="text"
+					default="btn-warning"
+					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_COLOR_LABEL"
+					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_COLOR_DESC" />
+				<field
+					name="icon3_title"
+					type="text"
+					default="Shortcut"
+					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_TITLE_LABEL"
+					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_TITLE_DESC" />
+				<field
+					name="icon3_link"
+					type="menuitem"
+					default=""
+					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_LINK_LABEL"
+					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_LINK_DESC" />
+
+
+				<field
+					name="icon4_icon"
+					type="text"
+					default="icon-cogs"
+					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_ICON_LABEL"
+					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_ICON_DESC" />
+				<field
+					name="icon4_color"
+					type="text"
+					default="btn-danger"
+					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_COLOR_LABEL"
+					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_COLOR_DESC" />
+				<field
+					name="icon4_title"
+					type="text"
+					default="Shortcut"
+					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_TITLE_LABEL"
+					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_TITLE_DESC" />
+				<field
+					name="icon4_link"
+					type="menuitem"
+					default=""
+					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_LINK_LABEL"
+					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_LINK_DESC" />
+			</fieldset>
+			<fieldset name="advanced">
+				<field
+					name="layout"
+					type="modulelayout"
+					label="JFIELD_ALT_LAYOUT_LABEL"
+					description="JFIELD_ALT_MODULE_LAYOUT_DESC" />
+
+				<field
+					name="moduleclass_sfx"
+					type="textarea" rows="3"
+					label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+					description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC" />
+
+				<field
+					name="cache"
+					type="list"
+					default="1"
+					label="COM_MODULES_FIELD_CACHING_LABEL"
+					description="COM_MODULES_FIELD_CACHING_DESC">
+					<option
+						value="1">JGLOBAL_USE_GLOBAL</option>
+					<option
+						value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+				</field>
+
+				<field
+					name="cache_time"
+					type="text"
+					default="900"
+					label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+					description="COM_MODULES_FIELD_CACHE_TIME_DESC" />
+				<field
+					name="cachemode"
+					type="hidden"
+					default="static">
+					<option
+						value="static"></option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>
