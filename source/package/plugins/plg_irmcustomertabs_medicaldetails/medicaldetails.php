@@ -394,7 +394,7 @@ class PlgIrmCustomerTabsMedicaldetails extends JPlugin
 	{
 		$inForm = array(
 			'formLabel' => 'Medical Details',
-			'formFields' => '<input type="text" class="input-control span6" name="' . $this->tab_key . '[insurance]">'
+			'formFields' => '<input type="text" class="input-control span6" name="' . $this->tab_key . '[insurance]" placeholder="Krankenkasse">'
 		);
 
 		return $inForm;
