@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.1" type="plugin" group="system" method="upgrade">
+	<name>plg_system_xiveirm</name>
+	<author>devXive</author>
+	<creationDate>May 2013</creationDate>
+	<copyright>(C) 1997 - 2013 devXive - research and development. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>support@devxive.com</authorEmail>
+	<authorUrl>www.devxive.com</authorUrl>
+	<version>1.0.0</version>
+	<description>PLG_SYSTEM_XIVEIRM_XML_DESCRIPTION</description>
+	<files>
+		<filename plugin="xiveirm">xiveirm.php</filename>
+		<filename>index.html</filename>
+	</files>
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.plg_system_xiveirm.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_system_xiveirm.sys.ini</language>
+	</languages>
+	<config>
+		<fields name="params">
+
+			<fieldset name="basic"
+				addfieldpath="/administrator/components/com_content/models/fields">
+
+				<field name="set-client-ability" type="list" default="0"
+					description="PLG_SYSTEM_XIVEIRM_SET_CLIENT_ABILITY_DESC"
+					label="PLG_SYSTEM_XIVEIRM_SET_CLIENT_ABILITY_LABEL"
+				>
+					<option value="1">JENABLED</option>
+					<option value="0">JDISABLED</option>
+				</field>
+
+				<field name="spacer1" type="spacer"
+					hr="true"
+				/>
+
+			</fieldset>
+
+		</fields>
+	</config>
+</extension>
