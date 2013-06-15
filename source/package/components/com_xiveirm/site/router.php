@@ -18,15 +18,51 @@ function XiveirmBuildRoute(&$query)
 {
 	$segments = array();
     
-	if (isset($query['task'])) {
-		$segments[] = implode('/',explode('.',$query['task']));
-		unset($query['task']);
-	}
-	if (isset($query['id'])) {
-		$segments[] = $query['id'];
-		unset($query['id']);
+	if (isset($query['view'])) {
+		if (empty($query['Itemid'])) {
+			$segments[] = $query['view'];
+		}
+		else {
+			$menu = &JSite::getMenu();
+			$menuItem = &$menu->getItem($query['Itemid']);
+
+			if (!isset($menuItem->query['view']) || $menuItem->query['view'] != $query['view']) {
+				$segments[] = $query['view'];
+			}
+		}
+		unset($query['view']);
 	}
 
+	if (isset($query['task'])) {
+		switch ($query['task']) {
+			case 'irmcustomerform.edit':
+				$segments[] = 'edit';
+				$segments[] = $query['id'];
+				unset($query['id']);
+				break;
+			case 'irmcustomerform.cancel':
+				$segments[] = 'cancel';
+				$segments[] = $query['id'];
+				unset($query['id']);
+				break;
+			case 'api.cancel':
+				$segments[] = 'cancel';
+				$segments[] = $query['id'];
+				unset($query['id']);
+				break;
+			case 'irmcustomer':
+				$segments[] = 'show';
+//				$segments[] = $query['id'];
+				unset($query['id']);
+				break;
+			default:
+				$segments[] = implode('/',explode('.',$query['task']));
+				$segments[] = $query['id'];
+				unset($query['id']);
+				break;
+		}
+		unset($query['task']);
+	}
 	return $segments;
 }
 
@@ -46,23 +82,24 @@ function XiveirmParseRoute($segments)
     
 	// view is always the first element of the array
 	$count = count($segments);
-    
-    if ($count)
-	{
-		$count--;
-		$segment = array_pop($segments) ;
-		if (is_numeric($segment)) {
-			$vars['id'] = $segment;
-		}
-        else{
-            $count--;
-            $vars['task'] = array_pop($segments) . '.' . $segment;
-        }
-	}
 
-	if ($count)
-	{   
-        $vars['task'] = implode('.',$segments);
+	switch ($segments[0]) {
+		case 'edit':
+			$vars['view'] = 'irmcustomerform';
+			$vars['id'] = $segments[$count - 1];
+			break;
+		case 'cancel':
+			$vars['task'] = 'api.cancel';
+			$vars['id'] = $segments[$count - 1];
+			break;
+		case 'show':
+			$vars['view'] = 'irmcustomer';
+			$vars['id'] = $segments[$count - 1];
+			break;
+		default:
+			$vars['task'] = $segments[0] . '.' . $segments[1];
+			$vars['id'] = $segments[$count - 1];
+			break;
 	}
 	return $vars;
 }
