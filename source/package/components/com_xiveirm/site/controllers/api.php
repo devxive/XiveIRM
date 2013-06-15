@@ -17,7 +17,6 @@ require_once JPATH_COMPONENT.'/controller.php';
  */
 class XiveirmControllerApi extends XiveirmController
 {
-
 	var $app;
 	var $model;
 	var $user;
@@ -44,24 +43,23 @@ class XiveirmControllerApi extends XiveirmController
 	 */
 	public function ajaxcheckout()
 	{
-		/*
-		 * Note: we don't do a token check as we're fetching information
-		 * asynchronously. This means that between requests the token might
-		 * change, making it impossible for AJAX to work.
-		 */
-
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-
-		$model = $this->getModel('Api', 'XiveirmModel');
-
-		// ------------------------------------------------------------- GET AND PROCESS THE CORE FORM DATAS
 		$data = $this->app->input->get('cica', array(), 'array');
+		$return = NFactory::checkOut('xiveirm_customer', $data['id'], NFactory::getDate('MySQL'), JFactory::getUser()->id);
 
-		// table_id, user_id, MySQL datetime
-		$return = $model->checkout($data['id'], $this->user->id, IRMSystem::getDate('MySQL'));
+		if($return) {
+			$return_arr = array();
+			$return_arr["apiReturnId"] = $data['id'];
+			$return_arr["apiReturnCode"] = 'TRUE';
+		} else {
+			$return_arr = array();
+			$return_arr["apiReturnId"] = $data['id'];
+			$return_arr["apiReturnCode"] = 1000;
+			$return_arr["apiReturnMessage"] = 'An Error occured in the Nawala Framework API-Processor';
+		}
 
-		echo json_encode($return);
+		echo json_encode($return_arr);
 
 		$this->app->close();
 	}
@@ -76,23 +74,26 @@ class XiveirmControllerApi extends XiveirmController
 	public function ajaxcheckin()
 	{
 		/*
-		 * Note: we don't do a token check as we're fetching information
-		 * asynchronously. This means that between requests the token might
-		 * change, making it impossible for AJAX to work.
+		 * Note: This is only an ajax checkin. The Checkin Processors are in the apropriate controllers
 		 */
 
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-
-		$model = $this->getModel('Api', 'XiveirmModel');
-
-		// ------------------------------------------------------------- GET AND PROCESS THE CORE FORM DATAS
 		$data = $this->app->input->get('cica', array(), 'array');
+		$return = NFactory::checkIn('xiveirm_customer', $data['id']);
 
-		// table_id, user_id
-		$return = $model->checkin($data['id'], $this->user->id);
+		if($return) {
+			$return_arr = array();
+			$return_arr["apiReturnId"] = $data['id'];
+			$return_arr["apiReturnCode"] = TRUE;
+		} else {
+			$return_arr = array();
+			$return_arr["apiReturnId"] = $data['id'];
+			$return_arr["apiReturnCode"] = 1000;
+			$return_arr["apiReturnMessage"] = 'An Error occured in the Nawala Framework API-Processor';
+		}
 
-		echo json_encode($return);
+		echo json_encode($return_arr);
 
 		$this->app->close();
 	}
@@ -137,6 +138,8 @@ class XiveirmControllerApi extends XiveirmController
 		$data = $this->app->input->get('coreform', array(), 'array');
 		$return = $model->savecore($data); // If return isn't false, we got the item row id for further processing the tab datas
 
+		$customerItemId = $data['id'];
+
 		if($return["apiReturnCode"] != 'ERROR' && $return["apiReturnId"] > 0)
 		{
 			// Check if we have tabApps and perform processing for each tabApp
@@ -147,6 +150,10 @@ class XiveirmControllerApi extends XiveirmController
 	
 				// Attempt to save the tabdata.
 				$return = $model->savetab($data, $return["apiReturnId"], $tabApp);
+
+				// If all ok, check in the parent item
+				NFactory::checkIn('xiveirm_customer', $customerItemId);
+
 			}
 		} else {
 			// Perform the return array
@@ -166,11 +173,45 @@ class XiveirmControllerApi extends XiveirmController
 		$this->app->close();
 	}
 
-	function ajaxcancel()
+	public function ajaxcancel()
 	{
+		/*
+		 * Note: we don't do a token check as we're fetching information
+		 * asynchronously. This means that between requests the token might
+		 * change, making it impossible for AJAX to work.
+		 */
+
+//		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+
+
+		$model = $this->getModel('Api', 'XiveirmModel');
+
+		// ------------------------------------------------------------- GET AND PROCESS THE CORE FORM DATAS
+		$data = $this->app->input->get('cica', array(), 'array');
+
+		// table_id, user_id
+		$return = $model->checkin($data['id'], $this->user->id);
+
+//		echo json_encode($return);
+
+//		$menu = & JSite::getMenu();
+//		$item = $menu->getActive();
+//		$this->setRedirect(JRoute::_($item->link, false));
+		$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=irmcustomers', false));
 	}
 
 	public function ajaxremove()
 	{
 	}
+
+	function cancel()
+	{
+		$id = JFactory::getApplication()->input->get('id', '', 'INT');
+		$return = NFactory::checkIn('xiveirm_customer', $id);
+
+		$menu = & JSite::getMenu();
+		$item = $menu->getActive();
+		$this->setRedirect(JRoute::_($item->link, false));
+	}
+
 }
