@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.3.0
+ * @version     4.2.3
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -15,7 +15,7 @@ jimport('joomla.application.component.view');
 /**
  * View to edit
  */
-class XiveirmViewAdditionalinformation extends JViewLegacy
+class XiveirmViewContact extends JViewLegacy
 {
 	protected $state;
 	protected $item;
@@ -55,27 +55,27 @@ class XiveirmViewAdditionalinformation extends JViewLegacy
         }
 		$canDo		= XiveirmHelper::getActions();
 
-		JToolBarHelper::title(JText::_('COM_XIVEIRM_TITLE_ADDITIONALINFORMATION'), 'additionalinformation.png');
+		JToolBarHelper::title(JText::_('COM_XIVEIRM_TITLE_CONTACT'), 'contact.png');
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit')||($canDo->get('core.create'))))
 		{
 
-			JToolBarHelper::apply('additionalinformation.apply', 'JTOOLBAR_APPLY');
-			JToolBarHelper::save('additionalinformation.save', 'JTOOLBAR_SAVE');
+			JToolBarHelper::apply('contact.apply', 'JTOOLBAR_APPLY');
+			JToolBarHelper::save('contact.save', 'JTOOLBAR_SAVE');
 		}
 		if (!$checkedOut && ($canDo->get('core.create'))){
-			JToolBarHelper::custom('additionalinformation.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+			JToolBarHelper::custom('contact.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 		}
 		// If an existing item, can save to a copy.
 		if (!$isNew && $canDo->get('core.create')) {
-			JToolBarHelper::custom('additionalinformation.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+			JToolBarHelper::custom('contact.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 		}
 		if (empty($this->item->id)) {
-			JToolBarHelper::cancel('additionalinformation.cancel', 'JTOOLBAR_CANCEL');
+			JToolBarHelper::cancel('contact.cancel', 'JTOOLBAR_CANCEL');
 		}
 		else {
-			JToolBarHelper::cancel('additionalinformation.cancel', 'JTOOLBAR_CLOSE');
+			JToolBarHelper::cancel('contact.cancel', 'JTOOLBAR_CLOSE');
 		}
 
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.3.0
+ * @version     4.2.3
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -27,8 +27,8 @@ $canOrder	= $user->authorise('core.edit.state', 'com_xiveirm');
 $saveOrder	= $listOrder == 'a.ordering';
 if ($saveOrder)
 {
-	$saveOrderingUrl = 'index.php?option=com_xiveirm&task=selectlists.saveOrderAjax&tmpl=component';
-	JHtml::_('sortablelist.sortable', 'selectlistList', 'adminForm', strtolower($listDirn), $saveOrderingUrl);
+	$saveOrderingUrl = 'index.php?option=com_xiveirm&task=contacts.saveOrderAjax&tmpl=component';
+	JHtml::_('sortablelist.sortable', 'contactList', 'adminForm', strtolower($listDirn), $saveOrderingUrl);
 }
 $sortFields = $this->getSortFields();
 ?>
@@ -53,7 +53,7 @@ if (!empty($this->extra_sidebar)) {
 }
 ?>
 
-<form action="<?php echo JRoute::_('index.php?option=com_xiveirm&view=selectlists'); ?>" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo JRoute::_('index.php?option=com_xiveirm&view=contacts'); ?>" method="post" name="adminForm" id="adminForm">
 <?php if(!empty($this->sidebar)): ?>
 	<div id="j-sidebar-container" class="span2">
 		<?php echo $this->sidebar; ?>
@@ -93,7 +93,7 @@ if (!empty($this->extra_sidebar)) {
 			</div>
 		</div>        
 		<div class="clearfix"> </div>
-		<table class="table table-striped" id="selectlistList">
+		<table class="table table-striped" id="contactList">
 			<thead>
 				<tr>
                 <?php if (isset($this->items[0]->ordering)): ?>
@@ -111,16 +111,25 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_SELECTLISTS_CLIENT_ID', 'a.client_id', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_CONTACTS_CATID', 'a.catid', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_SELECTLISTS_SL_KEY', 'a.sl_key', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_CONTACTS_CUSTOMER_ID', 'a.customer_id', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_SELECTLISTS_SL_VALUE', 'a.sl_value', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_CONTACTS_COMPANY', 'a.company', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_SELECTLISTS_SL_STRING', 'a.sl_string', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_CONTACTS_LAST_NAME', 'a.last_name', $listDirn, $listOrder); ?>
+				</th>
+				<th class='left'>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_CONTACTS_FIRST_NAME', 'a.first_name', $listDirn, $listOrder); ?>
+				</th>
+				<th class='left'>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_CONTACTS_GENDER', 'a.gender', $listDirn, $listOrder); ?>
+				</th>
+				<th class='left'>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_CONTACTS_DOB', 'a.dob', $listDirn, $listOrder); ?>
 				</th>
                     
                     
@@ -181,32 +190,44 @@ if (!empty($this->extra_sidebar)) {
 					</td>
                 <?php if (isset($this->items[0]->state)): ?>
 					<td class="center">
-						<?php echo JHtml::_('jgrid.published', $item->state, $i, 'selectlists.', $canChange, 'cb'); ?>
+						<?php echo JHtml::_('jgrid.published', $item->state, $i, 'contacts.', $canChange, 'cb'); ?>
 					</td>
                 <?php endif; ?>
                     
 				<td>
 
-					<?php echo $item->client_id; ?>
+					<?php echo $item->catid; ?>
 				</td>
 				<td>
 				<?php if (isset($item->checked_out) && $item->checked_out) : ?>
-					<?php echo JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'selectlists.', $canCheckin); ?>
+					<?php echo JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'contacts.', $canCheckin); ?>
 				<?php endif; ?>
 				<?php if ($canEdit) : ?>
-					<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=selectlist.edit&id='.(int) $item->id); ?>">
-					<?php echo $this->escape($item->sl_key); ?></a>
+					<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contact.edit&id='.(int) $item->id); ?>">
+					<?php echo $this->escape($item->customer_id); ?></a>
 				<?php else : ?>
-					<?php echo $this->escape($item->sl_key); ?>
+					<?php echo $this->escape($item->customer_id); ?>
 				<?php endif; ?>
 				</td>
 				<td>
 
-					<?php echo $item->sl_value; ?>
+					<?php echo $item->company; ?>
 				</td>
 				<td>
 
-					<?php echo $item->sl_string; ?>
+					<?php echo $item->last_name; ?>
+				</td>
+				<td>
+
+					<?php echo $item->first_name; ?>
+				</td>
+				<td>
+
+					<?php echo $item->gender; ?>
+				</td>
+				<td>
+
+					<?php echo $item->dob; ?>
 				</td>
 
 
