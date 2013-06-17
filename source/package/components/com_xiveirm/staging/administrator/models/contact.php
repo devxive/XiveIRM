@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.3.0
+ * @version     4.2.3
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -15,7 +15,7 @@ jimport('joomla.application.component.modeladmin');
 /**
  * Xiveirm model.
  */
-class XiveirmModeladditionalinformation extends JModelAdmin
+class XiveirmModelcontact extends JModelAdmin
 {
 	/**
 	 * @var		string	The prefix to use with controller messages.
@@ -33,7 +33,7 @@ class XiveirmModeladditionalinformation extends JModelAdmin
 	 * @return	JTable	A database object
 	 * @since	1.6
 	 */
-	public function getTable($type = 'Additionalinformation', $prefix = 'XiveirmTable', $config = array())
+	public function getTable($type = 'Contact', $prefix = 'XiveirmTable', $config = array())
 	{
 		return JTable::getInstance($type, $prefix, $config);
 	}
@@ -52,7 +52,7 @@ class XiveirmModeladditionalinformation extends JModelAdmin
 		$app	= JFactory::getApplication();
 
 		// Get the form.
-		$form = $this->loadForm('com_xiveirm.additionalinformation', 'additionalinformation', array('control' => 'jform', 'load_data' => $loadData));
+		$form = $this->loadForm('com_xiveirm.contact', 'contact', array('control' => 'jform', 'load_data' => $loadData));
 		if (empty($form)) {
 			return false;
 		}
@@ -69,11 +69,20 @@ class XiveirmModeladditionalinformation extends JModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_xiveirm.edit.additionalinformation.data', array());
+		$data = JFactory::getApplication()->getUserState('com_xiveirm.edit.contact.data', array());
 
 		if (empty($data)) {
 			$data = $this->getItem();
             
+
+			//Support for multiple or not foreign key field: gender
+			$array = array();
+			foreach((array)$data->gender as $value): 
+				if(!is_array($value)):
+					$array[] = $value;
+				endif;
+			endforeach;
+			$data->gender = implode(',',$array);
 		}
 
 		return $data;
@@ -112,7 +121,7 @@ class XiveirmModeladditionalinformation extends JModelAdmin
 			// Set ordering to the last item if not set
 			if (@$table->ordering === '') {
 				$db = JFactory::getDbo();
-				$db->setQuery('SELECT MAX(ordering) FROM #__xiveirm_customer_add');
+				$db->setQuery('SELECT MAX(ordering) FROM #__xiveirm_contacts');
 				$max = $db->loadResult();
 				$table->ordering = $max+1;
 			}

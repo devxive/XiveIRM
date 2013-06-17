@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version     3.3.0
+ * @version     4.2.3
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -11,9 +11,9 @@
 defined('_JEXEC') or die;
 
 /**
- * irmcustomer Table class
+ * optioncategory Table class
  */
-class XiveirmTableirmcustomer extends JTable {
+class XiveirmTableoptioncategory extends JTable {
 
     /**
      * Constructor
@@ -21,7 +21,7 @@ class XiveirmTableirmcustomer extends JTable {
      * @param JDatabase A database connector object
      */
     public function __construct(&$db) {
-        parent::__construct('#__xiveirm_customer', 'id', $db);
+        parent::__construct('#__xiveirm_option_categories', 'id', $db);
     }
 
     /**
@@ -37,12 +37,8 @@ class XiveirmTableirmcustomer extends JTable {
         
 		$input = JFactory::getApplication()->input;
 		$task = $input->getString('task', '');
-		if(($task == 'save' || $task == 'apply') && (!JFactory::getUser()->authorise('core.edit.state','com_xiveirm.irmcustomer.'.$array['id']) && $array['state'] == 1)){
+		if(($task == 'save' || $task == 'apply') && (!JFactory::getUser()->authorise('core.edit.state','com_xiveirm') && $array['state'] == 1)){
 			$array['state'] = 0;
-		}
-		$task = JRequest::getVar('task');
-		if($task == 'apply' || $task == 'save'){
-			$array['modified'] = date("Y-m-d H:i:s");
 		}
 
         if (isset($array['params']) && is_array($array['params'])) {
@@ -56,9 +52,9 @@ class XiveirmTableirmcustomer extends JTable {
             $registry->loadArray($array['metadata']);
             $array['metadata'] = (string) $registry;
         }
-        if(!JFactory::getUser()->authorise('core.admin', 'com_xiveirm.irmcustomer.'.$array['id'])){
-            $actions = JFactory::getACL()->getActions('com_xiveirm','irmcustomer');
-            $default_actions = JFactory::getACL()->getAssetRules('com_xiveirm.irmcustomer.'.$array['id'])->getData();
+        if(!JFactory::getUser()->authorise('core.admin', 'com_xiveirm.optioncategory.'.$array['id'])){
+            $actions = JFactory::getACL()->getActions('com_xiveirm','optioncategory');
+            $default_actions = JFactory::getACL()->getAssetRules('com_xiveirm.optioncategory.'.$array['id'])->getData();
             $array_jaccess = array();
             foreach($actions as $action){
                 $array_jaccess[$action->name] = $default_actions[$action->name];
@@ -185,7 +181,7 @@ class XiveirmTableirmcustomer extends JTable {
     */
     protected function _getAssetName() {
         $k = $this->_tbl_key;
-        return 'com_xiveirm.irmcustomer.' . (int) $this->$k;
+        return 'com_xiveirm.optioncategory.' . (int) $this->$k;
     }
  
     /**

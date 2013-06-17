@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version     3.3.0
+ * @version     4.2.3
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -11,9 +11,9 @@
 defined('_JEXEC') or die;
 
 /**
- * selectlist Table class
+ * option Table class
  */
-class XiveirmTableselectlist extends JTable {
+class XiveirmTableoption extends JTable {
 
     /**
      * Constructor
@@ -21,7 +21,7 @@ class XiveirmTableselectlist extends JTable {
      * @param JDatabase A database connector object
      */
     public function __construct(&$db) {
-        parent::__construct('#__xiveirm_selectlists', 'id', $db);
+        parent::__construct('#__xiveirm_options', 'id', $db);
     }
 
     /**
@@ -36,6 +36,19 @@ class XiveirmTableselectlist extends JTable {
 
         
 
+		//Support for multiple or not foreign key field: category
+			if(isset($array['category'])){
+				if(is_array($array['category'])){
+					$array['category'] = implode(',',$array['category']);
+				}
+				else if(strrpos($array['category'], ',') != false){
+					$array['category'] = explode(',',$array['category']);
+				}
+				else if(empty($array['category'])) {
+					$array['category'] = '';
+				}
+			}
+
         if (isset($array['params']) && is_array($array['params'])) {
             $registry = new JRegistry();
             $registry->loadArray($array['params']);
@@ -47,9 +60,9 @@ class XiveirmTableselectlist extends JTable {
             $registry->loadArray($array['metadata']);
             $array['metadata'] = (string) $registry;
         }
-        if(!JFactory::getUser()->authorise('core.admin', 'com_xiveirm.selectlist.'.$array['id'])){
-            $actions = JFactory::getACL()->getActions('com_xiveirm','selectlist');
-            $default_actions = JFactory::getACL()->getAssetRules('com_xiveirm.selectlist.'.$array['id'])->getData();
+        if(!JFactory::getUser()->authorise('core.admin', 'com_xiveirm.option.'.$array['id'])){
+            $actions = JFactory::getACL()->getActions('com_xiveirm','option');
+            $default_actions = JFactory::getACL()->getAssetRules('com_xiveirm.option.'.$array['id'])->getData();
             $array_jaccess = array();
             foreach($actions as $action){
                 $array_jaccess[$action->name] = $default_actions[$action->name];
@@ -176,7 +189,7 @@ class XiveirmTableselectlist extends JTable {
     */
     protected function _getAssetName() {
         $k = $this->_tbl_key;
-        return 'com_xiveirm.selectlist.' . (int) $this->$k;
+        return 'com_xiveirm.option.' . (int) $this->$k;
     }
  
     /**

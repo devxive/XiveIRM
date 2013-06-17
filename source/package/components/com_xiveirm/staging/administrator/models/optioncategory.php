@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.3.0
+ * @version     4.2.3
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -15,7 +15,7 @@ jimport('joomla.application.component.modeladmin');
 /**
  * Xiveirm model.
  */
-class XiveirmModelselectlist extends JModelAdmin
+class XiveirmModeloptioncategory extends JModelAdmin
 {
 	/**
 	 * @var		string	The prefix to use with controller messages.
@@ -33,7 +33,7 @@ class XiveirmModelselectlist extends JModelAdmin
 	 * @return	JTable	A database object
 	 * @since	1.6
 	 */
-	public function getTable($type = 'Selectlist', $prefix = 'XiveirmTable', $config = array())
+	public function getTable($type = 'Optioncategory', $prefix = 'XiveirmTable', $config = array())
 	{
 		return JTable::getInstance($type, $prefix, $config);
 	}
@@ -52,7 +52,7 @@ class XiveirmModelselectlist extends JModelAdmin
 		$app	= JFactory::getApplication();
 
 		// Get the form.
-		$form = $this->loadForm('com_xiveirm.selectlist', 'selectlist', array('control' => 'jform', 'load_data' => $loadData));
+		$form = $this->loadForm('com_xiveirm.optioncategory', 'optioncategory', array('control' => 'jform', 'load_data' => $loadData));
 		if (empty($form)) {
 			return false;
 		}
@@ -69,7 +69,7 @@ class XiveirmModelselectlist extends JModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_xiveirm.edit.selectlist.data', array());
+		$data = JFactory::getApplication()->getUserState('com_xiveirm.edit.optioncategory.data', array());
 
 		if (empty($data)) {
 			$data = $this->getItem();
@@ -112,7 +112,7 @@ class XiveirmModelselectlist extends JModelAdmin
 			// Set ordering to the last item if not set
 			if (@$table->ordering === '') {
 				$db = JFactory::getDbo();
-				$db->setQuery('SELECT MAX(ordering) FROM #__xiveirm_selectlists');
+				$db->setQuery('SELECT MAX(ordering) FROM #__xiveirm_option_categories');
 				$max = $db->loadResult();
 				$table->ordering = $max+1;
 			}
