@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.3.0
+ * @version     4.2.3
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -13,9 +13,9 @@ defined('_JEXEC') or die;
 require_once JPATH_COMPONENT.'/controller.php';
 
 /**
- * Irmcustomer controller class.
+ * Contact controller class.
  */
-class XiveirmControllerIrmcustomerForm extends XiveirmController
+class XiveirmControllerContactForm extends XiveirmController
 {
 
 	/**
@@ -28,27 +28,27 @@ class XiveirmControllerIrmcustomerForm extends XiveirmController
 //		$app			= JFactory::getApplication();
 //
 //		// Get the previous edit id (if any) and the current edit id.
-//		$previousId = (int) $app->getUserState('com_xiveirm.edit.irmcustomer.id');
+//		$previousId = (int) $app->getUserState('com_xiveirm.edit.contact.id');
 //		$editId	= JFactory::getApplication()->input->getInt('id', null, 'array');
 //
 //		// Set the user id for the user to edit in the session.
-//		$app->setUserState('com_xiveirm.edit.irmcustomer.id', $editId);
+//		$app->setUserState('com_xiveirm.edit.contact.id', $editId);
 //
 //		// Get the model.
-//		$model = $this->getModel('IrmcustomerForm', 'XiveirmModel');
+//		$model = $this->getModel('ContactForm', 'XiveirmModel');
 //
 //		// Check out the item
 //		if ($editId) {
-//            $model->checkout($editId);
+//			$model->checkout($editId);
 //		}
 //
 //		// Check in the previous user.
 //		if ($previousId) {
-//            $model->checkin($previousId);
+//			$model->checkin($previousId);
 //		}
 //
 //		// Redirect to the edit screen.
-//		$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=irmcustomer&layout=edit&zzz=xxx', false));
+//		$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=contact&layout=edit', false));
 	}
 
 //	/**
@@ -64,7 +64,7 @@ class XiveirmControllerIrmcustomerForm extends XiveirmController
 //
 //		// Initialise variables.
 //		$app	= JFactory::getApplication();
-//		$model = $this->getModel('IrmcustomerForm', 'XiveirmModel');
+//		$model = $this->getModel('ContactForm', 'XiveirmModel');
 //
 //		// Get the user data.
 //		$data = JFactory::getApplication()->input->get('jform', array(), 'array');
@@ -94,11 +94,11 @@ class XiveirmControllerIrmcustomerForm extends XiveirmController
 //			}
 //
 //			// Save the data in the session.
-//			$app->setUserState('com_xiveirm.edit.irmcustomer.data', JRequest::getVar('jform'),array());
+//			$app->setUserState('com_xiveirm.edit.contact.data', JRequest::getVar('jform'),array());
 //
 //			// Redirect back to the edit screen.
-//			$id = (int) $app->getUserState('com_xiveirm.edit.irmcustomer.id');
-//			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=irmcustomerform&layout=edit&id='.$id, false));
+//			$id = (int) $app->getUserState('com_xiveirm.edit.contact.id');
+//			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=contactform&layout=edit&id='.$id, false));
 //			return false;
 //		}
 //
@@ -108,32 +108,32 @@ class XiveirmControllerIrmcustomerForm extends XiveirmController
 //		// Check for errors.
 //		if ($return === false) {
 //			// Save the data in the session.
-//			$app->setUserState('com_xiveirm.edit.irmcustomer.data', $data);
+//			$app->setUserState('com_xiveirm.edit.contact.data', $data);
 //
 //			// Redirect back to the edit screen.
-//			$id = (int)$app->getUserState('com_xiveirm.edit.irmcustomer.id');
+//			$id = (int)$app->getUserState('com_xiveirm.edit.contact.id');
 //			$this->setMessage(JText::sprintf('Save failed', $model->getError()), 'warning');
-//			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=irmcustomerform&layout=edit&id='.$id, false));
+//			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=contactform&layout=edit&id='.$id, false));
 //			return false;
 //		}
 //
 //            
-//        // Check in the profile.
-//        if ($return) {
-//            $model->checkin($return);
-//        }
-//        
-//        // Clear the profile id from the session.
-//        $app->setUserState('com_xiveirm.edit.irmcustomer.id', null);
+//		// Check in the profile.
+//		if ($return) {
+//			$model->checkin($return);
+//		}
 //
-//        // Redirect to the list screen.
-//        $this->setMessage(JText::_('COM_XIVEIRM_ITEM_SAVED_SUCCESSFULLY'));
-//        $menu = & JSite::getMenu();
-//        $item = $menu->getActive();
-//        $this->setRedirect(JRoute::_($item->link, false));
+//		// Clear the profile id from the session.
+//		$app->setUserState('com_xiveirm.edit.contact.id', null);
+//
+//		// Redirect to the list screen.
+//		$this->setMessage(JText::_('COM_XIVEIRM_ITEM_SAVED_SUCCESSFULLY'));
+//		$menu = & JSite::getMenu();
+//		$item = $menu->getActive();
+//		$this->setRedirect(JRoute::_($item->link, false));
 //
 //		// Flush the data from the session.
-//		$app->setUserState('com_xiveirm.edit.irmcustomer.data', null);
+//		$app->setUserState('com_xiveirm.edit.contact.data', null);
 //	}
 
 //	function cancel()
@@ -145,7 +145,7 @@ class XiveirmControllerIrmcustomerForm extends XiveirmController
 //		$item = $menu->getActive();
 //		$this->setRedirect(JRoute::_($item->link, false));
 //	}
-
+    
 //	public function remove()
 //	{
 //		// Check for request forgeries.
@@ -153,7 +153,7 @@ class XiveirmControllerIrmcustomerForm extends XiveirmController
 //
 //		// Initialise variables.
 //		$app	= JFactory::getApplication();
-//		$model = $this->getModel('IrmcustomerForm', 'XiveirmModel');
+//		$model = $this->getModel('ContactForm', 'XiveirmModel');
 //
 //		// Get the user data.
 //		$data = JFactory::getApplication()->input->get('jform', array(), 'array');
@@ -183,11 +183,11 @@ class XiveirmControllerIrmcustomerForm extends XiveirmController
 //			}
 //
 //			// Save the data in the session.
-//			$app->setUserState('com_xiveirm.edit.irmcustomer.data', $data);
+//			$app->setUserState('com_xiveirm.edit.contact.data', $data);
 //
 //			// Redirect back to the edit screen.
-//			$id = (int) $app->getUserState('com_xiveirm.edit.irmcustomer.id');
-//			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=irmcustomer&layout=edit&id='.$id, false));
+//			$id = (int) $app->getUserState('com_xiveirm.edit.contact.id');
+//			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=contact&layout=edit&id='.$id, false));
 //			return false;
 //		}
 //
@@ -197,33 +197,30 @@ class XiveirmControllerIrmcustomerForm extends XiveirmController
 //		// Check for errors.
 //		if ($return === false) {
 //			// Save the data in the session.
-//			$app->setUserState('com_xiveirm.edit.irmcustomer.data', $data);
+//			$app->setUserState('com_xiveirm.edit.contact.data', $data);
 //
 //			// Redirect back to the edit screen.
-//			$id = (int)$app->getUserState('com_xiveirm.edit.irmcustomer.id');
+//			$id = (int)$app->getUserState('com_xiveirm.edit.contact.id');
 //			$this->setMessage(JText::sprintf('Delete failed', $model->getError()), 'warning');
-//			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=irmcustomer&layout=edit&id='.$id, false));
+//			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=contact&layout=edit&id='.$id, false));
 //			return false;
 //		}
 //
-//            
-//        // Check in the profile.
-//        if ($return) {
-//            $model->checkin($return);
-//        }
-//        
-//        // Clear the profile id from the session.
-//        $app->setUserState('com_xiveirm.edit.irmcustomer.id', null);
+//		// Check in the profile.
+//		if ($return) {
+//			$model->checkin($return);
+//		}
 //
-//        // Redirect to the list screen.
-//        $this->setMessage(JText::_('COM_XIVEIRM_ITEM_DELETED_SUCCESSFULLY'));
-//        $menu = & JSite::getMenu();
-//        $item = $menu->getActive();
-//        $this->setRedirect(JRoute::_($item->link, false));
+//		// Clear the profile id from the session.
+//		$app->setUserState('com_xiveirm.edit.contact.id', null);
+//
+//		// Redirect to the list screen.
+//		$this->setMessage(JText::_('COM_XIVEIRM_ITEM_DELETED_SUCCESSFULLY'));
+//		$menu = & JSite::getMenu();
+//		$item = $menu->getActive();
+//		$this->setRedirect(JRoute::_($item->link, false));
 //
 //		// Flush the data from the session.
-//		$app->setUserState('com_xiveirm.edit.irmcustomer.data', null);
+//		$app->setUserState('com_xiveirm.edit.contact.data', null);
 //	}
-    
-    
 }
