@@ -31,32 +31,33 @@ class XiveirmHelper
 			$vName == 'categories.contacts'
 		);
 		
-if ($vName=='categories.contacts.catid') {			
-JToolBarHelper::title('XiveIRM: Categories (Contacts - Category)');		
-}		JHtmlSidebar::addEntry(
+		if ($vName=='categories.contacts.catid') {
+			JToolBarHelper::title('XiveIRM: Categories (Contacts - Category)');
+		}
+
+		JHtmlSidebar::addEntry(
 			JText::_('COM_XIVEIRM_TITLE_OPTIONS'),
 			'index.php?option=com_xiveirm&view=options',
 			$vName == 'options'
 		);
+
 		JHtmlSidebar::addEntry(
 			JText::_('COM_XIVEIRM_TITLE_OPTIONCATEGORIES'),
 			'index.php?option=com_xiveirm&view=optioncategories',
 			$vName == 'optioncategories'
 		);
+
 		JHtmlSidebar::addEntry(
 			JText::_('COM_XIVEIRM_TITLE_TABAPPS'),
 			'index.php?option=com_xiveirm&view=tabapps',
 			$vName == 'tabapps'
 		);
+
 		JHtmlSidebar::addEntry(
 			'Categories (Tabapps - Category)',
 			"index.php?option=com_categories&extension=com_xiveirm.tabapps.catid",
 			$vName == 'categories.tabapps'
 		);
-		
-if ($vName=='categories.tabapps.catid') {			
-JToolBarHelper::title('XiveIRM: Categories (Tabapps - Category)');		
-}
 	}
 
 	/**
