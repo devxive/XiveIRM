@@ -1,29 +1,40 @@
-.icon-48-irmcustomers {
-      background-image: url(../images/l_irmcustomers.png);
+.icon-48-contacts {
+      background-image: url(../images/l_contacts.png);
       padding-left:60px!important;
 }
 
-.icon-48-irmcustomer {
-      background-image: url(../images/l_irmcustomers.png);
+.icon-48-contact {
+      background-image: url(../images/l_contacts.png);
       padding-left:60px!important;
 }
 
-.icon-48-additionalinformations {
-      background-image: url(../images/l_additionalinformations.png);
+.icon-48-options {
+      background-image: url(../images/l_options.png);
       padding-left:60px!important;
 }
 
-.icon-48-additionalinformation {
-      background-image: url(../images/l_additionalinformations.png);
+.icon-48-option {
+      background-image: url(../images/l_options.png);
       padding-left:60px!important;
 }
 
-.icon-48-selectlists {
-      background-image: url(../images/l_selectlists.png);
+.icon-48-optioncategories {
+      background-image: url(../images/l_optioncategories.png);
       padding-left:60px!important;
 }
 
-.icon-48-selectlist {
-      background-image: url(../images/l_selectlists.png);
+.icon-48-optioncategory {
+      background-image: url(../images/l_optioncategories.png);
       padding-left:60px!important;
 }
+
+.icon-48-tabapps {
+      background-image: url(../images/l_tabapps.png);
+      padding-left:60px!important;
+}
+
+.icon-48-tabapp {
+      background-image: url(../images/l_tabapps.png);
+      padding-left:60px!important;
+}
+
