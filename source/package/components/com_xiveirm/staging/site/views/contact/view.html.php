@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version     3.3.0
+ * @version     4.2.3
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -15,7 +15,7 @@ jimport('joomla.application.component.view');
 /**
  * View to edit
  */
-class XiveirmViewIrmcustomer extends JViewLegacy {
+class XiveirmViewContact extends JViewLegacy {
 
     protected $state;
     protected $item;
@@ -34,6 +34,7 @@ class XiveirmViewIrmcustomer extends JViewLegacy {
         $this->item = $this->get('Data');
         $this->params = $app->getParams('com_xiveirm');
    		
+		$this->item->catid_title = $this->getModel()->getCategoryName($this->item->catid)->title;
 		$this->form		= $this->get('Form');
 
         // Check for errors.
