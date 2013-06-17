@@ -1,19 +1,20 @@
-CREATE TABLE IF NOT EXISTS `#__xiveirm_customer` (
+CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts` (
 `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+`client_id` INT(11) NOT NULL,
+`parent_id` INT(11) NOT NULL,
 `state` TINYINT(1) NOT NULL DEFAULT '1',
 `created` DATETIME NOT NULL,
 `created_by` INT(11) NOT NULL,
 `checked_out` INT(11) NOT NULL,
 `checked_out_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 `modified` DATETIME NOT NULL,
-`access_id` VARCHAR(50) NOT NULL DEFAULT '0',
-`client_id` VARCHAR(50) NOT NULL,
-`customer_id` VARCHAR(25) NOT NULL,
-`company_name` VARCHAR(150) NOT NULL,
+`catid` INT(11) NOT NULL,
+`customer_id` VARCHAR(50) NOT NULL,
+`company` VARCHAR(150) NOT NULL,
 `title` VARCHAR(100) NOT NULL,
 `last_name` VARCHAR(150) NOT NULL,
 `first_name` VARCHAR(150) NOT NULL,
-`gender` VARCHAR(255) NOT NULL,
+`gender` INT NOT NULL,
 `dob` DATE NOT NULL,
 `address_name` VARCHAR(150) NOT NULL,
 `address_name_add` VARCHAR(100) NOT NULL,
@@ -21,29 +22,53 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_customer` (
 `address_houseno` VARCHAR(10) NOT NULL,
 `address_zip` VARCHAR(10) NOT NULL,
 `address_city` VARCHAR(100) NOT NULL,
+`address_region` VARCHAR(100) NOT NULL,
 `address_country` VARCHAR(100) NOT NULL,
 `phone` VARCHAR(25) NOT NULL,
 `fax` VARCHAR(25) NOT NULL,
 `mobile` VARCHAR(25) NOT NULL,
-`email` VARCHAR(100) NOT NULL,
-`web` VARCHAR(150) NOT NULL,
-`remarks` TEXT NOT NULL,
+`email` VARCHAR(150) NOT NULL,
+`web` VARCHAR(250) NOT NULL,
+`remarks` VARCHAR(255) NOT NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci;
 
-CREATE TABLE IF NOT EXISTS `#__xiveirm_customer_add` (
-`customer_cid` INT(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `#__xiveirm_contact_tabappvalues` (
+`contact_id` INT(11)  NOT NULL,
 `tab_key` VARCHAR(100) NOT NULL,
 `tab_value` MEDIUMTEXT NOT NULL,
-`ordering` INT(11) NOT NULL DEFAULT '0',
-UNIQUE KEY `idx_customer_cid_tab_key` (`customer_cid`,`tab_key`)
-) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Extensive customer data storage table';
+UNIQUE KEY `idx_contact_id_tab_key` (`contact_id`,`tab_key`)
+) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex contact data storage table';
 
-CREATE TABLE IF NOT EXISTS `#__xiveirm_selectlists` (
+CREATE TABLE IF NOT EXISTS `#__xiveirm_options` (
+`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `client_id` INT(11) NOT NULL,
-`sl_key` VARCHAR(100) NOT NULL,
-`sl_value` VARCHAR(100) NOT NULL,
-`sl_string` VARCHAR(255) NOT NULL,
+`category` INT NOT NULL,
+`opt_key` VARCHAR(100) NOT NULL,
+`opt_value` VARCHAR(150) NOT NULL,
+`opt_name` VARCHAR(255) NOT NULL,
+`access` INT(11) NOT NULL,
 `ordering` INT(11) NOT NULL,
-UNIQUE KEY `idx_client_id_sl_key` (`client_id`,`sl_key`)
-) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Simple or client related select list storage table';
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Simple or client related options list storage table with accesslevels';
+
+CREATE TABLE IF NOT EXISTS `#__xiveirm_option_categories` (
+`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+`appcat_key` VARCHAR(201) NOT NULL ,
+`name` VARCHAR(100) NOT NULL,
+`state` TINYINT(1) NOT NULL DEFAULT '1',
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Storage Table to nest the __xiveirm_options options';
+
+CREATE TABLE IF NOT EXISTS `#__xiveirm_tabapps` (
+`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+`asset_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+`client_id` INT(11) NOT NULL,
+`app_key` VARCHAR(100) NOT NULL,
+`tab_key` VARCHAR(100) NOT NULL,
+`catid` INT(11) NOT NULL,
+`config` TEXT NOT NULL,
+`state` TINYINT(1) NOT NULL DEFAULT '1',
+`ordering` INT(11) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     3.1.0
+ * @version     4.2.3
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
