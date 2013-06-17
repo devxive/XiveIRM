@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset>
+		<field name="customer_cid" type="text"
+			size="40"
+			class="inputbox"
+			label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_CUSTOMER_CID"
+			description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_CUSTOMER_CID"
+			filter="safehtml" />
+
+		<field name="tab_key" type="text"
+			size="40"
+			class="inputbox"
+			label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_TAB_KEY"
+			description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_TAB_KEY"
+			filter="safehtml" />
+
+		<field name="tab_value" type="editor"
+			buttons="true"
+			class="inputbox"
+			filter="safehtml"
+			label="COM_XIVEIRM_FORM_LBL_ADDITIONALINFORMATION_TAB_VALUE"
+			description="COM_XIVEIRM_FORM_DESC_ADDITIONALINFORMATION_TAB_VALUE" />
+	</fieldset> 
+</form>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset>
+		<field name="client_id" type="text" size="40" class="inputbox"
+			label="COM_XIVEIRM_FORM_LBL_SELECTLIST_CLIENT_ID"
+			description="COM_XIVEIRM_FORM_DESC_SELECTLIST_CLIENT_ID" 
+			filter="int" /> 
+
+		<field name="sl_key" type="text" size="40" class="inputbox"
+			label="COM_XIVEIRM_FORM_LBL_SELECTLIST_SL_KEY"
+			description="COM_XIVEIRM_FORM_DESC_SELECTLIST_SL_KEY" 
+			filter="safehtml" /> 
+
+		<field name="sl_value" type="text" size="40" class="inputbox"
+			label="COM_XIVEIRM_FORM_LBL_SELECTLIST_SL_VALUE"
+			description="COM_XIVEIRM_FORM_DESC_SELECTLIST_SL_VALUE" 
+			filter="safehtml" /> 
+
+		<field name="sl_string" type="text" size="40" class="inputbox"
+			label="COM_XIVEIRM_FORM_LBL_SELECTLIST_SL_STRING"
+			description="COM_XIVEIRM_FORM_DESC_SELECTLIST_SL_STRING" 
+			filter="safehtml" />
+	</fieldset>
+</form>
