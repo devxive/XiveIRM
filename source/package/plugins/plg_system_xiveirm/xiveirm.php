@@ -43,34 +43,108 @@ class PlgSystemXiveIrm extends JPlugin
 	{
 		$user = JFactory::getUser()->id;
 
-		// make sure the user is logged in
-		if($user != 0) {
+		// If we are in admin area we have to check if the logged in user is in the group of the given minimum user group (future version)
+		// at this time, all users with admin access become the client_id, catid = 0 in the session
+
+		// make sure the user is logged in to check if we have a session or not
+		if($user != 0)
+		{
 			$session = JFactory::getSession();
 
 			// Create the XiveIRM Session Array if no exist and store the required informations.
 			if (!$session->get('XiveIRMSystem')) {
-				$xiveIrmSystemArray = array();
+				$xiveIrmSystemObject = new stdClass;
 
-				if ($this->params->get('set-client-ability') == 0) {
-					$xiveIrmSystemArray['client_id'] = 0;
-				} else {
+				$app = JFactory::getApplication();
+
+				if ($app->isSite()) {
 					$db = JFactory::getDBO();
+					$query = $db->getQuery(true);
 
-		// GET INFORMATIONS FROM DB, WHAT CLIENT ID THE USER HAVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		// If we cant find a client_id we have to ensure that the user can't do anything until he have one. the last case is to close the getApplication immediately!
-					$client_id = '120700';
-					$xiveIrmSystemArray['client_id'] = $client_id;
+					$query
+						->select(array('profile_key', 'profile_value'))
+						->from('#__user_profiles')
+						->where('profile_key LIKE \'xiveirmclientprofile.%\'')
+						->where('user_id = '.$user.'');
+
+					$db->setQuery($query);
+					$results = $db->loadRowList();
+
+					//Build an easy User Profile Array
+					$newProfileArray = array();
+					foreach($results as $result) {
+						$newProfileArray[str_replace('xiveirmclientprofile.', '', $result[0])] = json_decode($result[1], true);
+					}
+
+					// Check if we have the required fields and store the final object for pushing to session. If not, close the $app with an error message!
+					if (isset($newProfileArray['groupid']) && isset($newProfileArray['catid'])) {
+						$xiveIrmSystemObject->client_id = (int) $newProfileArray['groupid'];
+						$xiveIrmSystemObject->catid = (int) $newProfileArray['catid'];
+
+						// Try to store additional fields
+						if (isset($newProfileArray['jobtitle'])) {
+							$xiveIrmSystemObject->jobtitle = $newProfileArray['jobtitle'];
+						}
+
+						$session->set('XiveIRMSystem', $xiveIrmSystemObject);
+					} else {
+						JError::raiseError( 403, 'You\'re not authorized to work with this system at present. Please check back again later!' );
+//						$session->destroy();
+//						$app->close();
+					}
+				} else {
+					$xiveIrmSystemObject->client_id = 0;
+					$xiveIrmSystemObject->catid = 1;
+					$xiveIrmSystemObject->jobtitle = 'System Administrator';
+
+					$session->set('XiveIRMSystem', $xiveIrmSystemObject);
 				}
-
-				$session->set('XiveIRMSystem', $xiveIrmSystemArray);
 			} else {
-				// Try to get info why this could be an error!?
-				return false;
+				// Session exist, all ok
 			}
 			// End of session exist check
 		}
 		// End of user check
-
-//		$app = JFactory::getApplication();
 	}
 }
+
+
+//			try
+//			{
+//				$db = JFactory::getDbo();
+//
+//				// Try to update existing profile fields. If nothing is there to update, we create a new entry
+//				$order  = 1;
+//
+//				foreach ($data['xiveirmclientprofile'] as $k => $v)
+//				{
+//					$profile_key = $db->quote('xiveirmclientprofile.'.$k);
+//
+//					// Check if row (field) exist for that user
+//					$db->setQuery('SELECT * FROM #__user_profiles WHERE user_id = '.$userId.' AND profile_key = '.$profile_key.'');
+//					if (!$db->loadObjectList())
+//					{
+//						$query = $db->getQuery(true);
+//						$columns = array('user_id', 'profile_key', 'profile_value', 'ordering');
+//						$values = array($userId, $profile_key, $db->quote(json_encode($v)), $order++);
+//						$query
+//							->insert($db->quoteName('#__user_profiles'))
+//							->columns($db->quoteName($columns))
+//							->values(implode(', ', $values));
+//						$db->setQuery($query);
+//						$db->query();
+//					} else {
+//						$db->setQuery('UPDATE #__user_profiles SET profile_value = '.$db->quote(json_encode($v)).' WHERE user_id = '.$userId.' AND profile_key = '.$profile_key.'');
+//						if (!$db->query())
+//						{
+//							throw new Exception($db->getErrorMsg());
+//						}
+//					}
+//				}
+//			}
+//			catch (JException $e)
+//			{
+//				$this->_subject->setError($e->getMessage());
+//				return false;
+//			}
+//		}
