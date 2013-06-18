@@ -7,8 +7,8 @@
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>support@devxive.com</authorEmail>
 	<authorUrl>www.devxive.com</authorUrl>
-	<version>1.0.0</version>
-	<description>PLG_USER_XIVEIRMCLIENTPROFILE_XML_DESCRIPTION</description>
+	<version>2.0.0</version>
+	<description>PLG_USER_XIVEIRMCLIENTPROFILE_XML_DESC</description>
 	<files>
 		<filename plugin="xiveirmclientprofile">xiveirmclientprofile.php</filename>
 		<filename>index.html</filename>
@@ -25,25 +25,30 @@
 				addfieldpath="/administrator/components/com_content/models/fields">
 
 				<field name="register-require-user" type="spacer" class="text"
-					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_NAME_REGISTER_REQUIRE_USER"
-				/>
+					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_NAME_REGISTER_REQUIRE_USER" />
 
-				<field name="register-xiveirmclientid" type="list" default="2"
-					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_XIVEIRMCLIENTID_DESC"
-					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_XIVEIRMCLIENTID_LABEL"
-				>
-					<option value="2">JOPTION_REQUIRED</option>
-					<option value="1">JOPTION_OPTIONAL</option>
-					<option value="0">JDISABLED</option>
+				<field name="register-groupid" type="list" default="2"
+					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_GROUPID_LBL"
+					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_GROUPID_DESC">
+						<option value="2">JOPTION_REQUIRED</option>
+						<option value="1">JOPTION_OPTIONAL</option>
+						<option value="0">JDISABLED</option>
+				</field>
+
+				<field name="register-catid" type="list" default="2"
+					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_CATID_LBL"
+					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_CATID_DESC">
+						<option value="2">JOPTION_REQUIRED</option>
+						<option value="1">JOPTION_OPTIONAL</option>
+						<option value="0">JDISABLED</option>
 				</field>
 
 				<field name="register-jobtitle" type="list" default="1"
 					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_DESC"
-					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_LABEL"
-				>
-					<option value="2">JOPTION_REQUIRED</option>
-					<option value="1">JOPTION_OPTIONAL</option>
-					<option value="0">JDISABLED</option>
+					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_LBL">
+						<option value="2">JOPTION_REQUIRED</option>
+						<option value="1">JOPTION_OPTIONAL</option>
+						<option value="0">JDISABLED</option>
 				</field>
 
 				<field name="spacer1" type="spacer"
@@ -51,25 +56,30 @@
 				/>
 
 				<field name="profile-require-user" type="spacer" class="text"
-					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_NAME_PROFILE_REQUIRE_USER"
-				/>
+					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_NAME_PROFILE_REQUIRE_USER" />
 
-				<field name="profile-xiveirmclientid" type="list" default="2"
-					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_XIVEIRMCLIENTID_DESC"
-					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_XIVEIRMCLIENTID_LABEL"
-				>
-					<option value="2">JOPTION_REQUIRED</option>
-					<option value="1">JOPTION_OPTIONAL</option>
-					<option value="0">JDISABLED</option>
+				<field name="profile-groupid" type="list" default="2"
+					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_GROUPID_LBL"
+					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_GROUPID_DESC">
+						<option value="2">JOPTION_REQUIRED</option>
+						<option value="1">JOPTION_OPTIONAL</option>
+						<option value="0">JDISABLED</option>
+				</field>
+
+				<field name="profile-catid" type="list" default="2"
+					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_CATID_LBL"
+					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_CATID_DESC">
+						<option value="2">JOPTION_REQUIRED</option>
+						<option value="1">JOPTION_OPTIONAL</option>
+						<option value="0">JDISABLED</option>
 				</field>
 
 				<field name="profile-jobtitle" type="list" default="1"
 					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_DESC"
-					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_LABEL"
-				>
-					<option value="2">JOPTION_REQUIRED</option>
-					<option value="1">JOPTION_OPTIONAL</option>
-					<option value="0">JDISABLED</option>
+					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_LBL">
+						<option value="2">JOPTION_REQUIRED</option>
+						<option value="1">JOPTION_OPTIONAL</option>
+						<option value="0">JDISABLED</option>
 				</field>
 
 			</fieldset>

@@ -1,28 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
 	<fields name="xiveirmclientprofile">
-		<fieldset name="xiveirmclientprofile"
-			label="PLG_USER_XIVEIRMCLIENTPROFILE_SLIDER_LABEL"
-		>
-			<field
-				name="xiveirmclientid"
-				type="text"
-				id="xiveirmclientid"
-				description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_XIVEIRMCLIENTID_DESC"
-				filter="string"
-				label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_XIVEIRMCLIENTID_LABEL"
-				size="30"
-			/>
+		<fieldset name="xiveirmclientprofile" label="PLG_USER_XIVEIRMCLIENTPROFILE_SLIDER_LBL" >
+			<field name="groupid" type="usergroup"
+				label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_GROUPID_LBL"
+				description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_GROUPID_DESC"
+				filter="raw" />
 
-			<field
-				name="jobtitle"
-				type="text"
-				id="jobtitle"
+			<field name="catid" type="category"
+				label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_CATID_LBL"
+				description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_CATID_DESC"
+				extension="com_xiveirm.contacts.catid"
+				filter="raw" />
+
+			<field name="jobtitle" type="text" size="30" id="jobtitle"
+				label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_LBL"
 				description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_DESC"
-				filter="string"
-				label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_LABEL"
-				size="30"
-			/>
+				filter="string" />
 		</fieldset>
 	</fields>
 </form>
