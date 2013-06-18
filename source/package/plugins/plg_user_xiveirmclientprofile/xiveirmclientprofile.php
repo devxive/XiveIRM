@@ -93,12 +93,20 @@ class PlgUserXiveIrmClientProfile extends JPlugin
 			JForm::addFormPath(dirname(__FILE__).'/profiles');
 			$form->loadFile('profile', false);
 
-			// Toggle whether the xiveirmclientid field is required.
-			if ($this->params->get('profile-xiveirmclientid', 1) > 0)
+			// Toggle whether the usergroup field is required.
+			if ($this->params->get('profile-groupid', 1) > 0)
 			{
-				$form->setFieldAttribute('xiveirmclientid', 'required', $this->params->get('profile-xiveirmclientid') == 2, 'xiveirmclientprofile');
+				$form->setFieldAttribute('groupid', 'required', $this->params->get('profile-groupid') == 2, 'xiveirmclientprofile');
 			} else {
-				$form->removeField('xiveirmclientid', 'xiveirmclientprofile');
+				$form->removeField('groupid', 'xiveirmclientprofile');
+			}
+
+			// Toggle whether the category field is required.
+			if ($this->params->get('profile-catid', 1) > 0)
+			{
+				$form->setFieldAttribute('catid', 'required', $this->params->get('profile-catid') == 2, 'xiveirmclientprofile');
+			} else {
+				$form->removeField('catid', 'xiveirmclientprofile');
 			}
 
 			// Toggle whether the jobtitle field is required.
@@ -117,12 +125,20 @@ class PlgUserXiveIrmClientProfile extends JPlugin
 			JForm::addFormPath(dirname(__FILE__).'/profiles');
 			$form->loadFile('profile', false);
 
-			// Toggle whether the xiveirmclientid field is required.
-			if ($this->params->get('register-xiveirmclientid', 1) > 0)
+			// Toggle whether the usergroup field is required.
+			if ($this->params->get('register-groupid', 1) > 0)
 			{
-				$form->setFieldAttribute('xiveirmclientid', 'required', $this->params->get('register-xiveirmclientid') == 2, 'xiveirmclientprofile');
+				$form->setFieldAttribute('groupid', 'required', $this->params->get('register-groupid') == 2, 'xiveirmclientprofile');
 			} else {
-				$form->removeField('xiveirmclientid', 'xiveirmclientprofile');
+				$form->removeField('groupid', 'xiveirmclientprofile');
+			}
+
+			// Toggle whether the category field is required.
+			if ($this->params->get('register-catid', 1) > 0)
+			{
+				$form->setFieldAttribute('catid', 'required', $this->params->get('register-catid') == 2, 'xiveirmclientprofile');
+			} else {
+				$form->removeField('catid', 'xiveirmclientprofile');
 			}
 
 			// Toggle whether the jobtitle field is required.
@@ -143,24 +159,35 @@ class PlgUserXiveIrmClientProfile extends JPlugin
 		{
 			try
 			{
-				$db = &JFactory::getDbo();
-				$db->setQuery('DELETE FROM #__user_profiles WHERE user_id = '.$userId.' AND profile_key LIKE \'xiveirmclientprofile.%\'');
-				if (!$db->query())
-				{
-					throw new Exception($db->getErrorMsg());
-				}
+				$db = JFactory::getDbo();
 
-				$tuples = array();
+				// Try to update existing profile fields. If nothing is there to update, we create a new entry
 				$order  = 1;
+
 				foreach ($data['xiveirmclientprofile'] as $k => $v)
 				{
-					$tuples[] = '('.$userId.', '.$db->quote('xiveirmclientprofile.'.$k).', '.$db->quote(json_encode($v)).', '.$order++.')';
-				}
+					$profile_key = $db->quote('xiveirmclientprofile.'.$k);
 
-				$db->setQuery('INSERT INTO #__user_profiles VALUES '.implode(', ', $tuples));
-				if (!$db->query())
-				{
-					throw new Exception($db->getErrorMsg());
+					// Check if row (field) exist for that user
+					$db->setQuery('SELECT * FROM #__user_profiles WHERE user_id = '.$userId.' AND profile_key = '.$profile_key.'');
+					if (!$db->loadObjectList())
+					{
+						$query = $db->getQuery(true);
+						$columns = array('user_id', 'profile_key', 'profile_value', 'ordering');
+						$values = array($userId, $profile_key, $db->quote(json_encode($v)), $order++);
+						$query
+							->insert($db->quoteName('#__user_profiles'))
+							->columns($db->quoteName($columns))
+							->values(implode(', ', $values));
+						$db->setQuery($query);
+						$db->query();
+					} else {
+						$db->setQuery('UPDATE #__user_profiles SET profile_value = '.$db->quote(json_encode($v)).' WHERE user_id = '.$userId.' AND profile_key = '.$profile_key.'');
+						if (!$db->query())
+						{
+							throw new Exception($db->getErrorMsg());
+						}
+					}
 				}
 			}
 			catch (JException $e)
