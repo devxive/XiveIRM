@@ -141,8 +141,10 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 					<div class="row-fluid">
 						<div class="span7">
 							<div class="control-group">
-								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CONTACTGROUP_LABEL'); ?></label>
+								<label class="control-label"><?php echo $this->form->getLabel('catid'); ?></label>
 								<div class="controls controls-row">
+									<?php echo $this->form->getInput('catid'); ?>
+<!--
 									<select name="coreform[type]" class="chzn-selects input-control span6" data-placeholder="Choose a Type..." required>
 										<option value=""><?php echo JText::_('COM_XIVEIRM_SELECT'); ?></option>
 										<?php
@@ -164,7 +166,7 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 											}
 										?>
 									</select>
-								</div>
+-->								</div>
 							</div>
 							<div class="control-group">
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID_LABEL'); ?>, <?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_COMPANY_NAME_LABEL'); ?></label>
