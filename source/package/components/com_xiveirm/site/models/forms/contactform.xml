@@ -37,13 +37,13 @@
 		<field name="catid" type="category"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
 			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATID"
-			extension="com_xiveirm.catid"
+			extension="com_xiveirm.contacts.catid"
 			filter="raw" />
 
 		<field name="filter_catid" type="category"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
 			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATID"
-			extension="com_xiveirm.catid"
+			extension="com_xiveirm.contacts.catid"
 			show_root="1"
 			onchange="this.form.submit();" />
 
@@ -79,7 +79,7 @@
 			key_field="opt_value"
 			value_field="opt_name" />
 
-		<field name="dob" type="calendar" class="inputbox"
+		<field name="dob" type="text" class="inputbox"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_DOB"
 			description="COM_XIVEIRM_FORM_DESC_CONTACT_DOB"
 			filter="safehtml" />
