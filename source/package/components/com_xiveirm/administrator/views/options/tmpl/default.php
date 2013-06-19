@@ -111,9 +111,6 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_OPTIONS_CLIENT_ID', 'a.client_id', $listDirn, $listOrder); ?>
-				</th>
-				<th class='left'>
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_OPTIONS_CATEGORY', 'a.category', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
@@ -124,6 +121,9 @@ if (!empty($this->extra_sidebar)) {
 				</th>
 				<th class='left'>
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_OPTIONS_OPT_NAME', 'a.opt_name', $listDirn, $listOrder); ?>
+				</th>
+				<th class='left'>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_OPTIONS_USERGROUP', 'a.client_id', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_OPTIONS_ACCESS', 'a.access', $listDirn, $listOrder); ?>
@@ -156,7 +156,7 @@ if (!empty($this->extra_sidebar)) {
 			<?php foreach ($this->items as $i => $item) :
 				$ordering   = ($listOrder == 'a.ordering');
                 $canCreate	= $user->authorise('core.create',		'com_xiveirm');
-                $canEdit	= $user->authorise('core.edit',			'com_xiveirm');
+                $canEdit	= $user->authorise('core.edit',		'com_xiveirm');
                 $canCheckin	= $user->authorise('core.manage',		'com_xiveirm');
                 $canChange	= $user->authorise('core.edit.state',	'com_xiveirm');
 				?>
@@ -192,35 +192,30 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<td>
-
-					<?php echo $item->client_id; ?>
-				</td>
-				<td>
-
 					<?php echo $item->category; ?>
 				</td>
 				<td>
-				<?php if (isset($item->checked_out) && $item->checked_out) : ?>
-					<?php echo JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'options.', $canCheckin); ?>
-				<?php endif; ?>
-				<?php if ($canEdit) : ?>
-					<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=option.edit&id='.(int) $item->id); ?>">
-					<?php echo $this->escape($item->opt_key); ?></a>
-				<?php else : ?>
-					<?php echo $this->escape($item->opt_key); ?>
-				<?php endif; ?>
+					<?php echo $item->opt_key; ?>
 				</td>
 				<td>
-
 					<?php echo $item->opt_value; ?>
 				</td>
 				<td>
-
-					<?php echo $item->opt_name; ?>
+					<?php if (isset($item->checked_out) && $item->checked_out) : ?>
+						<?php echo JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'options.', $canCheckin); ?>
+					<?php endif; ?>
+					<?php if ($canEdit) : ?>
+						<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=option.edit&id='.(int) $item->id); ?>">
+						<?php echo $this->escape($item->opt_name); ?></a>
+					<?php else : ?>
+						<?php echo $this->escape($item->opt_name); ?>
+					<?php endif; ?>
 				</td>
 				<td>
-
-					<?php echo $item->access; ?>
+					<?php echo NFactory::getTitleById('usergroup', $item->client_id); ?>
+				</td>
+				<td>
+					<?php echo NFactory::getTitleById('viewlevel', $item->access); ?>
 				</td>
 
 
