@@ -19,20 +19,20 @@ class XiveirmHelper
 	 * Configure the Linkbar.
 	 */
 	public static function addSubmenu($vName = '')
-	{
+	{ print_r($vName);
 		JHtmlSidebar::addEntry(
 			JText::_('COM_XIVEIRM_TITLE_CONTACTS'),
 			'index.php?option=com_xiveirm&view=contacts',
 			$vName == 'contacts'
 		);
 		JHtmlSidebar::addEntry(
-			'Categories (Contacts - Category)',
-			"index.php?option=com_categories&extension=com_xiveirm.contacts.catid",
+			JText::_('COM_XIVEIRM_TITLE_CONTACT_CATEGORIES'),
+			"index.php?option=com_categories&extension=com_xiveirm.contacts",
 			$vName == 'categories.contacts'
 		);
 		
-		if ($vName=='categories.contacts.catid') {
-			JToolBarHelper::title('XiveIRM: Categories (Contacts - Category)');
+		if ($vName=='categories.contacts') {
+			JToolBarHelper::title('COM_XIVEIRM_TITLE_CONTACT_CATEGORIES');
 		}
 
 		JHtmlSidebar::addEntry(
@@ -42,10 +42,14 @@ class XiveirmHelper
 		);
 
 		JHtmlSidebar::addEntry(
-			JText::_('COM_XIVEIRM_TITLE_OPTIONCATEGORIES'),
-			'index.php?option=com_xiveirm&view=optioncategories',
-			$vName == 'optioncategories'
+			JText::_('COM_XIVEIRM_TITLE_OPTION_CATEGORIES'),
+			"index.php?option=com_categories&extension=com_xiveirm.options",
+			$vName == 'categories.options'
 		);
+
+		if ($vName=='categories.options') {
+			JToolBarHelper::title('COM_XIVEIRM_TITLE_OPTION_CATEGORIES');
+		}
 
 		JHtmlSidebar::addEntry(
 			JText::_('COM_XIVEIRM_TITLE_TABAPPS'),

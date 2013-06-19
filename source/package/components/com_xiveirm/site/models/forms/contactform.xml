@@ -38,8 +38,9 @@
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
 			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATID"
 			extension="com_xiveirm.contacts.catid"
-			show_root="1"
-			filter="raw" />
+			filter="raw">
+				<option value="0">JOPTION_SELECT_CATEGORY</option>
+		</field>
 
 		<field name="filter_catid" type="category"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
@@ -79,6 +80,14 @@
 			query="SELECT 0 AS `opt_value`, '- Select Gender -' AS `opt_name` UNION SELECT `opt_value`, `opt_name` FROM `#__xiveirm_options`"
 			key_field="opt_value"
 			value_field="opt_name" />
+
+		<field name="catid.gender" type="category"
+			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
+			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATID"
+			extension="com_xiveirm.options"
+			filter="raw">
+				<option value="0">JOPTION_SELECT_CATEGORY</option>
+		</field>
 
 		<field name="dob" type="text" class="inputbox"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_DOB"

@@ -43,7 +43,7 @@ UNIQUE KEY `idx_contact_id_tab_key` (`contact_id`,`tab_key`)
 CREATE TABLE IF NOT EXISTS `#__xiveirm_options` (
 `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `client_id` INT(11) NOT NULL COMMENT 'usergroup id',
-`category` INT NOT NULL,
+`catid` INT NOT NULL,
 `opt_key` VARCHAR(100) NOT NULL,
 `opt_value` VARCHAR(150) NOT NULL,
 `opt_name` VARCHAR(255) NOT NULL,
@@ -51,14 +51,6 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_options` (
 `ordering` INT(11) NOT NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Simple or client related options list storage table with accesslevels';
-
-CREATE TABLE IF NOT EXISTS `#__xiveirm_option_categories` (
-`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-`appcat_key` VARCHAR(201) NOT NULL ,
-`name` VARCHAR(100) NOT NULL,
-`state` TINYINT(1) NOT NULL DEFAULT '1',
-PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Storage Table to nest the __xiveirm_options options';
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_tabapps` (
 `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,

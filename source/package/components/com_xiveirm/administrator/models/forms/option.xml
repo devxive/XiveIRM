@@ -13,11 +13,20 @@
 			default="0"
 			filter="raw" />
 
-		<field name="category" type="sql" class="inputbox"
-			label="COM_XIVEIRM_FORM_LBL_OPTION_CATEGORY"
-			description="COM_XIVEIRM_FORM_DESC_OPTION_CATEGORY"
-			query="SELECT 0 AS `id`, '- Select Category -' AS `name` UNION SELECT `id`, `name` FROM `#__xiveirm_option_categories`"
-			key_field="id" value_field="name" />
+		<field name="catid" type="category"
+			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
+			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATID"
+			extension="com_xiveirm.options"
+			filter="raw">
+				<option value="0">JOPTION_SELECT_CATEGORY</option>
+		</field>
+
+		<field name="filter_catid" type="category"
+			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
+			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATID"
+			extension="com_xiveirm.options"
+			show_root="1"
+			onchange="this.form.submit();" />
 
 		<field name="opt_key" type="text" size="40" class="inputbox"
 			label="COM_XIVEIRM_FORM_LBL_OPTION_OPT_KEY"
