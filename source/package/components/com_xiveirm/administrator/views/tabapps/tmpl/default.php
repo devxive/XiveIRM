@@ -86,6 +86,7 @@ if (!empty($this->extra_sidebar)) {
 			</div>
 			<div class="btn-group pull-right">
 				<label for="sortTable" class="element-invisible"><?php echo JText::_('JGLOBAL_SORT_BY');?></label>
+
 				<select name="sortTable" id="sortTable" class="input-medium" onchange="Joomla.orderTable()">
 					<option value=""><?php echo JText::_('JGLOBAL_SORT_BY');?></option>
 					<?php echo JHtml::_('select.options', $sortFields, 'value', 'text', $listOrder);?>
@@ -150,7 +151,7 @@ if (!empty($this->extra_sidebar)) {
 			<?php foreach ($this->items as $i => $item) :
 				$ordering   = ($listOrder == 'a.ordering');
                 $canCreate	= $user->authorise('core.create',		'com_xiveirm');
-                $canEdit	= $user->authorise('core.edit',			'com_xiveirm');
+                $canEdit	= $user->authorise('core.edit',		'com_xiveirm');
                 $canCheckin	= $user->authorise('core.manage',		'com_xiveirm');
                 $canChange	= $user->authorise('core.edit.state',	'com_xiveirm');
 				?>
