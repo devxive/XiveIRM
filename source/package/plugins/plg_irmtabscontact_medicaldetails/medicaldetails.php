@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     XAP.Plugin
- * @subpackage  IRMCustomerTabs.medicaldetails
+ * @subpackage  IRMTabsContact.medicaldetails
  *
  * @copyright   Copyright (C) 1997 - 2013 devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -13,10 +13,10 @@ defined('JPATH_BASE') or die;
  * An example custom profile plugin.
  *
  * @package     XAP.Plugin
- * @subpackage  IRMCustomerTabs.medicaldetails
+ * @subpackage  IRMTabsContact.medicaldetails
  * @since       3.0
  */
-class PlgIrmCustomerTabsMedicaldetails extends JPlugin
+class PlgIrmTabsContactMedicaldetails extends JPlugin
 {
 	/**
 	 * Stores the tab app name

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     XAP.Plugin
- * @subpackage  IRMCustomerWidgets.corewidget
+ * @subpackage  IRMWidgetsContact.corewidget
  *
  * @copyright   Copyright (C) 1997 - 2013 devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -13,10 +13,10 @@ defined('JPATH_BASE') or die;
  * An example custom profile plugin.
  *
  * @package     XAP.Plugin
- * @subpackage  IRMCustomerWidgets.corewidget
+ * @subpackage  IRMWidgetsContact.corewidget
  * @since       3.0
  */
-class PlgIrmCustomerWidgetsCorewidget extends JPlugin
+class PlgIrmWidgetsContactCorewidget extends JPlugin
 {
 	/**
 	 * Stores the tab app name
@@ -108,7 +108,7 @@ class PlgIrmCustomerWidgetsCorewidget extends JPlugin
 					<?php if($item->modified): ?>
 						<div class="alert alert-warning center">
 							<small>
-								<?php echo JText::_('COM_XIVEIRM_IRMCUSTOMER_FORM_LAST_MODIFIED') . ' ' . date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)); ?>
+								<?php echo JText::_('COM_XIVEIRM_IRMCONTACT_FORM_LAST_MODIFIED') . ' ' . date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)); ?>
 							</small>
 						</div>
 					<?php endif; ?>
