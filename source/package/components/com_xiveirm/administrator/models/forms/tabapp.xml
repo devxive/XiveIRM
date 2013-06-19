@@ -1,67 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
 	<fieldset>
-		<field name="id" type="text"
-			default="0"
+		<field name="id" type="text" class="readonly"
 			label="COM_XIVEIRM_FORM_LBL_TABAPP_ID"
-			readonly="true"
-			class="readonly"
 			description="JGLOBAL_FIELD_ID_DESC"
-		/>
-
-		<field name="client_id" type="text"
-			size="40"
-			class="inputbox"
-			label="COM_XIVEIRM_FORM_LBL_TABAPP_CLIENT_ID"
-			description="COM_XIVEIRM_FORM_DESC_TABAPP_CLIENT_ID"
 			default="0"
-			filter="safehtml"
-		/>
+			readonly="true" />
 
-		<field name="app_key" type="text"
-			size="40"
-			class="inputbox"
-			label="COM_XIVEIRM_FORM_LBL_TABAPP_APP_KEY"
-			description="COM_XIVEIRM_FORM_DESC_TABAPP_APP_KEY"
-			filter="safehtml"
-		/>
+		<field name="client_id" type="usergroup" size="40" class="inputbox"
+			label="COM_XIVEIRM_FORM_LBL_TABAPP_USERGROUP"
+			description="COM_XIVEIRM_FORM_DESC_TABAPP_USERGROUP"
+			filter="safehtml" />
 
-		<field name="tab_key" type="text"
-			size="40"
-			class="inputbox"
-			label="COM_XIVEIRM_FORM_LBL_TABAPP_TAB_KEY"
-			description="COM_XIVEIRM_FORM_DESC_TABAPP_TAB_KEY"
-			filter="safehtml"
-		/>
+		<field name="access" type="accesslevel" size="40" class="inputbox"
+			label="COM_XIVEIRM_FORM_LBL_TABAPP_ACCESS_LEVEL"
+			description="COM_XIVEIRM_FORM_DESC_TABAPP_ACCESS_LEVEL"
+			filter="raw" />
+
+		<field name="plugin" type="sql" class="inputbox"
+			label="COM_XIVEIRM_FORM_LBL_TABAPP_PLUGIN"
+			description="COM_XIVEIRM_FORM_DESC_TABAPP_PLUGIN"
+			query="SELECT element, name FROM #__extensions WHERE folder LIKE 'irmtabs%' OR folder LIKE 'irmwidgets%'"
+			key_field="element" value_field="name" />
 
 		<field name="catid" type="category"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
 			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATID"
-			extension="com_xiveirm.contact.catid"
-			filter="raw"
-		/>
+			extension="com_xiveirm.contacts.catid"
+			filter="raw" />
 
 		<field name="filter_catid" type="category"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
 			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATID"
-			extension="com_xiveirm.contact.catid"
+			extension="com_xiveirm.contacts.catid"
 			show_root="1"
-			onchange="this.form.submit();"
-		/>
+			onchange="this.form.submit();" />
 
-		<field name="config" type="editor"
-			buttons="true"
-			class="inputbox"
-			filter="safehtml"
+		<field name="config" type="editor" class="inputbox"
 			label="COM_XIVEIRM_FORM_LBL_TABAPP_CONFIG"
 			description="COM_XIVEIRM_FORM_DESC_TABAPP_CONFIG"
-		/>
+			editor="codemirror"
+			filter="safehtml" />
 
-		<field name="state" type="list"
+		<field name="state" type="list" size="1" class="inputbox"
 			label="JSTATUS"
 			description="JFIELD_PUBLISHED_DESC"
-			class="inputbox"
-			size="1"
 			default="1">
 				<option value="1">JPUBLISHED</option>
 				<option value="0">JUNPUBLISHED</option>
@@ -69,17 +52,14 @@
 	</fieldset> 
 	<fieldset name="accesscontrol">
 		<field name="asset_id" type="hidden"
-			filter="unset"
-		/>
+			filter="unset" />
 
-		<field name="rules" type="rules"
+		<field name="rules" type="rules" class="inputbox"
 			label="JFIELD_RULES_LABEL"
 			translate_label="false"
 			filter="rules"
 			validate="rules"
-			class="inputbox"
 			component="com_xiveirm"
-			section="tabapp"
-		/>
+			section="tabapp" />
 	</fieldset>
 </form>

@@ -114,10 +114,10 @@ if (!empty($this->extra_sidebar)) {
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_TABAPPS_USERGROUP', 'a.client_id', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_TABAPPS_PLUGIN', 'a.tab_key', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_TABAPPS_PLUGIN', 'a.plugin', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_TABAPPS_ACCESS_LEVEL', 'a.app_key', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_TABAPPS_ACCESS_LEVEL', 'a.access', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_TABAPPS_CATID', 'a.catid', $listDirn, $listOrder); ?>
@@ -195,14 +195,14 @@ if (!empty($this->extra_sidebar)) {
 				<?php endif; ?>
 				<?php if ($canEdit) : ?>
 					<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=tabapp.edit&id='.(int) $item->id); ?>">
-					<?php echo $this->escape($item->app_key); ?></a>
+					<?php echo $this->escape($item->access); ?></a>
 				<?php else : ?>
-					<?php echo $this->escape($item->app_key); ?>
+					<?php echo $this->escape($item->access); ?>
 				<?php endif; ?>
 				</td>
 				<td>
 
-					<?php echo $item->tab_key; ?>
+					<?php echo $item->plugin; ?>
 				</td>
 				<td>
 

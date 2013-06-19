@@ -1,14 +1,14 @@
 CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts` (
 `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-`client_id` INT(11) NOT NULL,
-`parent_id` INT(11) NOT NULL,
+`client_id` INT(11) NOT NULL COMMENT 'usergroup id',
+`parent_id` INT(11) NOT NULL COMMENT 'parent contact id',
 `state` TINYINT(1) NOT NULL DEFAULT '1',
 `created` DATETIME NOT NULL,
 `created_by` INT(11) NOT NULL,
 `checked_out` INT(11) NOT NULL,
 `checked_out_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 `modified` DATETIME NOT NULL,
-`catid` INT(11) NOT NULL,
+`catid` INT(11) NOT NULL COMMENT 'XAP categories',
 `customer_id` VARCHAR(50) NOT NULL,
 `company` VARCHAR(150) NOT NULL,
 `title` VARCHAR(100) NOT NULL,
@@ -35,14 +35,14 @@ PRIMARY KEY (`id`)
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_contact_tabappvalues` (
 `contact_id` INT(11)  NOT NULL,
-`tab_key` VARCHAR(100) NOT NULL,
+`tab_key` VARCHAR(100) NOT NULL COMMENT 'plugin element',
 `tab_value` MEDIUMTEXT NOT NULL,
 UNIQUE KEY `idx_contact_id_tab_key` (`contact_id`,`tab_key`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex contact data storage table';
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_options` (
 `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-`client_id` INT(11) NOT NULL,
+`client_id` INT(11) NOT NULL COMMENT 'usergroup id',
 `category` INT NOT NULL,
 `opt_key` VARCHAR(100) NOT NULL,
 `opt_value` VARCHAR(150) NOT NULL,
@@ -63,12 +63,12 @@ PRIMARY KEY (`id`)
 CREATE TABLE IF NOT EXISTS `#__xiveirm_tabapps` (
 `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `asset_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-`client_id` INT(11) NOT NULL,
-`app_key` VARCHAR(100) NOT NULL,
-`tab_key` VARCHAR(100) NOT NULL,
-`catid` INT(11) NOT NULL,
+`client_id` INT(11) NOT NULL COMMENT 'usergroup id',
+`access` INT(10) NOT NULL COMMENT 'access and view level',
+`plugin` VARCHAR(100) NOT NULL COMMENT 'tab_key',
+`catid` INT(11) NOT NULL COMMENT 'XAP categories',
 `config` TEXT NOT NULL,
 `state` TINYINT(1) NOT NULL DEFAULT '1',
 `ordering` INT(11) NOT NULL,
 PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Storage Table for the TabApp and Widget configurations';

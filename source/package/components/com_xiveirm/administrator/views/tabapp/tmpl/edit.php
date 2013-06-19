@@ -57,12 +57,12 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
 				<div class="controls"><?php echo $this->form->getInput('client_id'); ?></div>
 			</div>
 			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('app_key'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('app_key'); ?></div>
+				<div class="control-label"><?php echo $this->form->getLabel('access'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('access'); ?></div>
 			</div>
 			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('tab_key'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('tab_key'); ?></div>
+				<div class="control-label"><?php echo $this->form->getLabel('plugin'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('plugin'); ?></div>
 			</div>
 			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('catid'); ?></div>
