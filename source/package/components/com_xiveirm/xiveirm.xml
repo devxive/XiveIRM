@@ -7,7 +7,7 @@
     <author>devXive</author>
     <authorEmail>support@devxive.com</authorEmail>
     <authorUrl>http://devxive.com</authorUrl>
-    <version>4.2.3</version>
+    <version>4.3.0</version>
     <description>Interoperable Relationship Management - the next Generation of CRM/ERP</description>
     
     <install> <!-- Runs on install -->
