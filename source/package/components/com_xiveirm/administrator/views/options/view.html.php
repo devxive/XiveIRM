@@ -124,9 +124,9 @@ class XiveirmViewOptions extends JViewLegacy
 	protected function getSortFields()
 	{
 		return array(
-		'a.id' => JText::_('JGRID_HEADING_ID'),
-		'a.client_id' => JText::_('COM_XIVEIRM_OPTIONS_CLIENT_ID'),
+//		'a.id' => JText::_('JGRID_HEADING_ID'),
 		'a.category' => JText::_('COM_XIVEIRM_OPTIONS_CATEGORY'),
+		'a.client_id' => JText::_('COM_XIVEIRM_OPTIONS_USERGROUP'),
 		'a.opt_key' => JText::_('COM_XIVEIRM_OPTIONS_OPT_KEY'),
 		'a.opt_value' => JText::_('COM_XIVEIRM_OPTIONS_OPT_VALUE'),
 		'a.opt_name' => JText::_('COM_XIVEIRM_OPTIONS_OPT_NAME'),
