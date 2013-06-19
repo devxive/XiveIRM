@@ -19,7 +19,8 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_xiveirm'))
 
 // Include dependancies
 jimport('joomla.application.component.controller');
+nawala_import('core.nfactory', 'once');
 
-$controller	= JControllerLegacy::getInstance('Xiveirm');
+$controller = JControllerLegacy::getInstance('Xiveirm');
 $controller->execute(JFactory::getApplication()->input->get('task'));
 $controller->redirect();
