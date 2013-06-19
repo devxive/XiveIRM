@@ -38,6 +38,7 @@
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
 			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATID"
 			extension="com_xiveirm.catid"
+			show_root="1"
 			filter="raw" />
 
 		<field name="filter_catid" type="category"
