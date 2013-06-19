@@ -114,7 +114,7 @@ class XiveirmViewTabapps extends JViewLegacy
 		JHtmlSidebar::addFilter(
 			JText::_("JOPTION_SELECT_CATEGORY"),
 			'filter_catid',
-			JHtml::_('select.options', JHtml::_('category.options', 'com_xiveirm.tabapps.catid'), "value", "text", $this->state->get('filter.catid'))
+			JHtml::_('select.options', JHtml::_('category.options', 'com_xiveirm.contacts.catid'), "value", "text", $this->state->get('filter.catid'))
 
 		);
 
@@ -134,10 +134,10 @@ class XiveirmViewTabapps extends JViewLegacy
 	protected function getSortFields()
 	{
 		return array(
-		'a.id' => JText::_('JGRID_HEADING_ID'),
-		'a.client_id' => JText::_('COM_XIVEIRM_TABAPPS_CLIENT_ID'),
-		'a.app_key' => JText::_('COM_XIVEIRM_TABAPPS_APP_KEY'),
-		'a.tab_key' => JText::_('COM_XIVEIRM_TABAPPS_TAB_KEY'),
+//		'a.id' => JText::_('JGRID_HEADING_ID'),
+		'a.client_id' => JText::_('COM_XIVEIRM_TABAPPS_USERGROUP'),
+		'a.tab_key' => JText::_('COM_XIVEIRM_TABAPPS_PLUGIN'),
+		'a.app_key' => JText::_('COM_XIVEIRM_TABAPPS_ACCESS_LEVEL'),
 		'a.catid' => JText::_('COM_XIVEIRM_TABAPPS_CATID'),
 		'a.state' => JText::_('JSTATUS'),
 		'a.ordering' => JText::_('JGRID_HEADING_ORDERING'),
