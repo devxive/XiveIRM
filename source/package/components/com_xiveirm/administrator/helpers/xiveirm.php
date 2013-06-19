@@ -52,12 +52,6 @@ class XiveirmHelper
 			'index.php?option=com_xiveirm&view=tabapps',
 			$vName == 'tabapps'
 		);
-
-		JHtmlSidebar::addEntry(
-			'Categories (Tabapps - Category)',
-			"index.php?option=com_categories&extension=com_xiveirm.tabapps.catid",
-			$vName == 'categories.tabapps'
-		);
 	}
 
 	/**
