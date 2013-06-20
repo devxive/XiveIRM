@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
 	<fieldset>
-		<field name="id" type="text" class="readonly" readonly="true"
+		<field name="id" type="text" class="readonly"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_ID"
 			description="JGLOBAL_FIELD_ID_DESC"
-			default="0" />
+			default="0"
+			readonly="true" />
 
 		<field name="client_id" type="text" size="40" class="inputbox"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_CLIENT_ID"
@@ -37,15 +38,15 @@
 		<field name="catid" type="category"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
 			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATID"
-			extension="com_xiveirm.contacts.catid"
+			extension="com_xiveirm.catid"
 			filter="raw">
 				<option value="0">JOPTION_SELECT_CATEGORY</option>
 		</field>
 
 		<field name="filter_catid" type="category"
-			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
-			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATID"
-			extension="com_xiveirm.contacts.catid"
+			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATEGORY"
+			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATEGORY"
+			extension="com_xiveirm.catid"
 			show_root="1"
 			onchange="this.form.submit();" />
 
@@ -74,22 +75,13 @@
 			description="COM_XIVEIRM_FORM_DESC_CONTACT_FIRST_NAME"
 			filter="safehtml" />
 
-		<field name="gender" type="sql" class="inputbox"
+		<field name="gender" type="category"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_GENDER"
-			description="COM_XIVEIRM_FORM_DESC_CONTACT_GENDER"
-			query="SELECT 0 AS `opt_value`, '- Select Gender -' AS `opt_name` UNION SELECT `opt_value`, `opt_name` FROM `#__xiveirm_options`"
-			key_field="opt_value"
-			value_field="opt_name" />
+			description="COM_XIVEIRM_FORM_DESC_CONTACT_GENDER" 
+			extension="com_xiveirm.gender"
+			filter="raw" /> 
 
-		<field name="catid.gender" type="category"
-			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
-			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATID"
-			extension="com_xiveirm.options"
-			filter="raw">
-				<option value="0">JOPTION_SELECT_CATEGORY</option>
-		</field>
-
-		<field name="dob" type="text" class="inputbox"
+		<field name="dob" type="calendar" class="inputbox"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_DOB"
 			description="COM_XIVEIRM_FORM_DESC_CONTACT_DOB"
 			filter="safehtml" />

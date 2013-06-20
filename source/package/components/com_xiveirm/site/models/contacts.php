@@ -85,10 +85,10 @@ class XiveirmModelContacts extends JModelList {
 		$query->select('catid.title AS catid_title');
 		$query->join('LEFT', '#__categories AS catid ON catid.id = a.catid');
 
-		// Join over the foreign key 'gender'
-		$query->select('#__xiveirm_options_556902.opt_name AS options_opt_name_556902');
-		$query->join('LEFT', '#__xiveirm_options AS #__xiveirm_options_556902 ON #__xiveirm_options_556902.opt_value = a.gender');
-        
+		// Join over the category 'gender'
+		$query->select('gender.title AS gender_title');
+		$query->join('LEFT', '#__categories AS gender ON gender.id = a.gender');
+
 		// Filter by search in title
 		$search = $this->getState('filter.search');
 		if (!empty($search)) {

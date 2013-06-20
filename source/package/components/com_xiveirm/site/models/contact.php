@@ -193,29 +193,6 @@ class XiveirmModelContact extends JModelForm
 	{
 		$data = $this->getData(); 
         
-
-			if (isset($data->gender)) {
-				$values = get_object_vars($data->gender);
-				unset($values['_errors']);
-
-				$textValue = array();
-				foreach ($values as $value){
-					$db = JFactory::getDbo();
-					$query = $db->getQuery(true);
-					$query
-							->select('opt_name')
-							->from('`#__xiveirm_options`')
-							->where('opt_value = ' .$value);
-					$db->setQuery($query);
-					$results = $db->loadObject();
-					if ($results) {
-						$textValue[] = $results->opt_name;
-					}
-				}
-
-			$data->gender = !empty($textValue) ? implode(', ', $textValue) : $data->gender;
-
-			}
         return $data;
 	}
 

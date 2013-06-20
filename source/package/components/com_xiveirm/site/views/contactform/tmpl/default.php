@@ -56,13 +56,6 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 			js('#form-contact').submit(function(event){
 			});
 
-			js('input:hidden.gender').each(function(){
-				var name = js(this).attr('name');
-				if(name.indexOf('genderhidden')){
-					js('#jform_gender option[value="'+js(this).val()+'"]').attr('selected',true);
-				}
-			});
-			js("#jform_gender").trigger("liszt:updated");
 		});
 	});
 </script>
@@ -189,6 +182,7 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 							<div class="control-group">
 								<label class="control-label" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_DESC'); ?>"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_LABEL'); ?></label>
 								<div class="controls controls-row">
+<?php echo $this->form->getInput('gender'); ?>
 									<select name="coreform[gender]" class="input-control span3" required>
 										<option value=""<?php if(!$this->item->gender): echo ' selected'; endif; ?>><?php echo JText::_('COM_XIVEIRM_SELECT'); ?></option>
 										<option value="u"<?php if($this->item->gender == 'u'): echo ' selected'; endif; ?>><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_UNKNOWN'); ?></option>

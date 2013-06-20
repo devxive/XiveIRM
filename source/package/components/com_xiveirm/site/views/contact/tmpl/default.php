@@ -54,7 +54,7 @@ if (!$canEdit && JFactory::getUser()->authorise('core.edit.own', 'com_xiveirm'))
 			<li><?php echo JText::_('COM_XIVEIRM_FORM_LBL_CONTACT_FIRST_NAME'); ?>:
 			<?php echo $this->item->first_name; ?></li>
 			<li><?php echo JText::_('COM_XIVEIRM_FORM_LBL_CONTACT_GENDER'); ?>:
-			<?php echo $this->item->gender; ?></li>
+			<?php echo $this->item->gender_title; ?></li>
 			<li><?php echo JText::_('COM_XIVEIRM_FORM_LBL_CONTACT_DOB'); ?>:
 			<?php echo $this->item->dob; ?></li>
 			<li><?php echo JText::_('COM_XIVEIRM_FORM_LBL_CONTACT_ADDRESS_NAME'); ?>:
