@@ -38,7 +38,7 @@
 		<field name="catid" type="category"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATEGORY"
 			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATEGORY"
-			extension="com_xiveirm.contacts.catid"
+			extension="com_xiveirm.contacts"
 			filter="raw">
 				<option value="0">JOPTION_SELECT_CATEGORY</option>
 		</field>
@@ -46,7 +46,7 @@
 		<field name="filter_catid" type="category"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
 			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATID"
-			extension="com_xiveirm.contacts.catid"
+			extension="com_xiveirm.contacts"
 			show_root="1"
 			onchange="this.form.submit();" />
 
@@ -78,7 +78,7 @@
 		<field name="gender" type="category"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_GENDER"
 			description="COM_XIVEIRM_FORM_DESC_CONTACT_GENDER" 
-			extension="com_xiveirm.contacts.gender"
+			extension="com_xiveirm.options"
 			filter="raw" /> 
 
 		<field name="dob" type="calendar" class="inputbox"
