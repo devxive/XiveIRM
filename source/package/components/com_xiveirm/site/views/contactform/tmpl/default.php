@@ -140,43 +140,44 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 					<div class="row-fluid">
 						<div class="span7">
 							<div class="control-group">
-								<label class="control-label"><?php echo $this->form->getLabel('catid'); ?></label>
+								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_FORM_LBL_CONTACT_CATEGORY'); ?></label>
 								<div class="controls controls-row">
 									<?php echo $this->form->getInput('catid'); ?>
+									<div class="span6"><a id="toggleExtend" class="btn btn-small btn-primary pull-right"><i class="icon-double-angle-down"></i> Additional fields</a></div>
 <!--
 									<select name="coreform[type]" class="chzn-selects input-control span6" data-placeholder="Choose a Type..." required>
 										<option value=""><?php echo JText::_('COM_XIVEIRM_SELECT'); ?></option>
 										<?php
-											$options = NFactory::getOptionArray('xiveirm_selectlists', 'customertype', 120700);
-
-											if($options->client) {
-												echo '<optgroup label="Eigene Kontakttypen"></optgroup>';
-													foreach ($options->client as $key => $val) {
-														echo '<option value="' . $key . '">&nbsp;&nbsp;&nbsp;&nbsp;' . $val . '</option>';
-													}
-												echo '</optgroup>';
-											}
-											if($options->global) {
-												echo '<optgroup label="System (Global)"></optgroup>';
-													foreach ($options->global as $key => $val) {
-														echo '<option value="' . $key . '">&nbsp;&nbsp;&nbsp;&nbsp;' . $val . '</option>';
-													}
-												echo '</optgroup>';
-											}
+//											$options = NFactory::getOptionArray('xiveirm_selectlists', 'customertype', 120700);
+//
+//											if($options->client) {
+//												echo '<optgroup label="Eigene Kontakttypen"></optgroup>';
+//													foreach ($options->client as $key => $val) {
+//														echo '<option value="' . $key . '">&nbsp;&nbsp;&nbsp;&nbsp;' . $val . '</option>';
+//													}
+//												echo '</optgroup>';
+//											}
+//											if($options->global) {
+//												echo '<optgroup label="System (Global)"></optgroup>';
+//													foreach ($options->global as $key => $val) {
+//														echo '<option value="' . $key . '">&nbsp;&nbsp;&nbsp;&nbsp;' . $val . '</option>';
+//													}
+//												echo '</optgroup>';
+//											}
 										?>
 									</select>
 -->								</div>
 							</div>
-							<div class="control-group">
-								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID_LABEL'); ?>, <?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_COMPANY_NAME_LABEL'); ?></label>
+							<div class="control-group extended">
+								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID_LABEL'); ?></label>
 								<div class="controls controls-row">
 									<input type="text" name="coreform[customer_id]" class="input-control span6" id="prependedInput" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID'); ?>" value="<?php echo $this->item->customer_id; ?>">
-									<input type="text" name="coreform[company_name]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_COMPANY_NAME'); ?>" value="<?php echo $this->item->company_name; ?>">
 								</div>
 							</div>
 							<div class="control-group">
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_NAME_LABEL'); ?></label>
-								<div class="controls controls-row">
+								<div id="name-ext" class="controls controls-row extended">
+									<input type="text" name="coreform[company_name]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_COMPANY'); ?>" value="<?php echo $this->item->company; ?>">
 									<input type="text" name="coreform[title]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_NAME_TITLE'); ?>" value="<?php echo $this->item->title; ?>">
 								</div>
 								<div class="controls controls-row">
@@ -359,6 +360,17 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 
 
 <script>
+	// Toggle Down/Up form fields
+	var ddvar;
+	function ddext(ddvar) {
+		jQuery("#"+ddvar).slideToggle("fast");
+	}
+
+	jQuery(".extended").hide();
+	jQuery("#toggleExtend").click(function () {
+		$(".extended").slideToggle("fast");
+	});
+
 	// Prevent submit on enter (keycode 13) event in form fields
 	jQuery("#form-contact").bind('keypress keydown keyup', function(e) {
 		if(e.keyCode == 13) { e.preventDefault(); }
