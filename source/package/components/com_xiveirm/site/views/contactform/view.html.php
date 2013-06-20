@@ -15,47 +15,42 @@ jimport('joomla.application.component.view');
 /**
  * View to edit
  */
-class XiveirmViewContactForm extends JViewLegacy {
+class XiveirmViewContactForm extends JViewLegacy
+{
+	protected $state;
+	protected $item;
+	protected $form;
+	protected $params;
 
-    protected $state;
-    protected $item;
-    protected $form;
-    protected $params;
-
-    /**
-     * Display the view
-     */
-    public function display($tpl = null) {
-        
+	/**
+	 * Display the view
+	 */
+	public function display($tpl = null)
+	{
 		$app	= JFactory::getApplication();
-        $user		= JFactory::getUser();
-        
-        $this->state = $this->get('State');
-        $this->item = $this->get('Data');
-        $this->params = $app->getParams('com_xiveirm');
-   		$this->form		= $this->get('Form');
+		$user	= JFactory::getUser();
 
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors));
-        }
-        
-        
-        
-        if($this->_layout == 'edit') {
-            
-            $authorised = $user->authorise('core.create', 'com_xiveirm');
+		$this->state	= $this->get('State');
+		$this->item	= $this->get('Data');
+		$this->params	= $app->getParams('com_xiveirm');
+		$this->form	= $this->get('Form');
 
-            if ($authorised !== true) {
-                throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'));
-            }
-        }
+		// Check for errors.
+		if (count($errors = $this->get('Errors'))) {
+			throw new Exception(implode("\n", $errors));
+		}
+
+		if($this->_layout == 'edit') {
+			$authorised = $user->authorise('core.create', 'com_xiveirm');
+			if ($authorised !== true) {
+				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'));
+			}
+		}
         
-        $this->_prepareDocument();
+		$this->_prepareDocument();
 
-        parent::display($tpl);
-    }
-
+		parent::display($tpl);
+	}
 
 	/**
 	 * Prepares the document
@@ -69,13 +64,15 @@ class XiveirmViewContactForm extends JViewLegacy {
 		// Because the application sets a default page title,
 		// we need to get it from the menu item itself
 		$menu = $menus->getActive();
-		if($menu)
-		{
+
+		if($menu) {
 			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
 		} else {
 			$this->params->def('page_heading', JText::_('com_xiveirm_DEFAULT_PAGE_TITLE'));
 		}
+
 		$title = $this->params->get('page_title', '');
+
 		if (empty($title)) {
 			$title = $app->getCfg('sitename');
 		}
@@ -87,20 +84,16 @@ class XiveirmViewContactForm extends JViewLegacy {
 		}
 		$this->document->setTitle($title);
 
-		if ($this->params->get('menu-meta_description'))
-		{
+		if ($this->params->get('menu-meta_description')) {
 			$this->document->setDescription($this->params->get('menu-meta_description'));
 		}
 
-		if ($this->params->get('menu-meta_keywords'))
-		{
+		if ($this->params->get('menu-meta_keywords')) {
 			$this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
 		}
 
-		if ($this->params->get('robots'))
-		{
+		if ($this->params->get('robots')) {
 			$this->document->setMetadata('robots', $this->params->get('robots'));
 		}
-	}        
-    
+	}
 }
