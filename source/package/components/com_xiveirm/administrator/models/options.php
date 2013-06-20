@@ -28,7 +28,7 @@ class XiveirmModeloptions extends JModelList {
             $config['filter_fields'] = array(
                                 'id', 'a.id',
                 'client_id', 'a.client_id',
-                'category', 'a.category',
+                'catid', 'a.catid',
                 'opt_key', 'a.opt_key',
                 'opt_value', 'a.opt_value',
                 'opt_name', 'a.opt_name',
@@ -58,6 +58,9 @@ class XiveirmModeloptions extends JModelList {
         $this->setState('filter.state', $published);
 
         
+		//Filtering catid
+		$this->setState('filter.catid', $app->getUserStateFromRequest($this->context.'.filter.catid', 'filter_catid', '', 'string'));
+
 		//Filtering access
 		$this->setState('filter.access', $app->getUserStateFromRequest($this->context.'.filter.access', 'filter_access', '', 'string'));
 
@@ -109,9 +112,9 @@ class XiveirmModeloptions extends JModelList {
         $query->from('`#__xiveirm_options` AS a');
 
         
-		// Join over the foreign key 'category'
-		$query->select('#__xiveirm_option_categories_605020.name AS optioncategories_name_605020');
-		$query->join('LEFT', '#__xiveirm_option_categories AS #__xiveirm_option_categories_605020 ON #__xiveirm_option_categories_605020.id = a.category');
+		// Join over the category 'catid'
+		$query->select('catid.title AS catid');
+		$query->join('LEFT', '#__categories AS catid ON catid.id = a.catid');
 
         
 
@@ -127,6 +130,12 @@ class XiveirmModeloptions extends JModelList {
         }
 
         
+
+		//Filtering catid
+		$filter_catid = $this->state->get("filter.catid");
+		if ($filter_catid) {
+			$query->where("a.catid = '".$db->escape($filter_catid)."'");
+		}
 
 		//Filtering access
 		$filter_access = $this->state->get("filter.access");
@@ -148,30 +157,6 @@ class XiveirmModeloptions extends JModelList {
     public function getItems() {
         $items = parent::getItems();
         
-		foreach ($items as $oneItem) {
-
-			if (isset($oneItem->category)) {
-				$values = explode(',', $oneItem->category);
-
-				$textValue = array();
-				foreach ($values as $value){
-					$db = JFactory::getDbo();
-					$query = $db->getQuery(true);
-					$query
-							->select('name')
-							->from('`#__xiveirm_option_categories`')
-							->where('id = ' .$value);
-					$db->setQuery($query);
-					$results = $db->loadObject();
-					if ($results) {
-						$textValue[] = $results->name;
-					}
-				}
-
-			$oneItem->category = !empty($textValue) ? implode(', ', $textValue) : $oneItem->category;
-
-			}
-		}
         return $items;
     }
 
