@@ -17,6 +17,12 @@ defined('_JEXEC') or die;
 $lang = JFactory::getLanguage();
 $lang->load('com_xiveirm', JPATH_ADMINISTRATOR);
 
+	$user = JFactory::getUser()->getAuthorisedCategories('com_xiveirm', 'edit');
+//	$canCreate	= $user->authorise('core.create',		'com_xiveirm');
+//	$canEdit	= $user->authorise('core.edit',		'com_xiveirm');
+//	$canCheckin	= $user->authorise('core.manage',		'com_xiveirm');
+//	$canChange	= $user->authorise('core.edit.state',	'com_xiveirm');
+
 JPluginHelper::importPlugin( 'contacttabs' ); // returned 1 if get successfully loaded
 JPluginHelper::importPlugin( 'contactwidgets' ); // returned 1 if get successfully loaded
 $dispatcher = JDispatcher::getInstance();
