@@ -36,8 +36,8 @@
 			hidden="true" />
 
 		<field name="catid" type="category"
-			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
-			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATID"
+			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATEGORY"
+			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATEGORY"
 			extension="com_xiveirm.contacts"
 			filter="raw">
 				<option value="0">JOPTION_SELECT_CATEGORY</option>
@@ -81,7 +81,7 @@
 			extension="com_xiveirm.options"
 			filter="raw" /> 
 
-		<field name="dob" type="calendar" class="inputbox"
+		<field name="dob" type="calendar_BAK" class="inputbox"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_DOB"
 			description="COM_XIVEIRM_FORM_DESC_CONTACT_DOB"
 			filter="safehtml" />
