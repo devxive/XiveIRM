@@ -74,15 +74,6 @@ class XiveirmModeloption extends JModelAdmin
 		if (empty($data)) {
 			$data = $this->getItem();
             
-
-			//Support for multiple or not foreign key field: category
-			$array = array();
-			foreach((array)$data->category as $value): 
-				if(!is_array($value)):
-					$array[] = $value;
-				endif;
-			endforeach;
-			$data->category = implode(',',$array);
 		}
 
 		return $data;
