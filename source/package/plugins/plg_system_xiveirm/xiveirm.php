@@ -44,7 +44,7 @@ class PlgSystemXiveIrm extends JPlugin
 		$user = JFactory::getUser()->id;
 
 		// If we are in admin area we have to check if the logged in user is in the group of the given minimum user group (future version)
-		// at this time, all users with admin access become the client_id, catid = 0 in the session
+		// at this time, all users with admin access become the client_id = 0, access = 1 (Public) in the session
 
 		// make sure the user is logged in to check if we have a session or not
 		if($user != 0)
@@ -77,9 +77,9 @@ class PlgSystemXiveIrm extends JPlugin
 					}
 
 					// Check if we have the required fields and store the final object for pushing to session. If not, close the $app with an error message!
-					if (isset($newProfileArray['groupid']) && isset($newProfileArray['catid'])) {
+					if (isset($newProfileArray['groupid']) && isset($newProfileArray['access'])) {
 						$xiveIrmSystemObject->client_id = (int) $newProfileArray['groupid'];
-						$xiveIrmSystemObject->catid = (int) $newProfileArray['catid'];
+						$xiveIrmSystemObject->access = (int) $newProfileArray['access'];
 
 						// Try to store additional fields
 						if (isset($newProfileArray['jobtitle'])) {
@@ -94,7 +94,7 @@ class PlgSystemXiveIrm extends JPlugin
 					}
 				} else {
 					$xiveIrmSystemObject->client_id = 0;
-					$xiveIrmSystemObject->catid = 1;
+					$xiveIrmSystemObject->access = 1;
 					$xiveIrmSystemObject->jobtitle = 'System Administrator';
 
 					$session->set('XiveIRMSystem', $xiveIrmSystemObject);

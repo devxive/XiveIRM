@@ -102,11 +102,11 @@ class PlgUserXiveIrmClientProfile extends JPlugin
 			}
 
 			// Toggle whether the category field is required.
-			if ($this->params->get('profile-catid', 1) > 0)
+			if ($this->params->get('profile-access', 1) > 0)
 			{
-				$form->setFieldAttribute('catid', 'required', $this->params->get('profile-catid') == 2, 'xiveirmclientprofile');
+				$form->setFieldAttribute('access', 'required', $this->params->get('profile-access') == 2, 'xiveirmclientprofile');
 			} else {
-				$form->removeField('catid', 'xiveirmclientprofile');
+				$form->removeField('access', 'xiveirmclientprofile');
 			}
 
 			// Toggle whether the jobtitle field is required.
@@ -134,11 +134,11 @@ class PlgUserXiveIrmClientProfile extends JPlugin
 			}
 
 			// Toggle whether the category field is required.
-			if ($this->params->get('register-catid', 1) > 0)
+			if ($this->params->get('register-access', 1) > 0)
 			{
-				$form->setFieldAttribute('catid', 'required', $this->params->get('register-catid') == 2, 'xiveirmclientprofile');
+				$form->setFieldAttribute('access', 'required', $this->params->get('register-access') == 2, 'xiveirmclientprofile');
 			} else {
-				$form->removeField('catid', 'xiveirmclientprofile');
+				$form->removeField('access', 'xiveirmclientprofile');
 			}
 
 			// Toggle whether the jobtitle field is required.
