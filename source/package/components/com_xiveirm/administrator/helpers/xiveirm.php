@@ -19,7 +19,7 @@ class XiveirmHelper
 	 * Configure the Linkbar.
 	 */
 	public static function addSubmenu($vName = '')
-	{ print_r($vName);
+	{
 		JHtmlSidebar::addEntry(
 			JText::_('COM_XIVEIRM_TITLE_CONTACTS'),
 			'index.php?option=com_xiveirm&view=contacts',
