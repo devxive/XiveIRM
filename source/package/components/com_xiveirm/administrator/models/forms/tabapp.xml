@@ -13,8 +13,8 @@
 			filter="safehtml" />
 
 		<field name="access" type="accesslevel" size="40" class="inputbox"
-			label="COM_XIVEIRM_FORM_LBL_TABAPP_ACCESS_LEVEL"
-			description="COM_XIVEIRM_FORM_DESC_TABAPP_ACCESS_LEVEL"
+			label="COM_XIVEIRM_FORM_LBL_TABAPP_ACCESS"
+			description="COM_XIVEIRM_FORM_DESC_TABAPP_ACCESS"
 			filter="raw" />
 
 		<field name="plugin" type="sql" class="inputbox"
@@ -24,8 +24,8 @@
 			key_field="element" value_field="name" />
 
 		<field name="catid" type="category"
-			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
-			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATID"
+			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATEGORY"
+			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATEGORY"
 			extension="com_xiveirm.contacts"
 			filter="raw">
 				<option value="0">JOPTION_SELECT_CATEGORY</option>

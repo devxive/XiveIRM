@@ -45,19 +45,6 @@ class XiveirmTablecontact extends JTable {
 			$array['modified'] = date("Y-m-d H:i:s");
 		}
 
-		//Support for multiple or not foreign key field: gender
-			if(isset($array['gender'])){
-				if(is_array($array['gender'])){
-					$array['gender'] = implode(',',$array['gender']);
-				}
-				else if(strrpos($array['gender'], ',') != false){
-					$array['gender'] = explode(',',$array['gender']);
-				}
-				else if(empty($array['gender'])) {
-					$array['gender'] = '';
-				}
-			}
-
         if (isset($array['params']) && is_array($array['params'])) {
             $registry = new JRegistry();
             $registry->loadArray($array['params']);

@@ -23,13 +23,6 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
     js = jQuery.noConflict();
     js(document).ready(function(){
         
-	js('input:hidden.gender').each(function(){
-		var name = js(this).attr('name');
-		if(name.indexOf('genderhidden')){
-			js('#jform_gender option[value="'+js(this).val()+'"]').attr('selected',true);
-		}
-	});
-	js("#jform_gender").trigger("liszt:updated");
     });
     
     Joomla.submitbutton = function(task)
@@ -105,14 +98,7 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
 				<div class="control-label"><?php echo $this->form->getLabel('gender'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('gender'); ?></div>
 			</div>
-
-			<?php
-				foreach((array)$this->item->gender as $value): 
-					if(!is_array($value)):
-						echo '<input type="hidden" class="gender" name="jform[genderhidden]['.$value.']" value="'.$value.'" />';
-					endif;
-				endforeach;
-			?>			<div class="control-group">
+			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('dob'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('dob'); ?></div>
 			</div>

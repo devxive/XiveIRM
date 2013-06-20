@@ -36,19 +36,6 @@ class XiveirmTableoption extends JTable {
 
         
 
-		//Support for multiple or not foreign key field: category
-			if(isset($array['category'])){
-				if(is_array($array['category'])){
-					$array['category'] = implode(',',$array['category']);
-				}
-				else if(strrpos($array['category'], ',') != false){
-					$array['category'] = explode(',',$array['category']);
-				}
-				else if(empty($array['category'])) {
-					$array['category'] = '';
-				}
-			}
-
         if (isset($array['params']) && is_array($array['params'])) {
             $registry = new JRegistry();
             $registry->loadArray($array['params']);

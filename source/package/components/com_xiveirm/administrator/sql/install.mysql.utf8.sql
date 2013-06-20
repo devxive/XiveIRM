@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts` (
-`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `client_id` INT(11) NOT NULL COMMENT 'usergroup id',
 `parent_id` INT(11) NOT NULL COMMENT 'parent contact id',
 `state` TINYINT(1) NOT NULL DEFAULT '1',
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts` (
 `title` VARCHAR(100) NOT NULL,
 `last_name` VARCHAR(150) NOT NULL,
 `first_name` VARCHAR(150) NOT NULL,
-`gender` INT NOT NULL,
+`gender` INT(11) NOT NULL,
 `dob` DATE NOT NULL,
 `address_name` VARCHAR(150) NOT NULL,
 `address_name_add` VARCHAR(100) NOT NULL,
@@ -34,16 +34,16 @@ PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_contact_tabappvalues` (
-`contact_id` INT(11)  NOT NULL,
-`tab_key` VARCHAR(100) NOT NULL COMMENT 'plugin element',
+`contact_id` INT(11)  NOT NULL COMMENT '#__contacts id',
+`tab_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
 `tab_value` MEDIUMTEXT NOT NULL,
 UNIQUE KEY `idx_contact_id_tab_key` (`contact_id`,`tab_key`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex contact data storage table';
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_options` (
-`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `client_id` INT(11) NOT NULL COMMENT 'usergroup id',
-`catid` INT NOT NULL,
+`catid` INT(11) NOT NULL,
 `opt_key` VARCHAR(100) NOT NULL,
 `opt_value` VARCHAR(150) NOT NULL,
 `opt_name` VARCHAR(255) NOT NULL,
@@ -53,10 +53,10 @@ PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Simple or client related options list storage table with accesslevels';
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_tabapps` (
-`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `asset_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
 `client_id` INT(11) NOT NULL COMMENT 'usergroup id',
-`access` INT(10) NOT NULL COMMENT 'access and view level',
+`access` INT(11) NOT NULL COMMENT 'access and view level',
 `plugin` VARCHAR(100) NOT NULL COMMENT 'tab_key',
 `catid` INT(11) NOT NULL COMMENT 'XAP categories',
 `config` TEXT NOT NULL,

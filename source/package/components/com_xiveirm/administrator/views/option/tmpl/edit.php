@@ -23,13 +23,6 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
     js = jQuery.noConflict();
     js(document).ready(function(){
         
-	js('input:hidden.category').each(function(){
-		var name = js(this).attr('name');
-		if(name.indexOf('categoryhidden')){
-			js('#jform_category option[value="'+js(this).val()+'"]').attr('selected',true);
-		}
-	});
-	js("#jform_category").trigger("liszt:updated");
     });
     
     Joomla.submitbutton = function(task)
@@ -64,17 +57,10 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
 				<div class="controls"><?php echo $this->form->getInput('client_id'); ?></div>
 			</div>
 			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('category'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('category'); ?></div>
+				<div class="control-label"><?php echo $this->form->getLabel('catid'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('catid'); ?></div>
 			</div>
-
-			<?php
-				foreach((array)$this->item->category as $value): 
-					if(!is_array($value)):
-						echo '<input type="hidden" class="category" name="jform[categoryhidden]['.$value.']" value="'.$value.'" />';
-					endif;
-				endforeach;
-			?>			<div class="control-group">
+			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('opt_key'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('opt_key'); ?></div>
 			</div>

@@ -140,9 +140,9 @@ class XiveirmModelcontacts extends JModelList {
 		// Join over the category 'catid'
 		$query->select('catid.title AS catid');
 		$query->join('LEFT', '#__categories AS catid ON catid.id = a.catid');
-		// Join over the foreign key 'gender'
-		$query->select('#__xiveirm_options_556902.opt_name AS options_opt_name_556902');
-		$query->join('LEFT', '#__xiveirm_options AS #__xiveirm_options_556902 ON #__xiveirm_options_556902.opt_value = a.gender');
+		// Join over the category 'gender'
+		$query->select('gender.title AS gender');
+		$query->join('LEFT', '#__categories AS gender ON gender.id = a.gender');
 
         
     // Filter by published state
@@ -187,30 +187,6 @@ class XiveirmModelcontacts extends JModelList {
     public function getItems() {
         $items = parent::getItems();
         
-		foreach ($items as $oneItem) {
-
-			if (isset($oneItem->gender)) {
-				$values = explode(',', $oneItem->gender);
-
-				$textValue = array();
-				foreach ($values as $value){
-					$db = JFactory::getDbo();
-					$query = $db->getQuery(true);
-					$query
-							->select('opt_name')
-							->from('`#__xiveirm_options`')
-							->where('opt_value = ' .$value);
-					$db->setQuery($query);
-					$results = $db->loadObject();
-					if ($results) {
-						$textValue[] = $results->opt_name;
-					}
-				}
-
-			$oneItem->gender = !empty($textValue) ? implode(', ', $textValue) : $oneItem->gender;
-
-			}
-		}
         return $items;
     }
 

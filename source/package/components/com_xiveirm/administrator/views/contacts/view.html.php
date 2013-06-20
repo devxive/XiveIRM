@@ -136,7 +136,7 @@ class XiveirmViewContacts extends JViewLegacy
 		return array(
 		'a.id' => JText::_('JGRID_HEADING_ID'),
 		'a.state' => JText::_('JSTATUS'),
-		'a.catid' => JText::_('COM_XIVEIRM_CONTACTS_CATID'),
+		'a.catid' => JText::_('COM_XIVEIRM_CONTACTS_CATEGORY'),
 		'a.customer_id' => JText::_('COM_XIVEIRM_CONTACTS_CUSTOMER_ID'),
 		'a.company' => JText::_('COM_XIVEIRM_CONTACTS_COMPANY'),
 		'a.last_name' => JText::_('COM_XIVEIRM_CONTACTS_LAST_NAME'),

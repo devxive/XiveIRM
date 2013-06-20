@@ -7,7 +7,6 @@
  * @author      devXive <support@devxive.com> - http://devxive.com
  */
 
-
 // no direct access
 defined('_JEXEC') or die;
 

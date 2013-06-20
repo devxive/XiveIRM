@@ -111,7 +111,7 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_CONTACTS_CATID', 'a.catid', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_CONTACTS_CATEGORY', 'a.catid', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_CONTACTS_CUSTOMER_ID', 'a.customer_id', $listDirn, $listOrder); ?>
@@ -159,7 +159,7 @@ if (!empty($this->extra_sidebar)) {
 			<?php foreach ($this->items as $i => $item) :
 				$ordering   = ($listOrder == 'a.ordering');
                 $canCreate	= $user->authorise('core.create',		'com_xiveirm');
-                $canEdit	= $user->authorise('core.edit',			'com_xiveirm');
+                $canEdit	= $user->authorise('core.edit',		'com_xiveirm');
                 $canCheckin	= $user->authorise('core.manage',		'com_xiveirm');
                 $canChange	= $user->authorise('core.edit.state',	'com_xiveirm');
 				?>

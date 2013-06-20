@@ -74,15 +74,6 @@ class XiveirmModelcontact extends JModelAdmin
 		if (empty($data)) {
 			$data = $this->getItem();
             
-
-			//Support for multiple or not foreign key field: gender
-			$array = array();
-			foreach((array)$data->gender as $value): 
-				if(!is_array($value)):
-					$array[] = $value;
-				endif;
-			endforeach;
-			$data->gender = implode(',',$array);
 		}
 
 		return $data;
