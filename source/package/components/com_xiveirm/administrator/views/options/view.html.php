@@ -112,6 +112,13 @@ class XiveirmViewOptions extends JViewLegacy
         $this->extra_sidebar = '';
         
 		JHtmlSidebar::addFilter(
+			JText::_("JOPTION_SELECT_CATEGORY"),
+			'filter_catid',
+			JHtml::_('select.options', JHtml::_('category.options', 'com_xiveirm.options.catid'), "value", "text", $this->state->get('filter.catid'))
+
+		);
+
+		JHtmlSidebar::addFilter(
 			JText::_("JOPTION_SELECT_ACCESS"),
 			'filter_access',
 			JHtml::_('select.options', JHtml::_("access.assetgroups", true, true), "value", "text", $this->state->get('filter.access'), true)
@@ -125,8 +132,8 @@ class XiveirmViewOptions extends JViewLegacy
 	{
 		return array(
 //		'a.id' => JText::_('JGRID_HEADING_ID'),
-		'a.category' => JText::_('COM_XIVEIRM_OPTIONS_CATEGORY'),
 		'a.client_id' => JText::_('COM_XIVEIRM_OPTIONS_USERGROUP'),
+		'a.catid' => JText::_('COM_XIVEIRM_OPTIONS_CATEGORY'),
 		'a.opt_key' => JText::_('COM_XIVEIRM_OPTIONS_OPT_KEY'),
 		'a.opt_value' => JText::_('COM_XIVEIRM_OPTIONS_OPT_VALUE'),
 		'a.opt_name' => JText::_('COM_XIVEIRM_OPTIONS_OPT_NAME'),

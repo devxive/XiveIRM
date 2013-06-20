@@ -86,7 +86,6 @@ if (!empty($this->extra_sidebar)) {
 			</div>
 			<div class="btn-group pull-right">
 				<label for="sortTable" class="element-invisible"><?php echo JText::_('JGLOBAL_SORT_BY');?></label>
-
 				<select name="sortTable" id="sortTable" class="input-medium" onchange="Joomla.orderTable()">
 					<option value=""><?php echo JText::_('JGLOBAL_SORT_BY');?></option>
 					<?php echo JHtml::_('select.options', $sortFields, 'value', 'text', $listOrder);?>
@@ -118,7 +117,7 @@ if (!empty($this->extra_sidebar)) {
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_TABAPPS_PLUGIN', 'a.plugin', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_TABAPPS_ACCESS_LEVEL', 'a.access', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_TABAPPS_ACCESS', 'a.access', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_TABAPPS_CATID', 'a.catid', $listDirn, $listOrder); ?>
@@ -187,7 +186,6 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<td>
-
 					<?php echo $item->client_id; ?>
 				</td>
 				<td>
@@ -196,17 +194,15 @@ if (!empty($this->extra_sidebar)) {
 				<?php endif; ?>
 				<?php if ($canEdit) : ?>
 					<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=tabapp.edit&id='.(int) $item->id); ?>">
-					<?php echo $this->escape($item->access); ?></a>
+					<?php echo $this->escape($item->plugin); ?></a>
 				<?php else : ?>
-					<?php echo $this->escape($item->access); ?>
+					<?php echo $this->escape($item->plugin); ?>
 				<?php endif; ?>
 				</td>
 				<td>
-
-					<?php echo $item->plugin; ?>
+					<?php echo $item->access; ?>
 				</td>
 				<td>
-
 					<?php echo $item->catid; ?>
 				</td>
 

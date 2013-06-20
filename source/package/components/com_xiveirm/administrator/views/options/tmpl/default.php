@@ -111,7 +111,7 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_OPTIONS_CATEGORY', 'a.category', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_OPTIONS_CATEGORY', 'a.catid', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_OPTIONS_OPT_KEY', 'a.opt_key', $listDirn, $listOrder); ?>
@@ -192,7 +192,7 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<td>
-					<?php echo $item->category; ?>
+					<?php echo $item->catid; ?>
 				</td>
 				<td>
 					<?php echo $item->opt_key; ?>
