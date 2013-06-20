@@ -2,12 +2,24 @@
 <config>
 	<fieldset name="component" label="COM_XIVEIRM_COMPONENT_LABEL" description="COM_XIVEIRM_COMPONENT_DESC">
 		<field name="test" type="radio"
-			label="COM_XIVEIRM_TEST_LABEL"
-			description="COM_XIVEIRM_TEST_DESC"
-			default="1">
+			label="COM_XIVEIRM_SYSTEM_TEST_LBL"
+			description="COM_XIVEIRM_SYSTEM_TEST_DESC"
+			default="0">
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 		</field>
+
+		<field name="global_group" type="usergroup"
+			label="COM_XIVEIRM_SYSTEM_USERGROUP_LBL"
+			description="COM_XIVEIRM_SYSTEM_USERGROUP_DESC"
+			default="2"
+			filter="raw" />
+
+		<field name="access" type="accesslevel"
+			label="COM_XIVEIRM_SYSTEM_ACCESS_LBL"
+			description="COM_XIVEIRM_SYSTEM_ACCESS_DESC"
+			default="2"
+			filter="raw" />
 	</fieldset>
 
 	<fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL">
