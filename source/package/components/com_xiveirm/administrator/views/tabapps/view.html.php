@@ -114,7 +114,7 @@ class XiveirmViewTabapps extends JViewLegacy
 		JHtmlSidebar::addFilter(
 			JText::_("JOPTION_SELECT_CATEGORY"),
 			'filter_catid',
-			JHtml::_('select.options', JHtml::_('category.options', 'com_xiveirm.contacts.catid'), "value", "text", $this->state->get('filter.catid'))
+			JHtml::_('select.options', JHtml::_('category.options', 'com_xiveirm.contacts'), "value", "text", $this->state->get('filter.catid'))
 
 		);
 
