@@ -26,8 +26,7 @@ class XiveirmControllerOptions extends JControllerAdmin
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
 		return $model;
 	}
-    
-    
+
 	/**
 	 * Method to save the submitted ordering values for records via AJAX.
 	 *
@@ -60,7 +59,4 @@ class XiveirmControllerOptions extends JControllerAdmin
 		// Close the application
 		JFactory::getApplication()->close();
 	}
-    
-    
-    
 }

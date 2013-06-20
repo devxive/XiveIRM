@@ -1,38 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-	<fieldset name="component"
-		label="COM_XIVEIRM_COMPONENT_LABEL"
-		description="COM_XIVEIRM_COMPONENT_DESC"
-	>
-
-        <field name="test"
-             type="radio"
-             default="1"
-             label="COM_XIVEIRM_TEST_LABEL"
-             description="COM_XIVEIRM_TEST_DESC">
-                 <option value="0">JHIDE</option>
-                 <option value="1">JSHOW</option>
-         </field>
-
+	<fieldset name="component" label="COM_XIVEIRM_COMPONENT_LABEL" description="COM_XIVEIRM_COMPONENT_DESC">
+		<field name="test" type="radio"
+			label="COM_XIVEIRM_TEST_LABEL"
+			description="COM_XIVEIRM_TEST_DESC"
+			default="1">
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+		</field>
 	</fieldset>
 
-	<fieldset name="permissions"
-		description="JCONFIG_PERMISSIONS_DESC"
-		label="JCONFIG_PERMISSIONS_LABEL"
-	>
-
-		<field 
-            name="rules" 
-            type="rules"
-			component="com_xiveirm"
-            class="inputbox"
+	<fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL">
+		<field name="rules" type="rules" class="inputbox"
+			label="JCONFIG_PERMISSIONS_LABEL"
 			filter="rules"
 			validate="rules"
-			label="JCONFIG_PERMISSIONS_LABEL"
+			component="com_xiveirm"
 			section="component" />
 	</fieldset>
-
 </config>
+
 <!--
 ########################################################################################
 The following are a list of all the different types of fields you can add to this file
@@ -104,6 +91,4 @@ http://docs.joomla.org/Timezones_parameter_type
 
 http://docs.joomla.org/Usergroup_parameter_type
 <field name="myusergroups" type="usergroup" default="" label="Select a user group" description="" />
-
-
- -->
+-->

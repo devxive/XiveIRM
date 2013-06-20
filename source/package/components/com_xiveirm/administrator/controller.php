@@ -27,7 +27,8 @@ class XiveirmController extends JControllerLegacy
 		require_once JPATH_COMPONENT.'/helpers/xiveirm.php';
 
 		$view		= JFactory::getApplication()->input->getCmd('view', 'contacts');
-        JFactory::getApplication()->input->set('view', $view);
+
+		JFactory::getApplication()->input->set('view', $view);
 
 		parent::display($cachable, $urlparams);
 

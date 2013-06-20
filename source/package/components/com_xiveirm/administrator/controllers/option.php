@@ -17,10 +17,8 @@ jimport('joomla.application.component.controllerform');
  */
 class XiveirmControllerOption extends JControllerForm
 {
-
-    function __construct() {
-        $this->view_list = 'options';
-        parent::__construct();
-    }
-
+	function __construct() {
+		$this->view_list = 'options';
+		parent::__construct();
+	}
 }

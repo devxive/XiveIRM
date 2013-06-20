@@ -17,10 +17,8 @@ jimport('joomla.application.component.controllerform');
  */
 class XiveirmControllerContact extends JControllerForm
 {
-
-    function __construct() {
-        $this->view_list = 'contacts';
-        parent::__construct();
-    }
-
+	function __construct() {
+		$this->view_list = 'contacts';
+		parent::__construct();
+	}
 }
