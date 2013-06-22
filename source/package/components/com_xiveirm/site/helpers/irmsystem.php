@@ -94,6 +94,7 @@ class IRMSystem
 				->select(array('id', 'title', 'access'))
 				->from('#__categories')
 				->where('extension = ' . $db->quote($extension) . '')
+				->where('published = 1')
 				->where('access IN (' . $viewlevels . ')');
 
 				$db->setQuery($query);
