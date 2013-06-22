@@ -190,8 +190,10 @@ class XiveirmModelApi extends JModelForm
 			// Do the create new contact check if all needed datas are in there, else return false with error codes
 			if (!isset($data['created_by'])
 				|| !isset($data['client_id'])
+				|| !isset($data['parent_id'])
+				|| !isset($data['catid'])
 				|| !isset($data['customer_id'])
-				|| !isset($data['company_name'])
+				|| !isset($data['company'])
 				|| !isset($data['title'])
 				|| !isset($data['last_name'])
 				|| !isset($data['first_name'])
@@ -203,6 +205,7 @@ class XiveirmModelApi extends JModelForm
 				|| !isset($data['address_houseno'])
 				|| !isset($data['address_zip'])
 				|| !isset($data['address_city'])
+				|| !isset($data['address_region'])
 				|| !isset($data['address_country'])
 				|| !isset($data['phone'])
 				|| !isset($data['fax'])
@@ -217,11 +220,13 @@ class XiveirmModelApi extends JModelForm
 			} else {
 				// Set the columns
 				$columns = array(
+					'client_id',
+					'parent_id',
 					'created',
 					'created_by',
-					'client_id',
+					'catid',
 					'customer_id',
-					'company_name',
+					'company',
 					'title',
 					'last_name',
 					'first_name',
@@ -233,6 +238,7 @@ class XiveirmModelApi extends JModelForm
 					'address_houseno',
 					'address_zip',
 					'address_city',
+					'address_region',
 					'address_country',
 					'phone',
 					'fax',
@@ -243,11 +249,13 @@ class XiveirmModelApi extends JModelForm
 	
 				// Set the values
 				$values = array(
+					$db->quote($data['client_id']),
+					$db->quote($data['parent_id']),
 					$db->quote(date('Y-m-d H:i:s')),
 					$db->quote($data['created_by']),
-					$db->quote($data['client_id']),
+					$db->quote($data['catid']),
 					$db->quote($data['customer_id']),
-					$db->quote($data['company_name']),
+					$db->quote($data['company']),
 					$db->quote($data['title']),
 					$db->quote($data['last_name']),
 					$db->quote($data['first_name']),
@@ -259,6 +267,7 @@ class XiveirmModelApi extends JModelForm
 					$db->quote($data['address_houseno']),
 					$db->quote($data['address_zip']),
 					$db->quote($data['address_city']),
+					$db->quote($data['address_region']),
 					$db->quote($data['address_country']),
 					$db->quote($data['phone']),
 					$db->quote($data['fax']),
@@ -294,8 +303,10 @@ class XiveirmModelApi extends JModelForm
 		{
 			// Do the update contact check if all needed datas are in there, else return false with error codes
 			if (!isset($data['client_id'])
+				|| !isset($data['parent_id'])
+				|| !isset($data['catid'])
 				|| !isset($data['customer_id'])
-				|| !isset($data['company_name'])
+				|| !isset($data['company'])
 				|| !isset($data['title'])
 				|| !isset($data['last_name'])
 				|| !isset($data['first_name'])
@@ -307,6 +318,7 @@ class XiveirmModelApi extends JModelForm
 				|| !isset($data['address_houseno'])
 				|| !isset($data['address_zip'])
 				|| !isset($data['address_city'])
+				|| !isset($data['address_region'])
 				|| !isset($data['address_country'])
 				|| !isset($data['phone'])
 				|| !isset($data['fax'])
@@ -324,8 +336,10 @@ class XiveirmModelApi extends JModelForm
 				// Set the fields
 				$fields = array(
 					'client_id = ' . $db->quote($data['client_id']) . '',
+					'parent_id = ' . $db->quote($data['parent_id']) . '',
+					'catid = ' . $db->quote($data['catid']) . '',
 					'customer_id = ' . $db->quote($data['customer_id']) . '',
-					'company_name = ' . $db->quote($data['company_name']) . '',
+					'company = ' . $db->quote($data['company']) . '',
 					'title = ' . $db->quote($data['title']) . '',
 					'last_name = ' . $db->quote($data['last_name']) . '',
 					'first_name = ' . $db->quote($data['first_name']) . '',
@@ -337,6 +351,7 @@ class XiveirmModelApi extends JModelForm
 					'address_houseno = ' . $db->quote($data['address_houseno']) . '',
 					'address_zip = ' . $db->quote($data['address_zip']) . '',
 					'address_city = ' . $db->quote($data['address_city']) . '',
+					'address_region = ' . $db->quote($data['address_region']) . '',
 					'address_country = ' . $db->quote($data['address_country']) . '',
 					'phone = ' . $db->quote($data['phone']) . '',
 					'fax = ' . $db->quote($data['fax']) . '',
