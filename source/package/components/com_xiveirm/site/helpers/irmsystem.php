@@ -105,7 +105,7 @@ class IRMSystem
 				 * 
 				 */
 				$superglobal = new stdClass;
-				$clients = array(); // Based on currently user authorized view levels
+				$client = array(); // Based on currently user authorized view levels
 				$global = array(); // Based on com_xiveirm settings
 
 				foreach ($results as $result) {
@@ -133,7 +133,7 @@ class IRMSystem
 				 * 
 				 */
 				$superglobal = new stdClass;
-				$clients = array(); // Based on currently user authorized view levels
+				$client = array(); // Based on currently user authorized view levels
 				$global = array(); // Based on com_xiveirm settings
 
 				foreach ($results as $result) {
