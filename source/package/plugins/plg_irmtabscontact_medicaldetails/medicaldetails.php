@@ -79,7 +79,7 @@ class PlgIrmTabsContactMedicaldetails extends JPlugin
 
 		<div class="widget-box light-border">
 			<div class="widget-header red small-margin-top">
-				<h5 class="smaller"><?php echo JText::_('PLG_IRMCUSTOMERTABS_MEDICALDETAILS_TABNAME'); ?> Widget</h5>
+				<h5 class="smaller"><?php echo JText::_('PLG_IRMTABSCONTACT_MEDICALDETAILS_TABNAME'); ?> Widget</h5>
 				<?php if(isset($tabData->tab_value->infections_set)): ?>
 					<div class="widget-toolbar">
 						<span class="badge badge-important" data-rel="tooltip" data-placement="bottom" data-original-title="Patient hat akute Infektionen!">Achtung Infektionsgefahr!</span>
@@ -200,7 +200,7 @@ class PlgIrmTabsContactMedicaldetails extends JPlugin
 	{
 		$tabButton = array(
 			'tab_key' => $this->tab_key,
-			'tabButtonName' => '<i class="icon-medkit red"></i> ' . JText::_('PLG_IRMCUSTOMERTABS_MEDICALDETAILS_TABNAME')
+			'tabButtonName' => '<i class="icon-medkit red"></i> ' . JText::_('PLG_IRMTABSCONTACT_MEDICALDETAILS_TABNAME')
 		);
 
 		return $tabButton;
