@@ -75,10 +75,9 @@
 			description="COM_XIVEIRM_FORM_DESC_CONTACT_FIRST_NAME"
 			filter="safehtml" />
 
-		<field name="gender" type="category"
+		<field name="gender" type="text"
 			label="COM_XIVEIRM_FORM_LBL_CONTACT_GENDER"
 			description="COM_XIVEIRM_FORM_DESC_CONTACT_GENDER" 
-			extension="com_xiveirm.options"
 			filter="raw" /> 
 
 		<field name="dob" type="calendar_BAK" class="inputbox"
