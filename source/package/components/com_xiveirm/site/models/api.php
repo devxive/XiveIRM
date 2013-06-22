@@ -404,7 +404,7 @@ class XiveirmModelApi extends JModelForm
 	 * @return	mixed		The user id on success, false on failure.
 	 * @since	1.6
 	 */
-	public function savetab($data, $customer_cid, $tab_key)
+	public function savetab($data, $contact_id, $tab_key)
 	{
 		// Now we get raw $data from the controller and have to perform the save request
 		// first we have to check if we got any datas and split the data into separate values
@@ -414,7 +414,7 @@ class XiveirmModelApi extends JModelForm
 		{
 			// Perform the return array
 			$return_arr = array();
-			$return_arr["apiReturnId"] = (int)$customer_cid;
+			$return_arr["apiReturnId"] = (int)$contact_id;
 			$return_arr["apiReturnCode"] = 1000;
 			$return_arr["apiReturnMessage"] = 'The form is completely empty: Neither an appId, a tabId nor a masterdataId is given!';
 
@@ -452,8 +452,8 @@ class XiveirmModelApi extends JModelForm
 		// Lets have a look first if we have already a tab with that tab_key saved for this customer! Happens if the user attemp to click more than once on save
 		$query
 			->select('*')
-			->from('#__xiveirm_customer_add')
-			->where('customer_cid = ' . $db->quote($customer_cid) . '')
+			->from('#__xiveirm_contact_tabappvalues')
+			->where('contact_id = ' . $db->quote($contact_id) . '')
 			->where('tab_key = ' . $db->quote($tab_key) . '');
 
 		$db->setQuery($query);
@@ -469,16 +469,16 @@ class XiveirmModelApi extends JModelForm
 			$tab_exist = false;
 		}
 
-		if(!$tab_exist && $customer_cid != 0)
+		if(!$tab_exist && $contact_id != 0)
 		{
 			// Set the columns
-			$columns = array('customer_cid', 'tab_key', 'tab_value', 'ordering');
+			$columns = array('contact_id', 'tab_key', 'tab_value');
 
 			// Set the values
-			$values = array($db->quote($customer_cid), $db->quote($tab_key), $db->quote($newData), 0);
+			$values = array($db->quote($contact_id), $db->quote($tab_key), $db->quote($newData));
 
 			$query
-				->insert($db->quoteName('#__xiveirm_customer_add'))
+				->insert($db->quoteName('#__xiveirm_contact_tabappvalues'))
 				->columns($db->quoteName($columns))
 				->values(implode(',', $values));
 			$db->setQuery($query);
@@ -487,7 +487,7 @@ class XiveirmModelApi extends JModelForm
 			try
 			{
 				$db->execute();
-				$apiReturnId = (int)$customer_cid;
+				$apiReturnId = (int)$contact_id;
 				$apiReturnCode = 'SAVED';
 				$apiReturnMessage = 'Succesfully saved';
 			} catch (Exception $e) {
@@ -496,19 +496,18 @@ class XiveirmModelApi extends JModelForm
 				$apiReturnMessage = $e->getMessage();
 			}
 		}
-		else if($tab_exist && $customer_cid != 0)
+		else if($tab_exist && $contact_id != 0)
 		{
 			// Set the fields
 			$fields = array(
-				'customer_cid = ' . $db->quote($customer_cid) . '',
+				'contact_id = ' . $db->quote($contact_id) . '',
 				'tab_key = ' . $db->quote($tab_key) . '',
-				'tab_value = ' . $db->quote($newData) . '',
-				'ordering = 0');
+				'tab_value = ' . $db->quote($newData) . '');
 
 			$query
-				->update($db->quoteName('#__xiveirm_customer_add'))
+				->update($db->quoteName('#__xiveirm_contact_tabappvalues'))
 				->set($fields)
-				->where('customer_cid = ' . $db->quote($customer_cid) . '')
+				->where('contact_id = ' . $db->quote($contact_id) . '')
 				->where('tab_key = ' . $db->quote($tab_key) . '');
 
 			$db->setQuery($query);
@@ -517,7 +516,7 @@ class XiveirmModelApi extends JModelForm
 			try
 			{
 				$db->execute();
-				$apiReturnId = (int)$customer_cid;
+				$apiReturnId = (int)$contact_id;
 				$apiReturnCode = 'UPDATED';
 				$apiReturnMessage = 'Succesfully updated';
 			} catch (Exception $e) {
@@ -528,14 +527,14 @@ class XiveirmModelApi extends JModelForm
 		}
 		else
 		{
-			$apiReturnId = (int)$customer_cid;
+			$apiReturnId = (int)$contact_id;
 			$apiReturnCode = 1666;
 			$apiReturnMessage = 'Unbekannter Fehler';
 		}
 
 		// Perform the return array
 		$return_arr = array();
-		$return_arr["apiReturnId"] = (int)$customer_cid;
+		$return_arr["apiReturnId"] = (int)$contact_id;
 		$return_arr["apiReturnCode"] = $apiReturnCode;
 		$return_arr["apiReturnMessage"] = $apiReturnMessage;
 
