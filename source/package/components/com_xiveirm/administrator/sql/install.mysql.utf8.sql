@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts` (
 `title` VARCHAR(100) NOT NULL,
 `last_name` VARCHAR(150) NOT NULL,
 `first_name` VARCHAR(150) NOT NULL,
-`gender` INT(11) NOT NULL,
+`gender` VARCHAR(255) NOT NULL,
 `dob` DATE NOT NULL,
 `address_name` VARCHAR(150) NOT NULL,
 `address_name_add` VARCHAR(100) NOT NULL,
