@@ -150,11 +150,11 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 										<select name="coreform[catid]" class="chzn-select input-control" style="width: 362px;" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
 											<option value=""></option>
 											<?php
-												$options = IRMSystem::getListOptions('contacts', null);
+												$options = IRMSystem::getListOptions('categories', false);
 												if($options->client) {
 													echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NFactory::getTitleById('usergroup', $xsession->client_id)) . '">';
 														foreach ($options->client as $key => $val) {
-															if($this->item->gender == $key) {
+															if($this->item->catid == $key) {
 																echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
 															} else {
 																echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
@@ -165,7 +165,7 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 												if($options->global) {
 													echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
 														foreach ($options->global as $key => $val) {
-															if($this->item->gender == $key) {
+															if($this->item->catid == $key) {
 																echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
 															} else {
 																echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
@@ -185,7 +185,34 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID_LABEL'); ?></label>
 								<div class="controls controls-row">
 									<input type="text" name="coreform[customer_id]" class="input-control span6" id="prependedInput" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID'); ?>" value="<?php echo $this->item->customer_id; ?>">
-									<input type="text" name="coreform[parent_id]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_PARENT_ID'); ?>" value="<?php echo $this->item->parent_id; ?>">
+									<div class="span6">
+										<select name="coreform[parent_id]" class="chzn-select input-control" style="width: 362px;" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_PARENT'); ?>" required>
+											<?php
+												if(!$this->item->parent_id) {
+													echo '<option value="0" selected>No Root</option>';
+												}
+
+												$options_parent_id = IRMSystem::getListOptions('contacts', $xsession->client_id);
+												foreach($options_parent_id->categories as $catid => $name) {
+													echo '<optgroup label="' . $name . '">';
+														foreach($options_parent_id->contacts as $contactgroupid => $contactgroup) {
+															if($catid == $contactgroupid) {
+																foreach($contactgroup as $contact) {
+																	if($this->item->parent_id == $contact['id']) {
+																		echo '<option value="' . $contact['id'] . '" selected>#' . $contact['customer_id'] . ' - ' . $contact['company'] . ' ( ' . $contact['last_name'] . ', ' . $contact['first_name'] . ' )</option>';
+																	} else {
+																		echo '<option value="' . $contact['id'] . '">#' . $contact['customer_id'] . ' - ' . $contact['company'] . ' ( ' . $contact['last_name'] . ', ' . $contact['first_name'] . ' )</option>';
+																	}
+																}
+																unset($options_parent_id->contacts[$contactgroupid]);
+															}
+														}
+													echo '</optgroup>';
+												}
+												unset($options_parent_id->categories, $options_parent_id->contacts);
+											?>
+										</select>
+									</div>
 								</div>
 							</div>
 							<div class="control-group">
@@ -234,7 +261,7 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 										</select>
 									</div>
 									<div class="span1">
-										<i class="icon-help" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_DESC'); ?>">?</i>
+										<span class="help-button ace-popover" data-trigger="hover" data-placement="top" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_DESC'); ?>" data-original-title="The Gender take over effects!">?</i>
 									</div>
 									<input type="date" name="coreform[dob]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_DOB'); ?>" value="<?php echo $this->item->dob; ?>" required>
 								</div>
@@ -317,7 +344,7 @@ echo '<pre>';
 
 // $test = JUser::getAuthorisedCategories('com_xiveirm', 'core.create');
 
-$test55 = NFactory::getTitleById('usergroup', $xsession->client_id);
+$test55 = IRMSystem::getListOptions('contacts', $xsession->client_id);
 
 print_r($test55);
 

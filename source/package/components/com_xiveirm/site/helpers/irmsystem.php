@@ -59,6 +59,7 @@ class IRMSystem
 	 * Method to get an array of options. Used for select lists, radio and checkbox sets
 	 * return array if success, else return false
 	 * $table without prefix, category alias for the join left clause, client id (based on users usergroup and the xiveirm options where we declare which is the global group)
+	 * the alias could also be a client_id id we want to get all contacts related to the client which is logged on. in this case alias have to be an integer
 	 */
 	public function getListOptions($ext, $alias = null)
 	{
@@ -85,9 +86,9 @@ class IRMSystem
 		$viewlevels = implode(',', $viewlvlArray);
 
 		// Make sure we select from supported rows
-		if($ext == 'contacts' && $alias == null) {
+		if($ext == 'categories' && $alias == false) {
 			// Prebuild the extension
-			$extension = 'com_xiveirm.' . $ext;
+			$extension = 'com_xiveirm.contacts';
 
 			// Prepare the query
 			$query
@@ -97,25 +98,30 @@ class IRMSystem
 				->where('published = 1')
 				->where('access IN (' . $viewlevels . ')');
 
-				$db->setQuery($query);
-				$results = $db->loadObjectList();
+			$db->setQuery($query);
+			$results = $db->loadObjectList();
 
-				/* 
-				 * We have to store all results in appropriate arrays and the arrays in an object
-				 * so users/clients can set if they want only their own or all results.
-				 * 
-				 */
-				$superglobal = new stdClass;
-				$client = array(); // Based on currently user authorized view levels
-				$global = array(); // Based on com_xiveirm settings
+			/* 
+			 * We have to store all results in appropriate arrays and the arrays in an object
+			 * so users/clients can set if they want only their own or all results.
+			 * 
+			 */
+			$superglobal = new stdClass;
+			$client = array(); // Based on currently user authorized view levels
+			$global = array(); // Based on com_xiveirm settings
 
-				foreach ($results as $result) {
-					if($result->access != $globalAccessLvl) {
-						$client[$result->id] = $result->title;
-					} else {
-						$global[$result->id] = $result->title;
-					}
+			foreach ($results as $result) {
+				if($result->access != $globalAccessLvl) {
+					$client[$result->id] = $result->title;
+				} else {
+					$global[$result->id] = $result->title;
 				}
+			}
+
+			$superglobal->client = $client;
+			$superglobal->global = $global;
+
+			return $superglobal;
 		} else if($ext == 'options' && $alias != null) {
 			// Prepare the query
 			$query
@@ -125,6 +131,43 @@ class IRMSystem
 				->where('b.alias = ' . $db->quote($alias) . '')
 				->where('a.access IN (' . $viewlevels . ')');
 
+			$db->setQuery($query);
+			$results = $db->loadObjectList();
+
+			/* 
+			 * We have to store all results in appropriate arrays and the arrays in an object
+			 * so users/clients can set if they want only their own or all results.
+			 * 
+			 */
+			$superglobal = new stdClass;
+			$client = array(); // Based on currently user authorized view levels
+			$global = array(); // Based on com_xiveirm settings
+
+			foreach ($results as $result) {
+				if($result->access != $globalAccessLvl) {
+					$client[$result->opt_value] = $result->opt_name;
+				} else {
+					$global[$result->opt_value] = $result->opt_name;
+				}
+			}
+
+			$superglobal->client = $client;
+			$superglobal->global = $global;
+
+			return $superglobal;
+		} else if($ext == 'contacts' && $alias != null && (int)$alias) {
+			// Prepare the query
+			$query
+				->select(array('a.id', 'a.customer_id', 'a.last_name', 'a.first_name', 'a.company', 'a.catid', 'b.title', 'b.access'))
+				->from('#__xiveirm_contacts AS a')
+				->join('LEFT', '#__categories as b ON (a.catid = b.id)')
+				->where('a.client_id = ' . $alias . '')
+			// Ungleich leerstring (wenn Feld schonmal angefasst)
+				->where('a.company <> ""')
+			// NOT NULL (wenn feld noch vollkommen unberührt)
+				->where('a.company IS NOT NULL')
+				->where('b.access IN (' . $viewlevels . ')');
+
 				$db->setQuery($query);
 				$results = $db->loadObjectList();
 
@@ -134,23 +177,27 @@ class IRMSystem
 				 * 
 				 */
 				$superglobal = new stdClass;
-				$client = array(); // Based on currently user authorized view levels
-				$global = array(); // Based on com_xiveirm settings
+				$contacts = array(); // Based on currently user authorized view levels in the contact category and client_id (alias usergroups)
+				$contacts_categories = array();
 
 				foreach ($results as $result) {
-					if($result->access != $globalAccessLvl) {
-						$client[$result->opt_value] = $result->opt_name;
-					} else {
-						$global[$result->opt_value] = $result->opt_name;
-					}
+					$contacts_categories[$result->catid] = $result->title;
+
+					$contacts[$result->catid][] = array(
+						'id' => $result->id,
+						'customer_id' => $result->customer_id,
+						'last_name' => $result->last_name,
+						'first_name' => $result->first_name,
+						'company' => $result->company
+					);
 				}
+
+				$superglobal->categories = $contacts_categories;
+				$superglobal->contacts = $contacts;
+
+				return $superglobal;
 		} else {
 			return JFactory::getApplication()->enqueueMessage('You have an error in your syntax', 'error');;
 		}
-
-		$superglobal->client = $client;
-		$superglobal->global = $global;
-
-		return $superglobal;
 	}
 }
