@@ -189,7 +189,7 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 										<select name="coreform[parent_id]" class="chzn-select input-control" style="width: 362px;" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_PARENT'); ?>" required>
 											<?php
 												if(!$this->item->parent_id) {
-													echo '<option value="0" selected>No Root</option>';
+													echo '<option value="0" selected>' . JText::_('COM_XIVEIRM_SELECT_NO_PARENT') . '</option>';
 												}
 
 												$options_parent_id = IRMSystem::getListOptions('contacts', $xsession->client_id);
