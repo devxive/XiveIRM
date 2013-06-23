@@ -24,16 +24,16 @@
 			key_field="element" value_field="name" />
 
 		<field name="catid" type="category"
-			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATEGORY"
-			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATEGORY"
+			label="COM_XIVEIRM_FORM_LBL_TABAPP_CATEGORY"
+			description="COM_XIVEIRM_FORM_DESC_TABAPP_CATEGORY"
 			extension="com_xiveirm.contacts"
 			filter="raw">
 				<option value="0">JOPTION_SELECT_CATEGORY</option>
 		</field>
 
 		<field name="filter_catid" type="category"
-			label="COM_XIVEIRM_FORM_LBL_CONTACT_CATID"
-			description="COM_XIVEIRM_FORM_DESC_CONTACT_CATID"
+			label="COM_XIVEIRM_FORM_LBL_TABAPP_CATEGORY"
+			description="COM_XIVEIRM_FORM_DESC_TABAPP_CATEGORY"
 			extension="com_xiveirm.contacts"
 			show_root="1"
 			onchange="this.form.submit();" />
