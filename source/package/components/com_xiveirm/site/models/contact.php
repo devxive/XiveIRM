@@ -110,24 +110,6 @@ class XiveirmModelContact extends JModelForm
 	 */
 	public function checkin($id = null)
 	{
-		// Get the id.
-		$id = (!empty($id)) ? $id : (int)$this->getState('contact.id');
-
-		if ($id) {
-            
-			// Initialise the table
-			$table = $this->getTable();
-
-			// Attempt to check the row in.
-            if (method_exists($table, 'checkin')) {
-                if (!$table->checkin($id)) {
-                    $this->setError($table->getError());
-                    return false;
-                }
-            }
-		}
-
-		return true;
 	}
 
 	/**
@@ -139,27 +121,6 @@ class XiveirmModelContact extends JModelForm
 	 */
 	public function checkout($id = null)
 	{
-		// Get the user id.
-		$id = (!empty($id)) ? $id : (int)$this->getState('contact.id');
-
-		if ($id) {
-            
-			// Initialise the table
-			$table = $this->getTable();
-
-			// Get the current user object.
-			$user = JFactory::getUser();
-
-			// Attempt to check the row out.
-            if (method_exists($table, 'checkout')) {
-                if (!$table->checkout($user->get('id'), $id)) {
-                    $this->setError($table->getError());
-                    return false;
-                }
-            }
-		}
-
-		return true;
 	}    
     
 	/**
