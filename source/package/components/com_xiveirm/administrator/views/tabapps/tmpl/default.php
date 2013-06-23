@@ -86,6 +86,7 @@ if (!empty($this->extra_sidebar)) {
 			</div>
 			<div class="btn-group pull-right">
 				<label for="sortTable" class="element-invisible"><?php echo JText::_('JGLOBAL_SORT_BY');?></label>
+
 				<select name="sortTable" id="sortTable" class="input-medium" onchange="Joomla.orderTable()">
 					<option value=""><?php echo JText::_('JGLOBAL_SORT_BY');?></option>
 					<?php echo JHtml::_('select.options', $sortFields, 'value', 'text', $listOrder);?>
@@ -120,7 +121,7 @@ if (!empty($this->extra_sidebar)) {
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_TABAPPS_ACCESS', 'a.access', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_TABAPPS_CATID', 'a.catid', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_TABAPPS_CATEGORY', 'a.catid', $listDirn, $listOrder); ?>
 				</th>
                     
                     
@@ -186,7 +187,7 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<td>
-					<?php echo $item->client_id; ?>
+					<?php echo NFactory::getTitleById('usergroup', $item->client_id); ?>
 				</td>
 				<td>
 				<?php if (isset($item->checked_out) && $item->checked_out) : ?>
@@ -200,7 +201,7 @@ if (!empty($this->extra_sidebar)) {
 				<?php endif; ?>
 				</td>
 				<td>
-					<?php echo $item->access; ?>
+					<?php echo NFactory::getTitleById('viewlevel', $item->access); ?>
 				</td>
 				<td>
 					<?php echo $item->catid; ?>
