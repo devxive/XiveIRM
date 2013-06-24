@@ -239,7 +239,7 @@ class IRMSystem
 	 * @return		Object		With informations from tabApp config and joined extensions (folder)
 	 * 					id, appNames (plugin element name), folder to perform the NFactory::getPermissions(), catid, config (JSON)
 	 */
-	public function getPlugins($catid, $client_id = false)
+	public function getPlugins($catid, $loadGroup = 'all', $client_id = false)
 	{
 		// Init checks
 		if( !(int) $catid ) {
@@ -270,9 +270,15 @@ class IRMSystem
 
 		$results = $db->loadObjectlist();
 
-		// Load the corresponding Apps and Widgets
-		foreach($results as $result) {
-			JPluginHelper::importPlugin( $result->folder, $result->plugin );
+		// Load the corresponding TabApps and Widgets based on the $loadGroup
+		if($loadGroup == 'all') {
+			foreach($results as $result) {
+				JPluginHelper::importPlugin( $result->folder, $result->plugin );
+			}
+		} else {
+			foreach($results as $result) {
+				JPluginHelper::importPlugin( $loadGroup, $result->plugin );
+			}
 		}
 
 		// Return the results, we'll need to load the permissions based on the related assets/config // SEE NFactory::getPermissions
