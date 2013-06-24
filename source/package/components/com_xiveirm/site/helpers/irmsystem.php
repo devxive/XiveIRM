@@ -283,6 +283,18 @@ class IRMSystem
 			}
 		}
 
+		if($loadGroup != 'all') {
+			$reindexedResults = array();
+
+			foreach($results as $key => $result) {
+				if($result->folder == $loadGroup) {
+					$reindexedResults[] = $result;
+				}
+			}
+
+			return $reindexedResults;
+		}
+
 		// Return the results, we'll need to load the permissions based on the related assets/config // SEE NFactory::getPermissions
 		// Based on this results we can get the permissions, we need to check for checkin/out, save, edit, create or view permissions.
 		// NOTE: This is atypical to the normal viewing access levels and we need this for handle all client related stuff with this permissions/assets
