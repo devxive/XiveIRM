@@ -56,7 +56,6 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_tabapps` (
 `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `asset_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
 `client_id` INT(11) NOT NULL COMMENT 'usergroup id',
-`access` INT(11) NOT NULL COMMENT 'access and view level',
 `plugin` VARCHAR(100) NOT NULL COMMENT 'tab_key',
 `catid` INT(11) NOT NULL COMMENT 'XAP categories',
 `config` TEXT NOT NULL,
