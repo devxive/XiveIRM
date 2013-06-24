@@ -89,6 +89,14 @@ class PlgSystemXiveIrm extends JPlugin
 					$clientObject->client_id = IRMSystem::getGlobalClientId();
 				}
 
+				// Check if user want to get global list options. If yes, store the global_client_id, else unset this option
+				if($clientObject->show_globals == 1) {
+					$clientObject->global_client_id = IRMSystem::getGlobalClientId();
+					unset($clientObject->show_globals);
+				} else {
+					unset($clientObject->show_globals);
+				}
+
 				// Override informations if we're in admin
 				if ($app->isAdmin()) {
 					$clientObject->client_id = IRMSystem::getGlobalClientId();
