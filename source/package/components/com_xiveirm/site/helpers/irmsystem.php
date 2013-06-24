@@ -12,12 +12,42 @@ defined('_JEXEC') or die;
 class IRMSystem
 {
 	/*
+	 * Method to get the global client id as set in the component settings
+	 *
+	 * @return		int	Return the global client_id as set in the component settings, else false.
+	 */
+	public function getGlobalClientId()
+	{
+		if($global_client_id = JComponentHelper::getParams('com_xiveirm')->get('global_group')) {
+			return $global_client_id;
+		} else {
+			return false;
+		}
+	}
+
+	/*
+	 * Method to get access the XiveIRMSystem session
+	 *
+	 * @return		
+	 */
+	public function getSession($value = false)
+	{
+		if(!$value) {
+			$result = JFactory::getSession()->get('XiveIRMSystem');
+		} else {
+			$result = JFactory::getSession()->get('XiveIRMSystem')->$value;
+		}
+
+		return $result;
+	}
+
+	/*
 	 * 
 	 * returns a prepared array
 	 */
-	public function getTabData($customer_cid, $tab_key)
+	public function getTabData($contact_id, $tab_key)
 	{
-		if(!$customer_cid || !$tab_key)
+		if(!$contact_id || !$tab_key)
 		{
 			return false;
 		}
@@ -27,8 +57,8 @@ class IRMSystem
 
 		$query
 			->select('*')
-			->from('#__xiveirm_customer_add')
-			->where('customer_cid = ' . $db->quote($customer_cid) . '')
+			->from('#__xiveirm_contact_tabappvalues')
+			->where('contact_id = ' . $db->quote($contact_id) . '')
 			->where('tab_key = ' . $db->quote($tab_key) . '');
 		$db->setQuery($query);
 
@@ -71,7 +101,7 @@ class IRMSystem
 		$userId = (int) JFactory::getUser()->id;
 		$viewlvlHelper = JAccess::getAuthorisedViewLevels($userId);
 
-		// Get the component global viewlevel and inject in viewlvlArray
+		// Get the component global viewlevel and inject in viewlvlArray to identify all categories with taht view access level
 		$componentHelper = JComponentHelper::getParams('com_xiveirm');
 		if($componentHelper) {
 			$globalAccessLvl = $componentHelper->get('access');
@@ -199,5 +229,52 @@ class IRMSystem
 		} else {
 			return JFactory::getApplication()->enqueueMessage('You have an error in your syntax', 'error');;
 		}
+	}
+
+
+	/*
+	 * Global Method to load all TabApps and Widgets related to the appropriate category and usergroup (new method to ignore viewing access levels!).
+	 * 	Note: Global Categories (0) can be either the related to the global_client_id or the client_id
+	 *
+	 * @return		Object		With informations from tabApp config and joined extensions (folder)
+	 * 					id, appNames (plugin element name), folder to perform the NFactory::getPermissions(), catid, config (JSON)
+	 */
+	public function getPlugins($catid, $client_id = false)
+	{
+		// Init checks
+		if( !(int) $catid ) {
+			return false;
+		}
+
+		// Set the client id's
+		$global_client_id = self::getGlobalClientId();
+
+		// If we get no client_id, we use the global_client_id to perform our query
+		if(!$client_id) {
+			$client_id = self::getSession('client_id');
+		}
+
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query
+			->select(array('a.id', 'a.plugin', 'a.catid', 'a.config', 'b.folder'))
+			->from('#__xiveirm_tabapps AS a')
+			->join('LEFT', '#__extensions as b ON (a.plugin = b.element)')
+			->where('(a.catid = 0 AND a.client_id IN (' . $db->quote($global_client_id) . ',' . $db->quote($client_id) . ')) OR (a.catid = ' . $db->quote($catid) . ' AND a.client_id = ' . $db->quote($client_id) . ')');
+
+		$db->setQuery($query);
+
+		$results = $db->loadObjectlist();
+
+		// Load the corresponding Apps and Widgets
+		foreach($results as $result) {
+			JPluginHelper::importPlugin( $result->folder, $result->plugin );
+		}
+
+		// Return the results, we'll need to load the permissions based on the related assets/config // SEE NFactory::getPermissions
+		// Based on this results we can get the permissions, we need to check for checkin/out, save, edit, create or view permissions.
+		// NOTE: This is atypical to the normal viewing access levels and we need this for handle all client related stuff with this permissions/assets
+		return $results;
 	}
 }
