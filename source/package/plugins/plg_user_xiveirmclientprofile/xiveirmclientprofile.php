@@ -101,6 +101,14 @@ class PlgUserXiveIrmClientProfile extends JPlugin
 				$form->removeField('client_id', 'xiveirmclientprofile');
 			}
 
+			// Toggle whether to show global list options is required.
+			if ($this->params->get('profile-show_globals', 1) > 0)
+			{
+				$form->setFieldAttribute('show_globals', 'required', $this->params->get('profile-show_globals') == 2, 'xiveirmclientprofile');
+			} else {
+				$form->removeField('show_globals', 'xiveirmclientprofile');
+			}
+
 			// Toggle whether the jobtitle field is required.
 			if ($this->params->get('profile-jobtitle', 1) > 0)
 			{
@@ -123,6 +131,14 @@ class PlgUserXiveIrmClientProfile extends JPlugin
 				$form->setFieldAttribute('client_id', 'required', $this->params->get('register-client_id') == 2, 'xiveirmclientprofile');
 			} else {
 				$form->removeField('client_id', 'xiveirmclientprofile');
+			}
+
+			// Toggle whether to show global list options is required.
+			if ($this->params->get('register-show_globals', 1) > 0)
+			{
+				$form->setFieldAttribute('show_globals', 'required', $this->params->get('register-show_globals') == 2, 'xiveirmclientprofile');
+			} else {
+				$form->removeField('show_globals', 'xiveirmclientprofile');
 			}
 
 			// Toggle whether the jobtitle field is required.
