@@ -9,6 +9,8 @@
 
 defined('JPATH_BASE') or die;
 
+require_once JPATH_SITE.'/components/com_xiveirm/helpers/irmsystem.php';
+
 /**
  * Do checks to get the right coice of everything. Stores essential things in the session if a user login!
  *
@@ -46,59 +48,64 @@ class PlgSystemXiveIrm extends JPlugin
 		// If we are in admin area we have to check if the logged in user is in the group of the given minimum user group (future version)
 		// at this time, all users with admin access become the client_id = 0, access = 1 (Public) in the session
 
-		// make sure the user is logged in to check if we have a session or not
-		if($user != 0)
+		// Check if we have a logged in user and a valid user id to check if we have a valid session or not
+		if($user != 0 && (int) $user)
 		{
 			$session = JFactory::getSession();
 
-			// Create the XiveIRM Session Array if no exist and store the required informations.
+			// Create the XiveIRM Session if no exist and store the required informations in the $clientObject.
 			if (!$session->get('XiveIRMSystem')) {
-				$xiveIrmSystemObject = new stdClass;
+				$clientObject = new JObject;
 
 				$app = JFactory::getApplication();
 
-				if ($app->isSite()) {
-					$db = JFactory::getDBO();
-					$query = $db->getQuery(true);
+				// Get and store user informations in $clientObject
+				$userObject = JFactory::getUser($user);
+				$clientObject->id = $userObject->id;
+				$clientObject->username = $userObject->username;
+				$clientObject->name = $userObject->name;
+				$clientObject->email = $userObject->email;
 
-					$query
-						->select(array('profile_key', 'profile_value'))
-						->from('#__user_profiles')
-						->where('profile_key LIKE \'xiveirmclientprofile.%\'')
-						->where('user_id = '.$user.'');
+				// Get user profile data and store in $clientObject
+				$db = JFactory::getDBO();
+				$query = $db->getQuery(true);
 
-					$db->setQuery($query);
-					$results = $db->loadRowList();
+				$query
+					->select(array('profile_key', 'profile_value'))
+					->from('#__user_profiles')
+					->where('profile_key LIKE \'xiveirmclientprofile.%\'')
+					->where('user_id = '.$user.'');
 
-					//Build an easy User Profile Array
-					$newProfileArray = array();
-					foreach($results as $result) {
-						$newProfileArray[str_replace('xiveirmclientprofile.', '', $result[0])] = json_decode($result[1], true);
-					}
+				$db->setQuery($query);
+				$results = $db->loadObjectList();
 
-					// Check if we have the required fields and store the final object for pushing to session. If not, close the $app with an error message!
-					if (isset($newProfileArray['groupid']) && isset($newProfileArray['access'])) {
-						$xiveIrmSystemObject->client_id = (int) $newProfileArray['groupid'];
-						$xiveIrmSystemObject->access = (int) $newProfileArray['access'];
-
-						// Try to store additional fields
-						if (isset($newProfileArray['jobtitle'])) {
-							$xiveIrmSystemObject->jobtitle = $newProfileArray['jobtitle'];
-						}
-
-						$session->set('XiveIRMSystem', $xiveIrmSystemObject);
-					} else {
-						JError::raiseError( 403, 'You\'re not authorized to work with this system at present. Please check back again later!' );
-//						$session->destroy();
-//						$app->close();
-					}
-				} else {
-					$xiveIrmSystemObject->client_id = 0;
-					$xiveIrmSystemObject->access = 1;
-					$xiveIrmSystemObject->jobtitle = 'System Administrator';
-
-					$session->set('XiveIRMSystem', $xiveIrmSystemObject);
+				foreach($results as $result) {
+					$key = str_replace('xiveirmclientprofile.', '', $result->profile_key);
+					$clientObject->$key = json_decode($result->profile_value, true);
 				}
+
+				// Check if we have a client_id from the users profile, if not, then use the global client_id from the component
+				if(!$clientObject->client_id) {
+					$clientObject->client_id = IRMSystem::getGlobalClientId();
+				}
+
+				// Override informations if we're in admin
+				if ($app->isAdmin()) {
+					$clientObject->client_id = IRMSystem::getGlobalClientId();
+					$clientObject->jobtitle = 'System Administrator';
+
+					$session->set('XiveIRMSystem', $clientObject);
+				}
+
+				// Check if we have the minimum required fields and push the final object to session. If not, close the $app with an error message!
+				if (isset($clientObject->id) && isset($clientObject->client_id)) {
+						$session->set('XiveIRMSystem', $clientObject);
+				} else {
+					JError::raiseError( 403, 'You\'re not authorized to work with this system at present. Please check back again later!' );
+//					$session->destroy();
+//					$app->close();
+				}
+
 			} else {
 				// Session exist, all ok
 			}
@@ -107,6 +114,12 @@ class PlgSystemXiveIrm extends JPlugin
 		// End of user check
 	}
 }
+
+
+
+
+
+
 
 
 //			try
