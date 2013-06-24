@@ -93,20 +93,12 @@ class PlgUserXiveIrmClientProfile extends JPlugin
 			JForm::addFormPath(dirname(__FILE__).'/profiles');
 			$form->loadFile('profile', false);
 
-			// Toggle whether the usergroup field is required.
-			if ($this->params->get('profile-groupid', 1) > 0)
+			// Toggle whether the usergroup (client id) field is required.
+			if ($this->params->get('profile-client_id', 1) > 0)
 			{
-				$form->setFieldAttribute('groupid', 'required', $this->params->get('profile-groupid') == 2, 'xiveirmclientprofile');
+				$form->setFieldAttribute('client_id', 'required', $this->params->get('profile-client_id') == 2, 'xiveirmclientprofile');
 			} else {
-				$form->removeField('groupid', 'xiveirmclientprofile');
-			}
-
-			// Toggle whether the category field is required.
-			if ($this->params->get('profile-access', 1) > 0)
-			{
-				$form->setFieldAttribute('access', 'required', $this->params->get('profile-access') == 2, 'xiveirmclientprofile');
-			} else {
-				$form->removeField('access', 'xiveirmclientprofile');
+				$form->removeField('client_id', 'xiveirmclientprofile');
 			}
 
 			// Toggle whether the jobtitle field is required.
@@ -125,20 +117,12 @@ class PlgUserXiveIrmClientProfile extends JPlugin
 			JForm::addFormPath(dirname(__FILE__).'/profiles');
 			$form->loadFile('profile', false);
 
-			// Toggle whether the usergroup field is required.
-			if ($this->params->get('register-groupid', 1) > 0)
+			// Toggle whether the usergroup (client id) field is required.
+			if ($this->params->get('register-client_id', 1) > 0)
 			{
-				$form->setFieldAttribute('groupid', 'required', $this->params->get('register-groupid') == 2, 'xiveirmclientprofile');
+				$form->setFieldAttribute('client_id', 'required', $this->params->get('register-client_id') == 2, 'xiveirmclientprofile');
 			} else {
-				$form->removeField('groupid', 'xiveirmclientprofile');
-			}
-
-			// Toggle whether the category field is required.
-			if ($this->params->get('register-access', 1) > 0)
-			{
-				$form->setFieldAttribute('access', 'required', $this->params->get('register-access') == 2, 'xiveirmclientprofile');
-			} else {
-				$form->removeField('access', 'xiveirmclientprofile');
+				$form->removeField('client_id', 'xiveirmclientprofile');
 			}
 
 			// Toggle whether the jobtitle field is required.

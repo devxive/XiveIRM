@@ -7,7 +7,7 @@
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>support@devxive.com</authorEmail>
 	<authorUrl>www.devxive.com</authorUrl>
-	<version>1.1.0</version>
+	<version>1.0.0</version>
 	<description>PLG_USER_XIVEIRMCLIENTPROFILE_XML_DESC</description>
 	<files>
 		<filename plugin="xiveirmclientprofile">xiveirmclientprofile.php</filename>
@@ -27,17 +27,9 @@
 				<field name="register-require-user" type="spacer" class="text"
 					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_NAME_REGISTER_REQUIRE_USER" />
 
-				<field name="register-groupid" type="list" default="2"
-					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_GROUPID_LBL"
-					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_GROUPID_DESC">
-						<option value="2">JOPTION_REQUIRED</option>
-						<option value="1">JOPTION_OPTIONAL</option>
-						<option value="0">JDISABLED</option>
-				</field>
-
-				<field name="register-access" type="list" default="2"
-					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_ACCESS_LBL"
-					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_ACCESS_DESC">
+				<field name="register-client_id" type="list" default="2"
+					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_CLIENTID_LBL"
+					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_CLIENTID_DESC">
 						<option value="2">JOPTION_REQUIRED</option>
 						<option value="1">JOPTION_OPTIONAL</option>
 						<option value="0">JDISABLED</option>
@@ -58,17 +50,9 @@
 				<field name="profile-require-user" type="spacer" class="text"
 					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_NAME_PROFILE_REQUIRE_USER" />
 
-				<field name="profile-groupid" type="list" default="2"
-					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_GROUPID_LBL"
-					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_GROUPID_DESC">
-						<option value="2">JOPTION_REQUIRED</option>
-						<option value="1">JOPTION_OPTIONAL</option>
-						<option value="0">JDISABLED</option>
-				</field>
-
-				<field name="profile-access" type="list" default="2"
-					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_ACCESS_LBL"
-					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_ACCESS_DESC">
+				<field name="profile-client_id" type="list" default="2"
+					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_CLIENTID_LBL"
+					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_CLIENTID_DESC">
 						<option value="2">JOPTION_REQUIRED</option>
 						<option value="1">JOPTION_OPTIONAL</option>
 						<option value="0">JDISABLED</option>
