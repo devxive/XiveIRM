@@ -246,12 +246,15 @@ class IRMSystem
 			return false;
 		}
 
-		// Set the client id's
-		$global_client_id = self::getGlobalClientId();
-
-		// If we get no client_id, we use the global_client_id to perform our query
+		// If we get no client_id, we use the client_id based on the current client session to perform our query
 		if(!$client_id) {
 			$client_id = self::getSession('client_id');
+		}
+
+		// Check if we could use a global_client_id, else use the client_id as global_client_id
+		$global_client_id = self::getSession('global_client_id');
+		if(!$global_client_id) {
+			$global_client_id = $client_id;
 		}
 
 		$db = JFactory::getDbo();
