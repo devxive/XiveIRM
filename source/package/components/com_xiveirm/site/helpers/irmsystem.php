@@ -264,7 +264,7 @@ class IRMSystem
 			->select(array('a.id', 'a.plugin', 'a.catid', 'a.config', 'b.folder'))
 			->from('#__xiveirm_tabapps AS a')
 			->join('LEFT', '#__extensions as b ON (a.plugin = b.element)')
-			->where('(a.catid = 0 AND a.client_id IN (' . $db->quote($global_client_id) . ',' . $db->quote($client_id) . ')) OR (a.catid = ' . $db->quote($catid) . ' AND a.client_id = ' . $db->quote($client_id) . ')');
+			->where('b.enabled = 1 AND ((a.catid = 0 AND a.client_id IN (' . $db->quote($global_client_id) . ',' . $db->quote($client_id) . ')) OR (a.catid = ' . $db->quote($catid) . ' AND a.client_id = ' . $db->quote($client_id) . '))');
 
 		$db->setQuery($query);
 
