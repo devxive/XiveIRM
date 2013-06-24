@@ -235,6 +235,8 @@ class IRMSystem
 	/*
 	 * Global Method to load all TabApps and Widgets related to the appropriate category and usergroup (new method to ignore viewing access levels!).
 	 * 	Note: Global Categories (0) can be either the related to the global_client_id or the client_id
+	 *	Note twice:	If we get a loadGroup string, this take no effect to the returned object!! The appropriated plugins are loaded, but the returned list is NOT the same!
+	 *			This is ok, becuase we want to load the plugins, because we need them load for further processing.
 	 *
 	 * @return		Object		With informations from tabApp config and joined extensions (folder)
 	 * 					id, appNames (plugin element name), folder to perform the NFactory::getPermissions(), catid, config (JSON)
