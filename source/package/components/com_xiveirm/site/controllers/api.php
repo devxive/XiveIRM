@@ -270,6 +270,42 @@ class XiveirmControllerApi extends XiveirmController
 		$this->setRedirect(JRoute::_($item->link, false));
 	}
 
+	/**
+	 * Method to get a list for the jdatatable
+	 *
+	 * @since	4.4
+	 */
+	public function getlist()
+	{
+		/*
+		 * NOTE: we do a different token check at the moment, because the old is not working at the moment.
+		 */
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		$app = JFactory::getApplication();
+		if(!$sessionToken = $app->input->getInt(JFactory::getSession()->get('session.token'), null, 'array'))
+		{
+			return false;
+		}
+		
+
+		$model = $this->getModel('Api', 'XiveirmModel');
+
+		$cache_timeout = $this->input->getInt('cache_timeout', 0);
+		if ($cache_timeout == 0)
+		{
+			$component = JComponentHelper::getComponent('com_xiveirm');
+			$params = $component->params;
+			$cache_timeout = $params->get('cachetimeout', 6, 'int');
+			$cache_timeout = 3600 * $cache_timeout;
+		}
+
+		$return = $model->prepareList();
+
+		echo json_encode($return);
+
+		$this->app->close();
+	}
+
 //	/**
 //	 * Method to check out an item for editing and redirect to the edit form.
 //	 *
