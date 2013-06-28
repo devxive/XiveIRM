@@ -28,13 +28,13 @@ class XiveirmControllerContactForm extends XiveirmController
 		$app			= JFactory::getApplication();
 
 		// Get the previous edit id (if any) and get and set the current edit id for the user to edit in the session.
-//		$previousId	= (int) $app->getUserState('com_xiveirm.edit.contact.id');
-		$editId	= $app->input->getInt('id', null, 'array');
+//		$previousId = (int) $app->getUserState('com_xiveirm.edit.contact.id');
+		$editId = $app->input->getInt('id', null, 'array');
 		$app->setUserState('com_xiveirm.edit.contact.id', $editId);
 
 		// Get and set the category id for the user if its a new contact to edit in the session if we get one, else return to list
 		if($editId == 0) {
-			$catId		= $app->input->getInt('catid', null, 'array');
+			$catId = $app->input->getInt('catid', null, 'array');
 			if($catId >= 0 && (int) $catId) {
 				$app->setUserState('com_xiveirm.edit.contact.catid', $catId);
 			} else {
