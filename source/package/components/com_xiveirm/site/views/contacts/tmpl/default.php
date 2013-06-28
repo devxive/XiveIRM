@@ -88,8 +88,8 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 				<a id="toggleExtend" class="btn btn-mini btn-primary inline"><i class="icon-double-angle-down"></i><span class="hidden-phone hidden-480"> More</span></a>
 			</div>
 			<form id="form-reset-search" method="post" class="inline form-validate" enctype="multipart/form-data">
-				<input type="hidden" name="filter_search" value>
-				<input type="hidden" name="global_search" value>
+				<input type="hidden" name="filter_search" value="">
+				<input type="hidden" name="global_search" value="">
 			</form>
 		</div>
 	</div>
@@ -183,104 +183,132 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 		</div>
 	</div>
 
-	<div id="table_report_wrapper" class="dataTables_wrapper" role="grid">
-		<table id="table_report" class="table table-striped table-bordered table-hover dataTable" aria-describedby="table_report_info">
-			<thead>
-				<tr role="row">
-					<th class="center sorting_disabled" role="columnheader" rowspan="1" colspan="1" aria-label="">
-						<label><input type="checkbox"><span class="lbl"></span></label>
-					</th>
-					<th class="sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Customer ID: activate to sort column ascending">
-						ID
-					</th>
-					<th class="sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending">
-						<i class="icon-user"></i><span class="hidden-phone"> Name</span>
-					</th>
-					<th class="sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Date of Birth: activate to sort column ascending">
-						<i class="icon-calendar"></i><span class="hidden-phone"> Date of Birth</span>
-					</th>
-					<th class="hidden-480 sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Clicks: activate to sort column ascending">
-						<i class="icon-home"></i><span class="hidden-phone"> Address</span>
-					</th>
-					<th class="hidden-phone sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label=" Update: activate to sort column ascending">
-						<i class="icon-phone"></i><span class="hidden-phone"> Phone</span>
-					</th>
-					<th class="hidden-480 sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">
-						Status
-					</th>
-					<th class="sorting_disabled" role="columnheader" rowspan="1" colspan="1" style="width: 100px;" aria-label="">
-					</th>
-				</tr>
-			</thead>
-			<tbody role="alert" aria-live="polite" aria-relevant="all">
-			<?php $show = false; ?>
-			<?php foreach ($this->items as $item) : ?>
-				<?php if($item->state == 1 || ($item->state == 0 && JFactory::getUser()->authorise('core.edit.own',' com_xiveirm'))) : $show = true; ?>
-				<tr>
-					<td class="center">
-						<?php if($item->checked_out):
-							echo '<div style="font-size: 20px;"><i class="icon-lock red" data-rel="tooltip" data-placement="right" data-original-title="Checked out by: ' . JFactory::getUser($item->checked_out)->name . ' on ' . $item->checked_out_time . '"></i></div>';
-						else:
-							echo '<label><input type="checkbox"><span class="lbl"></span></label>';
-						endif; ?>
-					</td>
-
-					<td class=" ">
-						<span><?php if((int) $item->customer_id): echo '<i class="icon-barcode"></i> ' . $item->customer_id; elseif(!(int)  $item->customer_id): echo '<i class="icon-qrcode"></i> ' . $item->customer_id; else: echo '<i class="icon-code-fork"></i> ' . $item->id; endif; ?></span>
-					</td>
-
-					<td class=" ">
-						<a href="<?php echo JRoute::_('index.php?task=contactform.edit&id='.$item->id); ?>">
-							<?php 
-								if(!empty($item->company_name)) {
-									echo $item->company_name . '<br>';
-								} else {
-								}
-								if(!empty($item->last_name) && !empty($item->first_name)) {
-									echo $item->last_name . ', ' . $item->first_name;
-								} else {
-									echo !empty($item->last_name) ? $item->last_name : '';
-									echo !empty($item->first_name) ? $item->first_name : '';
-								}
-							?>
-						</a>
-					</td>
-					<td class=" "><?php if($item->gender == 'm'): echo '<i class="icon-user blue"></i>'; elseif($item->gender == 'f'): echo '<i class="icon-user red"></i>'; elseif($item->gender == 'c'): echo'<i class="icon-user green"></i>'; else: echo '<i class="icon-user"></i>'; endif; ?> <?php if(strtotime($item->dob) != -62135600400): echo date(JText::_('DATE_FORMAT_LC4'), strtotime($item->dob)); endif; ?></td>
-					<td class="hidden-480"><?php echo $item->address_street; ?> <?php echo $item->address_houseno; ?><br><?php echo $item->address_zip; ?> <?php echo $item->address_city; ?>, <?php echo $item->address_country; ?></td>
-					<td class="hidden-phone "><?php if($item->mobile != ''): echo '<i class="icon-mobile-phone"></i> ' . $item->mobile . '<br>'; endif; if($item->phone != ''): echo '<i class="icon-phone"></i> ' . $item->phone; endif; ?></td>
-					<td class="hidden-480">
-						<?php if(strtotime($item->modified) >= (time() - 86400)): ?>
-							<span class="label label-warning" data-rel="tooltip" data-original-title="<?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)); ?>"><i class="icon-time"></i> Modified <abbr class="timeago" data-time="<?php echo $item->modified; ?>"></abbr></span>
-						<?php endif; ?>
-						<?php if($item->remarks): echo ' <span class="label label-info" data-rel="tooltip" data-placement="left" data-original-title="' . $item->remarks . '"><i class="icon-comment-alt"></i> Intern</span>'; endif; ?>
-					</td>
-					<td class="">
-						<div class="hidden-phone visible-desktop btn-group">
-							<?php if(JFactory::getUser()->authorise('core.edit.state','com_xiveirm')) : ?>
-								<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.state&id=' . $item->id); ?>').submit()" class="btn btn-mini <?php if($item->state == 1): echo 'btn-success'; endif; ?>" title="<?php if($item->state == 1): echo JText::_("COM_XIVEIRM_UNPUBLISH_ITEM"); else: echo JText::_("COM_XIVEIRM_PUBLISH_ITEM"); endif; ?>"><?php if($item->state == 1): echo '<i class="icon-ok"></i>'; else: echo '<i class="icon-remove"></i>'; endif; ?></a>
-							<?php endif; ?>
-							<?php if(JFactory::getUser()->authorise('core.delete','com_xiveirm')) : ?>
-								<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.remove&id=' . $item->id); ?>').submit()" class="btn btn-mini btn-danger" title="<?php echo JText::_("COM_XIVEIRM_DELETE_ITEM"); ?>"><i class="icon-trash"></i></a>
-							<?php endif; ?>
-							<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.edit&id=' . $item->id); ?>" class="btn btn-mini btn-info"><i class="icon-edit"></i></a>
-							<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.flag&id=' . $item->id); ?>" class="btn btn-mini <?php if(IRMSystem::flagIt($item->id, 'check')) { echo 'btn-warning'; } ?>"><i class="icon-flag"></i></a>
-						</div>
-						<div class="hidden-desktop visible-phone">
-							<div class="inline position-relative">
-								<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown"><i class="icon-caret-down icon-only"></i></button>
-								<ul class="dropdown-menu dropdown-icon-only dropdown-yellow pull-right dropdown-caret dropdown-close">
-									<li><a class="<?php if($item->state == 1): echo 'tooltip-success'; endif; ?>" data-rel="tooltip" title="" data-placement="left" data-original-title="<?php if($item->state == 1): echo JText::_("COM_XIVEIRM_UNPUBLISH_ITEM"); else: echo JText::_("COM_XIVEIRM_PUBLISH_ITEM"); endif; ?>" href="javascript:document.getElementById('form-irmcustomer-state-<?php echo $item->id; ?>').submit()"><?php if($item->state == 1): echo '<span class="green"><i class="icon-ok"></i></span>'; else: echo '<span class="gray"><i class="icon-remove"></i></span>'; endif; ?></a></li>
-									<li><a class="tooltip-error" data-rel="tooltip" title="" data-placement="left" data-original-title="<?php echo JText::_("COM_XIVEIRM_DELETE_ITEM"); ?>" href="javascript:document.getElementById('form-irmcustomer-delete-<?php echo $item->id; ?>').submit()"><span class="red"><i class="icon-trash"></i></span></a></li>
-								</ul>
-							</div>
-						</div>
-					</td>
-				</tr>
-			<?php endif; ?>
-			<?php endforeach; ?>
-			</tbody>
+<!--
+	<div id="table_report_wrapper">
+		<table id="table_test" class="table table-striped table-bordered table-hover">
 		</table>
 	</div>
+-->
+	<table id="contact_table_results" class="table table-striped table-bordered table-hover dataTable" aria-describedby="table_report_info" display: none;>
+		<thead>
+			<tr>
+				<th class="center sorting_disabled" role="columnheader" rowspan="1" colspan="1" aria-label="">
+					<label><input type="checkbox"><span class="lbl"></span></label>
+				</th>
+				<th class="sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Customer ID: activate to sort column ascending">
+					ID
+				</th>
+				<th class="sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending">
+					<i class="icon-user"></i><span class="hidden-phone"> Name</span>
+				</th>
+				<th class="sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Date of Birth: activate to sort column ascending">
+					<i class="icon-calendar"></i><span class="hidden-phone"> Date of Birth</span>
+				</th>
+				<th class="hidden-480 sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Clicks: activate to sort column ascending">
+					<i class="icon-home"></i><span class="hidden-phone"> Address</span>
+				</th>
+				<th class="hidden-phone sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label=" Update: activate to sort column ascending">
+					<i class="icon-phone"></i><span class="hidden-phone"> Phone</span>
+				</th>
+				<th class="hidden-480 sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">
+					Status
+				</th>
+				<th class="sorting_disabled" role="columnheader" rowspan="1" colspan="1" style="width: 0px;" aria-label="">
+				</th>
+			</tr>
+		</thead>
+		<tbody role="alert" aria-live="polite" aria-relevant="all">
+		<?php $show = false; ?>
+		<?php foreach ($this->items as $item) : ?>
+			<?php if($item->state == 1 || ($item->state == 0 && JFactory::getUser()->authorise('core.edit.own',' com_xiveirm'))) : $show = true; ?>
+			<tr>
+				<td class="center" rowspan="2">
+					<?php if($item->checked_out):
+						echo '<div style="font-size: 20px;"><i class="icon-lock red" data-rel="tooltip" data-placement="right" data-original-title="Checked out by: ' . JFactory::getUser($item->checked_out)->name . ' on ' . $item->checked_out_time . '"></i></div>';
+					else:
+						echo '<label><input type="checkbox"><span class="lbl"></span></label>';
+					endif; ?>
+				</td>
+				<td>
+					<span><?php if((int) $item->customer_id): echo '<i class="icon-barcode"></i> ' . $item->customer_id; elseif(!(int)  $item->customer_id): echo '<i class="icon-qrcode"></i> ' . $item->customer_id; else: echo '<i class="icon-code-fork"></i> ' . $item->id; endif; ?></span>
+				</td>
+				<td>
+					<a href="<?php echo JRoute::_('index.php?task=contactform.edit&id='.$item->id); ?>">
+						<?php 
+							if(!empty($item->company_name)) {
+								echo $item->company_name . '<br>';
+							} else {
+							}
+							if(!empty($item->last_name) && !empty($item->first_name)) {
+								echo $item->last_name . ', ' . $item->first_name;
+							} else {
+								echo !empty($item->last_name) ? $item->last_name : '';
+								echo !empty($item->first_name) ? $item->first_name : '';
+							}
+						?>
+					</a>
+				</td>
+				<td><?php if($item->gender == 'm'): echo '<i class="icon-user blue"></i>'; elseif($item->gender == 'f'): echo '<i class="icon-user red"></i>'; elseif($item->gender == 'c'): echo'<i class="icon-user green"></i>'; else: echo '<i class="icon-user"></i>'; endif; ?> <?php if(strtotime($item->dob) != -62135600400): echo date(JText::_('DATE_FORMAT_LC4'), strtotime($item->dob)); endif; ?></td>
+				<td class="hidden-480"><?php echo $item->address_street; ?> <?php echo $item->address_houseno; ?><br><?php echo $item->address_zip; ?> <?php echo $item->address_city; ?>, <?php echo $item->address_country; ?></td>
+				<td class="hidden-phone "><?php if($item->mobile != ''): echo '<i class="icon-mobile-phone"></i> ' . $item->mobile . '<br>'; endif; if($item->phone != ''): echo '<i class="icon-phone"></i> ' . $item->phone; endif; ?></td>
+				<td class="hidden-480">
+					<?php if(strtotime($item->modified) >= (time() - 86400)): ?>
+						<span class="label label-warning" data-rel="tooltip" data-original-title="<?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)); ?>"><i class="icon-time"></i> Modified <abbr class="timeago" data-time="<?php echo $item->modified; ?>"></abbr></span>
+					<?php endif; ?>
+				</td>
+				<td class="center" rowspan="2">
+					<div class="hidden-phone visible-desktop btn-group">
+						<?php if(JFactory::getUser()->authorise('core.edit.state','com_xiveirm')) : ?>
+							<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.state&id=' . $item->id); ?>').submit()" class="btn btn-mini <?php if($item->state == 1): echo 'btn-success'; endif; ?>" title="<?php if($item->state == 1): echo JText::_("COM_XIVEIRM_UNPUBLISH_ITEM"); else: echo JText::_("COM_XIVEIRM_PUBLISH_ITEM"); endif; ?>"><?php if($item->state == 1): echo '<i class="icon-ok icon-only"></i>'; else: echo '<i class="icon-remove icon-only"></i>'; endif; ?></a>
+						<?php endif; ?>
+						<?php if(JFactory::getUser()->authorise('core.delete','com_xiveirm')) : ?>
+							<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.remove&id=' . $item->id); ?>').submit()" class="btn btn-mini btn-danger" title="<?php echo JText::_("COM_XIVEIRM_DELETE_ITEM"); ?>"><i class="icon-trash icon-only"></i></a>
+						<?php endif; ?>
+						<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.edit&id=' . $item->id); ?>" class="btn btn-mini btn-info"><i class="icon-edit icon-only"></i></a>
+						<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.flag&id=' . $item->id); ?>" class="btn btn-mini <?php if(IRMSystem::flagIt($item->id, 'check')) { echo 'btn-warning'; } ?>"><i class="icon-flag icon-only"></i></a>
+						<a onClick="rowToggler('rowToggler_<?php echo $item->id; ?>')" class="btn btn-mini btn-yellow"><i class="icon-double-angle-down icon-only"></i></a>
+					</div>
+					<div class="hidden-desktop visible-phone">
+						<div class="inline position-relative">
+							<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown"><i class="icon-caret-down icon-only"></i></button>
+							<ul class="dropdown-menu dropdown-icon-only dropdown-yellow pull-right dropdown-caret dropdown-close">
+								<li><a class="<?php if($item->state == 1): echo 'tooltip-success'; endif; ?>" data-rel="tooltip" title="" data-placement="left" data-original-title="<?php if($item->state == 1): echo JText::_("COM_XIVEIRM_UNPUBLISH_ITEM"); else: echo JText::_("COM_XIVEIRM_PUBLISH_ITEM"); endif; ?>" href="javascript:document.getElementById('form-irmcustomer-state-<?php echo $item->id; ?>').submit()"><?php if($item->state == 1): echo '<span class="green"><i class="icon-ok"></i></span>'; else: echo '<span class="gray"><i class="icon-remove"></i></span>'; endif; ?></a></li>
+								<li><a class="tooltip-error" data-rel="tooltip" title="" data-placement="left" data-original-title="<?php echo JText::_("COM_XIVEIRM_DELETE_ITEM"); ?>" href="javascript:document.getElementById('form-irmcustomer-delete-<?php echo $item->id; ?>').submit()"><span class="red"><i class="icon-trash"></i></span></a></li>
+							</ul>
+						</div>
+					</div>
+				</td>
+			</tr>
+				<td colspan="6" style="padding: 0; border-top: 0; border-bottom: 0;">
+					<div class="rowToggler_<?php echo $item->id; ?>" style="display: none; padding: 10px;">
+						<div class="pull-left">
+							Providing more Informations based on this customer to identify him in a more detailed way.<br>
+							May we could push info via trigger events!!!
+							<br>
+							<?php if($item->remarks): echo '<span class="label label-info"><i class="icon-comment-alt"></i> Internal Remark</span> ' . $item->remarks; endif; ?>
+						</div>
+						<div class="pull-right">
+							<a onClick="alert('Dieser Eintrag wurde Archiviert --> Achtung DEMO!!!')" class="btn btn-small btn-app radius-4 <?php echo $item->state == 0 ? 'btn-light' : ''; ?>">
+								<i class="icon-archive"></i>
+								<?php echo $item->state == 0 ? JText::_("COM_XIVEIRM_PUBLISH_ITEM") : JText::_("COM_XIVEIRM_UNPUBLISH_ITEM"); ?>
+							</a>
+						</div>
+					</div>
+				</td>
+		<?php endif; ?>
+		<?php endforeach; ?>
+		</tbody>
+	</table>
+
+<script>
+	function rowToggler(rowTogglerId) {
+		jQuery('.'+rowTogglerId).slideToggle('5000', 'easeInOutCubic', function(){
+			// Animation Complete
+		});
+	}
+</script>
+
+
 	<div class="row-fluid center legend">
 		<i class="icon-barcode" data-rel="tooltip" data-original-title="This is a numeric ID"></i>
 		&nbsp;&nbsp;&nbsp;
@@ -300,23 +328,21 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 	</div>
 </div>
 
+<?php if ($show): ?>
+	<div class="pagination">
+	<p class="counter">
+		<?php echo $this->pagination->getPagesCounter(); ?>
+	</p>
+		<?php echo $this->pagination->getPagesLinks(); ?>
+	</div>
+<?php endif; ?>
 
 
-<!--
+
 <div class="items">
-	<ul class="items_list">
 		<?php $show = false; ?>
 		<?php foreach ($this->items as $item) : ?>
 			<?php if($item->state == 1 || ($item->state == 0 && JFactory::getUser()->authorise('core.edit.own',' com_xiveirm'))): $show = true; ?>
-				<li>
-					<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&view=contact&id=' . (int)$item->id); ?>"><?php echo $item->customer_id; ?></a>
-					<?php if(JFactory::getUser()->authorise('core.edit.state','com_xiveirm')): ?>
-						<a href="javascript:document.getElementById('form-contact-state-<?php echo $item->id; ?>').submit()"><?php if($item->state == 1): echo JText::_("COM_XIVEIRM_UNPUBLISH_ITEM"); else: echo JText::_("COM_XIVEIRM_PUBLISH_ITEM"); endif; ?></a>
-					<?php endif; ?>
-					<?php if(JFactory::getUser()->authorise('core.delete','com_xiveirm')): ?>
-						<a href="javascript:document.getElementById('form-contact-delete-<?php echo $item->id; ?>').submit()"><?php echo JText::_("COM_XIVEIRM_DELETE_ITEM"); ?></a>
-					<?php endif; ?>
-				</li>
 			<?php endif; ?>
 		<?php endforeach; ?>
 	<?php
@@ -324,18 +350,4 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 			echo JText::_('COM_XIVEIRM_NO_ITEMS');
 		endif;
 	?>
-	</ul>
 </div>
-<?php if ($show): ?>
-    <div class="pagination">
-        <p class="counter">
-            <?php echo $this->pagination->getPagesCounter(); ?>
-        </p>
-        <?php echo $this->pagination->getPagesLinks(); ?>
-    </div>
-<?php endif; ?>
-
-<?php if(JFactory::getUser()->authorise('core.create','com_xiveirm')): ?>
-	<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contact.edit&id=0'); ?>"><?php echo JText::_("COM_XIVEIRM_ADD_ITEM"); ?></a>
-<?php endif; ?>
--->
