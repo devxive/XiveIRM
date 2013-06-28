@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts` (
 `title` VARCHAR(100) NOT NULL,
 `last_name` VARCHAR(150) NOT NULL,
 `first_name` VARCHAR(150) NOT NULL,
-`gender` VARCHAR(255) NOT NULL,
+`gender` VARCHAR(150) NOT NULL COMMENT 'VARCHAR 150 based on opt_value in option table',
 `dob` DATE NOT NULL,
 `address_name` VARCHAR(150) NOT NULL,
 `address_name_add` VARCHAR(100) NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_options` (
 `access` INT(11) NOT NULL,
 `ordering` INT(11) NOT NULL,
 PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Simple or client related options list storage table with accesslevels';
+) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Simple or client related opt-list storage table with viewlevels';
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_tabapps` (
 `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -63,3 +63,9 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_tabapps` (
 `ordering` INT(11) NOT NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Storage Table for the TabApp and Widget configurations';
+
+CREATE TABLE IF NOT EXISTS `#__xiveirm_flags` (
+`item` varchar(100) NOT NULL COMMENT 'table.id - like contacts.3',
+`flag` tinyint(1) NOT NULL DEFAULT '1',
+UNIQUE KEY `idx_item` (`item`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Simple flag table';
