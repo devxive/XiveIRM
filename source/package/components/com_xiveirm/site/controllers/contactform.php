@@ -25,30 +25,89 @@ class XiveirmControllerContactForm extends XiveirmController
 	 */
 	public function edit()
 	{
-//		$app			= JFactory::getApplication();
-//
-//		// Get the previous edit id (if any) and the current edit id.
-//		$previousId = (int) $app->getUserState('com_xiveirm.edit.contact.id');
-//		$editId	= JFactory::getApplication()->input->getInt('id', null, 'array');
-//
-//		// Set the user id for the user to edit in the session.
-//		$app->setUserState('com_xiveirm.edit.contact.id', $editId);
-//
+		$app			= JFactory::getApplication();
+
+		// Get the previous edit id (if any) and get and set the current edit id for the user to edit in the session.
+//		$previousId	= (int) $app->getUserState('com_xiveirm.edit.contact.id');
+		$editId	= $app->input->getInt('id', null, 'array');
+		$app->setUserState('com_xiveirm.edit.contact.id', $editId);
+
+		// Get and set the category id for the user if its a new contact to edit in the session if we get one, else return to list
+		if($editId == 0) {
+			$catId		= $app->input->getInt('catid', null, 'array');
+			if($catId >= 0 && (int) $catId) {
+				$app->setUserState('com_xiveirm.edit.contact.catid', $catId);
+			} else {
+				// Redirect to the list.
+				$this->setRedirect(JRoute::_('index.php?option=com_xiveirm', false));
+				return false;
+			}
+		}
+
 //		// Get the model.
 //		$model = $this->getModel('ContactForm', 'XiveirmModel');
-//
+
 //		// Check out the item
 //		if ($editId) {
 //			$model->checkout($editId);
 //		}
-//
+
 //		// Check in the previous user.
 //		if ($previousId) {
 //			$model->checkin($previousId);
 //		}
-//
-//		// Redirect to the edit screen.
-//		$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=contact&layout=edit', false));
+
+		// Redirect to the edit screen.
+		$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=contactform&layout=edit', false));
+	}
+
+	/**
+	 * Method to check out an item for editing and redirect to the edit form.
+	 *
+	 * @since	1.6
+	 */
+	public function flag()
+	{
+		$app = JFactory::getApplication();
+
+		// Get the the current edit id.
+		$id = JFactory::getApplication()->input->getInt('id', null, 'array');
+
+		$flag = IRMSystem::flagIt($id);
+
+		$name = '';
+
+		// Set the name for the respone message
+		if($flag->first_name && $flag->last_name)
+		{
+			$name .= $flag->first_name . ' ' . $flag->last_name;
+		} else {
+			if($flag->last_name) { $name .= $flag->last_name; }
+			if($flag->first_name) { $name .= $flag->first_name; }
+		}
+
+		if($name != '' && $flag->company)
+		{
+			$name .= ' - '. $flag->company;
+		} else {
+			if($flag->company) {
+				$name .= $flag->company;
+			} else {
+				if($name == '') {
+					$name .= 'ID ' . $id;
+				}
+			}
+		}
+
+		if($flag->action)
+		{
+			$app->enqueueMessage(JText::_('COM_XIVEIRM_CONTACT_LIST_FLAGGED') . $name, 'success');
+		} else {
+			$app->enqueueMessage(JText::_('COM_XIVEIRM_CONTACT_LIST_UNFLAGGED') . $name, 'notice');
+		}
+
+		// Redirect to the edit screen.
+		$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=contacts', false));
 	}
 
 //	/**
