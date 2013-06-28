@@ -34,8 +34,9 @@ class XiveirmViewContact extends JViewLegacy {
         $this->item = $this->get('Data');
         $this->params = $app->getParams('com_xiveirm');
    		
-		$this->item->catid_title = $this->getModel()->getCategoryName($this->item->catid)->title;
-		$this->item->gender_title = $this->getModel()->getCategoryName($this->item->gender)->title;
+// Xive-TODO: check this, becuase sql errors!
+//		$this->item->catid_title = $this->getModel()->getCategoryName($this->item->catid)->title;
+//		$this->item->gender_title = $this->getModel()->getCategoryName($this->item->gender)->title;
 		$this->form		= $this->get('Form');
 
         // Check for errors.
