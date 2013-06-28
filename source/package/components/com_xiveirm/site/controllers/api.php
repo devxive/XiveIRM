@@ -119,11 +119,7 @@ class XiveirmControllerApi extends XiveirmController
 
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-	$model = $this->getModel('Api', 'XiveirmModel');
-
-		// Import plugins, set event dispatcher
-		JPluginHelper::importPlugin( 'irmcustomertabs' ); // returned 1 if get successfully loaded
-		$dispatcher = JDispatcher::getInstance();
+		$model = $this->getModel('Api', 'XiveirmModel');
 
 		$cache_timeout = $this->input->getInt('cache_timeout', 0);
 		if ($cache_timeout == 0)
@@ -135,34 +131,96 @@ class XiveirmControllerApi extends XiveirmController
 		}
 
 		// ------------------------------------------------------------- GET AND PROCESS THE CORE FORM DATAS
-		$data = $this->app->input->get('coreform', array(), 'array');
-		$return = $model->savecore($data); // If return isn't false, we got the item row id for further processing the tab datas
+		$dataCore = $this->app->input->get('coreform', array(), 'array');
 
-		$customerItemId = $data['id'];
+		// Xive-TODO: We got the catid in all cases, so we could drop this check!!!!
+		if(isset($dataCore['catid'])) { $catid = $dataCore['catid']; } else { $catid = false; }
+		if(isset($dataCore['id'])) { $contactId = (int) $dataCore['id']; } else { $contactId = false; }
 
-		if($return["apiReturnCode"] != 'ERROR' && $return["apiReturnId"] > 0)
-		{
-			// Check if we have tabApps and perform processing for each tabApp
-			foreach($dispatcher->trigger( 'registerApp', array() ) as $tabApp)
-			{
-		 		// Get the tabForm data.
-				$data = JFactory::getApplication()->input->get($tabApp, array(), 'array');
-	
-				// Attempt to save the tabdata.
-				$return = $model->savetab($data, $return["apiReturnId"], $tabApp);
+		// Import Plugins (only those that are set / configured in the #__xiveirm_tabapps table. Category 0 and its related global_client-id (usergroup) always load, because its global (means for all)
+		// There is an extra check in, where we check also against the client_id (component global usergroup and client related usergroup)
+		// Because we use the returned values from the getPlugin, we have all informations on tabs that are loaded in the form.
+		// Widgets do not have form values, therefore we do not load them! Even there is no need to load the event dispatcher! (((At this time!!!!)))
+		// Pro for use the getPlugins Method: We'll get the tabconfig row id, we need for the permission checks below!!!!
+		$plugins = IRMSystem::getPlugins($catid, 'irmtabscontact'); // Array with all available plugins, that are already loaded with this request!!!
 
-				// If all ok, check in the parent item
-				NFactory::checkIn('xiveirm_customer', $customerItemId);
-			}
+		// Go to models and try to save the coreform datas.
+		// In all cases (new, update), if return isn't false, we got the item row id for further processing the TabApp datas.
+		// Check if the user have the rights to save the data for the coreform by checking the components ACL.
+		$permissionsCore = NFactory::getPermissions('com_xiveirm', false, false, 'xiveirm_contacts.' . $contactId);
+		if( ($contactId == 0 && $permissionsCore->get('core.create')) || ($contactId > 0 && ($permissionsCore->get('core.edit') || $permissionsCore->get('core.edit.own'))) ) {
+			$return = $model->savecore($dataCore);
 		} else {
-			// Perform the return array
 			$return_arr = array();
 			$return_arr["apiReturnId"] = 0;
-			$return_arr["apiReturnCode"] = ERROR;
-			$return_arr["apiReturnMessage"] = 'Cant get a row id from the customer db table to perform tabApp save/create processing';
+			$return_arr["apiReturnCode"] = 1100;
+			$return_arr["apiReturnMessage"] = 'Please Note: You have no rights edit or save the core datas. Please contact the support or your administrator to get further informations!';
 
 			$return = $return_arr;
+
+			echo json_encode($return);
+
+			$this->app->close();
 		}
+
+		/**
+		 * Example of doing Permission Checks
+		 * 
+		 * $permissionsCore = NFactory::getPermissions('com_xiveirm');
+		 * $permissionsTab = NFactory::getPermissions('com_xiveirm', 'tabapp', $tabApp->id);
+		 * 
+		 * $canView		= $this->user->authorise('core.view',		'com_xiveirm.tabapp.2');
+		 * $canCreate		= $this->user->authorise('core.create',		'com_xiveirm');
+		 * $canDelete		= $this->user->authorise('core.delete',		'com_xiveirm');
+		 * $canEdit		= $this->user->authorise('core.edit',		'com_xiveirm');
+		 * $canChange		= $this->user->authorise('core.edit.state',	'com_xiveirm');
+		 * $canEditOwn	= $this->user->authorise('core.edit.own',		'com_xiveirm');
+		 * 
+		 */
+		if($plugins) {
+			// ok we have installed and enabled TabApps, lets play
+			if($return["apiReturnCode"] != 'ERROR' && $return["apiReturnId"] > 0)
+			{
+				foreach($plugins as $tabApp)
+				{
+					// Check permissions based on the TabApp config with extra permission if the user can edit its own contact and related tabapps (we use the $contactId in the if core.create condition, to check if we have a new contact and the user is able to create.)
+					// XiveTODO: We should check if it make sense to add a userid (created_by) column in the tabappvalue table
+					$permissionsTab = NFactory::getPermissions('com_xiveirm', 'tabapp', $tabApp->id, 'xiveirm_contacts.' . $return["apiReturnId"]);
+
+					// We use the contactId we've get via the formsubmission to check if it is a new contact. The Id returned from the save coreform process is only used to build the relation to the contact itself.
+					if( $permissionsTab->get('core.edit') || $permissionsTab->get('core.edit.own') ) {
+				 		// Get the tabForm data.
+						$dataTabs = JFactory::getApplication()->input->get($tabApp->plugin, array(), 'array');
+
+						// Attempt to save the tabdata, if we got any, bound to the appropriate TabApp.
+						if($dataTabs) {
+							$return = $model->savetab($dataTabs, $return["apiReturnId"], $tabApp->plugin); // Return goes directly to echo json_decode (after checkin the contact)
+						}
+					} else {
+						$return_arr = array();
+						$return_arr["apiReturnId"] = $return["apiReturnId"];
+						$return_arr["apiReturnCode"] = 'NOTICE';
+						$return_arr["apiReturnMessage"] = 'Please Note: You have no rights to edit or save the ' . $tabApp->plugin . '-datas! Please contact the support or your administrator to get further informations!';
+
+						$return = $return_arr;
+					}
+				}
+			} else {
+				// Perform the return array. In this condition, the coreform returned no error but an id lover 0, or an correct id but an ERROR in the returnCode
+				$return_arr = array();
+				$return_arr["apiReturnId"] = 0;
+				$return_arr["apiReturnCode"] = 1600;
+				$return_arr["apiReturnMessage"] = 'Cant get a row id from the customer db table to perform tabApp save/create processing';
+
+				$return = $return_arr;
+			}
+		} else {
+			// we have no apps, therefore we use the return code from the save/update process from core contacts table
+//			echo 'No Plugins Load because there are no active';
+		}
+
+		// If all done, check in the core item
+		NFactory::checkIn('xiveirm_contacts', $contactId);
 
 		echo json_encode($return);
 
@@ -182,7 +240,7 @@ class XiveirmControllerApi extends XiveirmController
 
 //		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-	$model = $this->getModel('Api', 'XiveirmModel');
+		$model = $this->getModel('Api', 'XiveirmModel');
 
 		// ------------------------------------------------------------- GET AND PROCESS THE CORE FORM DATAS
 		$data = $this->app->input->get('cica', array(), 'array');
