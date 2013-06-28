@@ -13,6 +13,10 @@ defined('_JEXEC') or die;
 // JHtml::_('behavior.tooltip');
 // JHtml::_('behavior.formvalidation');
 
+// Import HTML and Helper Classes
+nawala_import('html.jshelper', 'once');
+NHtmlJSHelper::setToggle('extended', 'toggleExtend');
+
 //Load admin language file
 $lang = JFactory::getLanguage();
 $lang->load('com_xiveirm', JPATH_ADMINISTRATOR);
@@ -20,23 +24,23 @@ $lang->load('com_xiveirm', JPATH_ADMINISTRATOR);
 // Load the XiveIRMSystem Session Data (Performed by the XiveIRM System Plugin)
 $xsession = JFactory::getSession()->get('XiveIRMSystem');
 
-	$user = JFactory::getUser()->getAuthorisedCategories('com_xiveirm', 'edit');
-//	$canCreate	= $user->authorise('core.create',		'com_xiveirm');
-//	$canEdit	= $user->authorise('core.edit',		'com_xiveirm');
-//	$canCheckin	= $user->authorise('core.manage',		'com_xiveirm');
-//	$canChange	= $user->authorise('core.edit.state',	'com_xiveirm');
-//	$canView	= $user->authorise('xiveirm.view',		'com_xiveirm'); // muss noch in der access.xml definiert werden, wenn gebraucht !!!!!
+// Get Permissions
+$permissions = NFactory::getPermissions('com_xiveirm', false, false, 'xiveirm_contacts.' . $this->item->id);
 
-JPluginHelper::importPlugin( 'irmtabscontact' ); // returned 1 if get successfully loaded
-JPluginHelper::importPlugin( 'irmwidgetscontact' ); // returned 1 if get successfully loaded
+// If it's a new contact and we have set the catid in the prevoius link!
+if(!$this->item->catid) {
+	$this->item->catid = JFactory::getApplication()->getUserState('com_xiveirm.edit.contact.catid');
+}
+
+// Import all TabApps based on the XiveIRM TabApp configs and the related catid!
+IRMSystem::getPlugins($this->item->catid);
 $dispatcher = JDispatcher::getInstance();
 
 // used for javascript processed messages
 $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 
-// check if the customer is checked out and compare user id. If customer is checked out by the same user, show no info! TODO: Future versions may show a message that the user have to save or click cancel!!!!
+// Check if is checked out by the same user, else show info! TODO: Future versions may show a message that the user have to save or click cancel!!!!
 if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUser()->id) { $checked_out = true; } else { $checked_out = false; }
-
 ?>
 <!--
 <script type="text/javascript">
@@ -84,10 +88,14 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 			</span>
 			<span class="span5">
 				<div class="btn-group pull-right inline">
-					<?php if($this->item->id && !$checked_out): ?>
+					<?php if( ($this->item->id && !$checked_out) && ($permissions->get('core.edit') || $permissions->get('core.edit.own')) ): ?>
 						<a onClick="enableEdit()" id="loading-btn-edit" data-loading-text="<?php echo JText::_('COM_XIVEIRM_API_PLEASE_WAIT_BUTTON'); ?>" data-error-text="<?php echo JText::_('COM_XIVEIRM_API_ERROR_TRY_AGAIN_BUTTON'); ?>" class="btn btn-warning btn-mini edit-form-button"><i class="icon-edit"></i> <?php echo JText::_('COM_XIVEIRM_EDIT_ITEM'); ?></a>
 					<?php endif; ?>
-					<a class="btn btn-danger btn-mini" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=api.cancel&id=' . $this->item->id); ?>"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_CANCEL_ITEM'); ?></a>
+					<?php if($checked_out): ?>
+						<a class="btn btn-danger btn-mini" href="<?php echo JRoute::_('index.php?option=com_xiveirm'); ?>"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_CANCEL_ITEM'); ?></a>
+					<?php else: ?>
+						<a class="btn btn-danger btn-mini" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=api.cancel&id=' . $this->item->id); ?>"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_CANCEL_ITEM'); ?></a>
+					<?php endif; ?>
 				</div>
 			</span>
 		</h1>
@@ -101,9 +109,9 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 			</button>
 			<?php
 				$user_profile_url = '/#';
-				$users_name = IRMSystem::getUserName($this->item->checked_out);
-				$checked_out_time = $this->item->checked_out_time;
-				$checkin_in = '5';
+				$users_name = JFactory::getUser($this->item->checked_out)->name;
+				$checked_out_time = date(JText::_('DATE_FORMAT_LC2'), strtotime($this->item->checked_out_time));
+				$checkin_in = '10';
 				echo '<h1><i class=\"icon-signout\"></i> ' . JText::_('COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_ALERT_ERROR_TITLE') . '</h1>';
 				echo '<p>' . JText::sprintf('COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_ALERT_ERROR_BODY', $user_profile_url, $users_name, $checked_out_time, $checkin_in) . '</p>';
 			?>
@@ -147,6 +155,10 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_FORM_LBL_CONTACT_CATEGORY'); ?></label>
 								<div class="controls controls-row">
 									<div class="span6">
+										<?php if($this->item->catid && !$this->item->id) { ?>
+											<input type="hidden" name="coreform[catid]" value="<?php echo $this->item->catid; ?>">
+											<a class="btn btn-small btn-warning disabled" disabled="disabled"><i class="icon-double-angle-left"></i> <?php echo NFactory::getTitleById('category', $this->item->catid); ?></a>
+										<?php } else { ?>
 										<select name="coreform[catid]" class="chzn-select input-control" style="width: 362px;" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
 											<option value=""></option>
 											<?php
@@ -175,6 +187,7 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 												}
 											?>
 										</select>
+										<?php } ?>
 									</div>
 									<div class="span6">
 										<a id="toggleExtend" class="btn btn-small btn-primary pull-right"><i class="icon-double-angle-down"></i><span class="hidden-phone"> Additional fields</span></a>
@@ -186,7 +199,7 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 								<div class="controls controls-row">
 									<input type="text" name="coreform[customer_id]" class="input-control span6" id="prependedInput" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID'); ?>" value="<?php echo $this->item->customer_id; ?>">
 									<div class="span6">
-										<select name="coreform[parent_id]" class="chzn-select input-control" style="width: 362px;" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_PARENT'); ?>" required>
+										<select name="coreform[parent_id]" class="chzn-select input-control" style="width: 220px;" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_PARENT'); ?>" required>
 											<?php
 												if(!$this->item->parent_id) {
 													echo '<option value="0" selected>' . JText::_('COM_XIVEIRM_SELECT_NO_PARENT') . '</option>';
@@ -228,42 +241,40 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 							</div>
 							
 							<div class="control-group">
-								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_LABEL'); ?></label>
+								<label class="control-label">
+									<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_LABEL'); ?>
+									<span class="help-button ace-popover" data-trigger="hover" data-placement="top" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_DESC'); ?>" data-original-title="The Gender take over effects!">?</i>
+								</label>
 								<div class="controls controls-row">
-									<div class="span6">
-										<select name="coreform[gender]" class="chzn-select input-control" style="width: 362px;" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
-											<option value=""></option>
-											<?php
-												$options = IRMSystem::getListOptions('options', 'gender');
-												if($options->client) {
-													echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_TRAITS_SPECIFIC', NFactory::getTitleById('usergroup', $xsession->client_id)) . '">';
-														foreach ($options->client as $key => $val) {
-															if($this->item->gender == $key) {
-																echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
-															} else {
-																echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-															}
+									<select name="coreform[gender]" class="chzn-selectXXX input-control span6" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
+										<option value=""><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_SELECT'); ?></option>
+										<?php
+											$options = IRMSystem::getListOptions('options', 'gender');
+											if($options->client) {
+												echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_TRAITS_SPECIFIC', NFactory::getTitleById('usergroup', $xsession->client_id)) . '">';
+													foreach ($options->client as $key => $val) {
+														if($this->item->gender == $key) {
+															echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
+														} else {
+															echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
 														}
-													echo '</optgroup>';
-												}
-												if($options->global) {
-													echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
-														foreach ($options->global as $key => $val) {
-															if($this->item->gender == $key) {
-																echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
-															} else {
-																echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-															}
+													}
+												echo '</optgroup>';
+											}
+											if($options->global) {
+												echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
+													foreach ($options->global as $key => $val) {
+														if($this->item->gender == $key) {
+															echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
+														} else {
+															echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
 														}
-													echo '</optgroup>';
-												}
-											?>
-										</select>
-									</div>
-									<div class="span1">
-										<span class="help-button ace-popover" data-trigger="hover" data-placement="top" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_DESC'); ?>" data-original-title="The Gender take over effects!">?</i>
-									</div>
-									<input type="date" name="coreform[dob]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_DOB'); ?>" value="<?php echo $this->item->dob; ?>" required>
+													}
+												echo '</optgroup>';
+											}
+										?>
+									</select>
+									<input type="date" name="coreform[dob]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_DOB'); ?>" value="<?php echo $this->item->dob; ?>" required>
 								</div>
 							</div>
 							
@@ -276,12 +287,12 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 									<input type="text" name="coreform[address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->address_name_add; ?>">
 								</div>
 								<div class="controls controls-row">
-									<input type="text" name="coreform[address_street]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->address_street; ?>">
-									<input type="text" name="coreform[address_houseno]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->address_houseno; ?>">
+									<input type="text" name="coreform[address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->address_street; ?>">
+									<input type="text" name="coreform[address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->address_houseno; ?>">
 								</div>
 								<div class="controls controls-row">
-									<input type="text" name="coreform[address_zip]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->address_zip; ?>">
-									<input type="text" name="coreform[address_city]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->address_city; ?>">
+									<input type="text" name="coreform[address_zip]" class="input-control span4" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->address_zip; ?>">
+									<input type="text" name="coreform[address_city]" class="input-control span8" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->address_city; ?>">
 								</div>
 								<div class="controls controls-row extended">
 									<input type="text" name="coreform[address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->address_region; ?>">
@@ -336,27 +347,6 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 							<div class="well">
 							
 							<!-- ---------- ---------- ---------- ---------- ---------- BEGIN TAB.PLUGIN_MAIN-WIDGETS ---------- ---------- ---------- ---------- ---------- -->
-
-
-<?php
-
-echo '<pre>';
-
-// $test = JUser::getAuthorisedCategories('com_xiveirm', 'core.create');
-
-$test55 = IRMSystem::getListOptions('contacts', $xsession->client_id);
-
-print_r($test55);
-
-echo '</pre>';
-
-?>
-
-
-
-
-
-
 							<?php
 								foreach($dispatcher->trigger( 'loadInBasedataContainerFirst', array(&$this->item) ) as $inBaseWidget)
 								{
@@ -432,7 +422,11 @@ echo '</pre>';
 						<button class="btn" type="reset" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_RESET_TIP'); ?>"><i class="icon-undo"></i> <?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_RESET'); ?></button>
 						&nbsp; &nbsp; &nbsp;
 					</span>
-					<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=api.cancel&id=' . $this->item->id); ?>" class="btn btn-danger"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_CANCEL_ITEM'); ?></a>
+					<?php if($checked_out): ?>
+						<a class="btn btn-danger" href="<?php echo JRoute::_('index.php?option=com_xiveirm'); ?>"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_CANCEL_ITEM'); ?></a>
+					<?php else: ?>
+						<a class="btn btn-danger" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=api.cancel&id=' . $this->item->id); ?>"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_CANCEL_ITEM'); ?></a>
+					<?php endif; ?>
 				</div>
 			</div>
 			<!-- ---------- ---------- ---------- ---------- ---------- END master-tab-pane-container ---------- ---------- ---------- ---------- ---------- -->
@@ -448,17 +442,6 @@ echo '</pre>';
 
 
 <script>
-	// Toggle Down/Up form fields
-	var ddvar;
-	function ddext(ddvar) {
-		jQuery("#"+ddvar).slideToggle("fast");
-	}
-
-	jQuery(".extended").hide();
-	jQuery("#toggleExtend").click(function () {
-		$(".extended").slideToggle("fast");
-	});
-
 	// Prevent submit on enter (keycode 13) event in form fields
 	jQuery("#form-contact").bind('keypress keydown keyup', function(e) {
 		if(e.keyCode == 13) { e.preventDefault(); }
@@ -501,12 +484,38 @@ echo '</pre>';
 					$("#loading-btn-save").removeClass("btn-warning");
 					$("#loading-btn-save").button("complete");
 					$("#loading-btn-save").button("reset");
+
+					<?php if(!$this->item->catid) { ?>
+						var cId = $("#customer_cid").val();
+						window.location.href = "<?php echo JRoute::_('index.php?task=contact.edit&id='); ?>" + cId;
+					<?php } ?>
+
 				} else if(data.apiReturnCode === 'UPDATED') {
 					$.gritter.add({
 						title: 'Successfully updated',
 						text: 'You have successfully saved all items for the customer <?php echo $this->item->first_name . ' ' . $this->item->last_name; ?>',
 						icon: 'icon-globe',
 						class_name: 'alert-info'
+					});
+					$("#loading-btn-save").removeClass("btn-warning");
+					$("#loading-btn-save").button("complete");
+					$("#loading-btn-save").button("reset");
+
+					$("#loading-btn-edit").removeClass("hidden");
+					$("#loading-btn-edit").button("complete");
+					$("#loading-btn-edit").button("reset");
+
+					$("#form-contact .input-control").attr("readonly", true);
+					$("#form-buttons").addClass("hidden");
+					$(".widget-box .btn").attr("disabled", false);
+
+				} else if(data.apiReturnCode === 'NOTICE') {
+					$.gritter.add({
+						title: 'Successfully updated',
+						text: 'You have successfully saved all core items for the customer <?php echo $this->item->first_name . ' ' . $this->item->last_name; ?><br><br>' + data.apiReturnMessage,
+						icon: 'icon-info',
+						sticky: true,
+						class_name: 'alert-warning'
 					});
 					$("#loading-btn-save").removeClass("btn-warning");
 					$("#loading-btn-save").button("complete");
