@@ -38,7 +38,7 @@ class XiveirmModelApi extends JModelForm
 			// Perform the return array
 			$return_arr = array();
 			$return_arr["apiReturnId"] = 0;
-			$return_arr["apiReturnCode"] = 1000;
+			$return_arr["apiReturnCode"] = 2000;
 			$return_arr["apiReturnMessage"] = 'The form is completely empty: Neither an appId, a tabId nor a masterdataId is given!';
 
 			return $return_arr;
@@ -274,7 +274,7 @@ class XiveirmModelApi extends JModelForm
 		else
 		{
 			$apiReturnId = null;
-			$apiReturnCode = 1666;
+			$apiReturnCode = 2066;
 			$apiReturnMessage = 'Unbekannter Fehler';
 		}
 	
@@ -305,7 +305,7 @@ class XiveirmModelApi extends JModelForm
 			// Perform the return array
 			$return_arr = array();
 			$return_arr["apiReturnId"] = (int)$contact_id;
-			$return_arr["apiReturnCode"] = 1000;
+			$return_arr["apiReturnCode"] = 2500;
 			$return_arr["apiReturnMessage"] = 'The form is completely empty: Neither an appId, a tabId nor a masterdataId is given!';
 
 			return $return_arr;
@@ -418,7 +418,7 @@ class XiveirmModelApi extends JModelForm
 		else
 		{
 			$apiReturnId = (int)$contact_id;
-			$apiReturnCode = 1666;
+			$apiReturnCode = 2566;
 			$apiReturnMessage = 'Unbekannter Fehler';
 		}
 
