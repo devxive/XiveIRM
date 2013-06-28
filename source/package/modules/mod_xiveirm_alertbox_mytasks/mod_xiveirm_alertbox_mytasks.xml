@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.1" type="module" client="site" method="upgrade">
-	<name>mod_xapptheme_sidebarshortcuts</name>
+	<name>mod_xiveirm_alertbox_mytasks</name>
 	<author>devXive</author>
 	<creationDate>May 2013</creationDate>
 	<copyright>(C) 1997 - 2013 devXive - research and development. All rights reserved.</copyright>
@@ -8,123 +8,21 @@
 	<authorEmail>support@devxive.com</authorEmail>
 	<authorUrl>www.devxive.com</authorUrl>
 	<version>0.0.1</version>
-	<description>MOD_XAPPTHEME_SIDEBARSHORTCUTS_XML_DESCRIPTION</description>
+	<description>MOD_XIVEIRM_ALERTBOX_MYTASKS_XML_DESC</description>
 	<files>
-		<filename module="mod_xapptheme_sidebarshortcuts">mod_xapptheme_sidebarshortcuts.php</filename>
+		<filename module="mod_xiveirm_alertbox_mytasks">mod_xiveirm_alertbox_mytasks.php</filename>
 		<filename>index.html</filename>
 		<folder>tmpl</folder>
 	</files>
 	<languages folder="language">
-		<language tag="en-GB">en-GB/en-GB.mod_xapptheme_sidebarshortcuts.ini</language>
-		<language tag="en-GB">en-GB/en-GB.mod_xapptheme_sidebarshortcuts.sys.ini</language>
+		<language tag="en-GB">en-GB/en-GB.mod_xiveirm_alertbox_mytasks.ini</language>
+		<language tag="en-GB">en-GB/en-GB.mod_xiveirm_alertbox_mytasks.sys.ini</language>
 	</languages>
 
 	<help key="JHELP_EXTENSIONS_MODULE_MANAGER_CUSTOM_HTML" />
 	<config>
 		<fields name="params">
 			<fieldset name="basic">
-				<field
-					name="icon1_icon"
-					type="text"
-					default="icon-signal"
-					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_ICON_LABEL"
-					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_ICON_DESC" />
-				<field
-					name="icon1_color"
-					type="text"
-					default="btn-success"
-					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_COLOR_LABEL"
-					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_COLOR_DESC" />
-				<field
-					name="icon1_title"
-					type="text"
-					default="Shortcut"
-					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_TITLE_LABEL"
-					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_TITLE_DESC" />
-				<field
-					name="icon1_link"
-					type="menuitem"
-					default=""
-					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_LINK_LABEL"
-					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_LINK_DESC" />
-
-
-				<field
-					name="icon2_icon"
-					type="text"
-					default="icon-pencil"
-					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_ICON_LABEL"
-					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_ICON_DESC" />
-				<field
-					name="icon2_color"
-					type="text"
-					default="btn-info"
-					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_COLOR_LABEL"
-					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_COLOR_DESC" />
-				<field
-					name="icon2_title"
-					type="text"
-					default="Shortcut"
-					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_TITLE_LABEL"
-					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_TITLE_DESC" />
-				<field
-					name="icon2_link"
-					type="menuitem"
-					default=""
-					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_LINK_LABEL"
-					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_LINK_DESC" />
-
-
-				<field
-					name="icon3_icon"
-					type="text"
-					default="icon-group"
-					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_ICON_LABEL"
-					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_ICON_DESC" />
-				<field
-					name="icon3_color"
-					type="text"
-					default="btn-warning"
-					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_COLOR_LABEL"
-					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_COLOR_DESC" />
-				<field
-					name="icon3_title"
-					type="text"
-					default="Shortcut"
-					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_TITLE_LABEL"
-					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_TITLE_DESC" />
-				<field
-					name="icon3_link"
-					type="menuitem"
-					default=""
-					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_LINK_LABEL"
-					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_LINK_DESC" />
-
-
-				<field
-					name="icon4_icon"
-					type="text"
-					default="icon-cogs"
-					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_ICON_LABEL"
-					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_ICON_DESC" />
-				<field
-					name="icon4_color"
-					type="text"
-					default="btn-danger"
-					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_COLOR_LABEL"
-					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_COLOR_DESC" />
-				<field
-					name="icon4_title"
-					type="text"
-					default="Shortcut"
-					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_TITLE_LABEL"
-					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_TITLE_DESC" />
-				<field
-					name="icon4_link"
-					type="menuitem"
-					default=""
-					label="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_LINK_LABEL"
-					description="MOD_XAPPTHEME_SIDEBARSHORTCUTS_ICON_LINK_DESC" />
 			</fieldset>
 			<fieldset name="advanced">
 				<field
