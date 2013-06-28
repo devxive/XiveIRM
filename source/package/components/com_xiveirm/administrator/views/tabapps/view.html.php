@@ -136,7 +136,6 @@ class XiveirmViewTabapps extends JViewLegacy
 		return array(
 //		'a.id' => JText::_('JGRID_HEADING_ID'),
 		'a.client_id' => JText::_('COM_XIVEIRM_TABAPPS_USERGROUP'),
-		'a.access' => JText::_('COM_XIVEIRM_TABAPPS_ACCESS'),
 		'a.plugin' => JText::_('COM_XIVEIRM_TABAPPS_PLUGIN'),
 		'a.catid' => JText::_('COM_XIVEIRM_TABAPPS_CATEGORY'),
 		'a.state' => JText::_('JSTATUS'),

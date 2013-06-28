@@ -28,7 +28,6 @@ class XiveirmModeltabapps extends JModelList {
 			$config['filter_fields'] = array(
 				'id', 'a.id',
 				'client_id', 'a.client_id',
-				'access', 'a.access',
 				'plugin', 'a.plugin',
 				'catid', 'a.catid',
 				'config', 'a.config',

@@ -118,9 +118,6 @@ if (!empty($this->extra_sidebar)) {
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_TABAPPS_PLUGIN', 'a.plugin', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_TABAPPS_ACCESS', 'a.access', $listDirn, $listOrder); ?>
-				</th>
-				<th class='left'>
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_TABAPPS_CATEGORY', 'a.catid', $listDirn, $listOrder); ?>
 				</th>
                     
@@ -199,9 +196,6 @@ if (!empty($this->extra_sidebar)) {
 				<?php else : ?>
 					<?php echo $this->escape($item->plugin); ?>
 				<?php endif; ?>
-				</td>
-				<td>
-					<?php echo NFactory::getTitleById('viewlevel', $item->access); ?>
 				</td>
 				<td>
 					<?php echo $item->catid; ?>
