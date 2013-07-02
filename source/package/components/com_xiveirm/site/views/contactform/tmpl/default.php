@@ -14,8 +14,18 @@ defined('_JEXEC') or die;
 // JHtml::_('behavior.formvalidation');
 
 // Import HTML and Helper Classes
-nawala_import('html.jshelper', 'once');
-NHtmlJSHelper::setToggle('extended', 'toggleExtend');
+nimport('NHtml.JavaScript');
+nimport('NItem.Helper', false);
+nimport('NUser.Access', false);
+
+NHtmlJavaScript::setToggle('extended', 'toggleExtend');
+NHtmlJavaScript::setTextLimit('.limited', 250);
+NHtmlJavaScript::setTextAutosize('.autosize');
+NHtmlJavaScript::setTooltip('.xtooltip');
+NHtmlJavaScript::setPopover('.xpopover');
+NHtmlJavaScript::setPreventFormSubmitByKey();
+NHtmlJavaScript::loadGritter();
+NHtmlJavaScript::setPreventFormLeaveIfChanged();
 
 //Load admin language file
 $lang = JFactory::getLanguage();
@@ -25,7 +35,7 @@ $lang->load('com_xiveirm', JPATH_ADMINISTRATOR);
 $xsession = JFactory::getSession()->get('XiveIRMSystem');
 
 // Get Permissions
-$permissions = NFactory::getPermissions('com_xiveirm', false, false, 'xiveirm_contacts.' . $this->item->id);
+$permissions = NUserAccess::getPermissions('com_xiveirm', false, false, 'xiveirm_contacts.' . $this->item->id);
 
 // If it's a new contact and we have set the catid in the prevoius link!
 if(!$this->item->catid) {
@@ -36,11 +46,20 @@ if(!$this->item->catid) {
 IRMSystem::getPlugins($this->item->catid);
 $dispatcher = JDispatcher::getInstance();
 
+// Check for checked out item
+$checkoutParams = array(
+	'checkoutByOtherTitle' => 'COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_BY_OTHER_ALERT_ERROR_TITLE',
+	'checkoutByOtherMessage' => 'COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_BY_OTHER_ALERT_ERROR_BODY',
+	'checkoutByUserTitle' => 'COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_BY_USER_ALERT_ERROR_TITLE',
+	'checkoutByUserMessage' => 'COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_BY_USER_ALERT_ERROR_BODY',
+	'checkinMessage' => 'COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_BY_OTHER_ALERT_ERROR_CHECKIN_MESSAGE',
+	'checkinTime' => 10,
+	'userlink' => '#'
+);
+$checkedOut = NHtmlJavaScript::getCheckoutMessage($this->item->checked_out, $this->item->checked_out_time, '#checkout-message', $checkoutParams);
+
 // used for javascript processed messages
 $full_name = $this->item->first_name . ' ' . $this->item->last_name;
-
-// Check if is checked out by the same user, else show info! TODO: Future versions may show a message that the user have to save or click cancel!!!!
-if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUser()->id) { $checked_out = true; } else { $checked_out = false; }
 ?>
 <!--
 <script type="text/javascript">
@@ -76,6 +95,7 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 -->
 <div class="row-fluid">
 	<!-- ---------- ---------- ---------- ---------- ---------- BEGIN PAGE HEADER ---------- ---------- ---------- ---------- ---------- -->
+
 	<div class="row-fluid header smaller lighter blue">
 		<h1>
 			<span class="span7">
@@ -88,10 +108,10 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 			</span>
 			<span class="span5">
 				<div class="btn-group pull-right inline">
-					<?php if( ($this->item->id && !$checked_out) && ($permissions->get('core.edit') || $permissions->get('core.edit.own')) ): ?>
+					<?php if( ($this->item->id && $checkedOut['by'] != 'other') && ($permissions->get('core.edit') || $permissions->get('core.edit.own')) ): ?>
 						<a onClick="enableEdit()" id="loading-btn-edit" data-loading-text="<?php echo JText::_('COM_XIVEIRM_API_PLEASE_WAIT_BUTTON'); ?>" data-error-text="<?php echo JText::_('COM_XIVEIRM_API_ERROR_TRY_AGAIN_BUTTON'); ?>" class="btn btn-warning btn-mini edit-form-button"><i class="icon-edit"></i> <?php echo JText::_('COM_XIVEIRM_EDIT_ITEM'); ?></a>
 					<?php endif; ?>
-					<?php if($checked_out): ?>
+					<?php if($checkedOut['by'] == 'other'): ?>
 						<a class="btn btn-danger btn-mini" href="<?php echo JRoute::_('index.php?option=com_xiveirm'); ?>"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_CANCEL_ITEM'); ?></a>
 					<?php else: ?>
 						<a class="btn btn-danger btn-mini" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=api.cancel&id=' . $this->item->id); ?>"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_CANCEL_ITEM'); ?></a>
@@ -102,21 +122,9 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 	</div><!--/header-->
 	<!-- ---------- ---------- ---------- ---------- ---------- END PAGE HEADER ---------- ---------- ---------- ---------- ---------- -->
 	<!-- ---------- ---------- ---------- ---------- ---------- BEGIN CHECK_OUT MESSAGE ---------- ---------- ---------- ---------- ---------- -->
-	<?php if($checked_out): ?>
-		<div id="checkout-info" class="alert alert-error" style="display: none;">
-			<button type="button" class="close" data-dismiss="alert">
-				<i class="icon-remove"></i>
-			</button>
-			<?php
-				$user_profile_url = '/#';
-				$users_name = JFactory::getUser($this->item->checked_out)->name;
-				$checked_out_time = date(JText::_('DATE_FORMAT_LC2'), strtotime($this->item->checked_out_time));
-				$checkin_in = '10';
-				echo '<h1><i class=\"icon-signout\"></i> ' . JText::_('COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_ALERT_ERROR_TITLE') . '</h1>';
-				echo '<p>' . JText::sprintf('COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_ALERT_ERROR_BODY', $user_profile_url, $users_name, $checked_out_time, $checkin_in) . '</p>';
-			?>
-		</div>
-	<?php endif; ?>
+	<?php
+		echo $checkedOut['message'];
+	?>
 	<!-- ---------- ---------- ---------- ---------- ---------- END CHECK_OUT MESSAGE ---------- ---------- ---------- ---------- ---------- -->
 
 	<form id="form-contact" class="form-validate form-horizontal">
@@ -157,14 +165,14 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 									<div class="span6">
 										<?php if($this->item->catid && !$this->item->id) { ?>
 											<input type="hidden" name="coreform[catid]" value="<?php echo $this->item->catid; ?>">
-											<a class="btn btn-small btn-warning disabled" disabled="disabled"><i class="icon-double-angle-left"></i> <?php echo NFactory::getTitleById('category', $this->item->catid); ?></a>
+											<a class="btn btn-small btn-warning disabled" disabled="disabled"><i class="icon-double-angle-left"></i> <?php echo NItemHelper::getTitleById('category', $this->item->catid); ?></a>
 										<?php } else { ?>
 										<select name="coreform[catid]" class="chzn-select input-control" style="width: 362px;" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
 											<option value=""></option>
 											<?php
 												$options = IRMSystem::getListOptions('categories', false);
 												if($options->client) {
-													echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NFactory::getTitleById('usergroup', $xsession->client_id)) . '">';
+													echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
 														foreach ($options->client as $key => $val) {
 															if($this->item->catid == $key) {
 																echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
@@ -243,7 +251,7 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 							<div class="control-group">
 								<label class="control-label">
 									<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_LABEL'); ?>
-									<span class="help-button ace-popover" data-trigger="hover" data-placement="top" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_DESC'); ?>" data-original-title="The Gender take over effects!">?</i>
+									<span class="help-button xpopover" data-trigger="hover" data-placement="top" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_DESC'); ?>" data-original-title="The Gender take over effects!">?</i>
 								</label>
 								<div class="controls controls-row">
 									<select name="coreform[gender]" class="chzn-selectXXX input-control span6" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
@@ -251,7 +259,7 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 										<?php
 											$options = IRMSystem::getListOptions('options', 'gender');
 											if($options->client) {
-												echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_TRAITS_SPECIFIC', NFactory::getTitleById('usergroup', $xsession->client_id)) . '">';
+												echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_TRAITS_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
 													foreach ($options->client as $key => $val) {
 														if($this->item->gender == $key) {
 															echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
@@ -339,7 +347,7 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 							<div class="control-group extended">
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_INTERNAL_REMARKS'); ?></label>
 								<div class="controls">
-									<textarea name="coreform[remarks]" class="input-control span12 limited" max-data-length="250" maxlength="250" rows="5" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_INTERNAL_REMARKS_DESC'); ?>"><?php echo $this->item->remarks; ?></textarea>
+									<textarea name="coreform[remarks]" class="input-control span12 limited autosize" max-data-length="250" maxlength="250" rows="2" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_INTERNAL_REMARKS_DESC'); ?>"><?php echo $this->item->remarks; ?></textarea>
 								</div>
 							</div>
 						</div>
@@ -422,7 +430,7 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 						<button class="btn" type="reset" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_RESET_TIP'); ?>"><i class="icon-undo"></i> <?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_RESET'); ?></button>
 						&nbsp; &nbsp; &nbsp;
 					</span>
-					<?php if($checked_out): ?>
+					<?php if($checkedOut['by'] == 'other'): ?>
 						<a class="btn btn-danger" href="<?php echo JRoute::_('index.php?option=com_xiveirm'); ?>"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_CANCEL_ITEM'); ?></a>
 					<?php else: ?>
 						<a class="btn btn-danger" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=api.cancel&id=' . $this->item->id); ?>"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_CANCEL_ITEM'); ?></a>
@@ -440,13 +448,7 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 	</form>
 </div>
 
-
 <script>
-	// Prevent submit on enter (keycode 13) event in form fields
-	jQuery("#form-contact").bind('keypress keydown keyup', function(e) {
-		if(e.keyCode == 13) { e.preventDefault(); }
-	});
-
 	/*
 	 * Returns from API in json format
 	 * example {"apiReturnCode":"SAVED","apiReturnRowId":"173","apiReturnMessage":"Successfully saved"}
@@ -455,15 +457,6 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 	 * apiReturnMessage: returns a informal message, should be used for debugging and not in production use. returns the database or php errors
 	 */
 	jQuery(function(){
-		<?php if($checked_out): ?>
-		// show a message that the user is checked out
-		if ($("#checkout-info").is(":hidden")) {
-			setTimeout(function () {
-				jQuery("#checkout-info").slideDown("slow");
-			}, 2000)
-		}
-		<?php endif; ?>
-
 		$("#form-contact").submit(function(e){
 			e.preventDefault();
 
@@ -605,57 +598,6 @@ if($this->item->checked_out != 0 && $this->item->checked_out != JFactory::getUse
 	<?php else: ?>
 		jQuery(".widget-box .btn").attr("disabled", true);
 	<?php endif; ?>
-
-	/*
-	 *
-	 *
-	 * Prevent to leave this site, if anything in the form has changed and is not saved at present!
-	 *
-	 *
-	 */
-	var catcher = function() {
-		var changed = false;
-
-		$('form').each(function() {
-			if ($(this).data('initialForm') != $(this).serialize()) {
-				changed = true;
-				$(this).addClass('changed');
-			} else {
-				$(this).removeClass('changed');
-			}
-		});
-
-		if (changed) {
-			return '<?php echo JText::_('COM_XIVEIRM_PREVENT_LEAVE_SITE'); ?>';
-		}
-	};
-
-	jQuery(function() {
-		$('form').each(function() {
-			$(this).data('initialForm', $(this).serialize());
-		}).submit(function(e) {
-			var formEl = this;
-			var changed = false;
-
-			$('form').each(function() {
-				if (this != formEl && $(this).data('initialForm') != $(this).serialize()) {
-					changed = true;
-					$(this).addClass('changed');
-				} else {
-					$(this).removeClass('changed');
-				}
-			});
-
-			// If we have 2 or more forms on this page - Be careful with hidden forms!!
-			if (changed && !confirm('<?php echo JText::_('COM_XIVEIRM_PREVENT_FORM_SUBMISSION'); ?>')) {
-				e.preventDefault();
-			} else {
-				$(window).unbind('beforeunload', catcher);
-			}
-		});
-
-		$(window).bind('beforeunload', catcher);
-	});
 </script>
 
 
