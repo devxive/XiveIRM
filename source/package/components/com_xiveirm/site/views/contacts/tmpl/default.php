@@ -10,9 +10,27 @@
 defined('_JEXEC') or die;
 
 // Import HTML and Helper Classes
-nawala_import('html.jshelper', 'once');
-NHtmlJSHelper::autoRemove();
-NHtmlJSHelper::setToggle('extended', 'toggleExtend');
+nimport('NHtml.JavaScript');
+nimport('NHtml.DataTables');
+nimport('NItem.Helper', false);
+
+NHtmlJavaScript::setAutoRemove();
+NHtmlJavaScript::setToggle('extended', 'toggleExtend');
+NHtmlJavaScript::setToggleFunction('toggleFunction', 'toggle_id');
+
+// Init the dataTable
+$tableParams = '
+	{"bProcessing": true,
+	"bPaginate": false,
+	"aoColumnDefs": [
+		{ "bSortable": false, "aTargets": [0] },
+		{ "bSortable": false, "aTargets": [7] },
+		{ "bSearchable": false, "aTargets": [0] },
+		{ "bSearchable": false, "aTargets": [6] },
+		{ "bSearchable": false, "aTargets": [7] }
+	]}
+';
+NHtmlDataTables::loadDataTable('table_contacts', $tableParams);
 
 // Load the XiveIRMSystem Session Data (Performed by the XiveIRM System Plugin)
 $xsession = JFactory::getSession()->get('XiveIRMSystem');
@@ -24,6 +42,10 @@ $letters_nz = array('N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 
 $search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
 $global_search = JFactory::getApplication()->input->get('global_search', '', 'filter');
 ?>
+<script>
+
+
+</script>
 <div class="row-fluid">
 	<div class="header smaller lighter blue">
 		<h1>
@@ -63,7 +85,7 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 						<?php
 							$options = IRMSystem::getListOptions('categories', false);
 							if($options->client) {
-								echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NFactory::getTitleById('usergroup', $xsession->client_id)) . '">';
+								echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
 									foreach ($options->client as $key => $val) {
 										echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
 									}
@@ -183,37 +205,31 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 		</div>
 	</div>
 
-<!--
-	<div id="table_report_wrapper">
-		<table id="table_test" class="table table-striped table-bordered table-hover">
-		</table>
-	</div>
--->
-	<table id="contact_table_results" class="table table-striped table-bordered table-hover dataTable" aria-describedby="table_report_info" display: none;>
+	<table id="table_contacts" class="table table-striped table-bordered table-hover">
 		<thead>
 			<tr>
-				<th class="center sorting_disabled" role="columnheader" rowspan="1" colspan="1" aria-label="">
+				<th class="center sorting_disabled">
 					<label><input type="checkbox"><span class="lbl"></span></label>
 				</th>
-				<th class="sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Customer ID: activate to sort column ascending">
+				<th class="sorting">
 					ID
 				</th>
-				<th class="sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending">
+				<th class="sorting">
 					<i class="icon-user"></i><span class="hidden-phone"> Name</span>
 				</th>
-				<th class="sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Date of Birth: activate to sort column ascending">
+				<th class="sorting">
 					<i class="icon-calendar"></i><span class="hidden-phone"> Date of Birth</span>
 				</th>
-				<th class="hidden-480 sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Clicks: activate to sort column ascending">
+				<th class="hidden-480 sorting">
 					<i class="icon-home"></i><span class="hidden-phone"> Address</span>
 				</th>
-				<th class="hidden-phone sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label=" Update: activate to sort column ascending">
+				<th class="hidden-phone sorting">
 					<i class="icon-phone"></i><span class="hidden-phone"> Phone</span>
 				</th>
-				<th class="hidden-480 sorting" role="columnheader" tabindex="0" aria-controls="table_report" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">
+				<th class="hidden-480 sorting">
 					Status
 				</th>
-				<th class="sorting_disabled" role="columnheader" rowspan="1" colspan="1" style="width: 0px;" aria-label="">
+				<th class="sorting_disabled">
 				</th>
 			</tr>
 		</thead>
@@ -222,7 +238,7 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 		<?php foreach ($this->items as $item) : ?>
 			<?php if($item->state == 1 || ($item->state == 0 && JFactory::getUser()->authorise('core.edit.own',' com_xiveirm'))) : $show = true; ?>
 			<tr>
-				<td class="center" rowspan="2">
+				<td class="center">
 					<?php if($item->checked_out):
 						echo '<div style="font-size: 20px;"><i class="icon-lock red" data-rel="tooltip" data-placement="right" data-original-title="Checked out by: ' . JFactory::getUser($item->checked_out)->name . ' on ' . $item->checked_out_time . '"></i></div>';
 					else:
@@ -256,7 +272,7 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 						<span class="label label-warning" data-rel="tooltip" data-original-title="<?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)); ?>"><i class="icon-time"></i> Modified <abbr class="timeago" data-time="<?php echo $item->modified; ?>"></abbr></span>
 					<?php endif; ?>
 				</td>
-				<td class="center" rowspan="2">
+				<td class="center">
 					<div class="hidden-phone visible-desktop btn-group">
 						<?php if(JFactory::getUser()->authorise('core.edit.state','com_xiveirm')) : ?>
 							<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.state&id=' . $item->id); ?>').submit()" class="btn btn-mini <?php if($item->state == 1): echo 'btn-success'; endif; ?>" title="<?php if($item->state == 1): echo JText::_("COM_XIVEIRM_UNPUBLISH_ITEM"); else: echo JText::_("COM_XIVEIRM_PUBLISH_ITEM"); endif; ?>"><?php if($item->state == 1): echo '<i class="icon-ok icon-only"></i>'; else: echo '<i class="icon-remove icon-only"></i>'; endif; ?></a>
@@ -266,7 +282,7 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 						<?php endif; ?>
 						<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.edit&id=' . $item->id); ?>" class="btn btn-mini btn-info"><i class="icon-edit icon-only"></i></a>
 						<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.flag&id=' . $item->id); ?>" class="btn btn-mini <?php if(IRMSystem::flagIt($item->id, 'check')) { echo 'btn-warning'; } ?>"><i class="icon-flag icon-only"></i></a>
-						<a onClick="rowToggler('rowToggler_<?php echo $item->id; ?>')" class="btn btn-mini btn-yellow"><i class="icon-double-angle-down icon-only"></i></a>
+						<a onClick="toggleFunction('toggle_id_<?php echo $item->id; ?>')" class="btn btn-mini btn-yellow"><i class="icon-double-angle-down icon-only"></i></a>
 					</div>
 					<div class="hidden-desktop visible-phone">
 						<div class="inline position-relative">
@@ -278,9 +294,8 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 						</div>
 					</div>
 				</td>
-			</tr>
-				<td colspan="6" style="padding: 0; border-top: 0; border-bottom: 0;">
-					<div class="rowToggler_<?php echo $item->id; ?>" style="display: none; padding: 10px;">
+				<div style="padding: 0; border-top: 0; border-bottom: 0;">
+					<div class="toggle_id_<?php echo $item->id; ?>" style="display: none; padding: 10px;">
 						<div class="pull-left">
 							Providing more Informations based on this customer to identify him in a more detailed way.<br>
 							May we could push info via trigger events!!!
@@ -294,20 +309,12 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 							</a>
 						</div>
 					</div>
-				</td>
+				</div>
+			</tr>
 		<?php endif; ?>
 		<?php endforeach; ?>
 		</tbody>
 	</table>
-
-<script>
-	function rowToggler(rowTogglerId) {
-		jQuery('.'+rowTogglerId).slideToggle('5000', 'easeInOutCubic', function(){
-			// Animation Complete
-		});
-	}
-</script>
-
 
 	<div class="row-fluid center legend">
 		<i class="icon-barcode" data-rel="tooltip" data-original-title="This is a numeric ID"></i>
