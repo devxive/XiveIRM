@@ -9,6 +9,9 @@
 
 defined('_JEXEC') or die;
 
+// Import HTML and Helper Classes
+nimport('NUser.Access', false);
+
 class IRMSystem
 {
 	/*
@@ -239,7 +242,7 @@ class IRMSystem
 	 *			This is ok, becuase we want to load the plugins, because we need them load for further processing.
 	 *
 	 * @return		Object		With informations from tabApp config and joined extensions (folder)
-	 * 					id, appNames (plugin element name), folder to perform the NFactory::getPermissions(), catid, config (JSON)
+	 * 					id, appNames (plugin element name), folder to perform the NUserAccess::getPermissions(), catid, config (JSON)
 	 */
 	public function getPlugins($catid, $loadGroup = 'all', $client_id = false)
 	{
@@ -295,7 +298,7 @@ class IRMSystem
 			return $reindexedResults;
 		}
 
-		// Return the results, we'll need to load the permissions based on the related assets/config // SEE NFactory::getPermissions
+		// Return the results, we'll need to load the permissions based on the related assets/config // SEE NUserAccess::getPermissions
 		// Based on this results we can get the permissions, we need to check for checkin/out, save, edit, create or view permissions.
 		// NOTE: This is atypical to the normal viewing access levels and we need this for handle all client related stuff with this permissions/assets
 		return $results;
