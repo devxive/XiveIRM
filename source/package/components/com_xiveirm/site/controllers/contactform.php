@@ -198,7 +198,7 @@ class XiveirmControllerContactForm extends XiveirmController
 //	function cancel()
 //	{
 //		$id = JFactory::getApplication()->input->get('id', '', 'INT');
-//		$return = NFactory::checkIn('xiveirm_customer', $id);
+//		$return = NItemHelper::checkIn('xiveirm_customer', $id);
 //
 //		$menu = & JSite::getMenu();
 //		$item = $menu->getActive();

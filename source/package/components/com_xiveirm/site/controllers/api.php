@@ -12,6 +12,10 @@ defined('_JEXEC') or die;
 
 require_once JPATH_COMPONENT.'/controller.php';
 
+// Import HTML and Helper Classes
+nimport('NItem.Helper', false);
+nimport('NUser.Access', false);
+
 /**
  * Api controller class.
  */
@@ -46,7 +50,7 @@ class XiveirmControllerApi extends XiveirmController
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		$data = $this->app->input->get('cica', array(), 'array');
-		$return = NFactory::checkOut('xiveirm_contacts', $data['id'], NFactory::getDate('MySQL'), JFactory::getUser()->id);
+		$return = NItemHelper::checkOut('xiveirm_contacts', $data['id'], NItemHelper::getDate('MySQL'), JFactory::getUser()->id);
 
 		if($return) {
 			$return_arr = array();
@@ -80,7 +84,7 @@ class XiveirmControllerApi extends XiveirmController
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		$data = $this->app->input->get('cica', array(), 'array');
-		$return = NFactory::checkIn('xiveirm_contacts', $data['id']);
+		$return = NItemHelper::checkIn('xiveirm_contacts', $data['id']);
 
 		if($return) {
 			$return_arr = array();
@@ -147,7 +151,7 @@ class XiveirmControllerApi extends XiveirmController
 		// Go to models and try to save the coreform datas.
 		// In all cases (new, update), if return isn't false, we got the item row id for further processing the TabApp datas.
 		// Check if the user have the rights to save the data for the coreform by checking the components ACL.
-		$permissionsCore = NFactory::getPermissions('com_xiveirm', false, false, 'xiveirm_contacts.' . $contactId);
+		$permissionsCore = NUserAccess::getPermissions('com_xiveirm', false, false, 'xiveirm_contacts.' . $contactId);
 		if( ($contactId == 0 && $permissionsCore->get('core.create')) || ($contactId > 0 && ($permissionsCore->get('core.edit') || $permissionsCore->get('core.edit.own'))) ) {
 			$return = $model->savecore($dataCore);
 		} else {
@@ -166,8 +170,8 @@ class XiveirmControllerApi extends XiveirmController
 		/**
 		 * Example of doing Permission Checks
 		 * 
-		 * $permissionsCore = NFactory::getPermissions('com_xiveirm');
-		 * $permissionsTab = NFactory::getPermissions('com_xiveirm', 'tabapp', $tabApp->id);
+		 * $permissionsCore = NUserAccess::getPermissions('com_xiveirm');
+		 * $permissionsTab = NUserAccess::getPermissions('com_xiveirm', 'tabapp', $tabApp->id);
 		 * 
 		 * $canView		= $this->user->authorise('core.view',		'com_xiveirm.tabapp.2');
 		 * $canCreate		= $this->user->authorise('core.create',		'com_xiveirm');
@@ -185,7 +189,7 @@ class XiveirmControllerApi extends XiveirmController
 				{
 					// Check permissions based on the TabApp config with extra permission if the user can edit its own contact and related tabapps (we use the $contactId in the if core.create condition, to check if we have a new contact and the user is able to create.)
 					// XiveTODO: We should check if it make sense to add a userid (created_by) column in the tabappvalue table
-					$permissionsTab = NFactory::getPermissions('com_xiveirm', 'tabapp', $tabApp->id, 'xiveirm_contacts.' . $return["apiReturnId"]);
+					$permissionsTab = NUserAccess::getPermissions('com_xiveirm', 'tabapp', $tabApp->id, 'xiveirm_contacts.' . $return["apiReturnId"]);
 
 					// We use the contactId we've get via the formsubmission to check if it is a new contact. The Id returned from the save coreform process is only used to build the relation to the contact itself.
 					if( $permissionsTab->get('core.edit') || $permissionsTab->get('core.edit.own') ) {
@@ -220,7 +224,7 @@ class XiveirmControllerApi extends XiveirmController
 		}
 
 		// If all done, check in the core item
-		NFactory::checkIn('xiveirm_contacts', $contactId);
+		NItemHelper::checkIn('xiveirm_contacts', $contactId);
 
 		echo json_encode($return);
 
@@ -263,7 +267,7 @@ class XiveirmControllerApi extends XiveirmController
 	function cancel()
 	{
 		$id = JFactory::getApplication()->input->get('id', '', 'INT');
-		$return = NFactory::checkIn('xiveirm_contacts', $id);
+		$return = NItemHelper::checkIn('xiveirm_contacts', $id);
 
 		$menu = & JSite::getMenu();
 		$item = $menu->getActive();
