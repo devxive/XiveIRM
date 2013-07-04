@@ -25,7 +25,7 @@ class XiveirmControllerContactForm extends XiveirmController
 	 */
 	public function edit()
 	{
-		$app			= JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		// Get the previous edit id (if any) and get and set the current edit id for the user to edit in the session.
 //		$previousId = (int) $app->getUserState('com_xiveirm.edit.contact.id');
