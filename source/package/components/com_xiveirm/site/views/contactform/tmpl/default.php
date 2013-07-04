@@ -162,12 +162,13 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 							<div class="control-group">
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_FORM_LBL_CONTACT_CATEGORY'); ?></label>
 								<div class="controls controls-row">
+									<?php NHtmlJavaScript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 									<div class="span6">
 										<?php if($this->item->catid && !$this->item->id) { ?>
 											<input type="hidden" name="coreform[catid]" value="<?php echo $this->item->catid; ?>">
 											<a class="btn btn-small btn-warning disabled" disabled="disabled"><i class="icon-double-angle-left"></i> <?php echo NItemHelper::getTitleById('category', $this->item->catid); ?></a>
 										<?php } else { ?>
-										<select name="coreform[catid]" class="chzn-select input-control" style="width: 362px;" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
+										<select name="coreform[catid]" class="chzn-select-category input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
 											<option value=""></option>
 											<?php
 												$options = IRMSystem::getListOptions('categories', false);
@@ -206,8 +207,9 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID_LABEL'); ?></label>
 								<div class="controls controls-row">
 									<input type="text" name="coreform[customer_id]" class="input-control span6" id="prependedInput" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID'); ?>" value="<?php echo $this->item->customer_id; ?>">
+									<?php NHtmlJavaScript::setChosen('.chzn-select-parent', false, array('allow_single_deselect' => true, 'disable_search_threshold' => '10', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 									<div class="span6">
-										<select name="coreform[parent_id]" class="chzn-select input-control" style="width: 220px;" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_PARENT'); ?>" required>
+										<select name="coreform[parent_id]" class="chzn-select-parent input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_PARENT'); ?>" required>
 											<?php
 												if(!$this->item->parent_id) {
 													echo '<option value="0" selected>' . JText::_('COM_XIVEIRM_SELECT_NO_PARENT') . '</option>';
@@ -254,34 +256,37 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 									<span class="help-button xpopover" data-trigger="hover" data-placement="top" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_DESC'); ?>" data-original-title="The Gender take over effects!">?</i>
 								</label>
 								<div class="controls controls-row">
-									<select name="coreform[gender]" class="chzn-selectXXX input-control span6" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
-										<option value=""><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_SELECT'); ?></option>
-										<?php
-											$options = IRMSystem::getListOptions('options', 'gender');
-											if($options->client) {
-												echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_TRAITS_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
-													foreach ($options->client as $key => $val) {
-														if($this->item->gender == $key) {
-															echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
-														} else {
-															echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+									<?php NHtmlJavaScript::setChosen('.chzn-select-gender', false, array('width' => '100%', 'disable_search' => true)); ?>
+									<div class="span6">
+										<select name="coreform[gender]" class="chzn-select-gender input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
+											<option value=""><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_SELECT'); ?></option>
+											<?php
+												$options = IRMSystem::getListOptions('options', 'gender');
+												if($options->client) {
+													echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_TRAITS_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
+														foreach ($options->client as $key => $val) {
+															if($this->item->gender == $key) {
+																echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
+															} else {
+																echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+															}
 														}
-													}
-												echo '</optgroup>';
-											}
-											if($options->global) {
-												echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
-													foreach ($options->global as $key => $val) {
-														if($this->item->gender == $key) {
-															echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
-														} else {
-															echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+													echo '</optgroup>';
+												}
+												if($options->global) {
+													echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
+														foreach ($options->global as $key => $val) {
+															if($this->item->gender == $key) {
+																echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
+															} else {
+																echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+															}
 														}
-													}
-												echo '</optgroup>';
-											}
-										?>
-									</select>
+													echo '</optgroup>';
+												}
+											?>
+										</select>
+									</div>
 									<input type="date" name="coreform[dob]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_DOB'); ?>" value="<?php echo $this->item->dob; ?>" required>
 								</div>
 							</div>
@@ -356,6 +361,36 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 							
 							<!-- ---------- ---------- ---------- ---------- ---------- BEGIN TAB.PLUGIN_MAIN-WIDGETS ---------- ---------- ---------- ---------- ---------- -->
 							<?php
+								echo '<style>';
+									echo '.widget-box .btn-app.btn-mini span { font-size: 11px; }';
+								echo '</style>';
+								echo '<div class="widget-box light-border" style="margin-top: -10px;">';
+									echo '<div class="widget-header red">';
+										echo '<h5 class="smaller">Actiontoolbar</h5>';
+									echo '</div>';
+									echo '<div class="widget-body">';
+										echo '<div class="widget-main padding-5">';
+											echo '<center>';
+												if(!empty($this->item->address_street) && !empty($this->item->address_houseno) && !empty($this->item->address_zip) && !empty($this->item->address_city) && !empty($this->item->address_country)) {
+													echo '<a class="xpopover link-control" href="http://google.com/maps/preview#!q=' . $this->item->address_street . '+' . $this->item->address_houseno . '+' . $this->item->address_zip . '+' . $this->item->address_city . '" target="_blank" data-placement="bottom" data-content="New Google Maps" title="Google Maps 2.0"><img src="http://www.zdnet.de/wp-content/uploads/2012/11/googlemaps-icon.png" style="height: 63px; margin-right: 5px;"></a>';
+												}
+												echo '<a class="btn btn-app btn-mini btn-info link-control"><i class="icon-eye-open"></i> <span>StreetView</span></a>';
+												echo '<a class="btn btn-app btn-mini btn-light link-control"><i class="icon-print"></i> <span>Print</span></a>';
+												echo '<a class="btn btn-app btn-mini btn-purple link-control"><i class="icon-cloud-upload"></i> <span>DocUpload</span></a>';
+												echo '<a class="btn btn-app btn-mini btn-pink link-control"><i class="icon-share-alt"></i> <span>ShareIt</span></a>';
+
+												foreach($dispatcher->trigger( 'loadActionButton', array(&$this->item) ) as $inBaseWidget)
+												{
+													echo '<span id="' . $inBaseWidget['tab_key'] . '_button">';
+													echo $inBaseWidget['tabContent'];
+													echo '</span>';
+												}
+
+											echo '</center>';
+										echo '</div>';
+									echo '</div>';
+								echo '</div>';
+
 								foreach($dispatcher->trigger( 'loadInBasedataContainerFirst', array(&$this->item) ) as $inBaseWidget)
 								{
 									echo '<div id="' . $inBaseWidget['tab_key'] . '">';
@@ -449,6 +484,8 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 </div>
 
 <script>
+<?php
+	// PHP OUT COMMENTS TO PREVENT SHOWING INFOS IN SOURCE CODE WHILE IN ALPHA/BETA
 	/*
 	 * Returns from API in json format
 	 * example {"apiReturnCode":"SAVED","apiReturnRowId":"173","apiReturnMessage":"Successfully saved"}
@@ -456,6 +493,7 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 	 * apiReturnCode could be: SAVED, UPDATED or an Error Number ie. 666
 	 * apiReturnMessage: returns a informal message, should be used for debugging and not in production use. returns the database or php errors
 	 */
+?>
 	jQuery(function(){
 		$("#form-contact").submit(function(e){
 			e.preventDefault();
@@ -498,7 +536,7 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 					$("#loading-btn-edit").button("complete");
 					$("#loading-btn-edit").button("reset");
 
-					$("#form-contact .input-control").attr("readonly", true);
+					$("#form-contact .input-control").attr("disabled", true).trigger("liszt:updated");
 					$("#form-buttons").addClass("hidden");
 					$(".widget-box .btn").attr("disabled", false);
 
@@ -518,7 +556,7 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 					$("#loading-btn-edit").button("complete");
 					$("#loading-btn-edit").button("reset");
 
-					$("#form-contact .input-control").attr("readonly", true);
+					$("#form-contact .input-control").attr("disabled", true);
 					$("#form-buttons").addClass("hidden");
 					$(".widget-box .btn").attr("disabled", false);
 
@@ -547,13 +585,20 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 	 * 		because we have a function that prevent to leave the form if anything has changed!
 	 *
 	 */
-	jQuery("#form-contact .input-control").attr("readonly", true);
+	jQuery("#form-contact .input-control").attr("disabled", true);
 
-	// XAP-TODO: Have to set more functions to the edit form, such as a DB-checkout on activate and checkin on save or check in on deactivate !!!!
+	<?php // Check if a link is disabled and prevent default action !! ?>
+	jQuery('a').click(function(e) {
+		linkvar = $(this).attr('disabled');
+		if (linkvar === 'disabled') {
+			e.preventDefault();
+		}
+	});
+
+	<?php // XAP-TODO: Have to set more functions to the edit form, such as a DB-checkout on activate and checkin on save or check in on deactivate !!!! ?>
 	function cancelEdit() {
 	}
 
-	// XAP-TODO: Have to set more functions to the edit form, such as a DB-checkout on activate and checkin on save or check in on deactivate !!!!
 	function enableEdit() {
 		var inp = $('.input-control').get(0);
 
@@ -570,12 +615,14 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 						class_name: 'alert-warning'
 					});
 
-					// Remove all readonly fields if we got a "TRUE" response from the api and set the id="ckeckeditform" to 1 for form checks on leaving site
-					if(inp.hasAttribute('readonly')) {
-						$("#form-contact .input-control").attr("readonly", false);
+					<?php // Remove all disabled fields if we got a "TRUE" response from the api and set the id="ckeckeditform" to 1 for form checks on leaving site ?>
+					if(inp.hasAttribute('disabled')) {
+						// Remove disabled and fire trigger at same time
+						$("#form-contact .input-control").attr("disabled", false).trigger("liszt:updated");
+
 						$("#loading-btn-edit").addClass("hidden");
 						$("#form-buttons").removeClass("hidden");
-						$(".widget-box .btn").attr("disabled", true);
+						$(".widget-box .link-control").attr("disabled", true);
 
 						$("#checkEditForm").val("1");
 					}
