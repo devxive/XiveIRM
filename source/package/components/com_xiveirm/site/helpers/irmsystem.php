@@ -377,4 +377,55 @@ class IRMSystem
 			return false;
 		}
 	}
+
+	/**
+	 * Add javascript function to copy the value of form fields pused via tabApp into the main form
+	 *
+	 * @param	array		$formFields     Common id to identify the input fields
+	 *
+	 * @return  html
+	 *
+	 * @since   5.0
+	 */
+	public function cloneTabFormFields($formFields = null, $tabKey = null)
+	{
+		// Check if we get formFields and the tabKey
+		if(empty($formFields) || empty($tabKey)) {
+			return false;
+		}
+
+		// Include JS framework
+		NHtml::loadJsFramework();
+
+		$return_html = '';
+		$return_jsdec = "jQuery(document).ready(function() {";
+
+		foreach($formFields as $formField => $placeholder) {
+			// Build the html part
+			$return_html .= '<input id="' . $tabKey . '[' . $formField . ']clone" type="text" class="input-control span6" placeholder="' . JText::_($placeholder) . '" />';
+
+			// Build the JavaScript part
+			$return_jsdec .=
+					"
+					var intval_" . $tabKey . "_" . $formField . " = $('[name=" . $tabKey . "\\\\[" . $formField . "\\\\]]').val();
+					$('#" . $tabKey . "\\\\[" . $formField . "\\\\]clone').val(intval_" . $tabKey . "_" . $formField . ");
+
+					$('#" . $tabKey . "\\\\[" . $formField . "\\\\]clone').keyup(function() {
+						var val_" . $tabKey . "_" . $formField . "_clone = $(this).val();
+						$('[name=" . $tabKey . "\\\\[" . $formField . "\\\\]]').val(val_" . $tabKey . "_" . $formField . "_clone);
+					});
+					$('[name=" . $tabKey . "\\\\[" . $formField . "\\\\]]').keyup(function() {
+						var val_" . $tabKey . "_" . $formField . " = $(this).val();
+						$('#" . $tabKey . "\\\\[" . $formField . "\\\\]clone').val(val_" . $tabKey . "_" . $formField . ");
+					});
+					";
+		}
+
+		// Close the .ready function and attach to the document
+		$return_jsdec .= "});\n";
+		JFactory::getDocument()->addScriptDeclaration($return_jsdec);
+
+		// Return the html build
+		return $return_html;
+	}
 }
