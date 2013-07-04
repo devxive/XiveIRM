@@ -80,26 +80,29 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 		<div class="pull-right">
 			<?php if(JFactory::getUser()->authorise('core.create','com_xiveirm')): ?>
 				<form action="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.edit'); ?>" class="inline">
-					<select name="catid" class="chzn-select input-control" style="width: 362px;" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_NEW_CONTACT'); ?>" onchange="this.form.submit()">
-						<option value=""></option>
-						<?php
-							$options = IRMSystem::getListOptions('categories', false);
-							if($options->client) {
-								echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
-									foreach ($options->client as $key => $val) {
-										echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-									}
-								echo '</optgroup>';
-							}
-							if($options->global) {
-								echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
-									foreach ($options->global as $key => $val) {
-										echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-									}
-								echo '</optgroup>';
-							}
-						?>
-					</select>
+					<?php NHtmlJavaScript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
+					<div class="input-xlarge">
+						<select name="catid" class="chzn-select-category" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_NEW_CONTACT'); ?>" onchange="this.form.submit()">
+							<option value=""></option>
+							<?php
+								$options = IRMSystem::getListOptions('categories', false);
+								if($options->client) {
+									echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
+										foreach ($options->client as $key => $val) {
+											echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+										}
+									echo '</optgroup>';
+								}
+								if($options->global) {
+									echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
+										foreach ($options->global as $key => $val) {
+											echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+										}
+									echo '</optgroup>';
+								}
+							?>
+						</select>
+					</div>
 					<input type="hidden" name="id" value="0">
 				</form>
 			<?php endif; ?>
