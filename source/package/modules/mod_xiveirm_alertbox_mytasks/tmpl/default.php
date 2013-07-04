@@ -9,6 +9,7 @@
 
 defined('_JEXEC') or die;
 
+$user = JFactory::getUser();
 $db = JFactory::getDbo();
 
 	/*
@@ -65,8 +66,35 @@ $db = JFactory::getDbo();
 	$phonenumbersPercent = round(100 / $contacts * $phonenumbers);
 
 
+	/*
+	 * Count all checked out contacts
+	 */
+	$query = $db->getQuery(true);
+	$query
+		->select('COUNT(*)')
+		->from('#__xiveirm_contacts')
+		->where('checked_out != 0');
+
+	$db->setQuery($query);
+	$checkedout_all =  $db->loadResult();
+
+	/*
+	 * Count checked out contacts by current user
+	 */
+	$query = $db->getQuery(true);
+	$query
+		->select('COUNT(*)')
+		->from('#__xiveirm_contacts')
+		->where('checked_out = ' . $user->id . '');
+
+	$db->setQuery($query);
+	$checkedout =  $db->loadResult();
+
+	$checkedoutPercent = round(100 / $checkedout_all * $checkedout);
+
+
 // + Calculate all other entries after
-$totalCount = $flags + $addresses + $phonenumbers;
+$totalCount = $flags + $addresses + $phonenumbers + $checkedout;
 
 function getcssClass($percentage)
 {
@@ -122,27 +150,30 @@ function getcssClass($percentage)
 				</li>
 			<?php } ?>
 
-			<li>
-				<a href="#">
-					<div class="clearfix">
-						<span class="pull-left">Incomplete phone numbers</span>
-						<span class="pull-right"><?php echo $phonenumbersPercent; ?>%</span>
-					</div>
-					<div class="progress progress-mini <?php echo getcssClass($phonenumbersPercent); ?>"><div class="bar" style="width:<?php echo $phonenumbersPercent; ?>%"></div></div>
-				</a>
-			</li>
+			<?php if($phonenumbers > 0) { ?>
+				<li>
+					<a href="#">
+						<div class="clearfix">
+							<span class="pull-left">Incomplete phone numbers</span>
+							<span class="pull-right"><?php echo $phonenumbersPercent; ?>%</span>
+						</div>
+						<div class="progress progress-mini <?php echo getcssClass($phonenumbersPercent); ?>"><div class="bar" style="width:<?php echo $phonenumbersPercent; ?>%"></div></div>
+					</a>
+				</li>
+			<?php } ?>
 
-<!--
-			<li>
-				<a href="#">
-					<div class="clearfix">
-						<span class="pull-left">Vorplanung</span>
-						<span class="pull-right">90%</span>
-					</div>
-					<div class="progress progress-mini <?php echo getcssClass(); ?>"><div class="bar" style="width:90%"></div></div>
-				</a>
-			</li>
--->
+			<?php if($checkedout > 0) { ?>
+				<li>
+					<a href="#">
+						<div class="clearfix">
+							<span class="pull-left">My checked out contacts</span>
+							<span class="pull-right"><?php echo $checkedout . '/' . $checkedout_all; ?></span>
+						</div>
+						<div class="progress progress-mini <?php echo getcssClass($checkedoutPercent); ?>"><div class="bar" style="width:<?php echo $checkedoutPercent; ?>%"></div></div>
+					</a>
+				</li>
+			<?php } ?>
+
 			<li>
 				<a onClick="alert('Link to the global task list or the dashboard!')">
 					Aufgabendetails anzeigen
