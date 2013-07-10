@@ -34,6 +34,7 @@ class XiveirmControllerContactForm extends XiveirmController
 
 		// Get and set the category id for the user if its a new contact to edit in the session if we get one, else return to list
 		if($editId == 0) {
+//			$catId = (int) $app->getUserState('com_xiveirm.edit.contact.catid'); // getUserState is much better than getInt
 			$catId = $app->input->getInt('catid', null, 'array');
 			if($catId >= 0 && (int) $catId) {
 				$app->setUserState('com_xiveirm.edit.contact.catid', $catId);
