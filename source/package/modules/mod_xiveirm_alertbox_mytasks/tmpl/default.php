@@ -9,6 +9,7 @@
 
 defined('_JEXEC') or die;
 
+$session = JFactory::getSession();
 $user = JFactory::getUser();
 $db = JFactory::getDbo();
 
@@ -19,6 +20,10 @@ $db = JFactory::getDbo();
 	$query
 		->select('COUNT(*)')
 		->from('#__xiveirm_contacts');
+
+	if ($irmSession = $session->get('XiveIRMSystem')) {
+		$query->where('client_id = ' . $irmSession->client_id . '');
+	}
 
 	$db->setQuery($query);
 	$contacts = $db->loadResult();
@@ -117,7 +122,7 @@ function getcssClass($percentage)
 <?php if($totalCount > 0) { ?>
 	<li class="grey dark no-border margin-1">
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-			<i class="icon-eye-open icon-animated-wrench icon-only"></i>
+			<i class="icon-eye-open icon-animated-vertical icon-only"></i>
 			<span class="badge"><?php echo $totalCount; ?></span>
 		</a>
 		<ul class="pull-right dropdown-navbar dropdown-menu dropdown-caret dropdown-closer">
@@ -127,8 +132,7 @@ function getcssClass($percentage)
 
 			<?php if($flags > 0) { ?>
 				<li>
-					<!-- Have to be redirected to a filtered list with open flags, may we use &task=contacts.openflags -->
-					<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.openflags'); ?>">
+					<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter&search_pdk=pdk_flagged'); ?>">
 						<div class="clearfix">
 							<span class="pull-left">Open Flags</span>
 							<span class="pull-right"><?php echo $flags . '/' . $contacts; ?></span>
@@ -140,7 +144,7 @@ function getcssClass($percentage)
 
 			<?php if($addresses > 0) { ?>
 				<li>
-					<a href="#">
+					<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter&search_pdk=pdk_incomplete_address'); ?>">
 						<div class="clearfix">
 							<span class="pull-left">Incomplete adresses</span>
 							<span class="pull-right"><?php echo $addressesPercent; ?>%</span>
@@ -152,7 +156,7 @@ function getcssClass($percentage)
 
 			<?php if($phonenumbers > 0) { ?>
 				<li>
-					<a href="#">
+					<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter&search_pdk=pdk_no_phone'); ?>">
 						<div class="clearfix">
 							<span class="pull-left">Incomplete phone numbers</span>
 							<span class="pull-right"><?php echo $phonenumbersPercent; ?>%</span>
@@ -164,7 +168,7 @@ function getcssClass($percentage)
 
 			<?php if($checkedout > 0) { ?>
 				<li>
-					<a href="#">
+					<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter&search_pdk=pdk_checked_out'); ?>">
 						<div class="clearfix">
 							<span class="pull-left">My checked out contacts</span>
 							<span class="pull-right"><?php echo $checkedout . '/' . $checkedout_all; ?></span>
@@ -176,7 +180,7 @@ function getcssClass($percentage)
 
 			<li>
 				<a onClick="alert('Link to the global task list or the dashboard!')">
-					Aufgabendetails anzeigen
+					Show task details
 					<i class="icon-arrow-right"></i>
 				</a>
 			</li>
