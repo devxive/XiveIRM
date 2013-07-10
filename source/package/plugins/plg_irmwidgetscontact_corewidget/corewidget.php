@@ -90,7 +90,7 @@ class PlgIrmWidgetsContactCorewidget extends JPlugin
 		?>
 		<!---------- Begin output buffering: <?php echo $this->tab_key; ?> ---------->
 
-		<div class="widget-box light-border">
+		<div class="widget-box light-border small-margin-top">
 			<div class="widget-header header-color-dark">
 				<h5 class="smaller">Core Widget</h5>
  				<div class="widget-toolbar">
@@ -105,13 +105,17 @@ class PlgIrmWidgetsContactCorewidget extends JPlugin
 			</div>
 			<div class="widget-body">
 				<div class="widget-main padding-5">
-					<?php if($item->modified): ?>
-						<div class="alert alert-warning center">
-							<small>
-								<?php echo JText::_('COM_XIVEIRM_IRMCONTACT_FORM_LAST_MODIFIED') . ' ' . date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)); ?>
-							</small>
-						</div>
-					<?php endif; ?>
+					<div class="alert alert-warning center">
+						<small>
+							<?php
+								if($item->modified && $item->modified != '0000-00-00 00:00:00') {
+									echo JText::_('PLG_IRMWIDGETSCONTACT_COREWIDGET_LAST_MODIFIED') . ': ' . date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified));
+								} else {
+									echo JText::_('PLG_IRMWIDGETSCONTACT_COREWIDGET_NOT_MODIFIED');
+								}
+							?>
+						</small>
+					</div>
 				</div>
 			</div>
 		</div>
