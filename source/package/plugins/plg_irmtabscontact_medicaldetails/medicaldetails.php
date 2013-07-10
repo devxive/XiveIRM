@@ -26,6 +26,13 @@ class PlgIrmTabsContactMedicaldetails extends JPlugin
 	var $tab_key;
 
 	/**
+	 * Stores the tab values
+	 * @var	tabData
+	 * @since	3.5
+	 */
+	var $tabData;
+
+	/**
 	 * INITIATE THE CONSTRUCTOR
 	 */
 	public function __construct(& $subject, $config)
@@ -33,6 +40,16 @@ class PlgIrmTabsContactMedicaldetails extends JPlugin
 		parent::__construct($subject, $config);
 		$this->tab_key = 'medicaldetails';
 		$this->loadLanguage();
+
+		// Get the compoment registry object
+//		$registry = JFactory::getSession()->get('registry')->get('com_xiveirm');
+
+		// Get the userState Object
+//		$userState = (int) $app->getUserState('com_xiveirm.edit.contact');
+		$contactId = (int) JFactory::getApplication()->getUserState('com_xiveirm.edit.contact.id');
+
+		// Get the values from database
+		$this->tabData = IRMSystem::getTabData($contactId, $this->tab_key);
 	}
 
 	/**
@@ -46,6 +63,32 @@ class PlgIrmTabsContactMedicaldetails extends JPlugin
 	}
 
 	/**
+	 *
+	 *
+	 *
+	 */
+	public function loadActionButton()
+	{
+		ob_start();
+		?>
+
+		<button class="btn btn-app btn-mini btn-success"><i class="icon-road"></i> <span>Order</span></button>
+		<button class="btn btn-app btn-mini btn-grey"><i class="icon-file-alt"></i> <span>Template</span></button>
+
+		<!---------- End output buffering: <?php echo $this->tab_key; ?> ---------->
+		<?php
+
+		$tabContent = ob_get_clean();
+
+		$inMasterContainer = array(
+			'tab_key' => $this->tab_key . '-widget',
+			'tabContent' => $tabContent
+		);
+
+		return $inMasterContainer;
+	}
+
+	/**
 	 * @param   object	&$item		The item referenced object which includes the system id of this contact
 	 *
 	 * @return  array			tab_key = The tab identification, tabContent = Content of the Container
@@ -54,38 +97,18 @@ class PlgIrmTabsContactMedicaldetails extends JPlugin
 	 */
 	public function loadInBasedataContainer(&$item = null, &$params = null)
 	{
-		$tabData = IRMSystem::getTabData($item->id, $this->tab_key);
-
 		ob_start();
 		?>
 		<!---------- Begin output buffering: <?php echo $this->tab_key; ?> ---------->
 		<div class="widget-box light-border small-margin-top">
-			<div class="widget-header red hidden-phone visible-desktop">
-				<h5 class="smaller">Actiontoolbar</h5>
-			</div>
-			<div class="widget-body">
-				<div class="widget-main padding-5">
-					<center>
-						<button class="btn btn-app btn-small btn-success"><i class="icon-road"></i> Order</button>
-						<button class="btn btn-app btn-small btn-grey"><i class="icon-file-alt"></i> Template</button>
-						<button class="btn btn-app btn-small btn-info"><i class="icon-eye-open"></i> StreetView</button>
-						<button class="btn btn-app btn-small btn-light"><i class="icon-print"></i> Print</button>
-						<button class="btn btn-app btn-small btn-purple"><i class="icon-cloud-upload"></i> Upload</button>
-						<button class="btn btn-app btn-small btn-pink"><i class="icon-share-alt"></i> Share</button>
-					</center>
-				</div>
-			</div>
-		</div>
-
-		<div class="widget-box light-border">
-			<div class="widget-header red small-margin-top">
+			<div class="widget-header red">
 				<h5 class="smaller"><?php echo JText::_('PLG_IRMTABSCONTACT_MEDICALDETAILS_TABNAME'); ?> Widget</h5>
-				<?php if(isset($tabData->tab_value->infections_set)): ?>
+				<?php if(isset($this->tabData->tab_value->infections_set)): ?>
 					<div class="widget-toolbar">
 						<span class="badge badge-important" data-rel="tooltip" data-placement="bottom" data-original-title="Patient hat akute Infektionen!">Achtung Infektionsgefahr!</span>
 					</div>
 				<?php endif; ?>
-				<?php if(isset($tabData->tab_value->reserve_isolation)): ?>
+				<?php if(isset($this->tabData->tab_value->reserve_isolation)): ?>
 					<div class="widget-toolbar">
 						<span class="label label-large label-info arrowed-in-right arrowed" data-rel="tooltip" data-placement="bottom" data-original-title="Bitte Hinweise zur Umkehrisolation beachten!"><i class="icon-refresh"></i> Achtung Umkehrisolation!</span>
 					</div>
@@ -93,12 +116,12 @@ class PlgIrmTabsContactMedicaldetails extends JPlugin
 			</div>
 			<div class="widget-body">
 				<div class="widget-main padding-5">
-					<?php if(isset($tabData->tab_value->infections_set)) { ?>
+					<?php if(isset($this->tabData->tab_value->infections_set)) { ?>
 						<p>
 							<center class="alert alert-info">Basierend auf den uns vorliegenden Informationen zu den angegebenen Infektionskrankheiten haben wir folgende Artikel rescherchiert!</center>
 							<ul style="list-style: none;">
 							<?php
-								if(isset($tabData->tab_value->infections_set->mrsa))
+								if(isset($this->tabData->tab_value->infections_set->mrsa))
 								{
 									echo '
 										<li style="background: url(http://www.gefatex.de/favicon.ico) 0% 50% no-repeat; background-size: 3%; padding-left: 25px;">
@@ -106,7 +129,7 @@ class PlgIrmTabsContactMedicaldetails extends JPlugin
 										</li>
 									';
 								}
-								if(isset($tabData->tab_value->infections_set->vre))
+								if(isset($this->tabData->tab_value->infections_set->vre))
 								{
 									echo '
 										<li style="background: url(http://www.gefatex.de/favicon.ico) 0% 50% no-repeat; background-size: 3%; padding-left: 25px;">
@@ -114,7 +137,7 @@ class PlgIrmTabsContactMedicaldetails extends JPlugin
 										</li>
 									';
 								}
-								if(isset($tabData->tab_value->infections_set->esbl))
+								if(isset($this->tabData->tab_value->infections_set->esbl))
 								{
 									echo '
 										<li style="background: url(http://www.gefatex.de/favicon.ico) 0% 50% no-repeat; background-size: 3%; padding-left: 25px;">
@@ -122,23 +145,23 @@ class PlgIrmTabsContactMedicaldetails extends JPlugin
 										</li>
 									';
 								}
-								if(isset($tabData->tab_value->infections_set->hepa) || isset($tabData->tab_value->infections_set->hepb) || isset($tabData->tab_value->infections_set->hepc) || isset($tabData->tab_value->infections_set->hepd) || isset($tabData->tab_value->infections_set->hepe))
+								if(isset($this->tabData->tab_value->infections_set->hepa) || isset($this->tabData->tab_value->infections_set->hepb) || isset($this->tabData->tab_value->infections_set->hepc) || isset($this->tabData->tab_value->infections_set->hepd) || isset($this->tabData->tab_value->infections_set->hepe))
 								{
 									echo '
 										<li style="background: url(http://www.onmeda.de/favicon.ico) 0% 50% no-repeat; background-size: 3%; padding-left: 25px;">
 											<a href="http://www.onmeda.de/krankheiten/hepatitis-vorbeugen-1319-10.html" target="_blank">Ma&szlig;nahmen zur Vorbeugung einer Hepatitis bei Onmeda</a><br>
 											<div class="btn-group">
 											' .
-											(isset($tabData->tab_value->infections_set->hepa) ? '<a class="btn btn-minier btn-purple" href="http://www.onmeda.de/krankheiten/hepatitis_a.html" target="_blank">Typ A</a>' : '')
-											. (isset($tabData->tab_value->infections_set->hepb) ? '<a class="btn btn-minier btn-purple" href="http://www.onmeda.de/krankheiten/hepatitis_b.html" target="_blank">Typ B</a>' : '')
-											. (isset($tabData->tab_value->infections_set->hepc) ? '<a class="btn btn-minier btn-purple" href="http://www.onmeda.de/krankheiten/hepatitis_c.html" target="_blank">Typ C</a>' : '')
-											. (isset($tabData->tab_value->infections_set->hepd) ? '<a class="btn btn-minier btn-purple" href="http://www.onmeda.de/krankheiten/hepatitis_d.html" target="_blank">Typ D</a>' : '')
-											. (isset($tabData->tab_value->infections_set->hepe) ? '<a class="btn btn-minier btn-purple" href="http://www.onmeda.de/krankheiten/hepatitis_e.html" target="_blank">Typ E</a>' : '')
+											(isset($this->tabData->tab_value->infections_set->hepa) ? '<a class="btn btn-minier btn-purple" href="http://www.onmeda.de/krankheiten/hepatitis_a.html" target="_blank">Typ A</a>' : '')
+											. (isset($this->tabData->tab_value->infections_set->hepb) ? '<a class="btn btn-minier btn-purple" href="http://www.onmeda.de/krankheiten/hepatitis_b.html" target="_blank">Typ B</a>' : '')
+											. (isset($this->tabData->tab_value->infections_set->hepc) ? '<a class="btn btn-minier btn-purple" href="http://www.onmeda.de/krankheiten/hepatitis_c.html" target="_blank">Typ C</a>' : '')
+											. (isset($this->tabData->tab_value->infections_set->hepd) ? '<a class="btn btn-minier btn-purple" href="http://www.onmeda.de/krankheiten/hepatitis_d.html" target="_blank">Typ D</a>' : '')
+											. (isset($this->tabData->tab_value->infections_set->hepe) ? '<a class="btn btn-minier btn-purple" href="http://www.onmeda.de/krankheiten/hepatitis_e.html" target="_blank">Typ E</a>' : '')
 											. ' </div>
 										</li>
 									';
 								}
-								if(isset($tabData->tab_value->infections_set->hiv))
+								if(isset($this->tabData->tab_value->infections_set->hiv))
 								{
 									echo '
 										<li style="background: url(http://upload.wikimedia.org/wikipedia/commons/9/9e/Wikipedia-logo-v2-de.svg) 0% 50% no-repeat; background-size: 3%; padding-left: 25px;">
@@ -146,7 +169,7 @@ class PlgIrmTabsContactMedicaldetails extends JPlugin
 										</li>
 									';
 								}
-								if(isset($tabData->tab_value->infections_set->clostdiff))
+								if(isset($this->tabData->tab_value->infections_set->clostdiff))
 								{
 									echo '
 										<li style="background: url(http://www.berlin.de/favicon.ico) 0% 50% no-repeat; background-size: 3%; padding-left: 25px;">
@@ -158,7 +181,7 @@ class PlgIrmTabsContactMedicaldetails extends JPlugin
 							</ul>
 						</p>
 					<?php } ?>
-					<?php if(isset($tabData->tab_value->reserve_isolation)): ?>
+					<?php if(isset($this->tabData->tab_value->reserve_isolation)): ?>
 						<p>
 							<ul style="list-style: none;">
 								<li style="background: url(http://www.pflegewiki.de/favicon.ico) 0% 50% no-repeat; background-size: 3%; padding-left: 25px;">
@@ -215,159 +238,154 @@ class PlgIrmTabsContactMedicaldetails extends JPlugin
 	 */
 	public function loadTabContainer(&$item = null)
 	{
-		// Get the values from database
-		$tabData = IRMSystem::getTabData($item->id, $this->tab_key);
-
 //		echo '<pre>';
-//		print_r($tabData);
+//		print_r($this->tabData);
 //		echo '</pre>';
 		ob_start();
 		?>
 		<!---------- Begin output buffering: <?php echo $this->tab_key; ?> ---------->
 		<style>
-			#chzn-select .chzn-container, #chzn-select .chzn-container-multi, #chzn-select .chzn-drop {width: 99.6% !important;}
 			.widget-toolbar .popover {width: 220px;}
 			.widget-toolbar .popover .popover-content {line-height: 15px;}
 		</style>
 
 		<div class="row-fluid">
-		<div class="span6">
-			<div class="widget-box">
-				<div class="widget-header">
-					<h4><i class="icon-random"></i> Transportation info</h4>
-					<span class="widget-toolbar">
-						<span class="help-button"><i class="icon-random"></i></span>
-					</span>
-				</div>
-				<div class="widget-body">
-					<div class="widget-body-inner">
-						<div class="widget-main">
-							<div class="control-group">
-								<label class="control-label">Transportmittel</label>
-								<div class="controls">
-									<input name="<?php echo $this->tab_key; ?>[transport_type]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->transport_type) ? 'value="' . $tabData->tab_value->transport_type . '"' : ''; ?>>
+			<div class="span6">
+				<div class="widget-box">
+					<div class="widget-header">
+						<h4><i class="icon-puzzle-piece green"></i> Transportation info</h4>
+						<span class="widget-toolbar">
+							<span class="help-button"><i class="icon-random"></i></span>
+						</span>
+					</div>
+					<div class="widget-body">
+						<div class="widget-body-inner">
+							<div class="widget-main">
+								<div class="control-group">
+									<label class="control-label">Transportmittel</label>
+									<div class="controls">
+										<input class="input-control span12" name="<?php echo $this->tab_key; ?>[transport_type]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($this->tabData->tab_value->transport_type) ? 'value="' . $this->tabData->tab_value->transport_type . '"' : ''; ?>>
+									</div>
 								</div>
-							</div>
-							<div class="control-group">
-								<label class="control-label">Transportart</label>
-								<div class="controls">
-									<input name="<?php echo $this->tab_key; ?>[transport_properties]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->transport_properties) ? 'value="' . $tabData->tab_value->transport_properties . '"' : ''; ?>>
+								<div class="control-group">
+									<label class="control-label">Transportart</label>
+									<div class="controls">
+										<input class="input-control span12" name="<?php echo $this->tab_key; ?>[transport_properties]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($this->tabData->tab_value->transport_properties) ? 'value="' . $this->tabData->tab_value->transport_properties . '"' : ''; ?>>
+									</div>
 								</div>
-							</div>
-							<div class="control-group">
-								<label class="control-label">Accompaniment</label>
-								<div class="controls">
-									<input name="<?php echo $this->tab_key; ?>[companion]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->companion) ? 'value="' . $tabData->tab_value->companion . '"' : ''; ?>>
+								<div class="control-group">
+									<label class="control-label">Accompaniment</label>
+									<div class="controls">
+										<input class="input-control span12" name="<?php echo $this->tab_key; ?>[companion]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($this->tabData->tab_value->companion) ? 'value="' . $this->tabData->tab_value->companion . '"' : ''; ?>>
+									</div>
 								</div>
-							</div>
-							<div class="control-group">
-								<label class="control-label">Mobile Oxigen</label>
-								<div class="controls">
-									<input name="<?php echo $this->tab_key; ?>[oxygen]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->oxygen) ? 'value="' . $tabData->tab_value->oxygen . '"' : ''; ?>>
+								<div class="control-group">
+									<label class="control-label">Mobile Oxigen</label>
+									<div class="controls">
+										<input class="input-control span12" name="<?php echo $this->tab_key; ?>[oxygen]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($this->tabData->tab_value->oxygen) ? 'value="' . $this->tabData->tab_value->oxygen . '"' : ''; ?>>
+									</div>
 								</div>
-							</div>
-							<div class="control-group">
-								<label class="control-label">Vacuum Mattress</label>
-								<div class="controls">
-									<input name="<?php echo $this->tab_key; ?>[vacuum_mattress]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->vacuum_mattress) ? 'value="' . $tabData->tab_value->vacuum_mattress . '"' : ''; ?>>
+								<div class="control-group">
+									<label class="control-label">Vacuum Mattress</label>
+									<div class="controls">
+										<input class="input-control span12" name="<?php echo $this->tab_key; ?>[vacuum_mattress]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($this->tabData->tab_value->vacuum_mattress) ? 'value="' . $this->tabData->tab_value->vacuum_mattress . '"' : ''; ?>>
+									</div>
 								</div>
-							</div>
-							<div class="control-group">
-								<label class="control-label">Other Aids</label>
-								<div class="controls">
-									<input name="<?php echo $this->tab_key; ?>[other_aids]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->other_aids) ? 'value="' . $tabData->tab_value->other_aids . '"' : ''; ?>>
+								<div class="control-group">
+									<label class="control-label">Other Aids</label>
+									<div class="controls">
+										<input class="input-control span12" name="<?php echo $this->tab_key; ?>[other_aids]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($this->tabData->tab_value->other_aids) ? 'value="' . $this->tabData->tab_value->other_aids . '"' : ''; ?>>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="span6">
-			<div class="widget-box">
-				<div class="widget-header">
-					<h4><i class="icon-tags"></i>Infects, Illness & Adipositas</h4>
-					<span class="widget-toolbar">
-						<span class="help-button"><i class="icon-random"></i></span>
-					</span>
-				</div>
-				<div class="widget-body">
-					<div class="widget-body-inner">
-						<div class="widget-main">
-							<div class="control-group">
-								<label class="control-label">Infections <i class="icon-tags red"></i></label>
-								<div id="chzn-select" class="controls">
-									<select multiple name="<?php echo $this->tab_key; ?>[infections][]" data-placeholder="Select Informations here to activate!" class="chzn-select">
-										<option value=""></option>
-										<option value="mrsa" <?php echo isset($tabData->tab_value->infections_set->mrsa) ? 'selected' : ''; ?>>MRSA</option>
-										<option value="vre" <?php echo isset($tabData->tab_value->infections_set->vre) ? 'selected' : ''; ?>>VRE</option>
-										<option value="esbl" <?php echo isset($tabData->tab_value->infections_set->esbl) ? 'selected' : ''; ?>>ESBL</option>
-										<option value="hepa" <?php echo isset($tabData->tab_value->infections_set->hepa) ? 'selected' : ''; ?>>HEP A</option>
-										<option value="hepb" <?php echo isset($tabData->tab_value->infections_set->hepb) ? 'selected' : ''; ?>>HEP B</option>
-										<option value="hepc" <?php echo isset($tabData->tab_value->infections_set->hepc) ? 'selected' : ''; ?>>HEP C</option>
-										<option value="hepd" <?php echo isset($tabData->tab_value->infections_set->hepd) ? 'selected' : ''; ?>>HEP D</option>
-										<option value="hepe" <?php echo isset($tabData->tab_value->infections_set->hepe) ? 'selected' : ''; ?>>HEP E</option>
-										<option value="hiv" <?php echo isset($tabData->tab_value->infections_set->hiv) ? 'selected' : ''; ?>>HIV</option>
-										<option value="clostdiff" <?php echo isset($tabData->tab_value->infections_set->clostdiff) ? 'selected' : ''; ?>>Clostr. Difficile</option>
-									</select>
+			<div class="span6">
+				<div class="widget-box">
+					<div class="widget-header">
+						<h4><i class="icon-puzzle-piece red"></i>Infects, Illness & Adipositas</h4>
+						<span class="widget-toolbar">
+							<span class="help-button"><i class="icon-random"></i></span>
+						</span>
+					</div>
+					<div class="widget-body">
+						<div class="widget-body-inner">
+							<div class="widget-main">
+								<div class="control-group">
+									<label class="control-label">Infections <i class="icon-tags red"></i></label>
+									<div class="controls">
+										<?php NHtmlJavaScript::setChosen('.chzn-select-infect', false, array('width' => '100%')); ?>
+										<select multiple name="<?php echo $this->tab_key; ?>[infections][]" data-placeholder="Click here to select your choice!" class="chzn-select-infect input-control">
+											<option value=""></option>
+											<option value="mrsa" <?php echo isset($this->tabData->tab_value->infections_set->mrsa) ? 'selected' : ''; ?>>MRSA</option>
+											<option value="vre" <?php echo isset($this->tabData->tab_value->infections_set->vre) ? 'selected' : ''; ?>>VRE</option>
+											<option value="esbl" <?php echo isset($this->tabData->tab_value->infections_set->esbl) ? 'selected' : ''; ?>>ESBL</option>
+											<option value="hepa" <?php echo isset($this->tabData->tab_value->infections_set->hepa) ? 'selected' : ''; ?>>HEP A</option>
+											<option value="hepb" <?php echo isset($this->tabData->tab_value->infections_set->hepb) ? 'selected' : ''; ?>>HEP B</option>
+											<option value="hepc" <?php echo isset($this->tabData->tab_value->infections_set->hepc) ? 'selected' : ''; ?>>HEP C</option>
+											<option value="hepd" <?php echo isset($this->tabData->tab_value->infections_set->hepd) ? 'selected' : ''; ?>>HEP D</option>
+											<option value="hepe" <?php echo isset($this->tabData->tab_value->infections_set->hepe) ? 'selected' : ''; ?>>HEP E</option>
+											<option value="hiv" <?php echo isset($this->tabData->tab_value->infections_set->hiv) ? 'selected' : ''; ?>>HIV</option>
+											<option value="clostdiff" <?php echo isset($this->tabData->tab_value->infections_set->clostdiff) ? 'selected' : ''; ?>>Clostr. Difficile</option>
+										</select>
+									</div>
 								</div>
-							</div>
-							<div class="control-group">
-								<label class="control-label">Umkehrisolation <i class="icon-tag red"></i></label>
-								<div class="controls">
-									<input name="<?php echo $this->tab_key; ?>[reserve_isolation]" type="checkbox" class="ace-switch ace-switch-6" <?php echo isset($tabData->tab_value->reserve_isolation) ? 'checked' : ''; ?>>
-									<span class="lbl"> </span>
+								<div class="control-group">
+									<label class="control-label">Umkehrisolation <i class="icon-tag red"></i></label>
+									<div class="controls">
+										<input name="<?php echo $this->tab_key; ?>[reserve_isolation]" type="checkbox" class="ace-switch ace-switch-6 input-control" <?php echo isset($this->tabData->tab_value->reserve_isolation) ? 'checked' : ''; ?>>
+										<span class="lbl"> </span>
+									</div>
 								</div>
-							</div>
-							<div class="control-group">
-								<label class="control-label">Sonstiges <i class="icon-tag red"></i></label>
-								<div class="controls">
-									<input name="<?php echo $this->tab_key; ?>[other_infect]" type="text" class="span12" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->other_infect) ? 'value="' . $tabData->tab_value->other_infect . '"' : ''; ?>>
+								<div class="control-group">
+									<label class="control-label">Sonstiges <i class="icon-tag red"></i></label>
+									<div class="controls">
+										<input class="input-control span12" name="<?php echo $this->tab_key; ?>[other_infect]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($this->tabData->tab_value->other_infect) ? 'value="' . $this->tabData->tab_value->other_infect . '"' : ''; ?>>
+									</div>
 								</div>
-							</div>
-							<div class="control-group">
-								<label class="control-label">Obese 120KG+ <i class="icon-tag orange"></i></label>
-								<div class="controls">
-									<input name="<?php echo $this->tab_key; ?>[obese_120]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->obese_120) ? 'value="' . $tabData->tab_value->obese_120 . '"' : ''; ?>>
+								<div class="control-group">
+									<label class="control-label">Obese 120KG+ <i class="icon-tag orange"></i></label>
+									<div class="controls">
+										<input class="input-control span12" name="<?php echo $this->tab_key; ?>[obese_120]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($this->tabData->tab_value->obese_120) ? 'value="' . $this->tabData->tab_value->obese_120 . '"' : ''; ?>>
+									</div>
 								</div>
-							</div>
-							<div class="control-group">
-								<label class="control-label">Sonstiges <i class="icon-tag orange"></i></label>
-								<div class="controls">
-									<input name="<?php echo $this->tab_key; ?>[obese_other]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($tabData->tab_value->obese_other) ? 'value="' . $tabData->tab_value->obese_other . '"' : ''; ?>>
+								<div class="control-group">
+									<label class="control-label">Sonstiges <i class="icon-tag orange"></i></label>
+									<div class="controls">
+										<input class="input-control span12" name="<?php echo $this->tab_key; ?>[obese_other]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($this->tabData->tab_value->obese_other) ? 'value="' . $this->tabData->tab_value->obese_other . '"' : ''; ?>>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-
-			<div class="widget-box small-margin-top">
-				<div class="widget-header">
-					<h5><i class="icon-tag orange"></i>Transportation related Informations</h5>
-				</div>
-				<div class="widget-body">
-					<div class="widget-body-inner">
-						<div class="widget-main">
-							<div class="control-group">
-								<label class="control-label">Insurance</label>
-								<div class="controls">
-									<input name="<?php echo $this->tab_key; ?>[insurance]" type="text" placeholder="Enter Informations here" <?php echo isset($tabData->tab_value->insurance) ? 'value="' . $tabData->tab_value->insurance . '"' : ''; ?>>
-									<input name="<?php echo $this->tab_key; ?>[supervisor_name]" type="text" placeholder="Supervisor Name" />
-									<input name="<?php echo $this->tab_key; ?>[supervisor_phone]" type="text" placeholder="Supervisor Phone" />
-									<input name="<?php echo $this->tab_key; ?>[supervisor_desc]" type="text" placeholder="Supervisor Description" />
+	
+				<div class="widget-box small-margin-top">
+					<div class="widget-header">
+						<h4><i class="icon-puzzle-piece orange"></i>Insurance info</h4>
+					</div>
+					<div class="widget-body">
+						<div class="widget-body-inner">
+							<div class="widget-main">
+								<div class="control-group">
+									<label class="control-label">Insurance</label>
+									<div class="controls">
+										<input class="input-control span6" name="<?php echo $this->tab_key; ?>[insurance]" type="text" placeholder="Insurance" <?php echo isset($this->tabData->tab_value->insurance) ? 'value="' . $this->tabData->tab_value->insurance . '"' : ''; ?> />
+										<input class="input-control span6" name="<?php echo $this->tab_key; ?>[insurance_no]" type="text" placeholder="Insurance Number" <?php echo isset($this->tabData->tab_value->insurance_no) ? 'value="' . $this->tabData->tab_value->insurance_no . '"' : ''; ?> />
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-		</div>
+			</div><!-- end .span6 -->
+		</div><!-- end .row-fluid -->
 
 		<div class="hr"></div>
 		<center>
-			<span class="help-button ace-popover" data-trigger="hover" data-placement="top" data-content="Informations given here are used in other applications, such as the despatching app => order form. Use this as help to minimize inputs during remaining phone orders." data-original-title="Info about cross referencing!"><i class="icon-random"></i></span>
+			<span class="help-button xpopover" data-trigger="hover" data-placement="top" data-content="Informations given here are used in other applications, such as the despatching app => order form. Use this as help to minimize inputs during remaining phone orders." data-original-title="Info about cross referencing!"><i class="icon-random"></i></span>
 		</center>
 
 		<!---------- End output buffering: <?php echo $this->tab_key; ?> ---------->
@@ -384,7 +402,8 @@ class PlgIrmTabsContactMedicaldetails extends JPlugin
 	}
 
 	/**
-	 * Push Formfields in the core form. Useful for recommended fields. used parts at controls-row!
+	 * Push Pseudo form fields in the core form. Useful for recommended fields.
+	 * Put also a JS function in, where the input fields were cloned in realtime between the pseudo and the real form field.
 	 *
 	 * @return  array			tab_key = The tab identification, tabName = Translateable string from .ini file
 	 *
@@ -392,9 +411,23 @@ class PlgIrmTabsContactMedicaldetails extends JPlugin
 	 */
 	public function loadInCoreformForm()
 	{
+		/**
+		 * Put the name (inner brackets) in an array.
+		 * Example: <?php echo $this->tab_key; ?>[insurance] -> use insurance as name in the array
+		 * NOTE The form field must exist in your tabApp!
+		 *
+		 * @returns the html form
+		 */
+		$inputFields = array(
+			'insurance' => 'Krankenkasse',
+			'insurance_no' => 'Versicherungsnummer'
+		);
+
+		$html = IRMSystem::cloneTabFormFields($inputFields, $this->tab_key);
+
 		$inForm = array(
-			'formLabel' => 'Medical Details',
-			'formFields' => '<input type="text" class="input-control span6" name="' . $this->tab_key . '[insurance]" placeholder="Krankenkasse">'
+			'formLabel' => 'Insurance Infos*',
+			'formFields' => $html
 		);
 
 		return $inForm;
