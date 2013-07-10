@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modelform');
 jimport('joomla.event.dispatcher');
+nimport('NItem.Helper', false);
 
 /**
  * Xiveirm model.
@@ -248,15 +249,16 @@ class XiveirmModelApi extends JModelForm
 					'mobile = ' . $db->quote($data['mobile']) . '',
 					'email = ' . $db->quote($data['email']) . '',
 					'web = ' . $db->quote($data['web']) . '',
-					'remarks = ' . $db->quote($data['remarks']) . '');
-	
+					'remarks = ' . $db->quote($data['remarks']) . '',
+					'modified = ' . $db->quote(NItemHelper::getDate('MySQL')) . '');
+
 				$query
 					->update($db->quoteName('#__xiveirm_contacts'))
 					->set($fields)
 					->where('id = ' . $db->quote($id) . '');
-	
+
 				$db->setQuery($query);
-	
+
 				// Try to store or get the error code for debugging
 				try
 				{
