@@ -16,7 +16,7 @@ require_once JPATH_COMPONENT.'/helpers/irmsystem.php';
 
 // Include dependancies
 jimport('joomla.application.component.controller');
-nawala_import('core.nfactory', 'once');
+nimport('item.helper', 'once');
 
 // Execute the task.
 $controller	= JControllerLegacy::getInstance('Xiveirm');
