@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts` (
 `state` TINYINT(1) NOT NULL DEFAULT '1',
 `created` DATETIME NOT NULL,
 `created_by` INT(11) NOT NULL,
-`checked_out` INT(11) NOT NULL,
+`checked_out` INT(11) NOT NULL DEFAULT '0',
 `checked_out_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 `modified` DATETIME NOT NULL,
 `catid` INT(11) NOT NULL COMMENT 'XAP categories',
