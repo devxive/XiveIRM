@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die;
 
+$app = JFactory::getApplication();
+
 // Import HTML and Helper Classes
 nimport('NHtml.JavaScript');
 nimport('NHtml.DataTables');
@@ -16,246 +18,286 @@ nimport('NItem.Helper', false);
 
 NHtmlJavaScript::setAutoRemove();
 NHtmlJavaScript::setToggle('extended', 'toggleExtend');
-NHtmlJavaScript::setToggleFunction('toggleFunction', 'toggle_id');
+NHtmlJavaScript::setTooltip('.xtooltip');
+NHtmlJavaScript::setPopover('.xpopover');
+NHtmlJavaScript::loadMoment();
 
 // Init the dataTable
 $tableParams = '
 	{"bProcessing": true,
-	"bPaginate": false,
+	"bAutoWidth": false,
+	"bLengthChange": true,
+	"bStateSave": false,
+	"aaSorting": [[3,"asc"]],
+	"sPaginationType": "bootstrap",
 	"aoColumnDefs": [
 		{ "bSortable": false, "aTargets": [0] },
+		{ "bSortable": false, "aTargets": [1] },
+		{ "bSortable": false, "aTargets": [6] },
 		{ "bSortable": false, "aTargets": [7] },
+		{ "bSortable": false, "aTargets": [8] },
 		{ "bSearchable": false, "aTargets": [0] },
-		{ "bSearchable": false, "aTargets": [6] },
-		{ "bSearchable": false, "aTargets": [7] }
-	]}
+		{ "bSearchable": false, "aTargets": [1] },
+		{ "bSearchable": false, "aTargets": [7] },
+		{ "bSearchable": false, "aTargets": [8] }
+	],
+	"oLanguage": {
+		"sLengthMenu": \'Zeige <select>\'+
+			\'<option vlaue="10">10</option>\'+
+			\'<option vlaue="25">25</option>\'+
+			\'<option vlaue="50">50</option>\'+
+			\'<option vlaue="100">100</option>\'+
+			\'<option vlaue="1">1 (Testzwecke)</option>\'+
+			\'<option vlaue="-1">Alle (Achtung!)</option>\'+
+			\'</select> Eintraege\'
+	},
+	"sDom": "<\'row-fluid\'<\'span6\'T<\'#dt-table_category_filter\'>l><\'span6\'f>r>t<\'row-fluid\'<\'span6\'i><\'span6\'p>>"
+}
 ';
-NHtmlDataTables::loadDataTable('table_contacts', $tableParams);
+
+//	"aoColumnDefs": [
+//		{ "bSortable": false, "aTargets": [ 0 ] }
+//	],
+//	"aaSorting": [[1, 'asc']]
+
+
+NHtmlDataTables::loadDataTable('table_contacts', $tableParams, true);
 
 // Load the XiveIRMSystem Session Data (Performed by the XiveIRM System Plugin)
 $xsession = JFactory::getSession()->get('XiveIRMSystem');
 
-$letters = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
-$letters_am = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M');
-$letters_nz = array('N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+// Check for filters
+$filter = $app->getUserState('com_xiveirm.contacts.filter');
+$filter_global = isset($filter['global']) ? $filter['global'] : null;
+$filter_catid = isset($filter['catid']) ? $filter['catid'] : null;
+$filter_pdk = isset($filter['pdk']) ? $filter['pdk'] : null;
 
-$search = JFactory::getApplication()->input->get('filter_search', '', 'filter');
-$global_search = JFactory::getApplication()->input->get('global_search', '', 'filter');
+//	echo '<pre>';
+//	print_r($filter);
+//	echo '</pre>';
 ?>
 <script>
-
-
+// Set the classes that TableTools uses to something suitable for Bootstrap
+jQuery(function() {
+});
 </script>
+
 <div class="row-fluid">
 	<div class="header smaller lighter blue">
 		<h1>
 			<div>
 				<i class="icon-group"></i>
-			<?php if(!$search && !$global_search) { ?>
-				<span class="hidden-phone hidden-tablet visible-desktop"><?php echo JText::_('COM_XIVEIRM_DES_CONTACT_LIST_CONTACTS_ALL'); ?></span>
-				<span class="hidden-phone visible-tablet hidden-desktop"><?php echo JText::_('COM_XIVEIRM_TAB_CONTACT_LIST_CONTACTS_ALL'); ?></span>
-				<span class="visible-phone hidden-tablet hidden-desktop"><?php echo JText::_('COM_XIVEIRM_PHO_CONTACT_LIST_CONTACTS_ALL'); ?></span>
-			<?php } else if($search == '09' || in_array($search, $letters)) { ?>
-				<span class="hidden-phone hidden-tablet visible-desktop"><?php echo JText::_('COM_XIVEIRM_DES_CONTACT_LIST_CONTACTS_STARTS'); ?></span>
-				<span class="hidden-phone visible-tablet hidden-desktop"><?php echo JText::_('COM_XIVEIRM_TAB_CONTACT_LIST_CONTACTS_STARTS'); ?></span>
-				<span class="visible-phone hidden-tablet hidden-desktop"><?php echo JText::_('COM_XIVEIRM_PHO_CONTACT_LIST_CONTACTS_STARTS'); ?></span>
-				<?php echo $search; ?>
-			<?php } else if($global_search) { ?>
-				<span class="hidden-phone hidden-tablet visible-desktop"><?php echo JText::_('COM_XIVEIRM_DES_CONTACT_LIST_CONTACTS_LIKE'); ?></span>
-				<span class="hidden-phone visible-tablet hidden-desktop"><?php echo JText::_('COM_XIVEIRM_TAB_CONTACT_LIST_CONTACTS_LIKE'); ?></span>
-				<span class="visible-phone hidden-tablet hidden-desktop"><?php echo JText::_('COM_XIVEIRM_PHO_CONTACT_LIST_CONTACTS_LIKE'); ?></span>
-				<?php echo $global_search; ?>
-				<?php $addLastName = $global_search; ?>
+			<?php if(!$filter) { ?>
+				<span><?php echo JText::_('COM_XIVEIRM_CONTACT_LIST_CONTACTS_ALL'); ?></span>
+			<?php } else if($filter_catid) { ?>
+				<span><?php echo JText::_('COM_XIVEIRM_CONTACT_LIST_CONTACTS_CAT'); ?></span>
+				<?php echo NItemHelper::getTitleById('category', $filter_catid); ?>
+			<?php } else if($filter_pdk) { ?>
+				<span><span class="hidden-phone"><?php echo JText::_('COM_XIVEIRM_CONTACT_LIST_CONTACTS_FILTER_PDK'); ?></span> <?php echo JText::_('COM_XIVEIRM_CONTACT_LIST_CONTACTS_FILTER_' . strtoupper($filter_pdk)); ?></span>
+			<?php } else if($filter_global) { ?>
+				<span><?php echo JText::sprintf('COM_XIVEIRM_CONTACT_LIST_CONTACTS_CUSTOM', $filter_global); ?></span>
+				<?php $addLastName = $filter_global; ?>
 			<?php } else { ?>
-				<span class="hidden-phone hidden-tablet visible-desktop"></span>
-				<span class="hidden-phone visible-tablet hidden-desktop"></span>
-				<span class="visible-phone hidden-tablet hidden-desktop"></span>
-				Please notify the Support about this issue! Code: 8001
+				<span><?php echo JText::_('COM_XIVEIRM_CONTACT_LIST_CONTACTS_FILTER_UNKNOWN'); ?></span>
 			<?php } ?>
 			</div>
 		</h1>
 	</div><!--/page-header-->
 
-	<div class="row">
-		<div class="pull-right">
-			<?php if(JFactory::getUser()->authorise('core.create','com_xiveirm')): ?>
-				<form action="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.edit'); ?>" class="inline">
-					<?php NHtmlJavaScript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
-					<div class="input-xlarge">
-						<select name="catid" class="chzn-select-category" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_NEW_CONTACT'); ?>" onchange="this.form.submit()">
-							<option value=""></option>
-							<?php
-								$options = IRMSystem::getListOptions('categories', false);
-								if($options->client) {
-									echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
-										foreach ($options->client as $key => $val) {
-											echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-										}
-									echo '</optgroup>';
-								}
-								if($options->global) {
-									echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
-										foreach ($options->global as $key => $val) {
-											echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-										}
-									echo '</optgroup>';
-								}
-							?>
-						</select>
-					</div>
-					<input type="hidden" name="id" value="0">
-				</form>
-			<?php endif; ?>
-			<div class="btn-group">
-				<?php if($search || $global_search) { ?>
-					<a href="javascript:document.getElementById('form-reset-search').submit()" class="btn btn-mini btn-primary"><i class="icon-undo"></i><span class="hidden-phone hidden-480"> Reset Search</span></a>
-				<?php } ?>
-				<a id="toggleExtend" class="btn btn-mini btn-primary inline"><i class="icon-double-angle-down"></i><span class="hidden-phone hidden-480"> More</span></a>
+	<div class="table-header">
+		<div class="row-fluid">
+			<div class="span6">
+				What'ya wanna search today?
 			</div>
-			<form id="form-reset-search" method="post" class="inline form-validate" enctype="multipart/form-data">
-				<input type="hidden" name="filter_search" value="">
-				<input type="hidden" name="global_search" value="">
+			<div class="span6">
+				<div class="pull-right">
+					<?php if(JFactory::getUser()->authorise('core.create','com_xiveirm')): ?>
+						<form action="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.edit'); ?>" class="inline">
+							<?php NHtmlJavaScript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
+							<div class="input-xlarge">
+								<select name="catid" class="chzn-select-category" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_NEW_CONTACT'); ?>" onchange="this.form.submit()">
+									<option value=""></option>
+									<?php
+										$options = IRMSystem::getListOptions('categories', false);
+										if($options->client) {
+											echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
+												foreach ($options->client as $key => $val) {
+													echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+												}
+											echo '</optgroup>';
+										}
+										if($options->global) {
+											echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
+												foreach ($options->global as $key => $val) {
+													echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+												}
+											echo '</optgroup>';
+										}
+									?>
+								</select>
+							</div>
+							<input type="hidden" name="id" value="0">
+						</form>
+					<?php endif; ?>
+					<div class="btn-group">
+						<a id="toggleExtend" class="btn btn-small btn-success inline"><i class="icon-double-angle-down"></i><span class="hidden-phone hidden-480"> <?php echo JText::_('COM_XIVEIRM_MORE'); ?></span></a>
+						<?php if(!empty($filter)) { ?>
+							<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter'); ?>" class="btn btn-small btn-danger inline"><i class="icon-undo"></i><span class="hidden-phone hidden-480"> <?php echo JText::_('COM_XIVEIRM_RESET_FILTER'); ?></span></a>
+						<?php } ?>
+					</div>
+				</div>
+			</div>
+		</div> <!-- /.row-fluid -->
+		<div class="row-fluid extended">
+			<div class="header smaller lighter green">
+				<h3>Extended search options</h3>
+			</div>
+			<form class="form-horizontal" action="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter'); ?>" class="inline">
+				<div class="row-fluid">
+					<div class="span6">
+						<div class="control-group">
+							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_FILTER_CATEGORY_LBL'); ?></label>
+							<div class="controls controls-row">
+								<?php NHtmlJavaScript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
+								<div class="span12">
+									<select name="search_catid" class="chzn-select-category" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" onchange="this.form.submit()">
+										<option value=""></option>
+										<?php
+											$options = IRMSystem::getListOptions('categories', false);
+											if($options->client) {
+												echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
+													foreach ($options->client as $key => $val) {
+														echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+													}
+												echo '</optgroup>';
+											}
+											if($options->global) {
+												echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
+													foreach ($options->global as $key => $val) {
+														echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+													}
+												echo '</optgroup>';
+											}
+										?>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_FILTER_SEARCH_LBL'); ?></label>
+							<div class="controls controls-row">
+								<span class="input-icon">
+									<input class="span12" type="text" name="search_global" placeholder="<?php echo JText::_('COM_XIVEIRM_FILTER_SEARCH_PHOLD'); ?>"/>
+									<i class="icon-search"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="span6">
+						<div class="control-group">
+							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_LBL'); ?></label>
+							<div class="controls controls-row">
+								<div class="btn-group row-fluid">
+									<span><a class="span6 btn btn-mini btn-yellow" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter&search_pdk=pdk_no_customer_id'); ?>"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_BTN_NO_CUSTOMER_ID'); ?></a></span>
+									<span><a class="span6 btn btn-mini btn-purple" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter&search_pdk=pdk_special'); ?>"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_BTN_SPECIAL_CHARS'); ?></a></span>
+									<span><a class="span6 btn btn-mini btn-primary" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter&search_pdk=pdk_in_country'); ?>"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_BTN_IN_COUNTRY'); ?></a></span>
+									<span><a class="span6 btn btn-mini btn-info" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter&search_pdk=pdk_not_in_country'); ?>"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_BTN_NOT_IN_COUNTRY'); ?></a></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="clear"></div>
+				<div class="center">
+					<button class="btn btn-block btn-success"><i class="icon-search"></i> <?php echo JText::_('COM_XIVEIRM_SEARCH'); ?></button>
+				</div>
 			</form>
-		</div>
-	</div>
-
-	<div class="row center contact-categories extended" style="background-color: #eff3aa;">
-
-		<p>
-			<a href="#" class="btn btn-app radius-4">
-				<i class="icon-cog"></i>
-				Lieferanten
-				<span class="badge badge-pink">+3</span>
-			</a>
-		
-			<a href="#" class="btn btn-app btn-primary no-radius">
-				<i class="icon-edit"></i>
-				Edit
-				<span class="badge badge-warning badge-right">11245</span>
-			</a>
-		
-			<a href="#" class="btn btn-app btn-success">
-				<i class="icon-refresh"></i>
-				Reload
-			</a>
-		
-			<button class="btn btn-app btn-warning">
-				<i class="icon-undo"></i>
-				Undo
-			</button>
-
-			<a href="#" class="btn btn-app btn-info btn-small no-radius">
-				<i class="icon-envelope"></i>
-				Mailbox
-				<span class="label label-inverse arrowed-in">6+</span>
-			</a>
-		
-			<button class="btn btn-app btn-danger btn-small">
-				<i class="icon-trash"></i>
-				Delete
-			</button>
-		
-			<button class="btn btn-app btn-purple btn-small">
-				<i class="icon-cloud-upload"></i>
-				Upload
-			</button>
-		
-			<button class="btn btn-app btn-pink btn-small">
-				<i class="icon-share-alt"></i>
-				Share
-			</button>
-		
-			<button class="btn btn-app btn-inverse btn-mini">
-				<i class="icon-lock"></i>
-				Lock
-			</button>
-		
-			<button class="btn btn-app btn-grey btn-mini radius-4">
-				<i class="icon-save"></i>
-				Patienten
-				<span class="badge badge-transparent"><i class="light-red icon-asterisk"></i></span>
-			</button>
-		
-			<button class="btn btn-app btn-light btn-mini">
-				<i class="icon-print"></i>
-				Subunternehmer
-			</button>
-
-			<a href="#" class="btn btn-app btn-yellow btn-mini">
-				<i class="icon-shopping-cart"></i>
-				Lieferanten
-			</a>
-		</p>
-	</div>
-
-	<div class="center hidden-phone extended" style="background-color: #eff3f8;">
-		<div class="btn-group">
-			<?php
-				// HIER DB ABFRAGE ALLER NAMEN MIT COUNT UND SO, AM BESTEN EIN NAWALA CLASS REIN, DIE ALLES ZÄHLT UND AUSWERTET ANHAND EINES TABELLENNAMENS UND DES FELDES DAS AUSGEWERTET WERDEN SOLL !!!!! HEISST DANN NAlphaIndex::buildIndex('tabellen_name', 'spalten_name') // Berechnung mit suchparameter, alle nachnamen beginnend mit BUCHSTABE !!!!!!!!!!!!!!!!!!!!!!
-			?>
-			<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&filter_search='); ?>" class="btn btn-small <?php if($search == '') { echo 'active'; } ?>" data-rel="tooltip" title data-original-title="All results">All</a>
-			<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&filter_search=09'); ?>" class="btn btn-small <?php if($search == '09') { echo 'active'; } ?>" data-rel="tooltip" title data-original-title="Names starts with a special chars">#</a>
-		</div>
-		<div class="btn-group">
-			<?php foreach($letters_am as $letter) { ?>
-				<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&filter_search=' . $letter); ?>" class="btn btn-small <?php if($search == $letter) { echo 'active'; } ?>" data-rel="tooltip" title data-original-title="Names starts with"><?php echo $letter; ?></a>
-			<?php } ?>
-		</div>
-		<div class="btn-group">
-			<?php foreach($letters_nz as $letter) { ?>
-				<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&filter_search=' . $letter); ?>" class="btn btn-small <?php if($search == $letter) { echo 'active'; } ?>" data-rel="tooltip" title data-original-title="Names starts with"><?php echo $letter; ?></a>
-			<?php } ?>
-		</div>
-	</div>
+		</div> <!-- /.row-fluid extended -->
+	</div> <!-- /.table-header -->
 
 	<table id="table_contacts" class="table table-striped table-bordered table-hover">
 		<thead>
 			<tr>
-				<th class="center sorting_disabled">
+				<th>Category</th>
+				<th class="center sorting_disabled hidden-phone">
 					<label><input type="checkbox"><span class="lbl"></span></label>
 				</th>
-				<th class="sorting">
-					ID
+				<th class="sorting hidden-480">
+					<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TH_ID'); ?>
 				</th>
 				<th class="sorting">
-					<i class="icon-user"></i><span class="hidden-phone"> Name</span>
+					<i class="icon-user"></i><span class="hidden-phone"> <?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TH_NAME'); ?></span>
+				</th>
+				<th class="sorting hidden-phone">
+					<i class="icon-calendar"></i><span class="hidden-phone hidden-tablet"> <?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TH_DOB'); ?></span>
 				</th>
 				<th class="sorting">
-					<i class="icon-calendar"></i><span class="hidden-phone"> Date of Birth</span>
+					<i class="icon-home"></i><span class="hidden-phone"> <?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TH_ADDRESS'); ?></span>
 				</th>
-				<th class="hidden-480 sorting">
-					<i class="icon-home"></i><span class="hidden-phone"> Address</span>
+				<th class="sorting hidden-480">
+					<i class="icon-phone"></i><span class="hidden-phone"> <?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TH_PHONE'); ?></span>
 				</th>
-				<th class="hidden-phone sorting">
-					<i class="icon-phone"></i><span class="hidden-phone"> Phone</span>
-				</th>
-				<th class="hidden-480 sorting">
-					Status
+				<th class="sorting_disabled hidden-phone hidden-tablet">
+					<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TH_STATUS'); ?>
 				</th>
 				<th class="sorting_disabled">
+				</th>
+				<th class="hide">
+					TD9
+				</th>
+				<th class="hide">
+					TD10
+				</th>
+				<th class="hide">
+					TD11
+				</th>
+				<th class="hide">
+					TD12
+				</th>
+				<th class="hide">
+					TD13
+				</th>
+				<th class="hide">
+					TD14
+				</th>
+				<th class="hide">
+					TD15
 				</th>
 			</tr>
 		</thead>
 		<tbody role="alert" aria-live="polite" aria-relevant="all">
-		<?php $show = false; ?>
-		<?php foreach ($this->items as $item) : ?>
+		<?php
+			$show = false;
+			foreach ($this->items as $item) :
+		?>
 			<?php if($item->state == 1 || ($item->state == 0 && JFactory::getUser()->authorise('core.edit.own',' com_xiveirm'))) : $show = true; ?>
 			<tr>
-				<td class="center">
+				<td><?php echo NItemHelper::getTitleById('category', $item->catid); ?></td>
+				<td class="center hidden-phone">
 					<?php if($item->checked_out):
-						echo '<div style="font-size: 20px;"><i class="icon-lock red" data-rel="tooltip" data-placement="right" data-original-title="Checked out by: ' . JFactory::getUser($item->checked_out)->name . ' on ' . $item->checked_out_time . '"></i></div>';
+						echo '<div style="font-size: 20px;"><i class="icon-lock red"></i></div>';
 					else:
 						echo '<label><input type="checkbox"><span class="lbl"></span></label>';
 					endif; ?>
 				</td>
-				<td>
-					<span><?php if((int) $item->customer_id): echo '<i class="icon-barcode"></i> ' . $item->customer_id; elseif(!(int)  $item->customer_id): echo '<i class="icon-qrcode"></i> ' . $item->customer_id; else: echo '<i class="icon-code-fork"></i> ' . $item->id; endif; ?></span>
+				<td class="hidden-480">
+					<span>
+					<?php
+						if((int) $item->customer_id && !empty($item->customer_id)) {
+							echo '<i class="icon-barcode"></i> ' . $item->customer_id;
+						} else if(!(int) $item->customer_id && !empty($item->customer_id)) {
+							echo '<i class="icon-qrcode"></i> ' . $item->customer_id;
+						} else {
+							echo '<i class="icon-code-fork"></i> ' . $item->id;
+						}
+					?>
+					</span>
 				</td>
 				<td>
 					<a href="<?php echo JRoute::_('index.php?task=contactform.edit&id='.$item->id); ?>">
 						<?php 
-							if(!empty($item->company_name)) {
-								echo $item->company_name . '<br>';
+							if(!empty($item->company)) {
+								echo $item->company . '<br>';
 							} else {
 							}
 							if(!empty($item->last_name) && !empty($item->first_name)) {
@@ -267,12 +309,12 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 						?>
 					</a>
 				</td>
-				<td><?php if($item->gender == 'm'): echo '<i class="icon-user blue"></i>'; elseif($item->gender == 'f'): echo '<i class="icon-user red"></i>'; elseif($item->gender == 'c'): echo'<i class="icon-user green"></i>'; else: echo '<i class="icon-user"></i>'; endif; ?> <?php if(strtotime($item->dob) != -62135600400): echo date(JText::_('DATE_FORMAT_LC4'), strtotime($item->dob)); endif; ?></td>
-				<td class="hidden-480"><?php echo $item->address_street; ?> <?php echo $item->address_houseno; ?><br><?php echo $item->address_zip; ?> <?php echo $item->address_city; ?>, <?php echo $item->address_country; ?></td>
-				<td class="hidden-phone "><?php if($item->mobile != ''): echo '<i class="icon-mobile-phone"></i> ' . $item->mobile . '<br>'; endif; if($item->phone != ''): echo '<i class="icon-phone"></i> ' . $item->phone; endif; ?></td>
-				<td class="hidden-480">
+				<td class="hidden-phone"><?php if($item->gender == 'm'): echo '<i class="icon-male blue"></i>'; elseif($item->gender == 'f'): echo '<i class="icon-female red"></i>'; elseif($item->gender == 'c'): echo'<i class="icon-building green"></i>'; else: echo '<i class="icon-user"></i>'; endif; ?> <?php if(strtotime($item->dob) != -62135600400): echo date(JText::_('DATE_FORMAT_LC4'), strtotime($item->dob)); endif; ?></td>
+				<td><?php echo $item->address_street; ?> <?php echo $item->address_houseno; ?><br><?php echo $item->address_zip; ?> <?php echo $item->address_city; ?>, <?php echo $item->address_country; ?></td>
+				<td class="hidden-480"><?php if($item->mobile != ''): echo '<i class="icon-mobile-phone"></i> ' . $item->mobile . '<br>'; endif; if($item->phone != ''): echo '<i class="icon-phone icon-only"></i> ' . $item->phone; endif; ?></td>
+				<td class="hidden-phone hidden-tablet">
 					<?php if(strtotime($item->modified) >= (time() - 86400)): ?>
-						<span class="label label-warning" data-rel="tooltip" data-original-title="<?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)); ?>"><i class="icon-time"></i> Modified <abbr class="timeago" data-time="<?php echo $item->modified; ?>"></abbr></span>
+						<div class="label label-warning xtooltip" title="<?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)); ?>"><i class="icon-time"></i> <?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TD_MODIFIED'); ?> <abbr class="ntime-fromnow" data-time="<?php echo $item->modified; ?>"></abbr></div>
 					<?php endif; ?>
 				</td>
 				<td class="center">
@@ -285,7 +327,7 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 						<?php endif; ?>
 						<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.edit&id=' . $item->id); ?>" class="btn btn-mini btn-info"><i class="icon-edit icon-only"></i></a>
 						<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.flag&id=' . $item->id); ?>" class="btn btn-mini <?php if(IRMSystem::flagIt($item->id, 'check')) { echo 'btn-warning'; } ?>"><i class="icon-flag icon-only"></i></a>
-						<a onClick="toggleFunction('toggle_id_<?php echo $item->id; ?>')" class="btn btn-mini btn-yellow"><i class="icon-double-angle-down icon-only"></i></a>
+						<a id="rowToggle" class="btn btn-mini btn-light"><i class="icon-eye-close icon-only"></i></a>
 					</div>
 					<div class="hidden-desktop visible-phone">
 						<div class="inline position-relative">
@@ -297,22 +339,39 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 						</div>
 					</div>
 				</td>
-				<div style="padding: 0; border-top: 0; border-bottom: 0;">
-					<div class="toggle_id_<?php echo $item->id; ?>" style="display: none; padding: 10px;">
-						<div class="pull-left">
-							Providing more Informations based on this customer to identify him in a more detailed way.<br>
-							May we could push info via trigger events!!!
-							<br>
-							<?php if($item->remarks): echo '<span class="label label-info"><i class="icon-comment-alt"></i> Internal Remark</span> ' . $item->remarks; endif; ?>
-						</div>
-						<div class="pull-right">
-							<a onClick="alert('Dieser Eintrag wurde Archiviert --> Achtung DEMO!!!')" class="btn btn-small btn-app radius-4 <?php echo $item->state == 0 ? 'btn-light' : ''; ?>">
-								<i class="icon-archive"></i>
-								<?php echo $item->state == 0 ? JText::_("COM_XIVEIRM_PUBLISH_ITEM") : JText::_("COM_XIVEIRM_UNPUBLISH_ITEM"); ?>
-							</a>
-						</div>
-					</div>
-				</div>
+				<td class="hide">
+					<?php echo $item->remarks ? '<i class="icon-comment"></i> ' . $item->remarks : ''; ?>
+				</td>
+				<td class="hide">
+					<?php if ($item->checked_out) { ?>
+						Von <a href="#" target="_blank"><?php echo JFactory::getUser($item->checked_out)->name; ?></a> <abbr class="xtooltip ntime-fromnow" data-calendar="<?php echo $item->checked_out_time; ?>"></abbr> ausgecheckt.
+					<?php } ?>
+				</td>
+				<td class="hide">
+					<?php if ($item->modified != '0000-00-00 00:00:00') { ?>
+						<i class="icon-time orange"></i> <?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)); ?> <span class="small-margin-left hidden-phone"></span><i class="icon-user orange"></i> <a href="#" target="_blank">Rosalinda Garcia</a>
+						<br><em>TODO: New data have to come from user activity app!</em>
+					<?php } ?>
+				</td>
+				<td class="hide">
+					<?php
+						$kontostand = rand(-1000.00, 1000.00);
+						if($kontostand < 0) {
+							echo '<span class="red"><i class="icon-eur"></i> ' . str_replace('.', ',', $kontostand) . ' EUR</span>';
+						} else {
+							echo '<span class="green"><i class="icon-eur"></i> ' . str_replace('.', ',', $kontostand) . ' EUR</span>';
+						}
+					?>
+				</td>
+				<td class="hide">
+					<i class="icon-sitemap purple"></i> ParentID/Name<br><i class="icon-random purple"></i> ChildID/Name
+				</td>
+				<td class="hide">
+					<i class="icon-calendar"></i> <?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($item->created)); ?> <span class="small-margin-left hidden-phone"></span><i class="icon-user"></i> <a href="#" target="_blank"><?php echo $item->created_by; ?></a>
+				</td>
+				<td class="hide">
+					TD15
+				</td>
 			</tr>
 		<?php endif; ?>
 		<?php endforeach; ?>
@@ -320,21 +379,23 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 	</table>
 
 	<div class="row-fluid center legend">
-		<i class="icon-barcode" data-rel="tooltip" data-original-title="This is a numeric ID"></i>
+		<i class="icon-lock red xpopover" title="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_LOCKED_TITLE'); ?>" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_LOCKED_CONTENT'); ?>" data-placement="top"></i>
 		&nbsp;&nbsp;&nbsp;
-		<i class="icon-qrcode" data-rel="tooltip" data-original-title="This is an alphanumeric ID"></i>
+		<i class="icon-barcode xpopover" title="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_NUMERIC_ID_TITLE'); ?>" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_NUMERIC_ID_CONTENT'); ?>" data-placement="top"></i>
 		&nbsp;&nbsp;&nbsp;
-		<i class="icon-code-fork" data-rel="tooltip" data-original-title="This is a system ID"></i>
+		<i class="icon-qrcode xpopover" title="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_ALPHA_NUMERIC_ID_TITLE'); ?>" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_ALPHA_NUMERIC_ID_CONTENT'); ?>" data-placement="top"></i>
 		&nbsp;&nbsp;&nbsp;
-		<i class="icon-user" data-rel="tooltip" data-original-title="The gender is unknown"></i>
+		<i class="icon-code-fork xpopover" title="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_SYSTEM_ID_TITLE'); ?>" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_SYSTEM_ID_CONTENT'); ?>" data-placement="top"></i>
 		&nbsp;&nbsp;&nbsp;
-		<i class="icon-user red" data-rel="tooltip" data-original-title="This is a female gender"></i>
+		<i class="icon-user xpopover" title="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_GENDER_UNKNOWN_TITLE'); ?>" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_GENDER_UNKNOWN_CONTENT'); ?>" data-placement="top"></i>
 		&nbsp;&nbsp;&nbsp;
-		<i class="icon-user blue" data-rel="tooltip" data-original-title="This is a male gender"></i>
+		<i class="icon-female red xpopover" title="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_GENDER_FEMALE_TITLE'); ?>" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_GENDER_FEMALE_CONTENT'); ?>" data-placement="top"></i>
 		&nbsp;&nbsp;&nbsp;
-		<i class="icon-user green" data-rel="tooltip" data-original-title="No gender, this is a company. Set the date of birth to 01.01.0001 (Tip: Hit 8 times key 0 in chrome)"></i>
+		<i class="icon-male blue xpopover" title="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_GENDER_MALE_TITLE'); ?>" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_GENDER_MALE_CONTENT'); ?>" data-placement="top"></i>
 		&nbsp;&nbsp;&nbsp;
-		<i class="icon-comment-alt" data-rel="tooltip" data-original-title="Internal remarks the customer won't see, ever!"></i>
+		<i class="icon-building green xpopover" title="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_GENDER_COMPANY_TITLE'); ?>" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_GENDER_COMPANY_CONTENT'); ?>" data-placement="top"></i>
+		&nbsp;&nbsp;&nbsp;
+		<i class="icon-comment-alt xpopover" title="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_INTERNAL_REMARK_TITLE'); ?>" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TF_INTERNAL_REMARK_CONTENT'); ?>" data-placement="top"></i>
 	</div>
 </div>
 
@@ -361,3 +422,80 @@ $global_search = JFactory::getApplication()->input->get('global_search', '', 'fi
 		endif;
 	?>
 </div>
+
+<script>
+function fnFormatDetails ( oTable, nTr )
+{
+	var aData = oTable.fnGetData( nTr );
+	var sOut = '<div class="innerDetails">';
+	sOut += '<table class="table">';
+	sOut += '<tr><td>Interne Bemerkungen</td><td>'+aData[9]+'</td><td rowspan="3" class="table-divider"></td><td>Kontostand </td><td>' + aData[12] + '</td></tr>';
+	sOut += '<tr><td>Status</td><td>'+aData[10]+'</td><td>Verbindungen</td><td>' + aData[13] + '</td></tr>';
+	sOut += '<tr><td>Zuletzt bearbeitet</td><td>' + aData[11] + '</td><td>Datensatz erzeugt</td><td>' + aData[14] + '</td></tr>';
+	sOut += '</table>';
+	sOut += '</div>';
+
+	return sOut;
+}
+</script>
+
+
+
+<h3 class="header lighter pink">Tests</h3>
+
+<a onClick="alert('Dieser Eintrag wurde Archiviert --> Achtung DEMO!!!')" class="btn btn-small btn-app radius-4 <?php echo $item->state == 0 ? 'btn-light' : ''; ?>">
+	<i class="icon-archive"></i>
+	<?php echo $item->state == 0 ? JText::_("COM_XIVEIRM_PUBLISH_ITEM") : JText::_("COM_XIVEIRM_UNPUBLISH_ITEM"); ?>
+</a>
+<br>
+<br>
+<hr>
+<?php $testDate = '07/15/2013 10:38'; ?>
+<abbr class="xtooltip ntime-fromnow" data-calendar="<?php echo $testDate; ?>" title="<?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($testDate)); ?>" data-content-prefix="Termin:" data-icon-class="icon-calendar">WIRD UEBERSCHRIEBEN</abbr>
+<br>
+<br>
+<pre class="prettify">
+<?php
+echo '<strong><em>devXive - Nawala Framework 4.2.8alpha -> abstract class NHtmlJavaScript::loadMoment() (( nimport(\'NHtml.JavaScript\'); ))</em></strong>';
+echo '<br>';
+echo '<br>';
+	echo htmlentities(" <?php \$testDate = '07/15/2013 10:38'; ?> ");
+echo '<br>';
+echo '<br>';
+
+echo '<strong><em>abbr tag => timeago (javascript supported)</em></strong>';
+	echo htmlentities('
+	<abbr
+		class="xtooltip ntime-fromnow"
+		data-time="2013-07-15 10:38"
+		title="Monday, 15 July 2013 10:38"
+		data-content-prefix="Termin:"
+		data-icon-class="icon-calendar">
+			WIRD UEBERSCHRIEBEN
+	</abbr>
+	');
+echo '<br>';
+echo '<br>';
+
+echo '<strong><em>abbr tag => calendar (javascript supported)</em></strong>';
+	echo htmlentities('
+	<abbr
+		class="xtooltip ntime-fromnow"
+		data-calendar="2013-07-15 10:38"
+		title="Monday, 15 July 2013 10:38"
+		data-content-prefix="Termin:"
+		data-icon-class="icon-calendar">
+			WIRD UEBERSCHRIEBEN
+	</abbr>
+	');
+echo '<br>';
+echo '<br>';
+
+echo '<strong><em>span tag => none (bootstrap supported)</em></strong>';
+	echo htmlentities('
+	<span class="xtooltip" data-original-title="Monday, 15 July 2013 10:38">
+		<i class="icon-clock"></i> 2013-07-15 10:38
+	</span>
+	');
+?>
+</pre>
