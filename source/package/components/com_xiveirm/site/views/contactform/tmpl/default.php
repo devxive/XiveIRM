@@ -451,9 +451,13 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 					<input type="hidden" name="coreform[created_by]" value="<?php echo $this->item->created_by; ?>" />
 					<input type="hidden" name="coreform[client_id]" value="<?php echo $this->item->client_id; ?>" maxlength="50" />
 				<?php } ?>
-				<input type="hidden" name="coreform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
-				<input type="hidden" name="coreform[checked_out_time]" value="<?php echo $this->item->checked_out_time; ?>" />
-				<input type="hidden" name="coreform[modified]" value="<?php echo $this->item->modified; ?>" />
+<!-- Handled by checkout class
+				<input type="hidden" name="coreform[checked_out]" value />
+				<input type="hidden" name="coreform[checked_out_time]" value />
+-->
+<!-- Autohandled in the model class save->update
+				<input type="hidden" name="coreform[modified]" />
+-->
 				<input type="hidden" name="coreform[state]" value="<?php echo $this->item->state; ?>" />
 				<input type="hidden" id="checkEditForm" name="checkEditForm" value="0" />
 				<?php echo JHtml::_('form.token'); ?>
