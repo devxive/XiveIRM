@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts` (
 `last_name` VARCHAR(150) NOT NULL,
 `first_name` VARCHAR(150) NOT NULL,
 `gender` VARCHAR(150) NOT NULL COMMENT 'VARCHAR 150 based on opt_value in option table',
-`dob` DATE NOT NULL,
+`dob` DATE NOT NULL DEFAULT '0000-00-00',
 `address_name` VARCHAR(150) NOT NULL,
 `address_name_add` VARCHAR(100) NOT NULL,
 `address_street` VARCHAR(100) NOT NULL,
