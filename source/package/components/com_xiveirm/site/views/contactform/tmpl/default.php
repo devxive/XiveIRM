@@ -25,7 +25,7 @@ NHtmlJavaScript::setTooltip('.xtooltip');
 NHtmlJavaScript::setPopover('.xpopover');
 NHtmlJavaScript::setPreventFormSubmitByKey();
 NHtmlJavaScript::loadGritter();
-NHtmlJavaScript::setPreventFormLeaveIfChanged();
+NHtmlJavaScript::setPreventFormLeaveIfChanged('#form-contact');
 
 //Load admin language file
 $lang = JFactory::getLanguage();
@@ -165,10 +165,10 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 									<?php NHtmlJavaScript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 									<div class="span6">
 										<?php if($this->item->catid && !$this->item->id) { ?>
-											<input type="hidden" name="coreform[catid]" value="<?php echo $this->item->catid; ?>">
+											<input type="hidden" name="contacts[catid]" value="<?php echo $this->item->catid; ?>">
 											<a class="btn btn-small btn-warning disabled" disabled="disabled"><i class="icon-double-angle-left"></i> <?php echo NItemHelper::getTitleById('category', $this->item->catid); ?></a>
 										<?php } else { ?>
-										<select name="coreform[catid]" class="chzn-select-category input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
+										<select name="contacts[catid]" class="chzn-select-category input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
 											<option value=""></option>
 											<?php
 												$options = IRMSystem::getListOptions('categories', false);
@@ -199,17 +199,17 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 										<?php } ?>
 									</div>
 									<div class="span6">
-										<a id="toggleExtend" class="btn btn-small btn-primary pull-right"><i class="icon-double-angle-down"></i><span class="hidden-phone"> Additional fields</span></a>
+										<a id="toggleExtend" class="btn btn-small pull-right"><i class="icon-double-angle-down"></i><span class="hidden-phone"> Additional fields</span></a>
 									</div>
 								</div>
 							</div>
 							<div class="control-group extended">
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID_LABEL'); ?></label>
 								<div class="controls controls-row">
-									<input type="text" name="coreform[customer_id]" class="input-control span6" id="prependedInput" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID'); ?>" value="<?php echo $this->item->customer_id; ?>">
+									<input type="text" name="contacts[customer_id]" class="input-control span6" id="prependedInput" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID'); ?>" value="<?php echo $this->item->customer_id; ?>">
 									<?php NHtmlJavaScript::setChosen('.chzn-select-parent', false, array('allow_single_deselect' => true, 'disable_search_threshold' => '10', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 									<div class="span6">
-										<select name="coreform[parent_id]" class="chzn-select-parent input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_PARENT'); ?>" required>
+										<select name="contacts[parent_id]" class="chzn-select-parent input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_PARENT'); ?>" required>
 											<?php
 												if(!$this->item->parent_id) {
 													echo '<option value="0" selected>' . JText::_('COM_XIVEIRM_SELECT_NO_PARENT') . '</option>';
@@ -241,12 +241,12 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 							<div class="control-group">
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_NAME_LABEL'); ?></label>
 								<div id="name-ext" class="controls controls-row extended">
-									<input type="text" name="coreform[company]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_COMPANY'); ?>" value="<?php echo $this->item->company; ?>">
-									<input type="text" name="coreform[title]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_NAME_TITLE'); ?>" value="<?php echo $this->item->title; ?>">
+									<input type="text" name="contacts[company]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_COMPANY'); ?>" value="<?php echo $this->item->company; ?>">
+									<input type="text" name="contacts[title]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_NAME_TITLE'); ?>" value="<?php echo $this->item->title; ?>">
 								</div>
 								<div class="controls controls-row">
-									<input type="text" name="coreform[last_name]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_LAST_NAME'); ?>" value="<?php echo $this->item->last_name; ?>" <?php echo empty($this->item->id) ? 'autofocus' : ''; ?>>
-									<input type="text" name="coreform[first_name]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_FIRST_NAME'); ?>" value="<?php echo $this->item->first_name; ?>">
+									<input type="text" name="contacts[last_name]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_LAST_NAME'); ?>" value="<?php echo $this->item->last_name; ?>" <?php echo empty($this->item->id) ? 'autofocus' : ''; ?>>
+									<input type="text" name="contacts[first_name]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_FIRST_NAME'); ?>" value="<?php echo $this->item->first_name; ?>">
 								</div>
 							</div>
 							
@@ -258,7 +258,7 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 								<div class="controls controls-row">
 									<?php NHtmlJavaScript::setChosen('.chzn-select-gender', false, array('width' => '100%', 'disable_search' => true)); ?>
 									<div class="span6">
-										<select name="coreform[gender]" class="chzn-select-gender input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
+										<select name="contacts[gender]" class="chzn-select-gender input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
 											<option value=""><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_SELECT'); ?></option>
 											<?php
 												$options = IRMSystem::getListOptions('options', 'gender');
@@ -287,29 +287,29 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 											?>
 										</select>
 									</div>
-									<input type="date" name="coreform[dob]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_DOB'); ?>" value="<?php echo $this->item->dob; ?>" required>
+									<input type="date" name="contacts[dob]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_DOB'); ?>" value="<?php echo $this->item->dob; ?>" />
 								</div>
 							</div>
 							
 							<div class="control-group">
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_LABEL'); ?></label>
 								<div class="controls extended">
-									<input type="text" name="coreform[address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->address_name; ?>">
+									<input type="text" name="contacts[address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->address_name; ?>">
 								</div>
 								<div class="controls extended">
-									<input type="text" name="coreform[address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->address_name_add; ?>">
+									<input type="text" name="contacts[address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->address_name_add; ?>">
 								</div>
 								<div class="controls controls-row">
-									<input type="text" name="coreform[address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->address_street; ?>">
-									<input type="text" name="coreform[address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->address_houseno; ?>">
+									<input type="text" name="contacts[address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->address_street; ?>">
+									<input type="text" name="contacts[address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->address_houseno; ?>">
 								</div>
 								<div class="controls controls-row">
-									<input type="text" name="coreform[address_zip]" class="input-control span4" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->address_zip; ?>">
-									<input type="text" name="coreform[address_city]" class="input-control span8" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->address_city; ?>">
+									<input type="text" name="contacts[address_zip]" class="input-control span4" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->address_zip; ?>">
+									<input type="text" name="contacts[address_city]" class="input-control span8" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->address_city; ?>">
 								</div>
 								<div class="controls controls-row extended">
-									<input type="text" name="coreform[address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->address_region; ?>">
-									<input type="text" name="coreform[address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->address_country; ?>">
+									<input type="text" name="contacts[address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->address_region; ?>">
+									<input type="text" name="contacts[address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->address_country; ?>">
 								</div>
 							</div>
 							
@@ -334,25 +334,25 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 							<div class="control-group">
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_PHONE_NUMBERS_LABEL'); ?></label>
 								<div class="controls controls-row">
-									<input type="text" name="coreform[phone]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_PHONE'); ?>" value="<?php echo $this->item->phone; ?>">
-									<input type="text" name="coreform[fax]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_FAX'); ?>" value="<?php echo $this->item->fax; ?>">
+									<input type="text" name="contacts[phone]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_PHONE'); ?>" value="<?php echo $this->item->phone; ?>">
+									<input type="text" name="contacts[fax]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_FAX'); ?>" value="<?php echo $this->item->fax; ?>">
 								</div>
 								<div class="controls">
-									<input type="text" name="coreform[mobile]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_MOBILE'); ?>" value="<?php echo $this->item->mobile; ?>">
+									<input type="text" name="contacts[mobile]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_MOBILE'); ?>" value="<?php echo $this->item->mobile; ?>">
 								</div>
 							</div>
 							<div class="control-group extended">
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_WEB_LABEL'); ?></label>
 								<div class="controls controls-row">
-									<input type="text" name="coreform[email]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_EMAIL'); ?>" value="<?php echo $this->item->email; ?>">
-									<input type="text" name="coreform[web]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_WEB'); ?>" value="<?php echo $this->item->web; ?>">
+									<input type="text" name="contacts[email]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_EMAIL'); ?>" value="<?php echo $this->item->email; ?>">
+									<input type="text" name="contacts[web]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_WEB'); ?>" value="<?php echo $this->item->web; ?>">
 								</div>
 							</div>
 							
 							<div class="control-group extended">
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_INTERNAL_REMARKS'); ?></label>
 								<div class="controls">
-									<textarea name="coreform[remarks]" class="input-control span12 limited autosize" max-data-length="250" maxlength="250" rows="2" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_INTERNAL_REMARKS_DESC'); ?>"><?php echo $this->item->remarks; ?></textarea>
+									<textarea name="contacts[remarks]" class="input-control span12 limited autosize" max-data-length="250" maxlength="250" rows="2" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_INTERNAL_REMARKS_DESC'); ?>"><?php echo $this->item->remarks; ?></textarea>
 								</div>
 							</div>
 						</div>
@@ -439,27 +439,17 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 				?>
 				<!-- ---------- ---------- ---------- ---------- ---------- END TAB.PLUGINS_CONTENT ---------- ---------- ---------- ---------- ---------- -->
 
-				<input type="hidden" name="coreform[id]" id="customer_cid" value="<?php echo isset($this->item->id) ? $this->item->id : '0'; ?>" />
+				<input type="hidden" name="contacts[id]" id="customer_cid" value="<?php echo isset($this->item->id) ? $this->item->id : '0'; ?>" />
 
-<!-- Könnte raus, weil ich in den models das datum eintrage und es hier erstmal unrelevant ist, kann in das core widget rein, wann der kunde das erste mal angelegt wurde!!!! -->
-<input type="hidden" name="coreform[created]" value="<?php echo $this->item->created; ?>" />
-
-				<?php if(empty($this->item->created_by)){ ?>
-					<input type="hidden" name="coreform[created_by]" value="<?php echo JFactory::getUser()->id; ?>" />
-					<input type="hidden" name="coreform[client_id]" value="<?php echo $xsession->client_id; ?>" maxlength="50" />
+				<?php if(empty($this->item->client_id)){ ?>
+					<input type="hidden" name="contacts[client_id]" value="<?php echo $xsession->client_id; ?>" maxlength="50" />
 				<?php } else { ?>
-					<input type="hidden" name="coreform[created_by]" value="<?php echo $this->item->created_by; ?>" />
-					<input type="hidden" name="coreform[client_id]" value="<?php echo $this->item->client_id; ?>" maxlength="50" />
+					<input type="hidden" name="contacts[client_id]" value="<?php echo $this->item->client_id; ?>" maxlength="50" />
 				<?php } ?>
-<!-- Handled by checkout class
-				<input type="hidden" name="coreform[checked_out]" value />
-				<input type="hidden" name="coreform[checked_out_time]" value />
--->
-<!-- Autohandled in the model class save->update
-				<input type="hidden" name="coreform[modified]" />
--->
-				<input type="hidden" name="coreform[state]" value="<?php echo $this->item->state; ?>" />
+				<input type="hidden" name="contacts[state]" value="<?php echo $this->item->state; ?>" />
 				<input type="hidden" id="checkEditForm" name="checkEditForm" value="0" />
+				<input type="hidden" name="irmapi[coreapp]" value="contacts" />
+				<input type="hidden" name="irmapi[component]" value="com_xiveirm" />
 				<?php echo JHtml::_('form.token'); ?>
 
 				<div class="form-actions">
@@ -482,7 +472,8 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 
 	</form>
 	<form id="form-contact-cica">
-		<input type="hidden" name="cica[id]" value="<?php echo isset($this->item->id) ? $this->item->id : '0'; ?>" />
+		<input type="hidden" name="irmapi[id]" value="<?php echo isset($this->item->id) ? $this->item->id : '0'; ?>" />
+		<input type="hidden" name="irmapi[coreapp]" value="contacts" />
 		<?php echo JHtml::_('form.token'); ?>
 	</form>
 </div>
@@ -650,187 +641,3 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 		jQuery(".widget-box .btn").attr("disabled", true);
 	<?php endif; ?>
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!--
-
-
-
-
-
-
-
-
-
-<div class="contact-edit front-end-edit">
-    <?php if (!empty($this->item->id)): ?>
-        <h1>Edit <?php echo $this->item->id; ?></h1>
-    <?php else: ?>
-        <h1>Add</h1>
-    <?php endif; ?>
-
-    <form id="form-contact" action="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contact.save'); ?>" method="post" class="form-validate" enctype="multipart/form-data">
-        <ul>
-            			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('id'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('id'); ?></div>
-			</div>
-				<input type="hidden" name="jform[client_id]" value="<?php echo $this->item->client_id; ?>" />
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('parent_id'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('parent_id'); ?></div>
-			</div>
-				<input type="hidden" name="jform[state]" value="<?php echo $this->item->state; ?>" />
-
-				<?php echo $this->form->getInput('created'); ?>
-				<?php if(empty($this->item->created_by)){ ?>
-					<input type="hidden" name="jform[created_by]" value="<?php echo JFactory::getUser()->id; ?>" />
-
-				<?php } 
-				else{ ?>
-					<input type="hidden" name="jform[created_by]" value="<?php echo $this->item->created_by; ?>" />
-
-				<?php } ?>				<input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
-				<input type="hidden" name="jform[checked_out_time]" value="<?php echo $this->item->checked_out_time; ?>" />
-
-				<?php echo $this->form->getInput('modified'); ?>			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('catid'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('catid'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('customer_id'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('customer_id'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('company'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('company'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('title'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('title'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('last_name'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('last_name'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('first_name'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('first_name'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('gender'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('gender'); ?></div>
-			</div>
-
-			<?php
-				foreach((array)$this->item->gender as $value): 
-					if(!is_array($value)):
-						echo '<input type="hidden" class="gender" name="jform[genderhidden]['.$value.']" value="'.$value.'" />';
-					endif;
-				endforeach;
-			?>			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('dob'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('dob'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('address_name'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('address_name'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('address_name_add'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('address_name_add'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('address_street'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('address_street'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('address_houseno'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('address_houseno'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('address_zip'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('address_zip'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('address_city'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('address_city'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('address_region'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('address_region'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('address_country'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('address_country'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('phone'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('phone'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('fax'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('fax'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('mobile'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('mobile'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('email'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('email'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('web'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('web'); ?></div>
-			</div>
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('remarks'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('remarks'); ?></div>
-			</div>
-
-        </ul>
-
-        <div>
-            <button type="submit" class="validate"><span><?php echo JText::_('JSUBMIT'); ?></span></button>
-            <?php echo JText::_('or'); ?>
-            <a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contact.cancel'); ?>" title="<?php echo JText::_('JCANCEL'); ?>"><?php echo JText::_('JCANCEL'); ?></a>
-
-            <input type="hidden" name="option" value="com_xiveirm" />
-            <input type="hidden" name="task" value="contactform.save" />
-            <?php echo JHtml::_('form.token'); ?>
-        </div>
-    </form>
-</div>
-
-
-
--->
