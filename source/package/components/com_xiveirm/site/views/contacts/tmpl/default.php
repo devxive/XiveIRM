@@ -140,7 +140,7 @@ jQuery(function() {
 						</form>
 					<?php endif; ?>
 					<div class="btn-group">
-						<a id="toggleExtend" class="btn btn-small btn-success inline"><i class="icon-double-angle-down"></i><span class="hidden-phone hidden-480"> <?php echo JText::_('COM_XIVEIRM_MORE'); ?></span></a>
+						<a id="toggleExtend" class="btn btn-small btn-primary inline"><i class="icon-double-angle-down"></i><span class="hidden-phone hidden-480"> <?php echo JText::_('COM_XIVEIRM_MORE'); ?></span></a>
 						<?php if(!empty($filter)) { ?>
 							<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter'); ?>" class="btn btn-small btn-danger inline"><i class="icon-undo"></i><span class="hidden-phone hidden-480"> <?php echo JText::_('COM_XIVEIRM_RESET_FILTER'); ?></span></a>
 						<?php } ?>
@@ -149,7 +149,7 @@ jQuery(function() {
 			</div>
 		</div> <!-- /.row-fluid -->
 		<div class="row-fluid extended">
-			<div class="header smaller lighter green">
+			<div class="header smaller lighter blue">
 				<h3>Extended search options</h3>
 			</div>
 			<form class="form-horizontal" action="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter'); ?>" class="inline">
@@ -209,7 +209,7 @@ jQuery(function() {
 				</div>
 				<div class="clear"></div>
 				<div class="center">
-					<button class="btn btn-block btn-success"><i class="icon-search"></i> <?php echo JText::_('COM_XIVEIRM_SEARCH'); ?></button>
+					<button class="btn btn-block btn-primary"><i class="icon-search"></i> <?php echo JText::_('COM_XIVEIRM_SEARCH'); ?></button>
 				</div>
 			</form>
 		</div> <!-- /.row-fluid extended -->
@@ -309,12 +309,29 @@ jQuery(function() {
 						?>
 					</a>
 				</td>
-				<td class="hidden-phone"><?php if($item->gender == 'm'): echo '<i class="icon-male blue"></i>'; elseif($item->gender == 'f'): echo '<i class="icon-female red"></i>'; elseif($item->gender == 'c'): echo'<i class="icon-building green"></i>'; else: echo '<i class="icon-user"></i>'; endif; ?> <?php if(strtotime($item->dob) != -62135600400): echo date(JText::_('DATE_FORMAT_LC4'), strtotime($item->dob)); endif; ?></td>
+				<td class="hidden-phone">
+					<?php
+						if($item->gender == 'm') {
+							echo '<i class="icon-male blue"></i>';
+						} else if($item->gender == 'f') {
+							echo '<i class="icon-female red"></i>';
+						} else if($item->gender == 'c') {
+							echo'<i class="icon-building green"></i>';
+						} else {
+							echo '<i class="icon-user"></i>';
+						}
+
+						if($item->dob != '0000-00-00') {
+							echo ' ' . date(JText::_('DATE_FORMAT_LC4'), strtotime($item->dob));
+						}
+					?>
+				</td>
+
 				<td><?php echo $item->address_street; ?> <?php echo $item->address_houseno; ?><br><?php echo $item->address_zip; ?> <?php echo $item->address_city; ?>, <?php echo $item->address_country; ?></td>
 				<td class="hidden-480"><?php if($item->mobile != ''): echo '<i class="icon-mobile-phone"></i> ' . $item->mobile . '<br>'; endif; if($item->phone != ''): echo '<i class="icon-phone icon-only"></i> ' . $item->phone; endif; ?></td>
-				<td class="hidden-phone hidden-tablet">
+				<td class="hidden-phone hidden-tablet center">
 					<?php if(strtotime($item->modified) >= (time() - 86400)): ?>
-						<div class="label label-warning xtooltip" title="<?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)); ?>"><i class="icon-time"></i> <?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TD_MODIFIED'); ?> <abbr class="ntime-fromnow" data-time="<?php echo $item->modified; ?>"></abbr></div>
+						<div class="label label-warning xtooltip" title="<?php echo JText::_('COM_XIVEIRM_CONTACTS_LIST_TD_MODIFIED'); ?>: <?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)); ?>"><i class="icon-time"></i> <abbr class="ntime-fromnow" data-time="<?php echo $item->modified; ?>"></abbr></div>
 					<?php endif; ?>
 				</td>
 				<td class="center">
@@ -344,7 +361,7 @@ jQuery(function() {
 				</td>
 				<td class="hide">
 					<?php if ($item->checked_out) { ?>
-						Von <a href="#" target="_blank"><?php echo JFactory::getUser($item->checked_out)->name; ?></a> <abbr class="xtooltip ntime-fromnow" data-calendar="<?php echo $item->checked_out_time; ?>"></abbr> ausgecheckt.
+						<i class="icon-time red"></i> <abbr class="ntime-fromnow" data-calendar="<?php echo $item->checked_out_time; ?>"></abbr> - Ausgecheckt von <a href="#" target="_blank"><?php echo JFactory::getUser($item->checked_out)->name; ?></a>
 					<?php } ?>
 				</td>
 				<td class="hide">
@@ -430,7 +447,7 @@ function fnFormatDetails ( oTable, nTr )
 	var sOut = '<div class="innerDetails">';
 	sOut += '<table class="table">';
 	sOut += '<tr><td>Interne Bemerkungen</td><td>'+aData[9]+'</td><td rowspan="3" class="table-divider"></td><td>Kontostand </td><td>' + aData[12] + '</td></tr>';
-	sOut += '<tr><td>Status</td><td>'+aData[10]+'</td><td>Verbindungen</td><td>' + aData[13] + '</td></tr>';
+	sOut += '<tr><td>Lfd Prozess</td><td>'+aData[10]+'</td><td>Verbindungen</td><td>' + aData[13] + '</td></tr>';
 	sOut += '<tr><td>Zuletzt bearbeitet</td><td>' + aData[11] + '</td><td>Datensatz erzeugt</td><td>' + aData[14] + '</td></tr>';
 	sOut += '</table>';
 	sOut += '</div>';
