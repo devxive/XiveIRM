@@ -57,6 +57,8 @@ class XiveirmModelSearch extends JModelList {
      * @since	1.6
      */
     public function searchbywords($data) {
+	// Prepare the return object
+	$return = new JObject();
 
 	// Initialise variables.
 //	$app = JFactory::getApplication();
@@ -72,6 +74,21 @@ class XiveirmModelSearch extends JModelList {
 
 	//explode the search terms
 	$search_query_x = explode(' ', $search);
+
+	// Remove empty string
+	foreach($search_query_x as $key => $value) {
+		if($value == '') {
+			unset($search_query_x[$key]);
+		}
+	}
+
+	// Check for data // if array empty
+	if(empty($search_query_x)) {
+		$return->query = array();
+		$return->results = array();
+		echo 'Nothing found. (This is hardcoded in search.php model class)';
+		return $return;
+	}
 
 	// Select the required fields from the table.
 	$query->select('a.*');
@@ -153,14 +170,11 @@ class XiveirmModelSearch extends JModelList {
 //		}
 //	}
 
-	$return = new JObject();
 	$return->query = $query;
 
 	$db->setQuery($query);
 
-	$results = $db->loadObjectList();
-
-	$return->results = $results;
+	$return->results = $db->loadObjectList();
 
 	return $return;
     }
