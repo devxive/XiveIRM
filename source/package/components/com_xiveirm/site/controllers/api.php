@@ -49,8 +49,8 @@ class XiveirmControllerApi extends XiveirmController
 	{
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$data = $this->app->input->get('cica', array(), 'array');
-		$return = NItemHelper::checkOut('xiveirm_contacts', $data['id'], NItemHelper::getDate('MySQL'), JFactory::getUser()->id);
+		$data = $this->app->input->get('irmapi', array(), 'array');
+		$return = NItemHelper::checkOut('xiveirm_' . $data['coreapp'], $data['id'], NItemHelper::getDate('MySQL'), JFactory::getUser()->id);
 
 		if($return) {
 			$return_arr = array();
@@ -83,8 +83,8 @@ class XiveirmControllerApi extends XiveirmController
 
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$data = $this->app->input->get('cica', array(), 'array');
-		$return = NItemHelper::checkIn('xiveirm_contacts', $data['id']);
+		$data = $this->app->input->get('irmapi', array(), 'array');
+		$return = NItemHelper::checkIn('xiveirm_' . $data['coreapp'], $data['id']);
 
 		if($return) {
 			$return_arr = array();
@@ -121,7 +121,7 @@ class XiveirmControllerApi extends XiveirmController
 		 * change, making it impossible for AJAX to work.
 		 */
 
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+//		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		$model = $this->getModel('Api', 'XiveirmModel');
 
@@ -135,25 +135,47 @@ class XiveirmControllerApi extends XiveirmController
 		}
 
 		// ------------------------------------------------------------- GET AND PROCESS THE CORE FORM DATAS
-		$dataCore = $this->app->input->get('coreform', array(), 'array');
+		// Get the dataAPI fields to check what app to process further
+		$dataAPI = $this->app->input->get('irmapi', array(), 'array');
+		if( $dataAPI && isset($dataAPI['coreapp']) && isset($dataAPI['component']) ) {
+			$coreApp = $dataAPI['coreapp'];
+			$coreComponent = $dataAPI['component'];
 
-		// Xive-TODO: We got the catid in all cases, so we could drop this check!!!!
-		if(isset($dataCore['catid'])) { $catid = $dataCore['catid']; } else { $catid = false; }
-		if(isset($dataCore['id'])) { $contactId = (int) $dataCore['id']; } else { $contactId = false; }
+			$dataCore = $this->app->input->get($coreApp, array(), 'array');
+
+			if(isset($dataCore['catid']) && isset($dataCore['id'])) {
+				$catId = $dataCore['catid'];
+				$contactId = (int) $dataCore['id'];
+			} else {
+				self::closeOnError(999, 'Get either no catid or id');
+			}
+		} else {
+			self::closeOnError(999, 'Get no Coreapp ID');
+		}
+
+		// Build the data object
+		$data = new stdClass;
+		$data->core = $dataCore;
+		$data->api = $dataAPI;
+
+		// Strip the last letter from $coreApp to get the correct string within the tabs/widgets and table which we're store in
+		$permissionsString = 'xiveirm_' . $coreApp . '.';
+		$tabAppPluginFolderName = 'irmtabs' . substr($coreApp, 0, -1);
+		$tabAppTableName = '#__xiveirm_' . substr($coreApp, 0, -1);
 
 		// Import Plugins (only those that are set / configured in the #__xiveirm_tabapps table. Category 0 and its related global_client-id (usergroup) always load, because its global (means for all)
 		// There is an extra check in, where we check also against the client_id (component global usergroup and client related usergroup)
 		// Because we use the returned values from the getPlugin, we have all informations on tabs that are loaded in the form.
 		// Widgets do not have form values, therefore we do not load them! Even there is no need to load the event dispatcher! (((At this time!!!!)))
 		// Pro for use the getPlugins Method: We'll get the tabconfig row id, we need for the permission checks below!!!!
-		$plugins = IRMSystem::getPlugins($catid, 'irmtabscontact'); // Array with all available plugins, that are already loaded with this request!!!
+		$plugins = IRMSystem::getPlugins($catId, $tabAppPluginFolderName); // Array with all available plugins, that are already loaded with this request!!!
 
-		// Go to models and try to save the coreform datas.
+		// Go to models and try to save the contacts datas.
 		// In all cases (new, update), if return isn't false, we got the item row id for further processing the TabApp datas.
-		// Check if the user have the rights to save the data for the coreform by checking the components ACL.
-		$permissionsCore = NUserAccess::getPermissions('com_xiveirm', false, false, 'xiveirm_contacts.' . $contactId);
+		// Check if the user have the rights to save the data for the contacts by checking the components ACL.
+		$permissionsCore = NUserAccess::getPermissions($coreComponent, false, false, $permissionsString . $contactId);
 		if( ($contactId == 0 && $permissionsCore->get('core.create')) || ($contactId > 0 && ($permissionsCore->get('core.edit') || $permissionsCore->get('core.edit.own'))) ) {
-			$return = $model->savecore($dataCore);
+			$return = $model->savecore($data);
 		} else {
 			$return_arr = array();
 			$return_arr["apiReturnId"] = 0;
@@ -183,15 +205,15 @@ class XiveirmControllerApi extends XiveirmController
 		 */
 		if($plugins) {
 			// ok we have installed and enabled TabApps, lets play
-			if($return["apiReturnCode"] != 'ERROR' && $return["apiReturnId"] > 0)
+			if( ($return["apiReturnCode"] == 'UPDATED' || $return["apiReturnCode"] == 'SAVED') && $return["apiReturnId"] > 0 )
 			{
 				foreach($plugins as $tabApp)
 				{
 					// Check permissions based on the TabApp config with extra permission if the user can edit its own contact and related tabapps (we use the $contactId in the if core.create condition, to check if we have a new contact and the user is able to create.)
 					// XiveTODO: We should check if it make sense to add a userid (created_by) column in the tabappvalue table
-					$permissionsTab = NUserAccess::getPermissions('com_xiveirm', 'tabapp', $tabApp->id, 'xiveirm_contacts.' . $return["apiReturnId"]);
+					$permissionsTab = NUserAccess::getPermissions($coreComponent, 'tabapp', $tabApp->id, $permissionsString . $return["apiReturnId"]);
 
-					// We use the contactId we've get via the formsubmission to check if it is a new contact. The Id returned from the save coreform process is only used to build the relation to the contact itself.
+					// We use the contactId we've get via the formsubmission to check if it is a new contact. The Id returned from the save contacts process is only used to build the relation to the contact itself.
 					if( $permissionsTab->get('core.edit') || $permissionsTab->get('core.edit.own') ) {
 				 		// Get the tabForm data.
 						$dataTabs = JFactory::getApplication()->input->get($tabApp->plugin, array(), 'array');
@@ -210,7 +232,7 @@ class XiveirmControllerApi extends XiveirmController
 					}
 				}
 			} else {
-				// Perform the return array. In this condition, the coreform returned no error but an id lover 0, or an correct id but an ERROR in the returnCode
+				// Perform the return array. In this condition, the contacts returned no error but an id lover 0, or an correct id but an ERROR in the returnCode
 				$return_arr = array();
 				$return_arr["apiReturnId"] = 0;
 				$return_arr["apiReturnCode"] = 1600;
@@ -515,4 +537,19 @@ class XiveirmControllerApi extends XiveirmController
 //	}
 //    
 //    
+
+	public function closeOnError($errorCode = 999, $errorMessage = 'ERROR') {
+		$return_arr = array();
+		$return_arr["apiReturnId"] = 0;
+		$return_arr["apiReturnCode"] = $errorCode;
+		$return_arr["apiReturnMessage"] = $errorMessage;
+
+		$return = $return_arr;
+	echo'<pre>';
+		print_r($return);
+	echo'</pre>';
+
+		$this->app->close();
+	}
+
 }

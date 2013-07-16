@@ -45,6 +45,9 @@ class XiveirmModelApi extends JModelForm
 			return $return_arr;
 		}
 
+		$dataCore = $data->core;
+		$dataApi = $data->api;
+
 //		$id = (!empty($data['id'])) ? $data['id'] : (int)$this->getState('contacts.id');
 //		$state = (!empty($data['state'])) ? 1 : 0;
 //		$user = JFactory::getUser();
@@ -70,207 +73,97 @@ class XiveirmModelApi extends JModelForm
 //		}
 
 		// Check if we have an id for an update, else we have to create
-		isset($data['id']) ? $id = (int)$data['id'] : $id = 0;
+		if( isset($dataCore['id']) && $dataCore['id'] > 0 ) {
+			$id = (int)$dataCore['id'];
+			$doNew = false;
+		} else {
+			$id = 0;
+			$doNew = true;
+		}
 
 		// Init database object.
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
-				
-		if($id == 0)
-		{
-			// Do the create new contact check if all needed datas are in there, else return false with error codes
-			if (!isset($data['created_by'])
-				|| !isset($data['client_id'])
-				|| !isset($data['parent_id'])
-				|| !isset($data['catid'])
-				|| !isset($data['customer_id'])
-				|| !isset($data['company'])
-				|| !isset($data['title'])
-				|| !isset($data['last_name'])
-				|| !isset($data['first_name'])
-				|| !isset($data['gender'])
-				|| !isset($data['dob'])
-				|| !isset($data['address_name'])
-				|| !isset($data['address_name_add'])
-				|| !isset($data['address_street'])
-				|| !isset($data['address_houseno'])
-				|| !isset($data['address_zip'])
-				|| !isset($data['address_city'])
-				|| !isset($data['address_region'])
-				|| !isset($data['address_country'])
-				|| !isset($data['phone'])
-				|| !isset($data['fax'])
-				|| !isset($data['mobile'])
-				|| !isset($data['email'])
-				|| !isset($data['web'])
-				|| !isset($data['remarks']))
-			{
-				$apiReturnId = null;
-				$apiReturnCode = 'ERROR';
-				$apiReturnMessage = 'An Error occured while checking if all form fields are send correctly';
-			} else {
+
+		$table = '#__xiveirm_' . $dataApi['coreapp'];
+
+		if($doNew) {
+			// Unset datas from form we do not need in the db query to save or to override (eg. id, created by)
+			unset($dataCore['id']);
+
+			// Build columns and values
+			$columns = array();
+			$values = array();
+
+			foreach($dataCore as $key => $val) {
 				// Set the columns
-				$columns = array(
-					'client_id',
-					'parent_id',
-					'created',
-					'created_by',
-					'catid',
-					'customer_id',
-					'company',
-					'title',
-					'last_name',
-					'first_name',
-					'gender',
-					'dob',
-					'address_name',
-					'address_name_add',
-					'address_street',
-					'address_houseno',
-					'address_zip',
-					'address_city',
-					'address_region',
-					'address_country',
-					'phone',
-					'fax',
-					'mobile',
-					'email',
-					'web',
-					'remarks');
-	
+				$columns[] = $key;
+
 				// Set the values
-				$values = array(
-					$db->quote($data['client_id']),
-					$db->quote($data['parent_id']),
-					$db->quote(date('Y-m-d H:i:s')),
-					$db->quote($data['created_by']),
-					$db->quote($data['catid']),
-					$db->quote($data['customer_id']),
-					$db->quote($data['company']),
-					$db->quote($data['title']),
-					$db->quote($data['last_name']),
-					$db->quote($data['first_name']),
-					$db->quote($data['gender']),
-					$db->quote($data['dob']),
-					$db->quote($data['address_name']),
-					$db->quote($data['address_name_add']),
-					$db->quote($data['address_street']),
-					$db->quote($data['address_houseno']),
-					$db->quote($data['address_zip']),
-					$db->quote($data['address_city']),
-					$db->quote($data['address_region']),
-					$db->quote($data['address_country']),
-					$db->quote($data['phone']),
-					$db->quote($data['fax']),
-					$db->quote($data['mobile']),
-					$db->quote($data['email']),
-					$db->quote($data['web']),
-					$db->quote($data['remarks']));
-	
-				$query
-					->insert($db->quoteName('#__xiveirm_contacts'))
-					->columns($db->quoteName($columns))
-					->values(implode(',', $values));
-				$db->setQuery($query);
-	
-				// Try to store or get the error code for debugging
-				$apiReturn = array();
-	
-				try
-				{
-					$db->execute();
-					$apiReturnId = (int)$db->insertid();
-					$apiReturnCode = 'SAVED';
-					$apiReturnMessage = 'Succesfully saved';
-				} catch (Exception $e) {
-					$apiReturnId = null;
-					$apiReturnCode = (int)$e->getCode();
-					$apiReturnMessage = $e->getMessage();
-				}
+				$values[] = $db->quote($val);
 			}
 
-		}
-		else if($id > 0)
-		{
-			// Do the update contact check if all needed datas are in there, else return false with error codes
-			if (!isset($data['client_id'])
-				|| !isset($data['parent_id'])
-				|| !isset($data['catid'])
-				|| !isset($data['customer_id'])
-				|| !isset($data['company'])
-				|| !isset($data['title'])
-				|| !isset($data['last_name'])
-				|| !isset($data['first_name'])
-				|| !isset($data['gender'])
-				|| !isset($data['dob'])
-				|| !isset($data['address_name'])
-				|| !isset($data['address_name_add'])
-				|| !isset($data['address_street'])
-				|| !isset($data['address_houseno'])
-				|| !isset($data['address_zip'])
-				|| !isset($data['address_city'])
-				|| !isset($data['address_region'])
-				|| !isset($data['address_country'])
-				|| !isset($data['phone'])
-				|| !isset($data['fax'])
-				|| !isset($data['mobile'])
-				|| !isset($data['email'])
-				|| !isset($data['web'])
-				|| !isset($data['remarks']))
+			// Set additionals we need for create process
+			$columns[] = 'created_by';
+			$values[] = $db->quote(NItemHelper::getDate('MySQL'));
+
+			$query
+				->insert($db->quoteName($table))
+				->columns($db->quoteName($columns))
+				->values(implode(',', $values));
+			$db->setQuery($query);
+	
+			// Try to store or get the error code for debugging
+			$apiReturn = array();
+	
+			try
 			{
+				$db->execute();
+				$apiReturnId = (int)$db->insertid();
+				$apiReturnCode = 'SAVED';
+				$apiReturnMessage = 'Succesfully saved';
+			} catch (Exception $e) {
 				$apiReturnId = null;
-				$apiReturnCode = 'ERROR';
-				$apiReturnMessage = 'An Error occured while checking if all form fields are send correctly';
+				$apiReturnCode = (int)$e->getCode();
+				$apiReturnMessage = $e->getMessage();
 			}
-			else
-			{
+		}
+		else if(!$doNew)
+		{
+			// Unset datas from form we do not need in the db query to save or to override (eg. id, created by)
+			unset($dataCore['id']);
+
+			// Build fields
+			$fields = array();
+			$field = '';
+
+			foreach($dataCore as $key => $val) {
 				// Set the fields
-				$fields = array(
-					'client_id = ' . $db->quote($data['client_id']) . '',
-					'parent_id = ' . $db->quote($data['parent_id']) . '',
-					'catid = ' . $db->quote($data['catid']) . '',
-					'customer_id = ' . $db->quote($data['customer_id']) . '',
-					'company = ' . $db->quote($data['company']) . '',
-					'title = ' . $db->quote($data['title']) . '',
-					'last_name = ' . $db->quote($data['last_name']) . '',
-					'first_name = ' . $db->quote($data['first_name']) . '',
-					'gender = ' . $db->quote($data['gender']) . '',
-					'dob = ' . $db->quote($data['dob']) . '',
-					'address_name = ' . $db->quote($data['address_name']) . '',
-					'address_name_add = ' . $db->quote($data['address_name_add']) . '',
-					'address_street = ' . $db->quote($data['address_street']) . '',
-					'address_houseno = ' . $db->quote($data['address_houseno']) . '',
-					'address_zip = ' . $db->quote($data['address_zip']) . '',
-					'address_city = ' . $db->quote($data['address_city']) . '',
-					'address_region = ' . $db->quote($data['address_region']) . '',
-					'address_country = ' . $db->quote($data['address_country']) . '',
-					'phone = ' . $db->quote($data['phone']) . '',
-					'fax = ' . $db->quote($data['fax']) . '',
-					'mobile = ' . $db->quote($data['mobile']) . '',
-					'email = ' . $db->quote($data['email']) . '',
-					'web = ' . $db->quote($data['web']) . '',
-					'remarks = ' . $db->quote($data['remarks']) . '',
-					'modified = ' . $db->quote(NItemHelper::getDate('MySQL')) . '');
+				$fields[] = $key . ' = ' . $db->quote($val);
 
-				$query
-					->update($db->quoteName('#__xiveirm_contacts'))
-					->set($fields)
-					->where('id = ' . $db->quote($id) . '');
+			}
 
-				$db->setQuery($query);
+			// Set additionals we need for update process
+			$fields[] = 'modified = ' . $db->quote(NItemHelper::getDate('MySQL'));
 
-				// Try to store or get the error code for debugging
-				try
-				{
-					$db->execute();
-					$apiReturnId = (int)$id;
-					$apiReturnCode = 'UPDATED';
-					$apiReturnMessage = 'Succesfully updated';
-				} catch (Exception $e) {
-					$apiReturnId = null;
-					$apiReturnCode = (int)$e->getCode();
-					$apiReturnMessage = $e->getMessage();
-				}
+			$query
+				->update($db->quoteName($table))
+				->set($fields)
+				->where('id = ' . $db->quote($id) . '');
+
+			$db->setQuery($query);
+
+			// Try to store or get the error code for debugging
+			try
+			{
+				$db->execute();
+				$apiReturnId = (int)$id;
+				$apiReturnCode = 'UPDATED';
+				$apiReturnMessage = 'Succesfully updated';
+			} catch (Exception $e) {
+				$apiReturnId = null;
+				$apiReturnCode = (int)$e->getCode();
+				$apiReturnMessage = $e->getMessage();
 			}
 		}
 		else
@@ -290,7 +183,7 @@ class XiveirmModelApi extends JModelForm
 	}
 
 	/**
-	 * Method to save the form data.
+	 * Method to save the tabform data.
 	 *
 	 * @param	array		The form data.
 	 * @return	mixed		The user id on success, false on failure.
