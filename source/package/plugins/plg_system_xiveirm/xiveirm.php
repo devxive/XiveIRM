@@ -85,12 +85,12 @@ class PlgSystemXiveIrm extends JPlugin
 				}
 
 				// Check if we have a client_id from the users profile, if not, then use the global client_id from the component
-				if(!$clientObject->client_id) {
+				if(!isset($clientObject->client_id)) {
 					$clientObject->client_id = IRMSystem::getGlobalClientId();
 				}
 
 				// Check if user want to get global list options. If yes, store the global_client_id, else unset this option
-				if($clientObject->show_globals == 1) {
+				if(isset($clientObject->show_globals) && $clientObject->show_globals == 1) {
 					$clientObject->global_client_id = IRMSystem::getGlobalClientId();
 					unset($clientObject->show_globals);
 				} else {
