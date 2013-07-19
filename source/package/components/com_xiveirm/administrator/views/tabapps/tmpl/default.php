@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     4.2.3
+ * @version     5.0.0
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -184,7 +184,7 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<td>
-					<?php echo NFactory::getTitleById('usergroup', $item->client_id); ?>
+					<?php echo NItemHelper::getTitleById('usergroup', $item->client_id); ?>
 				</td>
 				<td>
 				<?php if (isset($item->checked_out) && $item->checked_out) : ?>
