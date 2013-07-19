@@ -9,8 +9,12 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE.'/components/com_xiveirm/helpers/xiveirm.php';
+require_once JPATH_SITE.'/components/com_xiveirm/helpers/irmsystem.php';
+
 // Include dependancies
 jimport('joomla.application.component.controller');
+nimport('NItem.Helper', false);
 
 // Execute the task.
 $controller	= JControllerLegacy::getInstance('Xivetranscorder');
