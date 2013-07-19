@@ -161,7 +161,11 @@ $lang->load('com_xivetranscorder', JPATH_ADMINISTRATOR);
 				<div class="control-label"><?php echo $this->form->getLabel('transport_timestamp'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('transport_timestamp'); ?></div>
 			</div>
-				<input type="hidden" name="jform[f_poi_id]" value="<?php echo $this->item->f_poi_id; ?>" />
+
+			<div class="control-group">
+				<div class="control-label"><?php echo $this->form->getLabel('f_poi_id'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('f_poi_id'); ?></div>
+			</div>
 			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('f_address_name'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('f_address_name'); ?></div>
@@ -194,10 +198,14 @@ $lang->load('com_xivetranscorder', JPATH_ADMINISTRATOR);
 				<div class="control-label"><?php echo $this->form->getLabel('f_address_country'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('f_address_country'); ?></div>
 			</div>
-				<input type="hidden" name="jform[f_address_lat]" value="<?php echo $this->item->f_address_lat; ?>" />
-				<input type="hidden" name="jform[f_address_long]" value="<?php echo $this->item->f_address_long; ?>" />
-				<input type="hidden" name="jform[f_address_hash]" value="<?php echo $this->item->f_address_hash; ?>" />
-				<input type="hidden" name="jform[t_poi_id]" value="<?php echo $this->item->t_poi_id; ?>" />
+			<input type="hidden" name="jform[f_address_lat]" value="<?php echo $this->item->f_address_lat; ?>" />
+			<input type="hidden" name="jform[f_address_long]" value="<?php echo $this->item->f_address_long; ?>" />
+			<input type="hidden" name="jform[f_address_hash]" value="<?php echo $this->item->f_address_hash; ?>" />
+
+			<div class="control-group">
+				<div class="control-label"><?php echo $this->form->getLabel('t_poi_id'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('t_poi_id'); ?></div>
+			</div>
 			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('t_address_name'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('t_address_name'); ?></div>
@@ -226,10 +234,16 @@ $lang->load('com_xivetranscorder', JPATH_ADMINISTRATOR);
 				<div class="control-label"><?php echo $this->form->getLabel('t_address_country'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('t_address_country'); ?></div>
 			</div>
-				<input type="hidden" name="jform[t_address_lat]" value="<?php echo $this->item->t_address_lat; ?>" />
-				<input type="hidden" name="jform[t_address_long]" value="<?php echo $this->item->t_address_long; ?>" />
-				<input type="hidden" name="jform[t_address_hash]" value="<?php echo $this->item->t_address_hash; ?>" />
-				<input type="hidden" name="jform[distcalc_device]" value="<?php echo $this->item->distcalc_device; ?>" />
+
+			<input type="hidden" name="jform[t_address_lat]" value="<?php echo $this->item->t_address_lat; ?>" />
+			<input type="hidden" name="jform[t_address_long]" value="<?php echo $this->item->t_address_long; ?>" />
+			<input type="hidden" name="jform[t_address_hash]" value="<?php echo $this->item->t_address_hash; ?>" />
+
+			<div class="control-group">
+				<div class="control-label"><?php echo $this->form->getLabel('distcalc_device'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('distcalc_device'); ?></div>
+			</div>
+
 			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('estimated_distance'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('estimated_distance'); ?></div>
