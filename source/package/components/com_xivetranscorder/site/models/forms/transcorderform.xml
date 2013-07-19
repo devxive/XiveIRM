@@ -53,10 +53,12 @@
 			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_TRANSPORT_TIMESTAMP"
 			filter="safehtml" />
 
-		<field name="f_poi_id" type="text" size="40" class="inputbox"
+		<field name="f_poi_id" type="sql" default="0" class="inputbox"
 			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_POI_ID"
 			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_POI_ID"
-			filter="safehtml" />
+			query="SELECT id, concat(coalesce(last_name,''), ', ', coalesce(first_name,''), ' (', coalesce(company,''),' )') AS value FROM #__xiveirm_contacts WHERE catid=40"
+			key_field="id"
+			value_field="value"/>
 
 		<field name="f_address_name" type="text" size="40" class="inputbox"
 			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_NAME"
@@ -114,10 +116,12 @@
 			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_HASH"
 			filter="string" />
 
-		<field name="t_poi_id" type="text" size="40" class="inputbox"
+		<field name="t_poi_id" type="sql" default="0" class="inputbox"
 			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_POI_ID"
 			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_POI_ID"
-			filter="safehtml" />
+			query="SELECT id, concat(coalesce(last_name,''), ', ', coalesce(first_name,''), ' (', coalesce(company,''),' )') AS value FROM #__xiveirm_contacts WHERE catid=40"
+			key_field="id"
+			value_field="value"/>
 
 		<field name="t_address_name" type="text"
 			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_NAME"
@@ -176,7 +180,7 @@
 			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_HASH"
 			filter="string" />
 
-		<field name="distcalc_device" type="radio"
+		<field name="distcalc_device" type="radio" default="car"
 			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_DISTCALC_DEVICE"
 			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_DISTCALC_DEVICE"
 			filter="raw">
