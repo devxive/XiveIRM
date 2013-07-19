@@ -37,16 +37,11 @@
 	</languages>
 
 	<administration>
-		<menu img="components/com_xivetranscorder/assets/images/s_com_xivetranscorder.png" >COM_XIVETRANSCORDER</menu>
+		<menu img="components/com_xivetranscorder/assets/images/s_com_xivetranscorder.png" >COM_XIVETRANSCORDER_MENULINK</menu>
 		<submenu>
 			<menu link="option=com_xivetranscorder&amp;view=transcorders" view="transcorders" img="components/com_xivetranscorder/assets/images/s_transcorders.png" alt="Xivetranscorder/Transcorders">COM_XIVETRANSCORDER_TITLE_TRANSCORDERS</menu>
-			<menu link="option=com_categories&amp;extension=com_xivetranscorder.transcorders.catid" view="categories" img="components/com_xivetranscorder/assets/images/s_transcorders.png" alt="Xivetranscorder/Categories">COM_XIVETRANSCORDER_TRANSCORDERS_CATID</menu>
-			<menu link="option=com_xivetranscorder&amp;view=tabappvalues" view="tabappvalues" img="components/com_xivetranscorder/assets/images/s_tabappvalues.png" alt="Xivetranscorder/Tabappvalues">COM_XIVETRANSCORDER_TITLE_TABAPPVALUES</menu>
-			<menu link="option=com_xivetranscorder&amp;view=relatedbillings" view="relatedbillings" img="components/com_xivetranscorder/assets/images/s_relatedbillings.png" alt="Xivetranscorder/Relatedbillings">COM_XIVETRANSCORDER_TITLE_RELATEDBILLINGS</menu>
-			<menu link="option=com_xivetranscorder&amp;view=relatedstatistics" view="relatedstatistics" img="components/com_xivetranscorder/assets/images/s_relatedstatistics.png" alt="Xivetranscorder/Relatedstatistics">COM_XIVETRANSCORDER_TITLE_RELATEDSTATISTICS</menu>
-			<menu link="option=com_xivetranscorder&amp;view=relatedrevisions" view="relatedrevisions" img="components/com_xivetranscorder/assets/images/s_relatedrevisions.png" alt="Xivetranscorder/Relatedrevisions">COM_XIVETRANSCORDER_TITLE_RELATEDREVISIONS</menu>
+			<menu link="option=com_categories&amp;extension=com_xivetranscorder.transcorders" view="categories" img="components/com_xivetranscorder/assets/images/s_transcorders.png" alt="Xivetranscorder/Categories">COM_XIVETRANSCORDER_TRANSCORDERS_CATID</menu>
 			<menu link="option=com_xivetranscorder&amp;view=tabapps" view="tabapps" img="components/com_xivetranscorder/assets/images/s_tabapps.png" alt="Xivetranscorder/Tabapps">COM_XIVETRANSCORDER_TITLE_TABAPPS</menu>
-			<menu link="option=com_categories&amp;extension=com_xivetranscorder.tabapps.catid" view="categories" img="components/com_xivetranscorder/assets/images/s_tabapps.png" alt="Xivetranscorder/Categories">COM_XIVETRANSCORDER_TABAPPS_CATID</menu>
 		</submenu>
 
 		<files folder="administrator">
