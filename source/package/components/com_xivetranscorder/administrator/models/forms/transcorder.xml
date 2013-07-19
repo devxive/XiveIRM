@@ -1,304 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
 	<fieldset>
+		<field name="id" type="text" default="0"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_ID"
+			readonly="true" class="readonly"
+			description="JGLOBAL_FIELD_ID_DESC" />
 
-              <field name="id" type="text" default="0" label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_ID"
-            readonly="true" class="readonly"
-            description="JGLOBAL_FIELD_ID_DESC" /> 
+		<field name="client_id" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_CLIENT_ID"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_CLIENT_ID"
+			filter="safehtml" />
 
-       <field name="client_id" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_CLIENT_ID"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_CLIENT_ID" 
-        
-        
-        
-        filter="safehtml" /> 
+		<field name="created" type="timecreated" default=""
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_CREATED"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_CREATED" />
 
-       <field name="created" type="timecreated" default="" 
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_CREATED"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_CREATED"  /> 
+		<field name="created_by" type="createdby" default=""
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_CREATED_BY"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_CREATED_BY" />
 
-       <field name="created_by" type="createdby" default="" 
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_CREATED_BY"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_CREATED_BY"  /> 
+		<field name="modified" type="timeupdated" default=""
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_MODIFIED"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_MODIFIED" />
 
-       <field name="modified" type="timeupdated" default="" 
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_MODIFIED"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_MODIFIED"  /> 
+		<field name="catid" type="category"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_CATID"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_CATID"
+			extension="com_xivetranscorder.transcorders"
+			filter="raw" />
 
-       <field name="catid" type="category"
-                
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_CATID"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_CATID" 
-                
-                
-                
-            extension="com_xivetranscorder.transcorders.catid"
-            filter="raw" /> 
-
- 
 		<field name="filter_catid" type="category"
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_CATID"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_CATID"  extension="com_xivetranscorder.transcorders.catid" show_root="1" onchange="this.form.submit();" /> 
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_CATID"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_CATID"
+			extension="com_xivetranscorder.transcorders"
+			show_root="1"
+			onchange="this.form.submit();" />
 
-       <field name="contact_id" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_CONTACT_ID"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_CONTACT_ID" 
-        
-        
-        
-        filter="safehtml" /> 
+		<field name="contact_id" type="sql" default="0" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_CONTACT_ID"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_CONTACT_ID"
+			query="SELECT id, concat(coalesce(last_name,''), ', ', coalesce(first_name,''), ' (', coalesce(company,''),' )') AS value FROM #__xiveirm_contacts"
+			key_field="id"
+			value_field="value" />
 
-       <field name="order_id" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_ORDER_ID"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_ORDER_ID" 
-        
-        
-        
-        filter="safehtml" /> 
+		<field name="order_id" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_ORDER_ID"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_ORDER_ID"
+			filter="safehtml" />
 
-       <field name="transport_timestamp" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_TRANSPORT_TIMESTAMP"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_TRANSPORT_TIMESTAMP" 
-        
-        
-        
-        filter="safehtml" /> 
+		<field name="transport_timestamp" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_TRANSPORT_TIMESTAMP"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_TRANSPORT_TIMESTAMP"
+			filter="safehtml" />
 
-       <field name="f_poi_id" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_POI_ID"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_POI_ID" 
-        
-        
-        
-        filter="safehtml" /> 
+		<field name="f_poi_id" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_POI_ID"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_POI_ID"
+			filter="safehtml" />
 
-       <field name="f_address_name" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_NAME"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_NAME" 
-        
-        
-        
-        filter="safehtml" /> 
+		<field name="f_address_name" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_NAME"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_NAME"
+			filter="safehtml" />
 
-       <field name="f_address_name_add" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_NAME_ADD"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_NAME_ADD" 
-        
-        
-        
-        filter="safehtml" /> 
+		<field name="f_address_name_add" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_NAME_ADD"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_NAME_ADD"
+			filter="safehtml" />
 
-       <field name="f_address_street" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_STREET"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_STREET" 
-        
-        
-        
-        filter="safehtml" /> 
+		<field name="f_address_street" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_STREET"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_STREET"
+			filter="safehtml" />
 
-       <field name="f_address_houseno" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_HOUSENO"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_HOUSENO" 
-        
-        
-        
-        filter="safehtml" /> 
+		<field name="f_address_houseno" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_HOUSENO"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_HOUSENO"
+			filter="safehtml" />
 
-       <field name="f_address_zip" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_ZIP"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_ZIP" 
-        
-        
-        
-        filter="safehtml" /> 
+		<field name="f_address_zip" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_ZIP"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_ZIP"
+			filter="safehtml" />
 
-       <field name="f_address_city" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_CITY"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_CITY" 
-        
-        
-        
-        filter="safehtml" /> 
+		<field name="f_address_city" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_CITY"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_CITY"
+			filter="safehtml" />
 
-       <field name="f_address_region" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_REGION"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_REGION" 
-        
-        
-        
-        filter="safehtml" /> 
+		<field name="f_address_region" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_REGION"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_REGION"
+			filter="safehtml" />
 
-       <field name="f_address_country" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_COUNTRY"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_COUNTRY" 
-        
-        
-         required="true" 
-        filter="safehtml" /> 
+		<field name="f_address_country" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_COUNTRY"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_COUNTRY"
+			required="true"
+			filter="safehtml" />
 
-       <field name="f_address_lat" type="text"
-                
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_LAT"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_LAT" 
-                
-                
-                
-            filter="string" /> 
+		<field name="f_address_lat" type="text"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_LAT"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_LAT"
+			filter="string" />
 
-       <field name="f_address_long" type="text"
-                
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_LONG"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_LONG" 
-                
-                
-                
-            filter="string" /> 
+		<field name="f_address_long" type="text"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_LONG"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_LONG"
+			filter="string" />
 
-       <field name="f_address_hash" type="text"
-                
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_HASH"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_HASH" 
-                
-                
-                
-            filter="string" /> 
+		<field name="f_address_hash" type="text"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_HASH"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_HASH"
+			filter="string" />
 
-       <field name="t_poi_id" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_POI_ID"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_POI_ID" 
-        
-        
-        
-        filter="safehtml" /> 
+		<field name="t_poi_id" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_POI_ID"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_POI_ID"
+			filter="safehtml" />
 
-       <field name="t_address_name" type="text"
-                
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_NAME"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_NAME" 
-                
-                
-                
-            filter="string"
-            maxlength="150" /> 
+		<field name="t_address_name" type="text"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_NAME"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_NAME"
+			filter="string"
+			maxlength="150" />
 
-       <field name="t_address_name_add" type="text"
-                
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_NAME_ADD"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_NAME_ADD" 
-                
-                
-                
-            filter="string"
-            maxlength="100" /> 
+		<field name="t_address_name_add" type="text"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_NAME_ADD"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_NAME_ADD"
+			filter="string"
+			maxlength="100" />
 
-       <field name="t_address_street" type="text"
-                
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_STREET"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_STREET" 
-                
-                
-                
-            filter="string"
-            maxlength="100" /> 
+		<field name="t_address_street" type="text"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_STREET"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_STREET"
+			filter="string"
+			maxlength="100" />
 
-       <field name="t_address_houseno" type="text"
-                
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_HOUSENO"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_HOUSENO" 
-                
-                
-                
-            filter="string"
-            maxlength="10" /> 
+		<field name="t_address_houseno" type="text"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_HOUSENO"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_HOUSENO"
+			filter="string"
+			maxlength="10" />
 
-       <field name="t_address_zip" type="text"
-                
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_ZIP"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_ZIP" 
-                
-                
-                
-            filter="string"
-            maxlength="10" /> 
+		<field name="t_address_zip" type="text"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_ZIP"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_ZIP"
+			filter="string"
+			maxlength="10" />
 
-       <field name="t_address_city" type="text"
-                
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_CITY"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_CITY" 
-                
-                
-                
-            filter="string"
-            maxlength="100" /> 
+		<field name="t_address_city" type="text"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_CITY"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_CITY"
+			filter="string"
+			maxlength="100" />
 
-       <field name="t_address_country" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_COUNTRY"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_COUNTRY" 
-        
-        
-         required="true" 
-        filter="safehtml" /> 
+		<field name="t_address_country" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_COUNTRY"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_COUNTRY"
+			required="true"
+			filter="safehtml" />
 
-       <field name="t_address_lat" type="text"
-                
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_LAT"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_LAT" 
-                
-                
-                
-            filter="string" /> 
+		<field name="t_address_lat" type="text"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_LAT"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_LAT"
+			filter="string" />
 
-       <field name="t_address_long" type="text"
-                
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_LONG"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_LONG" 
-                
-                
-                
-            filter="string" /> 
+		<field name="t_address_long" type="text"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_LONG"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_LONG"
+			filter="string" />
 
-       <field name="t_address_hash" type="text"
-                
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_HASH"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_HASH" 
-                
-                
-                
-            filter="string" /> 
+		<field name="t_address_hash" type="text"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_HASH"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_HASH"
+			filter="string" />
 
-       <field name="distcalc_device" type="radio"
-                
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_DISTCALC_DEVICE"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_DISTCALC_DEVICE" 
-                
-                
-                
-            filter="raw">
-                <option value="walk">Walk</option>
-                <option value="car">Car</option>
-                <option value="truck">Truck</option>
-                <option value="train">Train</option>
-                <option value="airplane">Airplane</option>
-                <option value="custom">Custom</option>
-        </field> 
+		<field name="distcalc_device" type="radio"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_DISTCALC_DEVICE"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_DISTCALC_DEVICE"
+			filter="raw">
+				<option value="walk">Walk</option>
+				<option value="car">Car</option>
+				<option value="truck">Truck</option>
+				<option value="train">Train</option>
+				<option value="airplane">Airplane</option>
+				<option value="custom">Custom</option>
+		</field>
 
- 
 		<field name="filter_distcalc_device" type="list" onchange="this.form.submit();">
 			<option value="">COM_XIVETRANSCORDER_TRANSCORDERS_DISTCALC_DEVICE_FILTER</option>
 			<option value="walk">Walk</option>
@@ -307,41 +196,26 @@
 			<option value="train">Train</option>
 			<option value="airplane">Airplane</option>
 			<option value="custom">Custom</option>
-		</field> 
+		</field>
 
-       <field name="estimated_distance" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_ESTIMATED_DISTANCE"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_ESTIMATED_DISTANCE" 
-        
-        
-        
-        filter="safehtml" /> 
+		<field name="estimated_distance" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_ESTIMATED_DISTANCE"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_ESTIMATED_DISTANCE"
+			filter="safehtml" />
 
-       <field name="estimated_time" type="text" size="40" class="inputbox"
-        
-            label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_ESTIMATED_TIME"
-            description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_ESTIMATED_TIME" 
-        
-        
-        
-        filter="safehtml" /> 
+		<field name="estimated_time" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_ESTIMATED_TIME"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_ESTIMATED_TIME"
+			filter="safehtml" />
 
-         <field
-        name="state"
-        type="list"
-        label="JSTATUS"
-        description="JFIELD_PUBLISHED_DESC"
-        class="inputbox"
-        size="1"
-        default="1">
-        <option value="1">JPUBLISHED</option>
-        <option value="0">JUNPUBLISHED</option>
-    </field> 
+		<field name="state" type="list" size="1" class="inputbox" default="1"
+			label="JSTATUS"
+			description="JFIELD_PUBLISHED_DESC">
+				<option value="1">JPUBLISHED</option>
+				<option value="0">JUNPUBLISHED</option>
+		</field>
 
-                        <field name="checked_out" type="hidden" filter="unset" />
-        <field name="checked_out_time" type="hidden" filter="unset" />
-
+		<field name="checked_out" type="hidden" filter="unset" />
+		<field name="checked_out_time" type="hidden" filter="unset" />
 	</fieldset>
-
 </form>
