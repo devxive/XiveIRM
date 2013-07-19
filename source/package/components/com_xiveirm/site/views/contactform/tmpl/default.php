@@ -215,7 +215,7 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 													echo '<option value="0" selected>' . JText::_('COM_XIVEIRM_SELECT_NO_PARENT') . '</option>';
 												}
 
-												$options_parent_id = IRMSystem::getListOptions('contacts', $xsession->client_id);
+												$options_parent_id = IRMSystem::getListOptions('parents', $xsession->client_id);
 												foreach($options_parent_id->categories as $catid => $name) {
 													echo '<optgroup label="' . $name . '">';
 														foreach($options_parent_id->contacts as $contactgroupid => $contactgroup) {
