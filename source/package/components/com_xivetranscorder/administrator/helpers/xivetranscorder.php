@@ -26,47 +26,20 @@ class XivetranscorderHelper
 			$vName == 'transcorders'
 		);
 		JHtmlSidebar::addEntry(
-			'Categories (Transcorders - Category)',
-			"index.php?option=com_categories&extension=com_xivetranscorder.transcorders.catid",
+			JText::_('COM_XIVETRANSCORDER_TITLE_TRANSCORDERS_CATEGORIES'),
+			"index.php?option=com_categories&extension=com_xivetranscorder.transcorders",
 			$vName == 'categories.transcorders'
 		);
-		
-if ($vName=='categories.transcorders.catid') {			
-JToolBarHelper::title('XiveTC - Transport Coordination: Categories (Transcorders - Category)');		
-}		JHtmlSidebar::addEntry(
-			JText::_('COM_XIVETRANSCORDER_TITLE_TABAPPVALUES'),
-			'index.php?option=com_xivetranscorder&view=tabappvalues',
-			$vName == 'tabappvalues'
-		);
-		JHtmlSidebar::addEntry(
-			JText::_('COM_XIVETRANSCORDER_TITLE_RELATEDBILLINGS'),
-			'index.php?option=com_xivetranscorder&view=relatedbillings',
-			$vName == 'relatedbillings'
-		);
-		JHtmlSidebar::addEntry(
-			JText::_('COM_XIVETRANSCORDER_TITLE_RELATEDSTATISTICS'),
-			'index.php?option=com_xivetranscorder&view=relatedstatistics',
-			$vName == 'relatedstatistics'
-		);
-		JHtmlSidebar::addEntry(
-			JText::_('COM_XIVETRANSCORDER_TITLE_RELATEDREVISIONS'),
-			'index.php?option=com_xivetranscorder&view=relatedrevisions',
-			$vName == 'relatedrevisions'
-		);
+
+		if ($vName=='categories.transcorders') {
+			JToolBarHelper::title(JText::_('COM_XIVETRANSCORDER_SITE_TITLE_TRANSCORDERS_CATEGORIES'));
+		}
+
 		JHtmlSidebar::addEntry(
 			JText::_('COM_XIVETRANSCORDER_TITLE_TABAPPS'),
 			'index.php?option=com_xivetranscorder&view=tabapps',
 			$vName == 'tabapps'
 		);
-		JHtmlSidebar::addEntry(
-			'Categories (Tabapps - Category)',
-			"index.php?option=com_categories&extension=com_xivetranscorder.tabapps.catid",
-			$vName == 'categories.tabapps'
-		);
-		
-if ($vName=='categories.tabapps.catid') {			
-JToolBarHelper::title('XiveTC - Transport Coordination: Categories (Tabapps - Category)');		
-}
 	}
 
 	/**
