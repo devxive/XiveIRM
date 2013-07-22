@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorders` (
 `t_address_houseno` VARCHAR(10) NOT NULL,
 `t_address_zip` VARCHAR(10) NOT NULL,
 `t_address_city` VARCHAR(100) NOT NULL,
+`t_address_region` VARCHAR(100) NOT NULL,
 `t_address_country` VARCHAR(100) NOT NULL,
 `t_address_lat` VARCHAR(50) NOT NULL,
 `t_address_long` VARCHAR(50) NOT NULL,
@@ -68,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorder_revisions` (
 UNIQUE KEY `idx_transcorder_id_tab_key` (`transcorder_id`,`tab_key`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex transcorder data storage table';
 
-CREATE TABLE IF NOT EXISTS `#__xivetranscorder_tabapps` (
+CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorder_tabapps` (
 `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `asset_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
 `client_id` INT(11) NOT NULL COMMENT 'usergroup id',
