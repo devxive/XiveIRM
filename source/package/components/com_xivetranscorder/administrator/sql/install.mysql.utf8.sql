@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorders` (
 `contact_id` INT(11) NOT NULL,
 `order_id` VARCHAR(100) NOT NULL,
 `transport_timestamp` VARCHAR(20) NOT NULL,
-`f_poi_id` INT(11) NOT NULL COMMENT 'Additional XiveIRM Contact Id',
+`f_poi_id` INT(11) NOT NULL DEFAULT '0' COMMENT 'Additional XiveIRM Contact Id',
 `f_address_name` VARCHAR(150) NOT NULL,
 `f_address_name_add` VARCHAR(100) NOT NULL,
 `f_address_street` VARCHAR(100) NOT NULL,
@@ -20,10 +20,10 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorders` (
 `f_address_city` VARCHAR(100) NOT NULL,
 `f_address_region` VARCHAR(100) NOT NULL,
 `f_address_country` VARCHAR(100) NOT NULL,
-`f_address_lat` VARCHAR(50) NOT NULL,
-`f_address_long` VARCHAR(50) NOT NULL,
-`f_address_hash` VARCHAR(255) NOT NULL,
-`t_poi_id` INT(11) NOT NULL COMMENT 'Additional XiveIRM Contact Id',
+`f_address_lat` VARCHAR(20) NOT NULL,
+`f_address_lng` VARCHAR(20) NOT NULL,
+`f_address_hash` VARCHAR(100) NOT NULL,
+`t_poi_id` INT(11) NOT NULL DEFAULT '0' COMMENT 'Additional XiveIRM Contact Id',
 `t_address_name` VARCHAR(150) NOT NULL ,
 `t_address_name_add` VARCHAR(100) NOT NULL,
 `t_address_street` VARCHAR(100) NOT NULL,
@@ -32,9 +32,9 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorders` (
 `t_address_city` VARCHAR(100) NOT NULL,
 `t_address_region` VARCHAR(100) NOT NULL,
 `t_address_country` VARCHAR(100) NOT NULL,
-`t_address_lat` VARCHAR(50) NOT NULL,
-`t_address_long` VARCHAR(50) NOT NULL,
-`t_address_hash` VARCHAR(255) NOT NULL,
+`t_address_lat` VARCHAR(20) NOT NULL,
+`t_address_lng` VARCHAR(20) NOT NULL,
+`t_address_hash` VARCHAR(100) NOT NULL,
 `distcalc_device` VARCHAR(10) NOT NULL,
 `estimated_distance` VARCHAR(10) NOT NULL,
 `estimated_time` VARCHAR(10) NOT NULL,
@@ -68,15 +68,3 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorder_revisions` (
 `tab_value` MEDIUMTEXT NOT NULL,
 UNIQUE KEY `idx_transcorder_id_tab_key` (`transcorder_id`,`tab_key`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex transcorder data storage table';
-
-CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorder_tabapps` (
-`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-`asset_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-`client_id` INT(11) NOT NULL COMMENT 'usergroup id',
-`plugin` VARCHAR(100) NOT NULL COMMENT 'tab_key',
-`catid` INT(11) NOT NULL COMMENT 'XIRM categories',
-`config` TEXT NOT NULL,
-`state` TINYINT(1) NOT NULL DEFAULT '1',
-`ordering` INT(11) NOT NULL,
-PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Storage Table for the TabApp and Widget configurations';
