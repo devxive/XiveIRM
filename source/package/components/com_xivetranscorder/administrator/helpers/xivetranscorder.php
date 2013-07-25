@@ -34,12 +34,6 @@ class XivetranscorderHelper
 		if ($vName=='categories.transcorders') {
 			JToolBarHelper::title(JText::_('COM_XIVETRANSCORDER_SITE_TITLE_TRANSCORDERS_CATEGORIES'));
 		}
-
-		JHtmlSidebar::addEntry(
-			JText::_('COM_XIVETRANSCORDER_TITLE_TABAPPS'),
-			'index.php?option=com_xivetranscorder&view=tabapps',
-			$vName == 'tabapps'
-		);
 	}
 
 	/**
