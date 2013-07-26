@@ -21,15 +21,15 @@ nimport('NItem.Helper', false);
 nimport('NUser.Access', false);
 
 NHtmlJavaScript::setToggle('extended', 'toggleExtend');
-NHtmlJavaScript::setTextLimit('.limited', 250);
-NHtmlJavaScript::setTextAutosize('.autosize');
 NHtmlJavaScript::setTooltip('.xtooltip');
 NHtmlJavaScript::setPopover('.xpopover');
 NHtmlJavaScript::setPreventFormSubmitByKey();
 NHtmlJavaScript::loadGritter();
-NHtmlJavaScript::setPreventFormLeaveIfChanged('#form-transcorder');
-NHtmlJavaScript::loadTimepicker('#timepicker_1', 15, false, false);
+NHtmlJavaScript::loadAlertify();
+// NHtmlJavaScript::setPreventFormLeaveIfChanged('#form-transcorder');
+NHtmlJavaScript::loadTimepicker('#timepicker-1', 15, false, false);
 NHtmlJavaScript::loadDatepicker();
+NHtmlJavaScript::setChosen('.chzn-select-poi-address', false, array('allow_single_deselect' => true, 'disable_search_threshold' => '10', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%'));
 
 //Load admin language file
 $lang = JFactory::getLanguage();
@@ -40,10 +40,20 @@ $lang->load('com_xivetranscorder', JPATH_ADMINISTRATOR);
 $xsession = JFactory::getSession()->get('XiveIRMSystem');
 
 // Get Permissions
-$permissions = NUserAccess::getPermissions('com_xiveirm', false, false, 'xiveirm_contacts.' . $this->item->id);
+$permissions = NUserAccess::getPermissions('com_xiveirm', false, false, 'xiveirm_transcorders.' . $this->item->id);
+
+// If it's a new order and we have set the catid in the prevoius link!
+if(!$this->item->catid) {
+	$this->item->catid = JFactory::getApplication()->getUserState('com_xivetranscorder.edit.transcorder.catid');
+}
+
+// If it's a new order and we have set the contactid in the prevoius link!
+if(!$this->item->contact_id) {
+	$this->item->contact_id = JFactory::getApplication()->getUserState('com_xivetranscorder.edit.transcorder.contactid');
+}
 
 // Import all TabApps based on the XiveIRM TabApp configs and the related catid!
-IRMSystem::getPlugins($this->item->catid);
+IRMSystem::getPlugins($this->item->catid, 'xivetranscorder');
 $dispatcher = JDispatcher::getInstance();
 
 // Check for checked out item
@@ -58,52 +68,27 @@ $checkoutParams = array(
 );
 $checkedOut = NHtmlJavaScript::getCheckoutMessage($this->item->checked_out, $this->item->checked_out_time, '#checkout-message', $checkoutParams);
 
-// used for javascript processed messages
-$full_name = 'Full Name PLACEHOLDER';
-?>
-<!--
-<script type="text/javascript">
-    function getScript(url,success) {
-        var script = document.createElement('script');
-        script.src = url;
-        var head = document.getElementsByTagName('head')[0],
-        done = false;
-        // Attach handlers for all browsers
-        script.onload = script.onreadystatechange = function() {
-            if (!done && (!this.readyState
-                || this.readyState == 'loaded'
-                || this.readyState == 'complete')) {
-                done = true;
-                success();
-                script.onload = script.onreadystatechange = null;
-                head.removeChild(script);
-            }
-        };
-        head.appendChild(script);
-    }
-    getScript('//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',function() {
-        js = jQuery.noConflict();
-        js(document).ready(function(){
-            js('#form-transcorder').submit(function(event){
-                 
-            }); 
-        
-            
-        });
-    });
-    
-</script>
--->
+// Get and build the name if id, used for javascript processed messages and title header
+if($this->item->contact_id) {
+	$full_name = NItemHelper::getNameById($this->item->contact_id, 'xiveirm_contacts', true);
+} else {
+	$full_name = 'Full Name PLACEHOLDER';
+}
 
+// Get the contact Object
+if($this->item->contact_id) {
+	$contactObject = IRMSystem::getContactObject($this->item->contact_id);
+}
+?>
 <div class="row-fluid">
 	<!-- ---------- ---------- ---------- ---------- ---------- BEGIN PAGE HEADER ---------- ---------- ---------- ---------- ---------- -->
 
-	<div class="row-fluid header smaller lighter blue">
+	<div class="row-fluid header smaller lighter green">
 		<h1>
 			<span class="span7">
-				<i class="icon-user"></i>
+				<i class="icon-road"></i>
 				<?php if (!empty($this->item->id)): ?>
-					<?php echo ' ' . $this->item->last_name; ?>, <?php echo $this->item->first_name; ?> <?php if($this->item->customer_id): echo '<small><i class="icon-double-angle-right"></i> (#' . $this->item->customer_id . ')</small>'; endif; ?>
+					<?php echo ' Order: #' . $this->item->order_id; ?>
 				<?php else: ?>
 					<?php echo ' ' . JText::_('COM_XIVETRANSCORDER_ORDER_FORM_ADD_NEW_ORDER'); ?>
 				<?php endif; ?>
@@ -129,7 +114,7 @@ $full_name = 'Full Name PLACEHOLDER';
 	?>
 	<!-- ---------- ---------- ---------- ---------- ---------- END CHECK_OUT MESSAGE ---------- ---------- ---------- ---------- ---------- -->
 
-	<form id="form-transcorder" class="form-validate">
+	<form id="form-transcorder" class="form-validate"  enctype="multipart/form-data">
 
 		<!-- ---------- ---------- ---------- ---------- ---------- BEGIN MASTER_TAP_PANE_PLUGINSTYLED ---------- ---------- ---------- ---------- ---------- -->
 		<div class="tabbable">
@@ -210,38 +195,107 @@ $full_name = 'Full Name PLACEHOLDER';
 								<label class="control-label"><?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_CONTACT'); ?></label>
 								<div class="controls controls-row">
 									<?php NHtmlJavaScript::setChosen('.chzn-select-parent', false, array('allow_single_deselect' => true, 'disable_search_threshold' => '10', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
-									<div class="span6">
-										<select name="contacts[parent_id]" class="chzn-select-parent input-control" data-placeholder="<?php echo JText::_('COM_XIVETRANSCORDER_FORM_SELECT_CONTACT'); ?>" required>
-											<?php
-												if(!$this->item->parent_id) {
-													echo '<option value="0" selected>' . JText::_('COM_XIVETRANSCORDER_FORM_SELECT_CONTACT') . '</option>';
-												}
-
-												$options_parent_id = IRMSystem::getListOptions('contacts', $xsession->client_id);
-												foreach($options_parent_id->categories as $catid => $name) {
-													echo '<optgroup label="' . $name . '">';
-														foreach($options_parent_id->contacts as $contactgroupid => $contactgroup) {
-															if($catid == $contactgroupid) {
-																foreach($contactgroup as $contact) {
-																	if($this->item->parent_id == $contact['id']) {
-																		echo '<option value="' . $contact['id'] . '" selected>#' . $contact['customer_id'] . ' - ' . $contact['company'] . ' ( ' . $contact['last_name'] . ', ' . $contact['first_name'] . ' )</option>';
-																	} else {
-																		echo '<option value="' . $contact['id'] . '">#' . $contact['customer_id'] . ' - ' . $contact['company'] . ' ( ' . $contact['last_name'] . ', ' . $contact['first_name'] . ' )</option>';
-																	}
-																}
-																unset($options_parent_id->contacts[$contactgroupid]);
+									<div class="span12">
+										<?php if($this->item->contact_id) { ?>
+											<div class="widget-box">
+												<div class="widget-header">
+													<h5>
+														<?php
+															if($contactObject->contact->gender == 'f') {
+																echo '<i class="icon-female red"></i>';
+															} else if($contactObject->contact->gender == 'm') {
+																echo '<i class="icon-male blue"></i>';
+															} else if($contactObject->contact->gender == 'c') {
+																echo '<i class="icon-building green"></i>';
+															} else {
+																echo '<i class="icon-user black"></i>';
 															}
-														}
-													echo '</optgroup>';
-												}
-												unset($options_parent_id->categories, $options_parent_id->contacts);
-											?>
-										</select>
-									</div>
-									<div class="span6">
+															echo $contactObject->contact->catid_title ? ' ' . $contactObject->contact->catid_title : '';
+														?>
+													</h5>
+													<div class="widget-toolbar">
+														<?php echo $contactObject->contact->flagged ? '<i class="icon-flag orange"></i>' : ''; ?>
+														<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.edit&id=' . $this->item->contact_id); ?>"><i class="icon-edit"></i></a>
+														<a><i class="icon-refresh"></i></a>
+														<a><i class="icon-chevron-up"></i></a>
+														<a><i class="icon-remove"></i></a>
+													</div>
+												</div>
+												<div class="widget-body">
+													<div class="widget-main">
+														<div class="row-fluid">
+															<div class="span6">
+																<address>
+																	<strong><?php echo $full_name; ?></strong><br>
+																	<?php echo $contactObject->contact->address_name ? $contactObject->contact->address_name . '<br>' : ''; ?>
+																	<?php echo $contactObject->contact->address_name_add ? $contactObject->contact->address_name_add . '<br>' : ''; ?>
+																	<?php echo $contactObject->contact->address_street ? $contactObject->contact->address_street . ' ' : ''; ?>	<?php echo $contactObject->contact->address_houseno ? $contactObject->contact->address_houseno . '<br>' : '<br>'; ?>
+																	<?php echo $contactObject->contact->address_zip ? $contactObject->contact->address_zip . ' ' : ''; ?><?php echo $contactObject->contact->address_city ? $contactObject->contact->address_city . '<br>' : '<br>'; ?>
+																	<?php echo $contactObject->contact->address_region ? $contactObject->contact->address_region . ', ' : ''; ?><?php echo $contactObject->contact->address_country ? $contactObject->contact->address_country . '<br>' : '<br>'; ?>
+																</address>
+															</div>
+															<div class="span6">
+																<?php
+																	if($contactObject->contact->customer_id && (int)$contactObject->contact->customer_id) {
+																		echo '<i class="icon-barcode"></i> ' . $contactObject->contact->customer_id;
+																	} else if($contactObject->contact->customer_id && !(int)$contactObject->contact->customer_id) {
+																		echo '<i class="icon-qrcode"></i> ' . $contactObject->contact->customer_id;
+																	} else {
+																		echo '<i class="icon-code-fork"></i> ' . $contactObject->contact->id;
+																	}
+																?><br>
+																<br>
+																<?php echo $contactObject->tabs->medicaldetails->insurance ? 'Krankenkasse: ' . $contactObject->tabs->medicaldetails->insurance . '<br>' : ''; ?>
+																<?php echo $contactObject->tabs->medicaldetails->insurance_no ? 'Versicherungs-Nr.: ' . $contactObject->tabs->medicaldetails->insurance_no . '<br>' : ''; ?>
+															</div>
+														</div>
+														<div class="row-fluid extended">
+															<div class="span6">
+																<?php echo $contactObject->contact->phone ? '<i class="icon-phone icon-shift-right"></i> ' . $contactObject->contact->phone . '<br>' : ''; ?>
+																<?php echo $contactObject->contact->fax ? '<i class="icon-print icon-shift-right"></i> ' . $contactObject->contact->fax . '<br>' : ''; ?>
+																<?php echo $contactObject->contact->mobile ? '<i class="icon-mobile-phone icon-shift-right"></i> ' . $contactObject->contact->mobile . '<br>' : ''; ?>
+																<?php echo $contactObject->contact->email ? '<i class="icon-envelope icon-shift-right"></i> ' . $contactObject->contact->email . '<br>' : ''; ?>
+															</div>
+															<div class="span6">
+																<?php echo $contactObject->contact->remarks ? '<blockquote><p>' . $contactObject->contact->remarks . '</p><small>Interne Bemerkungen</small></blockquote>' : ''; ?>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										<?php } else { ?>
+											<select name="contacts[parent_id]" class="chzn-select-parent input-control" data-placeholder="<?php echo JText::_('COM_XIVETRANSCORDER_FORM_SELECT_CONTACT'); ?>" required>
+												<?php
+													if(!$this->item->parent_id) {
+														echo '<option value="0" selected>' . JText::_('COM_XIVETRANSCORDER_FORM_SELECT_CONTACT') . '</option>';
+													}
+	
+													$options_parent_id = IRMSystem::getListOptions('contacts', $xsession->client_id);
+													foreach($options_parent_id->categories as $catid => $name) {
+														echo '<optgroup label="' . $name . '">';
+															foreach($options_parent_id->contacts as $contactgroupid => $contactgroup) {
+																if($catid == $contactgroupid) {
+																	foreach($contactgroup as $contact) {
+																		if($this->item->parent_id == $contact['id']) {
+																			echo '<option value="' . $contact['id'] . '" selected>#' . $contact['customer_id'] . ' - ' . $contact['company'] . ' ( ' . $contact['last_name'] . ', ' . $contact['first_name'] . ' )</option>';
+																		} else {
+																			echo '<option value="' . $contact['id'] . '">#' . $contact['customer_id'] . ' - ' . $contact['company'] . ' ( ' . $contact['last_name'] . ', ' . $contact['first_name'] . ' )</option>';
+																		}
+																	}
+																	unset($options_parent_id->contacts[$contactgroupid]);
+																}
+															}
+														echo '</optgroup>';
+													}
+													unset($options_parent_id->categories, $options_parent_id->contacts);
+												?>
+											</select>
+										<?php } ?>
+										</div>
+										<div class="span6">
+										</div>
 									</div>
 								</div>
-							</div>
 
 							<!-- ---------- ---------- ---------- ---------- ---------- BEGIN INCORE-FORM RECOMMENDED FORMFIELDS ---------- ---------- ---------- ---------- ---------- -->
 
@@ -261,12 +315,6 @@ $full_name = 'Full Name PLACEHOLDER';
 
 							<!-- ---------- ---------- ---------- ---------- ---------- END INCORE-FORM RECOMMENDED FORMFIELDS ---------- ---------- ---------- ---------- ---------- -->
 
-							<div class="control-group extended">
-								<label class="control-label"><?php echo JText::_('COM_XIVETRANSCORDER_FORM_PUBLIC_REMARKS'); ?></label>
-								<div class="controls">
-									<textarea name="transcorder[remarks]" class="input-control span12 limited autosize" max-data-length="250" maxlength="250" rows="2" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_INTERNAL_REMARKS_DESC'); ?>"><?php echo $this->item->remarks; ?></textarea>
-								</div>
-							</div>
 						</div>
 						<div class="span5">
 							<div class="well">
@@ -384,18 +432,12 @@ $full_name = 'Full Name PLACEHOLDER';
 				<!-- ---------- ---------- ---------- ---------- ---------- END TAB.PLUGINS_CONTENT ---------- ---------- ---------- ---------- ---------- -->
 
 				<!-- ########## ########## ########## ########## ##########  BEGIN FIRST TRANSPORT  ########## ########## ########## ########## ########## -->
-<?php NHtmlJavaScript::setToggle('extended-0', 'toggleEdit-0'); ?>
-<?php NHtmlJavaScript::setToggle('extended-1', 'toggleEdit-1'); ?>
-<?php NHtmlJavaScript::setToggle('extended-2', 'toggleEdit-2'); ?>
-<?php NHtmlJavaScript::setToggle('extended-3', 'toggleEdit-3'); ?>
-<?php NHtmlJavaScript::setToggle('extended-4', 'toggleEdit-4'); ?>
-<?php NHtmlJavaScript::setToggle('extended-5', 'toggleEdit-5'); ?>
-				<div id="torder-0" class="clonedTransport">
+
+				<div id="torder-1" class="clonedTransport">
 					<div class="widget-box transparent">
 						<div class="widget-header">
 							<h4 class="lighter">
 								<div id="transport-header" class="input-medium">Transport: 1</div>
-								<input name="transcorder[order_id]" type="hidden" value />
 							</h4>
 							<div class="widget-toolbar no-border">
 								<div class="btn-group">
@@ -404,19 +446,16 @@ $full_name = 'Full Name PLACEHOLDER';
 										data-placement="top">
 										<span class="<?php echo $this->item->order_id ? 'green' : 'red'; ?>">#</span> <?php echo $this->item->order_id ? $this->item->order_id : 'N/A'; ?>
 									</a>
-									<input name="transcorder[order_id]" type="hidden" value />
 									<a class="btn btn-mini btn-light xtooltip"
 										data-original-title="<?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_ESTIMATED_TIME'); ?>"
 										data-placement="top">
 										<i class="icon-time <?php echo $this->item->estimated_distance ? 'green' : 'red'; ?>"></i> <?php echo $this->item->estimated_distance ? '~' . $this->item->estimated_time : 'N/A'; ?>
 									</a>
-									<input name="transcorder[estimated_time]" type="hidden" value />
 									<a class="btn btn-mini btn-light xtooltip"
 										data-original-title="<?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_ESTIMATED_DISTANCE'); ?>"
 										data-placement="top">
 										<i class="icon-road <?php echo $this->item->estimated_distance ? 'green' : 'red'; ?>"></i> <?php echo $this->item->estimated_distance ? '~' . $this->item->estimated_distance . ' KM' : 'N/A'; ?>
 									</a>
-									<input name="transcorder[estimated_distance]" type="hidden" value />
 								</div>
 							</div>
 						</div>
@@ -425,18 +464,7 @@ $full_name = 'Full Name PLACEHOLDER';
 								<div class="row-fluid">
 									<?php NHtmlJavaScript::setChosen('.chzn-select-poi-address', false, array('allow_single_deselect' => true, 'disable_search_threshold' => '10', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 									<div class="span8">
-										<div class="well center inverse-extended-0">
-											<span>
-												<i class="icon-chevron-sign-up"></i> 
-												Frankfurter Str. 122, 60388 Frankfurt am Main
-											</span>
-											<span class="margin-left margin-right"><i class="icon-exchange"></i></span>
-											<span>
-												<i class="icon-chevron-sign-down"></i> 
-												Marbachweg 405, 61447 Offenbach am Main
-											</span>
-										</div>
-										<div class="controls controls-row extended-0">
+										<div class="controls controls-row">
 											<div class="span6">
 												<div class="well">
 													<div class="control-group">
@@ -447,26 +475,23 @@ $full_name = 'Full Name PLACEHOLDER';
 															</span>
 														</div>
 														<div class="controls">
-															<input type="text" name="transcorder[f_address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->f_address_name; ?>">
+															<input type="text" id="f_address_name-1" name="transcorder[multiform][1][f_address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->f_address_name; ?>">
 														</div>
 														<div class="controls">
-															<input type="text" name="transcorder[f_address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->f_address_name_add; ?>">
+															<input type="text" id="f_address_name_add-1" name="transcorder[multiform][1][f_address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->f_address_name_add; ?>">
 														</div>
 														<div class="controls controls-row">
-															<input type="text" name="transcorder[f_address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->f_address_street; ?>">
-															<input type="text" name="transcorder[f_address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->f_address_houseno; ?>">
+															<input type="text" id="f_address_street-1" name="transcorder[multiform][1][f_address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->f_address_street; ?>">
+															<input type="text" id="f_address_houseno-1" name="transcorder[multiform][1][f_address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->f_address_houseno; ?>">
 														</div>
 														<div class="controls controls-row">
-															<input type="text" name="transcorder[f_address_zip]" class="input-control span4" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->f_address_zip; ?>">
-															<input type="text" name="transcorder[f_address_city]" class="input-control span8" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->f_address_city; ?>">
+															<input type="text" id="f_address_zip-1" name="transcorder[multiform][1][f_address_zip]" class="input-control span4" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->f_address_zip; ?>">
+															<input type="text" id="f_address_city-1" name="transcorder[multiform][1][f_address_city]" class="input-control span8" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->f_address_city; ?>">
 														</div>
 														<div class="controls controls-row">
-															<input type="text" name="transcorder[f_address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->f_address_region; ?>">
-															<input type="text" name="transcorder[f_address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->f_address_country; ?>">
+															<input type="text" id="f_address_region-1" name="transcorder[multiform][1][f_address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->f_address_region; ?>">
+															<input type="text" id="f_address_country-1" name="transcorder[multiform][1][f_address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->f_address_country; ?>">
 														</div>
-														<input type="hidden" name="transcorder[f_address_lat]" value="<?php echo $this->item->t_address_lat; ?>" />
-														<input type="hidden" name="transcorder[f_address_long]" value="<?php echo $this->item->t_address_long; ?>" />
-														<input type="hidden" name="transcorder[f_address_hash]" value="<?php echo $this->item->t_address_hash; ?>" />
 													</div>
 												</div>
 											</div>
@@ -480,26 +505,23 @@ $full_name = 'Full Name PLACEHOLDER';
 															</span>
 														</div>
 														<div class="controls">
-															<input type="text" name="transcorder[t_address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->t_address_name; ?>">
+															<input type="text" id="t_address_name-1" name="transcorder[multiform][1][t_address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->t_address_name; ?>">
 														</div>
 														<div class="controls">
-															<input type="text" name="transcorder[t_address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->t_address_name_add; ?>">
+															<input type="text" id="t_address_name_add-1" name="transcorder[multiform][1][t_address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->t_address_name_add; ?>">
 														</div>
 														<div class="controls controls-row">
-															<input type="text" name="transcorder[t_address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->t_address_street; ?>">
-															<input type="text" name="transcorder[t_address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->t_address_houseno; ?>">
+															<input type="text" id="t_address_street-1" name="transcorder[multiform][1][t_address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->t_address_street; ?>">
+															<input type="text" id="t_address_houseno-1" name="transcorder[multiform][1][t_address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->t_address_houseno; ?>">
 														</div>
 														<div class="controls controls-row">
-															<input type="text" name="transcorder[t_address_zip]" class="input-control span4" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->t_address_zip; ?>">
-															<input type="text" name="transcorder[t_address_city]" class="input-control span8" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->t_address_city; ?>">
+															<input type="text" id="t_address_zip-1" name="transcorder[multiform][1][t_address_zip]" class="input-control span4" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->t_address_zip; ?>">
+															<input type="text" id="t_address_city-1" name="transcorder[multiform][1][t_address_city]" class="input-control span8" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->t_address_city; ?>">
 														</div>
 														<div class="controls controls-row">
-															<input type="text" name="transcorder[t_address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->t_address_region; ?>">
-															<input type="text" name="transcorder[t_address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->t_address_country; ?>">
+															<input type="text" id="t_address_region-1" name="transcorder[multiform][1][t_address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->t_address_region; ?>">
+															<input type="text" id="t_address_country-1" name="transcorder[multiform][1][t_address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->t_address_country; ?>">
 														</div>
-														<input type="hidden" name="transcorder[t_address_lat]" value="<?php echo $this->item->t_address_lat; ?>" />
-														<input type="hidden" name="transcorder[t_address_long]" value="<?php echo $this->item->t_address_long; ?>" />
-														<input type="hidden" name="transcorder[t_address_hash]" value="<?php echo $this->item->t_address_hash; ?>" />
 													</div>
 												</div>
 											</div>
@@ -507,174 +529,158 @@ $full_name = 'Full Name PLACEHOLDER';
 									</div><!-- /.span8 -->
 									<div class="span4">
 										<div class="well">
-											<div class="extended-0">
-												<div class="row-fluid">
-													<span class="input-icon input-icon-right span12 bootstrap-timepicker">
-														<input id="timepicker_1" type="text" class="span12 center" style="font-size: 25px; height: 45px;" />
-														<i class="icon-time"></i>
-													</span>
-												</div>
-												<div class="row-fluid">
-													<span class="input-icon input-icon-right span12 bootstrap-datepicker">
-														<input id="datepicker_1" type="text" class="span12 center" style="font-size: 25px; height: 45px;" />
-														<i class="icon-calendar"></i>
-													</span>
-												</div>
-											</div>
-											<div class="inverse-extended-0">
-												<div class="row-fluid">
-													<span class="input-icon input-icon-right span6 bootstrap-timepicker">
-														<input id="timepicker_1" type="text" class="span12 center" style="font-size: 25px; height: 45px;" />
-														<i class="icon-time"></i>
-													</span>
-													<span class="input-icon input-icon-right span6 bootstrap-datepicker">
-														<input id="datepicker_1" type="text" class="span12 center" style="font-size: 25px; height: 45px;" />
-														<i class="icon-calendar"></i>
-													</span>
-												</div>
+											<div class="row-fluid">
+												<span class="input-icon input-icon-right span6 bootstrap-timepicker">
+													<input id="timepicker-1" type="text" class="span12 center" style="font-size: 25px; height: 45px;" />
+													<i class="icon-time"></i>
+												</span>
+												<span class="input-icon input-icon-right span6 bootstrap-datepicker">
+													<input id="datepicker-1" type="text" class="span12 center" style="font-size: 25px; height: 45px;" />
+													<i class="icon-calendar"></i>
+												</span>
 											</div>
 
-											<input type="hidden" name="transcorder[transport_timestamp]" value="" />
-
-											<div class="extended-0">
-												<?php NHtmlJavaScript::setChosen('.chzn-select-trans', false, array('width' => '100%', 'disable_search' => true)); ?>
-												<div class="control-group">
-													<label class="control-label">
-														<?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_TRANSPORT_DEVICE_AND_TYPE'); ?>
-													</label>
-													<div class="controls controls-row">
-														<div class="span6">
-															<select name="transcorder[gender]" class="chzn-select-trans input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
-																<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_SELECT_TRANSPORT_DEVICE'); ?></option>
-																<?php
-																	$options = IRMSystem::getListOptions('options', 'transdevice');
-																	if($options->client) {
-																		echo '<optgroup label="' . JText::sprintf('COM_XIVETRANSCORDER_FORM_SELECT_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
-																			foreach ($options->client as $key => $val) {
-																				if($this->item->gender == $key) {
-																					echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
-																				} else {
-																					echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-																				}
+											<?php NHtmlJavaScript::setChosen('.chzn-select-trans', false, array('width' => '100%', 'disable_search' => true)); ?>
+											<div class="control-group">
+												<label class="control-label">
+													<?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_TRANSPORT_DEVICE_AND_TYPE'); ?>
+												</label>
+												<div class="controls controls-row">
+													<div class="span6">
+														<select id="transdevice-1" name="transcorder[multiform][1][transdevice]" class="chzn-select-trans input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
+															<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_SELECT_TRANSPORT_DEVICE'); ?></option>
+															<?php
+																$options = IRMSystem::getListOptions('options', 'transdevice');
+																if($options->client) {
+																	echo '<optgroup label="' . JText::sprintf('COM_XIVETRANSCORDER_FORM_SELECT_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
+																		foreach ($options->client as $key => $val) {
+																			if($this->item->transdevice == $key) {
+																				echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
+																			} else {
+																				echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
 																			}
-																		echo '</optgroup>';
-																	}
-																	if($options->global) {
-																		echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
-																			foreach ($options->global as $key => $val) {
-																				if($this->item->gender == $key) {
-																					echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
-																				} else {
-																					echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-																				}
+																		}
+																	echo '</optgroup>';
+																}
+																if($options->global) {
+																	echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
+																		foreach ($options->global as $key => $val) {
+																			if($this->item->transdevice == $key) {
+																				echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
+																			} else {
+																				echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
 																			}
-																		echo '</optgroup>';
-																	}
-																?>
-															</select>
-														</div>
-
-														<div class="span6">
-															<select name="transcorder[gender]" class="chzn-select-trans input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
-																<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_SELECT_TRANSPORT_DEVICE'); ?></option>
-																<?php
-																	$options = IRMSystem::getListOptions('options', 'transtype');
-																	if($options->client) {
-																		echo '<optgroup label="' . JText::sprintf('COM_XIVETRANSCORDER_FORM_SELECT_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
-																			foreach ($options->client as $key => $val) {
-																				if($this->item->gender == $key) {
-																					echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
-																				} else {
-																					echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-																				}
-																			}
-																		echo '</optgroup>';
-																	}
-																	if($options->global) {
-																		echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
-																			foreach ($options->global as $key => $val) {
-																				if($this->item->gender == $key) {
-																					echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
-																				} else {
-																					echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-																				}
-																			}
-																		echo '</optgroup>';
-																	}
-																?>
-															</select>
-														</div>
+																		}
+																	echo '</optgroup>';
+																}
+															?>
+														</select>
 													</div>
-												</div><!-- #end control group -->
-
-												<div class="control-group">
-													<label class="control-label">
-														<?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ORDER_TYPE'); ?>
-													</label>
-													<div class="controls controls-row">
-														<?php NHtmlJavaScript::setChosen('.chzn-select-ordertype', false, array('width' => '100%', 'disable_search' => true)); ?>
-														<div class="span12">
-															<select name="transcorder[gender]" class="chzn-select-ordertype input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
-																<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_SELECT_ORDER_TYPE'); ?></option>
-																<?php
-																	$options = IRMSystem::getListOptions('options', 'ordertype');
-																	if($options->client) {
-																		echo '<optgroup label="' . JText::sprintf('COM_XIVETRANSCORDER_FORM_SELECT_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
-																			foreach ($options->client as $key => $val) {
-																				if($this->item->gender == $key) {
-																					echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
-																				} else {
-																					echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-																				}
+														<div class="span6">
+														<select id="transtype-1" name="transcorder[multiform][1][transtype]" class="chzn-select-trans input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
+															<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_SELECT_TRANSPORT_TYPE'); ?></option>
+															<?php
+																$options = IRMSystem::getListOptions('options', 'transtype');
+																if($options->client) {
+																	echo '<optgroup label="' . JText::sprintf('COM_XIVETRANSCORDER_FORM_SELECT_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
+																		foreach ($options->client as $key => $val) {
+																			if($this->item->transtype == $key) {
+																				echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
+																			} else {
+																				echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
 																			}
-																		echo '</optgroup>';
-																	}
-																	if($options->global) {
-																		echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
-																			foreach ($options->global as $key => $val) {
-																				if($this->item->gender == $key) {
-																					echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
-																				} else {
-																					echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-																				}
+																		}
+																	echo '</optgroup>';
+																}
+																if($options->global) {
+																	echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
+																		foreach ($options->global as $key => $val) {
+																			if($this->item->transtype == $key) {
+																				echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
+																			} else {
+																				echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
 																			}
-																		echo '</optgroup>';
-																	}
-																?>
-															</select>
-														</div>
+																		}
+																	echo '</optgroup>';
+																}
+															?>
+														</select>
 													</div>
-												</div><!-- #end control group -->
-											</div><!-- /.extended-0 -->
+												</div>
+											</div><!-- #end control group -->
+
+											<div class="control-group">
+												<label class="control-label">
+													<?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ORDER_TYPE'); ?>
+												</label>
+												<div class="controls controls-row">
+													<?php NHtmlJavaScript::setChosen('.chzn-select-ordertype', false, array('width' => '100%', 'disable_search' => true)); ?>
+													<div class="span12">
+														<select id="ordertype-1" name="transcorder[multiform][1][ordertype]" class="chzn-select-ordertype input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
+															<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_SELECT_ORDER_TYPE'); ?></option>
+															<?php
+																$options = IRMSystem::getListOptions('options', 'ordertype');
+																if($options->client) {
+																	echo '<optgroup label="' . JText::sprintf('COM_XIVETRANSCORDER_FORM_SELECT_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
+																		foreach ($options->client as $key => $val) {
+																			if($this->item->ordertype == $key) {
+																				echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
+																			} else {
+																				echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+																			}
+																		}
+																	echo '</optgroup>';
+																}
+																if($options->global) {
+																	echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
+																		foreach ($options->global as $key => $val) {
+																			if($this->item->ordertype == $key) {
+																				echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
+																			} else {
+																				echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+																			}
+																		}
+																	echo '</optgroup>';
+																}
+															?>
+														</select>
+													</div>
+												</div>
+											</div><!-- #end control group -->
+
+											<?php if(!$this->item->id) { ?>
 											<div class="control-group">
 												<div class="controls controls-row center">
 													<div class="btn-group">
-														<a id="toggleEdit-0" class="btn btn-warning xtooltip"
-															data-action="collaps"
-															data-original-title="<?php echo JText::_('COM_XIVETRANSCORDER_EDIT_ITEM'); ?>"
-															data-placement="top">
-															<i class="icon-edit icon-only"></i> Bearbeiten
+														<a class="btn btn-success" onClick="trans_add(1)">
+															<i class="icon-plus icon-only"></i> <?php echo JText::_('COM_XIVETRANSCORDER_ADD_EMPTY_ITEM'); ?>
 														</a>
-														<a class="btn btn-success xtooltip trans-copy"
-															data-original-title="<?php echo JText::_('COM_XIVETRANSCORDER_ADD_ITEM'); ?>"
-															data-placement="top">
-															<i class="icon-plus icon-only"></i> Hinzufügen
-														</a>
-														<a class="btn btn-danger xtooltip trans-remove"
-															data-original-title="<?php echo JText::_('COM_XIVETRANSCORDER_DELETE_ITEM'); ?>"
-															data-placement="top">
-															<i class="icon-remove icon-only"></i> Löschen
+														<a class="btn btn-primary" onClick="trans_copy(1)">
+															<i class="icon-copy icon-only"></i> <?php echo JText::_('COM_XIVETRANSCORDER_COPY_THIS_ITEM'); ?>
 														</a>
 													</div>
 												</div>
 											</div><!-- #end control group -->
+											<?php } ?>
 										</div><!-- /.well -->
 									</div><!-- /.span4 -->
-								</div><!-- /.row-fluid .extended-1 -->
+								</div><!-- /.row-fluid -->
 							</div><!-- /.widget-main padding-6 no-padding-left no-padding-right -->
 						</div><!-- /.widget-body -->
 					</div><!-- /.widget-box .transparent -->
-				</div><!-- /.torder-0 -->
+
+					<input type="hidden" name="transcorder[multiform][1][order_id]" value="<?php echo $this->item->order_id; ?>" />
+					<input type="hidden" name="transcorder[multiform][1][estimated_time]" id="estimated_time-1" value="<?php echo $this->item->estimated_time; ?>" />
+					<input type="hidden" name="transcorder[multiform][1][estimated_distance]" id="estimated_distance-1" value="<?php echo $this->item->estimated_distance; ?>" />
+					<input type="hidden" name="transcorder[multiform][1][f_address_lat]" id="f_address_lat-1" value="<?php echo $this->item->t_address_lat; ?>" />
+					<input type="hidden" name="transcorder[multiform][1][f_address_long]" id="f_address_lng-1" value="<?php echo $this->item->t_address_long; ?>" />
+					<input type="hidden" name="transcorder[multiform][1][f_address_hash]" id="f_address_hash-1" value="<?php echo $this->item->t_address_hash; ?>" />
+					<input type="hidden" name="transcorder[multiform][1][t_address_lat]" id="t_address_lat-1" value="<?php echo $this->item->t_address_lat; ?>" />
+					<input type="hidden" name="transcorder[multiform][1][t_address_lng]" id="t_address_lng-1" value="<?php echo $this->item->t_address_long; ?>" />
+					<input type="hidden" name="transcorder[multiform][1][t_address_hash]" id="t_address_hash-1" value="<?php echo $this->item->t_address_hash; ?>" />
+					<input type="hidden" name="transcorder[multiform][1][transport_timestamp]" id="transport_timestamp-1" value="<?php echo $this->item->transport_timestamp; ?>" />
+
+				</div><!-- /.torder-1 -->
 				<!-- ########## ########## ########## ########## ##########   END FIRST TRANSPORT   ########## ########## ########## ########## ########## -->
 
 
@@ -731,13 +737,13 @@ $full_name = 'Full Name PLACEHOLDER';
 <script>
 <?php
 	// PHP OUT COMMENTS TO PREVENT SHOWING INFOS IN SOURCE CODE WHILE IN ALPHA/BETA
-	/*
+	/**
 	 * Returns from API in json format
 	 * example {"apiReturnCode":"SAVED","apiReturnRowId":"173","apiReturnMessage":"Successfully saved"}
 	 * 
 	 * apiReturnCode could be: SAVED, UPDATED or an Error Number ie. 666
 	 * apiReturnMessage: returns a informal message, should be used for debugging and not in production use. returns the database or php errors
-	 */
+	 **/
 ?>
 	jQuery(function(){
 		$("#form-transcorder").submit(function(e){
@@ -763,7 +769,7 @@ $full_name = 'Full Name PLACEHOLDER';
 
 					<?php if(!$this->item->catid) { ?>
 						var cId = $("#order_cid").val();
-						window.location.href = "<?php echo JRoute::_('index.php?task=contact.edit&id='); ?>" + cId;
+						window.location.href = "<?php echo JRoute::_('index.php?task=transcorderform.edit&id='); ?>" + cId;
 					<?php } ?>
 
 				} else if(data.apiReturnCode === 'UPDATED') {
@@ -896,57 +902,66 @@ $full_name = 'Full Name PLACEHOLDER';
 	<?php else: ?>
 		jQuery(".widget-box-tabapps .btn").attr("disabled", true);
 	<?php endif; ?>
-
-
-	// TRANSPORT COPY SCRIPT ************************************************************************
-	jQuery(document).ready(function() {
-
-		var regex = /^(.*)(\d)+$/i;
-		var cloneIndex = $(".clonedTransport").length;
-
-		$(".trans-copy").click(function() {
-			$(this).parents(".clonedTransport").clone()
-				.appendTo("#tcopycontainer")
-				.attr("id", "torder-" + cloneIndex)
-				.find("*").each(function() {
-					var id = this.id || "";
-					var match = id.match(regex) || [];
-					if (match.length == 3) {
-						this.id = match[1] + (cloneIndex);
-					}
-					$("#transport-header").html("Transport: " + cloneIndex);
-				});
-			cloneIndex++;
-
-			console.log(cloneIndex);
-
-		});
-
-		$(".trans-remove").click(function() {
-			confirm('wirklich löschen?');
-			$(this).parents(".clonedTransport").remove();
-		});
-	});
-
 </script>
 
 
 
 
 
+<?php
+// ########################################### T E S T A R E A ######################################################################
+
+	// TRANSPORT COPY SCRIPT ************************************************************************
+//	jQuery(document).ready(function() {
+//		var regex = /^(.*)(\d)+$/i;
+//		var cloneIndex = $(".clonedTransport").length;
+
+//		$(".trans-copy_XXXXX_ALT").click(function() {
+//			$(this).parents(".clonedTransport").clone()
+//				.appendTo("#tcopycontainer")
+//				.attr("id", "torder-" + cloneIndex)
+//				.find("*").each(function() {
+//					var id = this.id || "";
+//					var match = id.match(regex) || [];
+//					if (match.length == 3) {
+//						this.id = match[1] + (cloneIndex);
+//					}
+//					$("#transport-header").html("Transport: " + cloneIndex);
+//				});
+//			cloneIndex++;
+//
+//			console.log(cloneIndex);
+//
+//		});
+//
+//		$(".trans-remove_XXXXX_ALT").click(function() {
+//			confirm('wirklich löschen?');
+//			$(this).parents(".clonedTransport").remove();
+//		});
+//	});
+
+// ----------------------------------------
+
+//		var torderId = 2;
+
+//		var regex = /^(.*)(\d)+$/i;
+//		var cloneIndex = $(".clonedTransport").length + 1;
+//
+//		$(".trans-copy").click(function() {
+//			var divContainer = buildContainer( cloneIndex );
+//			$(divContainer).appendTo("#tcopycontainer");
+//
+//			cloneIndex++;
+//
+//			console.log(cloneIndex);
+//		});
+
+// ########################################### T E S T A R E A ######################################################################
+?>
 
 
 
 
-
-
-
-
-
-
-
-
-<div class="transcorder-edit front-end-edit" id="form-transcorder" action="<?php echo JRoute::_('index.php?option=com_xivetranscorder&task=transcorder.save'); ?>" method="post" class="form-validate" enctype="multipart/form-data">
 			<div class="control-group">
 				<?php $canState = false; ?>
 				<?php $canState = $canState = JFactory::getUser()->authorise('core.edit.state','com_xivetranscorder'); ?>
@@ -966,23 +981,360 @@ $full_name = 'Full Name PLACEHOLDER';
 					<div class="control-label"><?php echo $this->form->getLabel('state'); ?></div>
 					<div class="controls"><?php echo $this->form->getInput('state'); ?></div>
 				<?php endif; ?>
-				</div>
-
-				<div class="controls"><?php echo $this->form->getInput('created'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('created_by'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('modified'); ?></div>
-
-			<div class="control-group">
-				<div class="control-label"><?php echo $this->form->getLabel('transport_timestamp'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput(''); ?></div>
 			</div>
 
-        <div>
-            <button type="submit" class="validate"><span><?php echo JText::_('JSUBMIT'); ?></span></button>
-            <?php echo JText::_('or'); ?>
-            <a href="<?php echo JRoute::_('index.php?option=com_xivetranscorder&task=transcorder.cancel'); ?>" title="<?php echo JText::_('JCANCEL'); ?>"><?php echo JText::_('JCANCEL'); ?></a>
 
-            <input type="hidden" name="option" value="com_xivetranscorder" />
-            <input type="hidden" name="task" value="transcorderform.save" />
-        </div>
-</div>
+
+
+<script>
+// jQuery(document).ready(function() {
+		var regex = /^(.*)(\d)+$/i;
+		var cloneIndex = $(this).length + 1;
+
+		/*
+		 * Method to add a new container with no prefilled values
+		 *
+		 */
+		function trans_add() {
+			divContainer = buildContainer( cloneIndex );
+			jQuery(divContainer).appendTo("#tcopycontainer");
+
+			torderIdHelper = '#torder-' + cloneIndex;
+			jQuery(torderIdHelper).fadeIn('slow');
+
+			torderIdHelper = '.inverse-extended-' + cloneIndex;
+			jQuery(torderIdHelper).hide();
+
+			// Print out he Message what we've done
+			alertify.success('<i class="icon-plus"></i> Created new <strong>Transport ' + cloneIndex + '</strong>');
+
+			// Count index for next action
+			cloneIndex++;
+		}
+
+		/*
+		 * Method to copy the selected container with all the prefilled values
+		 *
+		 */
+		function trans_copy( torderId ) {
+			divContainer = buildContainer( cloneIndex );
+			jQuery(divContainer).appendTo("#tcopycontainer");
+
+			torderIdHelper = '#torder-' + cloneIndex;
+			jQuery(torderIdHelper).fadeIn('slow');
+
+			torderIdHelper = '.extended-' + cloneIndex;
+			jQuery(torderIdHelper).hide();
+
+			// Get the values from the Container which is copied
+			var inputValues = getValues(torderId);
+			jQuery.each(inputValues, function(i, val) {
+				console.log(i + ' - ' + val);
+				jQuery('#' + i + '-' + cloneIndex).val(val);
+			});
+
+			// Print out he Message what we've done
+			alertify.log('<i class="icon-copy"></i> <strong>Transport ' + torderId + '</strong> copied to <strong>Transport ' + cloneIndex + '</strong>');
+
+			// Count index for next action
+			cloneIndex++;
+		}
+
+		/*
+		 * Method to edit the selected container
+		 *
+		 */
+		function trans_edit( torderId ) {
+			torderIdHelper1 = '.extended-' + torderId;
+			torderIdHelper2 = '.inverse-extended-' + torderId;
+			torderIdHelper3 = '#toggleEdit-' + torderId;
+
+			jQuery(torderIdHelper2).hide();
+			jQuery(torderIdHelper3).hide();
+			jQuery(torderIdHelper1).slideToggle('fast', 'linear');
+
+			// Print out he Message what we've done
+			alertify.warning = alertify.extend('warning');
+			alertify.warning('<i class="icon-edit"></i> Edit <strong> Transport ' + torderId + '</strong>');
+		}
+
+		/*
+		 * Method to remove the selected container
+		 *
+		 */
+		function trans_remove( torderId ) {
+			// extend confirm function with modal (bootstrap or alertify)
+			alertify.set({
+				buttonFocus : 'none'
+			});
+			alertify.confirm('<div class="modal-header"><h3>Confirm the deletion of Transport ' + torderId + '</h3></div><div class="modal-body">Do you really want to remove <strong>Transport ' + torderId + '</strong>?</div>', function (e) {
+				if (e) {
+					// user klicked ok
+					torderIdHelper = '#torder-' + torderId;
+					jQuery(torderIdHelper).fadeOut('slow', function() {
+						jQuery(torderIdHelper).remove();
+					});
+
+					// Print out he Message what we've done
+					alertify.error('<i class="icon-remove"></i> <strong>Transport ' + torderId + '</strong> successfully removed');
+				} else {
+					// user clicked cancel
+					alertify.success('<i class="icon-lightbulb"></i> <strong>Abort action for Transport ' + torderId + '</strong>');
+				}
+			});
+		}
+
+		/*
+		 * Method to get the values from given torderId
+		 * Using in seperate to determine what fields we want to have for the copy process
+		 */
+		function getValues( torderId ) {
+			inputValues = new Object();
+			// catch base values
+				inputValues.transdevice = jQuery('#transdevice-' + torderId).val();
+				inputValues.transtype = jQuery('#transtype-' + torderId).val();
+				inputValues.ordertype = jQuery('#ordertype-' + torderId).val();
+			// catch from values
+				inputValues.f_address_name = jQuery('#f_address_name-' + torderId).val();
+				inputValues.f_address_name_add = jQuery('#f_address_name_add-' + torderId).val();
+				inputValues.f_address_street = jQuery('#f_address_street-' + torderId).val();
+				inputValues.f_address_houseno = jQuery('#f_address_houseno-' + torderId).val();
+				inputValues.f_address_zip = jQuery('#f_address_zip-' + torderId).val();
+				inputValues.f_address_city = jQuery('#f_address_city-' + torderId).val();
+				inputValues.f_address_region = jQuery('#f_address_region-' + torderId).val();
+				inputValues.f_address_country = jQuery('#f_address_country-' + torderId).val();
+				inputValues.f_address_lat = jQuery('#f_address_lat-' + torderId).val();
+				inputValues.f_address_lng = jQuery('#f_address_lng-' + torderId).val();
+				inputValues.f_address_hash = jQuery('#f_address_hash-' + torderId).val();
+			// catch to values
+				inputValues.t_address_name = jQuery('#t_address_name-' + torderId).val();
+				inputValues.t_address_name_add = jQuery('#t_address_name_add-' + torderId).val();
+				inputValues.t_address_street = jQuery('#t_address_street-' + torderId).val();
+				inputValues.t_address_houseno = jQuery('#t_address_houseno-' + torderId).val();
+				inputValues.t_address_zip = jQuery('#t_address_zip-' + torderId).val();
+				inputValues.t_address_city = jQuery('#t_address_city-' + torderId).val();
+				inputValues.t_address_region = jQuery('#t_address_region-' + torderId).val();
+				inputValues.t_address_country = jQuery('#t_address_country-' + torderId).val();
+				inputValues.t_address_lat = jQuery('#t_address_lat-' + torderId).val();
+				inputValues.t_address_lng = jQuery('#t_address_lng-' + torderId).val();
+				inputValues.t_address_hash = jQuery('#t_address_hash-' + torderId).val();
+
+			return inputValues;
+		}
+
+		/*
+		 * Method to set the shortInfoBar
+		 *
+		 */
+		function setShortInfoBar( torderId ) {
+			var value = jQuery( document.activeElement ).val();
+
+			console.log(value);
+
+			return value;
+		}
+
+		/*
+		 * Method to copy the shortInfoBar
+		 *
+		 */
+		function copyShortInfoBar( torderId ) {
+			
+		}
+
+		/*
+		 * Method to switch the hidden values and the shortInfoBar
+		 *
+		 */
+		function switchValues( torderId ) {
+			
+		}
+
+		/*
+		 * Method to get an OrderId/EmergencyId based and related to the timestamp and may unique in database
+		 *
+		 */
+		function getOrderIdFromDB( torderId ) {
+			
+		}
+
+		/*
+		 * Method to build the container
+		 *
+		 */
+		function buildContainer( torderId ) {
+			var htmlOut = '<div id=\"torder-' + torderId + '\" class=\"clonedTransport\" style="display: none;">';
+				htmlOut += '<div class=\"widget-box transparent\">';
+
+					htmlOut += '<div class=\"widget-header\">';
+						htmlOut += '<h4 class=\"lighter green\"><div class=\"input-medium\">Transport: ' + torderId + '</div></h4>';
+						htmlOut += '<div class=\"widget-toolbar no-border\">';
+							htmlOut += '<div class=\"btn-group\">';
+								htmlOut += '<a class=\"btn btn-mini btn-inverse xtooltip\" title=\"<?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_ORDER_ID'); ?>\" data-placement=\"top\">';
+									htmlOut += '<span id=\"torder-orderid-color-' + torderId + '\" class=\"red\">#</span> <span id=\"torder-orderid-value-' + torderId + '\">N/A</span>';
+								htmlOut += '</a>';
+								htmlOut += '<a class=\"btn btn-mini xtooltip\" title=\"<?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_ESTIMATED_TIME'); ?>\" data-placement=\"top\">';
+									htmlOut += '<i id=\"torder-esttime-color-' + torderId + '\" class=\"icon-time red\"></i> <span id=\"torder-esttime-value-' + torderId + '\">N/A</span>';
+								htmlOut += '</a>';
+								htmlOut += '<a class=\"btn btn-mini xtooltip\" title=\"<?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_ESTIMATED_DISTANCE'); ?>\" data-placement=\"top\">';
+									htmlOut += '<i id=\"torder-estdistance-color-' + torderId + '\" class=\"icon-road red\"></i> <span id=\"torder-estdistance-value-' + torderId + '\">N/A</span>';
+								htmlOut += '</a>';
+							htmlOut += '</div>';
+						htmlOut += '</div>';
+					htmlOut += '</div>';
+
+					htmlOut += '<div class=\"widget-body\">';
+						htmlOut += '<div class=\"widget-main padding-6 no-padding-left no-padding-right\">';
+							htmlOut += '<div class=\"row-fluid\">';
+
+								htmlOut += '<div class=\"span8\">';
+									htmlOut += '<div class=\"well center inverse-extended-' + torderId + '\">';
+										htmlOut += '<span id=\"torder-sum-left-' + torderId + '\">N/A</span>';
+										htmlOut += '<span id=\"torder-sum-change-' + torderId + '\" class=\"margin-left margin-right\"><i class=\"icon-exchange\"></i></span>';
+										htmlOut += '<span id=\"torder-sum-right-' + torderId + '\">N/A</span>';
+									htmlOut += '</div>';
+									htmlOut += '<div class=\"controls controls-row extended-' + torderId + '\">';
+										htmlOut += '<div class=\"span6\">';
+											htmlOut += '<div class=\"well\">';
+												htmlOut += '<div class=\"control-group\">';
+													htmlOut += '<label class=\"control-label\"><i class=\"icon-chevron-sign-up\"></i> <?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ADDRESS_FROM'); ?></label>';
+													htmlOut += '<div class=\"controls\">';
+														htmlOut += '<span class=\"span12\">';
+															htmlOut += '<?php // echo $this->form->getInput('f_poi_id'); ?>';
+														htmlOut += '</span>';
+													htmlOut += '</div>';
+													htmlOut += '<div class=\"controls\">';
+														htmlOut += '<input type=\"text\" id=\"f_address_name-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][f_address_name]\" class=\"input-control span12\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>\" maxlength=\"150\" value />';
+													htmlOut += '</div>';
+													htmlOut += '<div class=\"controls\">';
+														htmlOut += '<input type=\"text\" id=\"f_address_name_add-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][f_address_name_add]\" class=\"input-control span12\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>\" maxlength=\"100\" />';
+													htmlOut += '</div>';
+													htmlOut += '<div class=\"controls controls-row\">';
+														htmlOut += '<input type=\"text\" id=\"f_address_street-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][f_address_street]\" class=\"input-control span9\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>\" maxlength=\"100\" />';
+														htmlOut += '<input type=\"text\" id=\"f_address_houseno-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][f_address_houseno]\" class=\"input-control span3\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>\" maxlength=\"10\" />';
+													htmlOut += '</div>';
+													htmlOut += '<div class=\"controls controls-row\">';
+														htmlOut += '<input type=\"text\" id=\"f_address_zip-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][f_address_zip]\" class=\"input-control span4\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>\" maxlength=\"10\" />';
+														htmlOut += '<input type=\"text\" id=\"f_address_city-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][f_address_city]\" class=\"input-control span8\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>\" maxlength=\"100\" />';
+													htmlOut += '</div>';
+													htmlOut += '<div class=\"controls controls-row\">';
+														htmlOut += '<input type=\"text\" id=\"f_address_region-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][f_address_region]\" class=\"input-control span6\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>\" />';
+														htmlOut += '<input type=\"text\" id=\"f_address_country-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][f_address_country]\" class=\"input-control span6\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>\" />';
+													htmlOut += '</div>';
+												htmlOut += '</div>';
+											htmlOut += '</div>';
+										htmlOut += '</div>';
+										htmlOut += '<div class=\"span6\">';
+											htmlOut += '<div class=\"well\">';
+												htmlOut += '<div class=\"control-group\">';
+													htmlOut += '<label class=\"control-label\"><i class=\"icon-chevron-sign-down\"></i> <?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ADDRESS_TO'); ?></label>';
+													htmlOut += '<div class=\"controls\">';
+														htmlOut += '<span class=\"span12\">';
+															htmlOut += '<?php // echo $this->form->getInput('t_poi_id'); ?>';
+														htmlOut += '</span>';
+													htmlOut += '</div>';
+													htmlOut += '<div class=\"controls\">';
+														htmlOut += '<input type=\"text\" id=\"t_address_name-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][t_address_name]\" class=\"input-control span12\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_NAME'); ?>\" maxlength=\"150\" value />';
+													htmlOut += '</div>';
+													htmlOut += '<div class=\"controls\">';
+														htmlOut += '<input type=\"text\" id=\"t_address_name_add-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][t_address_name_add]\" class=\"input-control span12\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_NAME_ADD'); ?>\" maxlength=\"100\" />';
+													htmlOut += '</div>';
+													htmlOut += '<div class=\"controls controls-row\">';
+														htmlOut += '<input type=\"text\" id=\"t_address_street-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][t_address_street]\" class=\"input-control span9\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_STREET'); ?>\" maxlength=\"100\" />';
+														htmlOut += '<input type=\"text\" id=\"t_address_houseno-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][t_address_houseno]\" class=\"input-control span3\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_HOUSENO'); ?>\" maxlength=\"10\" />';
+													htmlOut += '</div>';
+													htmlOut += '<div class=\"controls controls-row\">';
+														htmlOut += '<input type=\"text\" id=\"t_address_zip-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][t_address_zip]\" class=\"input-control span4\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_ZIP'); ?>\" maxlength=\"10\" />';
+														htmlOut += '<input type=\"text\" id=\"t_address_city-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][t_address_city]\" class=\"input-control span8\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_CITY'); ?>\" maxlength=\"100\" />';
+													htmlOut += '</div>';
+													htmlOut += '<div class=\"controls controls-row\">';
+														htmlOut += '<input type=\"text\" id=\"t_address_region-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][t_address_region]\" class=\"input-control span6\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_REGION'); ?>\" />';
+														htmlOut += '<input type=\"text\" id=\"t_address_country-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][t_address_country]\" class=\"input-control span6\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_COUNTRY'); ?>\" />';
+													htmlOut += '</div>';
+												htmlOut += '</div>';
+											htmlOut += '</div>';
+										htmlOut += '</div>';
+									htmlOut += '</div>'; // <!-- /.controls .controls-row .extended- -->
+								htmlOut += '</div><!-- /.span8 -->';
+
+								htmlOut += '<div class=\"span4\">';
+									htmlOut += '<div class=\"well\">';
+										htmlOut += '<div class=\"controls controls-row\">';
+											htmlOut += '<span id=\"torder-input-time-' + torderId + '\" class=\"input-icon input-icon-right span6 bootstrap-timepicker\">';
+												htmlOut += '<input id=\"timepicker-' + torderId + '\" type=\"text\" class=\"span12 center\" style=\"font-size: 25px; height: 45px;\" />';
+												htmlOut += '<i class=\"icon-time\"></i>';
+											htmlOut += '</span>';
+											htmlOut += '<span id=\"torder-input-date-' + torderId + '\" class=\"input-icon input-icon-right span6 bootstrap-datepicker\">';
+												htmlOut += '<input id=\"datepicker-' + torderId + '\" type=\"text\" class=\"span12 center\" style=\"font-size: 25px; height: 45px;\" />';
+												htmlOut += '<i class=\"icon-calendar\"></i>';
+											htmlOut += '</span>';
+										htmlOut += '</div>';
+
+										htmlOut += '<div class=\"extended-' + torderId + '\">';
+											htmlOut += '<div class=\"control-group\">';
+												htmlOut += '<label class=\"control-label\"><?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_TRANSPORT_DEVICE_AND_TYPE'); ?></label>';
+												htmlOut += '<div class=\"controls controls-row\">';
+													htmlOut += '<div class=\"span6\">';
+														htmlOut += '<?php //  id=\"transdevice-' + torderId + '\" [multiform][' + torderId + '] echo getTransDevice(); ?>';
+													htmlOut += '</div>';
+													htmlOut += '<div class=\"span6\">';
+														htmlOut += '<?php // id=\"transtype-' + torderId + '\" [multiform][' + torderId + '] echo getTransType(); ?>';
+													htmlOut += '</div>';
+												htmlOut += '</div>';
+											htmlOut += '</div><!-- #end control group -->';
+
+											htmlOut += '<div class=\"control-group\">';
+												htmlOut += '<label class=\"control-label\"><?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ORDER_TYPE'); ?></label>';
+												htmlOut += '<div class=\"controls controls-row\">';
+													htmlOut += '<div class=\"span12\">';
+														htmlOut += '<?php // id=\"ordertpye-' + torderId + '\" [multiform][' + torderId + '] echo getOrderType(); ?>';
+													htmlOut += '</div>';
+												htmlOut += '</div>';
+											htmlOut += '</div><!-- #end control group -->';
+										htmlOut += '</div><!-- /.extended- -->';
+
+										htmlOut += '<div class=\"control-group\">';
+											htmlOut += '<div class=\"controls controls-row center\">';
+												htmlOut += '<div class=\"btn-group\">';
+													htmlOut += '<a id=\"toggleEdit-' + torderId + '\" class=\"btn btn-warning\" onClick=\"trans_edit(' + torderId + ')\">';
+														htmlOut += '<i class=\"icon-edit\"></i> <?php echo JText::_('COM_XIVETRANSCORDER_EDIT_ITEM'); ?>';
+													htmlOut += '</a>';
+													htmlOut += '<a class=\"btn btn-success xtooltip trans-add\" onClick=\"trans_add(' + torderId + ')\">';
+														htmlOut += '<i class=\"icon-plus\"></i> <?php echo JText::_('COM_XIVETRANSCORDER_ADD_EMPTY_ITEM'); ?>';
+													htmlOut += '</a>';
+													htmlOut += '<a class=\"btn btn-primary trans-copy\" onClick=\"trans_copy(' + torderId + ')\">';
+														htmlOut += '<i class=\"icon-copy\"></i> <?php echo JText::_('COM_XIVETRANSCORDER_COPY_THIS_ITEM'); ?>';
+													htmlOut += '</a>';
+													htmlOut += '<a class=\"btn btn-danger trans-remove\" onClick=\"trans_remove(' + torderId + ')\">';
+														htmlOut += '<i class=\"icon-remove\"></i> <?php echo JText::_('COM_XIVETRANSCORDER_DELETE_ITEM'); ?>';
+													htmlOut += '</a>';
+												htmlOut += '</div>';
+											htmlOut += '</div>';
+										htmlOut += '</div><!-- #end control group -->';
+									htmlOut += '</div><!-- /.well -->';
+								htmlOut += '</div><!-- /.span4 -->';
+							htmlOut += '</div><!-- /.row-fluid -->';
+						htmlOut += '</div><!-- /.widget-main padding-6 no-padding-left no-padding-right -->';
+					htmlOut += '</div><!-- /.widget-body -->';
+				htmlOut += '</div><!-- /.widget-box .transparent -->';
+
+				htmlOut += '<input type=\"hidden\" id=\"f_address_lat-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][f_address_lat]\" />';
+				htmlOut += '<input type=\"hidden\" id=\"f_address_lng-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][f_address_lng]\" />';
+				htmlOut += '<input type=\"hidden\" id=\"f_address_hash-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][f_address_hash]\" />';
+				htmlOut += '<input type=\"hidden\" id=\"t_address_lat-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][t_address_lat]\" />';
+				htmlOut += '<input type=\"hidden\" id=\"t_address_lng-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][t_address_lng]\" />';
+				htmlOut += '<input type=\"hidden\" id=\"t_address_hash-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][t_address_hash]\" />';
+
+				htmlOut += '<input type=\"hidden\" id=\"order_id-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][order_id]\" value />';
+				htmlOut += '<input type=\"hidden\" id=\"estimated_time-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][estimated_time]\" value />';
+				htmlOut += '<input type=\"hidden\" id=\"estimated_distance-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][estimated_distance]\" value />';
+				htmlOut += '<input type=\"hidden\" id=\"transport_timestamp-' + torderId + '\" name=\"transcorder[multiform][' + torderId + '][transport_timestamp]\" value />';
+
+			htmlOut += '</div><!-- /.torder-' + torderId + ' -->';
+
+			return htmlOut;
+		}
+
+	console.log();
+// });
+</script>
