@@ -85,30 +85,47 @@ class XiveirmModelApi extends JModelForm
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
 
-		$table = '#__xiveirm_' . $dataApi['coreapp'];
-
 		if($doNew) {
 			// Unset datas from form we do not need in the db query to save or to override (eg. id, created by)
 			unset($dataCore['id']);
 
-			// Build columns and values
+			// Build columns and values, check if we're in a multiform
 			$columns = array();
 			$values = array();
 
-			foreach($dataCore as $key => $val) {
-				// Set the columns
-				$columns[] = $key;
+			// Check if we have a multiform
 
-				// Set the values
-				$values[] = $db->quote($val);
+	// TODO IF WE'RE IN MULTIFORM, WE COULD SAVE THE COUNT VAR INTO THE USER STATE AND ACCESS THEM LATER TO PROCESS MESSAGES OR SOMETHING ELSE
+
+			if(is_array($data->core['multiform'])) {
+				$multiformTotal = count($data->core['multiform']);
+// debug				echo 'Multiform detected. Processing ' . $multiformTotal . ' transports...';
+				$lastArray = array_pop($data->core['multiform']);
+				foreach($lastArray as $key => $val) {
+					// Set the columns
+					$columns[] = $key;
+
+					// Set the values
+					$values[] = $db->quote($val);
+				}
+			} else {
+				foreach($dataCore as $key => $val) {
+					// Set the columns
+					$columns[] = $key;
+
+					// Set the values
+					$values[] = $db->quote($val);
+				}
 			}
 
 			// Set additionals we need for create process
-			$columns[] = 'created_by';
+			$columns[] = 'created';
 			$values[] = $db->quote(NItemHelper::getDate('MySQL'));
+			$columns[] = 'created_by';
+			$values[] = $db->quote(JFactory::getUser()->id);
 
 			$query
-				->insert($db->quoteName($table))
+				->insert($db->quoteName($dataApi['coretable']))
 				->columns($db->quoteName($columns))
 				->values(implode(',', $values));
 			$db->setQuery($query);
@@ -147,7 +164,7 @@ class XiveirmModelApi extends JModelForm
 			$fields[] = 'modified = ' . $db->quote(NItemHelper::getDate('MySQL'));
 
 			$query
-				->update($db->quoteName($table))
+				->update($db->quoteName($dataApi['coretable']))
 				->set($fields)
 				->where('id = ' . $db->quote($id) . '');
 
@@ -189,7 +206,7 @@ class XiveirmModelApi extends JModelForm
 	 * @return	mixed		The user id on success, false on failure.
 	 * @since	1.6
 	 */
-	public function savetab($data, $contact_id, $tab_key)
+	public function savetab($data, $id, $tabKey)
 	{
 		// Now we get raw $data from the controller and have to perform the save request
 		// first we have to check if we got any datas and split the data into separate values
@@ -199,16 +216,18 @@ class XiveirmModelApi extends JModelForm
 		{
 			// Perform the return array
 			$return_arr = array();
-			$return_arr["apiReturnId"] = (int)$contact_id;
+			$return_arr["apiReturnId"] = (int)$id;
 			$return_arr["apiReturnCode"] = 2500;
-			$return_arr["apiReturnMessage"] = 'The form is completely empty: Neither an appId, a tabId nor a masterdataId is given!';
+			$return_arr["apiReturnMessage"] = 'The tabApp form is completely empty: Neither an appId, a tabId nor a masterdataId is given!';
 
 			return $return_arr;
 		}
+		$dataTab = $data->tab;
+		$dataApi = $data->api;
 
 		// Check if in all the datas are values and/or nested arrays from multiselect and reinject the val as key, save all as a clean new array
 		$newDataArray = array();
-		foreach($data as $key => $val)
+		foreach($dataTab as $key => $val)
 		{
 			if(!empty($val))
 			{
@@ -237,33 +256,32 @@ class XiveirmModelApi extends JModelForm
 		// Lets have a look first if we have already a tab with that tab_key saved for this customer! Happens if the user attemp to click more than once on save
 		$query
 			->select('*')
-			->from('#__xiveirm_contact_tabappvalues')
-			->where('contact_id = ' . $db->quote($contact_id) . '')
-			->where('tab_key = ' . $db->quote($tab_key) . '');
+			->from($db->quoteName($dataApi['tabapptable']))
+			->where('' . $dataApi['tabapptableidname'] . ' = ' . $db->quote($id) . '')
+			->where('tab_key = ' . $db->quote($tabKey) . '');
 
 		$db->setQuery($query);
 		$result = $db->loadObject();
 
+		// Override query by call new bcz old values in select query cause errors on firther queries!!!
+		$query = $db->getQuery(true);
+
 		if($result) {
 			$tab_exist = true;
-
-			// Ok, tab exist, if the array is empty, the user try to delete all values. Lets kill the row!
-			// XiveIRM-TODO: Delete the row!
-			
 		} else {
 			$tab_exist = false;
 		}
 
-		if(!$tab_exist && $contact_id != 0)
+		if(!$tab_exist && $id != 0)
 		{
 			// Set the columns
-			$columns = array('contact_id', 'tab_key', 'tab_value');
+			$columns = array($dataApi['tabapptableidname'], 'tab_key', 'tab_value');
 
 			// Set the values
-			$values = array($db->quote($contact_id), $db->quote($tab_key), $db->quote($newData));
+			$values = array($db->quote($id), $db->quote($tabKey), $db->quote($newData));
 
 			$query
-				->insert($db->quoteName('#__xiveirm_contact_tabappvalues'))
+				->insert($db->quoteName($dataApi['tabapptable']))
 				->columns($db->quoteName($columns))
 				->values(implode(',', $values));
 			$db->setQuery($query);
@@ -272,7 +290,7 @@ class XiveirmModelApi extends JModelForm
 			try
 			{
 				$db->execute();
-				$apiReturnId = (int)$contact_id;
+				$apiReturnId = (int)$id;
 				$apiReturnCode = 'SAVED';
 				$apiReturnMessage = 'Succesfully saved';
 			} catch (Exception $e) {
@@ -281,45 +299,70 @@ class XiveirmModelApi extends JModelForm
 				$apiReturnMessage = $e->getMessage();
 			}
 		}
-		else if($tab_exist && $contact_id != 0)
+		else if($tab_exist && $id != 0)
 		{
-			// Set the fields
-			$fields = array(
-				'contact_id = ' . $db->quote($contact_id) . '',
-				'tab_key = ' . $db->quote($tab_key) . '',
-				'tab_value = ' . $db->quote($newData) . '');
+			// If tab exist but array is empty, delete the row!
+			if( $newData == '[]' ) {
+				$conditions = array(
+					'' . $dataApi['tabapptableidname'] . ' = ' . $db->quote($id) . '',
+					'tab_key = ' . $db->quote($tabKey) . '');
 
-			$query
-				->update($db->quoteName('#__xiveirm_contact_tabappvalues'))
-				->set($fields)
-				->where('contact_id = ' . $db->quote($contact_id) . '')
-				->where('tab_key = ' . $db->quote($tab_key) . '');
+				$query
+					->delete($db->quoteName($dataApi['tabapptable']))
+					->where($conditions);
+				$db->setQuery($query);
 
-			$db->setQuery($query);
+				// Try to store or get the error code for debugging
+				try
+				{
+					$db->execute();
+					$apiReturnId = (int)$id;
+					$apiReturnCode = 'UPDATED';
+					$apiReturnMessage = 'Succesfully saved core and deleted tabApp values';
+				} catch (Exception $e) {
+					$apiReturnId = null;
+					$apiReturnCode = (int)$e->getCode();
+					$apiReturnMessage = $e->getMessage();
+				}
+			} else {
+				// Set the fields
+				$fields = array(
+					'' . $dataApi['tabapptableidname'] . ' = ' . $db->quote($id) . '',
+					'tab_key = ' . $db->quote($tabKey) . '',
+					'tab_value = ' . $db->quote($newData) . '');
 
-			// Try to store or get the error code for debugging
-			try
-			{
-				$db->execute();
-				$apiReturnId = (int)$contact_id;
-				$apiReturnCode = 'UPDATED';
-				$apiReturnMessage = 'Succesfully updated';
-			} catch (Exception $e) {
-				$apiReturnId = null;
-				$apiReturnCode = (int)$e->getCode();
-				$apiReturnMessage = $e->getMessage();
+				$query
+					->update($db->quoteName($dataApi['tabapptable']))
+					->set($fields)
+					->where('' . $dataApi['tabapptableidname'] . ' = ' . $db->quote($id) . '')
+					->where('tab_key = ' . $db->quote($tabKey) . '');
+
+				$db->setQuery($query);
+
+				// Try to store or get the error code for debugging
+				try
+				{
+					$db->execute();
+					$apiReturnId = (int)$id;
+					$apiReturnCode = 'UPDATED';
+					$apiReturnMessage = 'Succesfully updated';
+				} catch (Exception $e) {
+					$apiReturnId = null;
+					$apiReturnCode = (int)$e->getCode();
+					$apiReturnMessage = $e->getMessage();
+				}
 			}
 		}
 		else
 		{
-			$apiReturnId = (int)$contact_id;
+			$apiReturnId = (int)$id;
 			$apiReturnCode = 2566;
 			$apiReturnMessage = 'Unbekannter Fehler';
 		}
 
 		// Perform the return array
 		$return_arr = array();
-		$return_arr["apiReturnId"] = (int)$contact_id;
+		$return_arr["apiReturnId"] = (int)$id;
 		$return_arr["apiReturnCode"] = $apiReturnCode;
 		$return_arr["apiReturnMessage"] = $apiReturnMessage;
 
