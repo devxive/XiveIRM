@@ -17,6 +17,7 @@ defined('_JEXEC') or die;
 nimport('NHtml.JavaScript');
 nimport('NItem.Helper', false);
 nimport('NUser.Access', false);
+nimport('NPlugins.Sha256');
 
 NHtmlJavaScript::setToggle('extended', 'toggleExtend');
 NHtmlJavaScript::setTextLimit('.limited', 250);
@@ -25,7 +26,11 @@ NHtmlJavaScript::setTooltip('.xtooltip');
 NHtmlJavaScript::setPopover('.xpopover');
 NHtmlJavaScript::setPreventFormSubmitByKey();
 NHtmlJavaScript::loadGritter();
+NHtmlJavaScript::loadAlertify();
 NHtmlJavaScript::setPreventFormLeaveIfChanged('#form-contact');
+NHtmlJavaScript::loadEasyPie('.ep-chart', false, false);
+NHtmlJavaScript::loadBootbox('.bootbox');
+NPluginsSHA256::loadSHA256('js.sha256');
 
 //Load admin language file
 $lang = JFactory::getLanguage();
@@ -43,7 +48,7 @@ if(!$this->item->catid) {
 }
 
 // Import all TabApps based on the XiveIRM TabApp configs and the related catid!
-IRMSystem::getPlugins($this->item->catid);
+IRMSystem::getPlugins($this->item->catid, 'contacts');
 $dispatcher = JDispatcher::getInstance();
 
 // Check for checked out item
@@ -253,7 +258,7 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 							<div class="control-group">
 								<label class="control-label">
 									<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_LABEL'); ?>
-									<span class="help-button xpopover" data-trigger="hover" data-placement="top" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_DESC'); ?>" data-original-title="The Gender take over effects!">?</i>
+									<span class="help-button xpopover" data-trigger="hover" data-placement="top" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_DESC'); ?>" data-original-title="The Gender take over effects!">?</span>
 								</label>
 								<div class="controls controls-row">
 									<?php NHtmlJavaScript::setChosen('.chzn-select-gender', false, array('width' => '100%', 'disable_search' => true)); ?>
@@ -291,25 +296,45 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 								</div>
 							</div>
 							
-							<div class="control-group">
-								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_LABEL'); ?></label>
-								<div class="controls extended">
-									<input type="text" name="contacts[address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->address_name; ?>">
+							<div id="address-block" class="control-group">
+								<label class="control-label">
+									<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_LABEL'); ?>
+									<span class="help-button xpopover btn-danger" data-trigger="hover" data-placement="top" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CLEAN_ADDRESS_DESC'); ?>" data-original-title="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CLEAN_ADDRESS_TITLE'); ?>" onClick="clearAddress()">!</span>
+									<div id="geocode-progress" class="ep-chart" data-percent="100" data-size="23" data-line-width="4" data-animate="1500" data-color="#EBA450" style="display: inline-block; vertical-align: middle;"></div>
+								</label>
+								<div class="controls">
+									<div class="alert center" style="padding: 8px !important;">
+										<input type="text" id="address_auto_geocoder" class="input-control span12 red" placeholder="Type in: Street HouseNo, City, State, Country" onFocus="geocodeInputHelper()" onBlur="geocodeInputHelper()" style="margin-bottom: 0 !important;;">
+										<p id="geocode-input-helper" style="margin-top: 10px; display: none;">
+											<small>
+												This is a helper input field. Type in here the address and let the Geocoder find the right one for you!<br>
+												<em><strong>Please note that this field will not save its value!</strong></em>
+											</small>
+										</p>
+									</div>
 								</div>
-								<div class="controls extended">
-									<input type="text" name="contacts[address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->address_name_add; ?>">
-								</div>
-								<div class="controls controls-row">
-									<input type="text" name="contacts[address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->address_street; ?>">
-									<input type="text" name="contacts[address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->address_houseno; ?>">
-								</div>
-								<div class="controls controls-row">
-									<input type="text" name="contacts[address_zip]" class="input-control span4" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->address_zip; ?>">
-									<input type="text" name="contacts[address_city]" class="input-control span8" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->address_city; ?>">
-								</div>
-								<div class="controls controls-row extended">
-									<input type="text" name="contacts[address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->address_region; ?>">
-									<input type="text" name="contacts[address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->address_country; ?>">
+								<div id="inner-address-block">
+									<div class="controls extended">
+										<input type="text" id="address_name" name="contacts[address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->address_name; ?>">
+									</div>
+									<div class="controls extended">
+										<input type="text" id="address_name_add" name="contacts[address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->address_name_add; ?>">
+									</div>
+									<div class="controls controls-row">
+										<input type="text" id="address_street" name="contacts[address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->address_street; ?>">
+										<input type="text" id="address_houseno" name="contacts[address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->address_houseno; ?>">
+									</div>
+									<div class="controls controls-row">
+										<input type="text" id="address_zip" name="contacts[address_zip]" class="input-control span4" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->address_zip; ?>">
+										<input type="text" id="address_city" name="contacts[address_city]" class="input-control span8" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->address_city; ?>">
+									</div>
+									<div class="controls controls-row extended">
+										<input type="text" id="address_region" name="contacts[address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->address_region; ?>">
+										<input type="text" id="address_country" name="contacts[address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->address_country; ?>">
+									</div>
+									<input type="text" placeholder="lat" class="purple span4" id="address_lat" name="contacts[address_lat]" value="<?php echo $this->item->address_lat; ?>" />
+									<input type="text" placeholder="lng" class="purple span4" id="address_lng" name="contacts[address_lng]" value="<?php echo $this->item->address_lng; ?>" />
+									<input type="text" placeholder="hash" class="purple span4" id="address_hash" name="contacts[address_hash]" value="<?php echo $this->item->address_hash; ?>" />
 								</div>
 							</div>
 							
@@ -367,26 +392,26 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 								echo '<div class="widget-box light-border" style="margin-top: -10px;">';
 									echo '<div class="widget-header red">';
 										echo '<h5 class="smaller">Actiontoolbar</h5>';
+										echo '<div class="widget-toolbar">';
+											echo '<label>';
+												if(!empty($this->item->address_street) && !empty($this->item->address_houseno) && !empty($this->item->address_zip) && !empty($this->item->address_city) && !empty($this->item->address_country)) {
+													echo '<a class="xpopover link-control btn btn-mini btn-light" href="http://google.com/maps/preview#!q=' . $this->item->address_street . '+' . $this->item->address_houseno . '+' . $this->item->address_zip . '+' . $this->item->address_city . '" target="_blank" data-placement="bottom" data-content="Show the address with a map marker in the new Google Maps" title="Google Maps 2.0"><img src="http://www.zdnet.de/wp-content/uploads/2012/11/googlemaps-icon.png" style="height: 15px; margin-top: -2px;"></a>';
+												}
+
+												echo '<a href="javascript:alert(\'PrintPDF: In sandbox not available at present\');" class="link-control btn btn-mini btn-light"><i class="icon-print icon-only"></i></a>';
+												echo '<a href="javascript:alert(\'DocUpload: In sandbox not available at present\');" class="link-control btn btn-mini btn-light"><i class="icon-cloud-upload icon-only"></i></a>';
+												echo '<a href="javascript:alert(\'ShareIt: In sandbox not available at present\');" class="link-control btn btn-mini btn-light"><i class="icon-share-alt icon-only"></i></a>';
+											echo '</label>';
+										echo '</div>';
 									echo '</div>';
 									echo '<div class="widget-body">';
 										echo '<div class="widget-main padding-5">';
-											echo '<center>';
-												if(!empty($this->item->address_street) && !empty($this->item->address_houseno) && !empty($this->item->address_zip) && !empty($this->item->address_city) && !empty($this->item->address_country)) {
-													echo '<a class="xpopover link-control" href="http://google.com/maps/preview#!q=' . $this->item->address_street . '+' . $this->item->address_houseno . '+' . $this->item->address_zip . '+' . $this->item->address_city . '" target="_blank" data-placement="bottom" data-content="New Google Maps" title="Google Maps 2.0"><img src="http://www.zdnet.de/wp-content/uploads/2012/11/googlemaps-icon.png" style="height: 63px; margin-right: 5px;"></a>';
-												}
-												echo '<a class="btn btn-app btn-mini btn-info link-control"><i class="icon-eye-open"></i> <span>StreetView</span></a>';
-												echo '<a class="btn btn-app btn-mini btn-light link-control"><i class="icon-print"></i> <span>Print</span></a>';
-												echo '<a class="btn btn-app btn-mini btn-purple link-control"><i class="icon-cloud-upload"></i> <span>DocUpload</span></a>';
-												echo '<a class="btn btn-app btn-mini btn-pink link-control"><i class="icon-share-alt"></i> <span>ShareIt</span></a>';
-
-												foreach($dispatcher->trigger( 'loadActionButton', array(&$this->item) ) as $inBaseWidget)
-												{
-													echo '<span id="' . $inBaseWidget['tab_key'] . '_button">';
-													echo $inBaseWidget['tabContent'];
-													echo '</span>';
-												}
-
-											echo '</center>';
+											foreach($dispatcher->trigger( 'loadActionButton', array(&$this->item) ) as $inBaseWidget)
+											{
+												echo '<span id="' . $inBaseWidget['tab_key'] . '_button">';
+												echo $inBaseWidget['tabContent'];
+												echo '</span>';
+											}
 										echo '</div>';
 									echo '</div>';
 								echo '</div>';
@@ -476,9 +501,42 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 		<input type="hidden" name="irmapi[coreapp]" value="contacts" />
 		<?php echo JHtml::_('form.token'); ?>
 	</form>
+
+	<!-- ---------- ---------- ---------- ---------- ---------- BEGIN EXTERN FORMS ---------- ---------- ---------- ---------- ---------- -->
+	<?php
+		foreach($dispatcher->trigger( 'loadExternForms', array(&$this->item) ) as $externForm)
+		{
+			echo '<span id="' . $externForm['tab_key'] . '_form">';
+			echo $externForm['tabContent'];
+			echo '</span>';
+		}
+	?>
+	<!-- ---------- ---------- ---------- ---------- ---------- END EXTERN FORMS ---------- ---------- ---------- ---------- ---------- -->
+
 </div>
 
 <script>
+
+function clearAddress() {
+	if(jQuery("#address_name").attr('disabled') != 'disabled') {
+		jQuery('#address_name').val('');
+		jQuery('#address_name_add').val('');
+		jQuery('#address_street').val('');
+		jQuery('#address_houseno').val('');
+		jQuery('#address_zip').val('');
+		jQuery('#address_city').val('');
+		jQuery('#address_region').val('');
+		jQuery('#address_country').val('');
+		jQuery('#address_lat').val('');
+		jQuery('#address_lng').val('');
+		jQuery('#address_hash').val('');
+	}
+}
+
+function geocodeInputHelper() {
+	jQuery("#geocode-input-helper").fadeToggle('slow');
+}
+
 <?php
 	// PHP OUT COMMENTS TO PREVENT SHOWING INFOS IN SOURCE CODE WHILE IN ALPHA/BETA
 	/*
