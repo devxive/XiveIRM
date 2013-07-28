@@ -189,8 +189,8 @@
 		}
 
 		if(position.jb && position.kb) {
-			$('#address_lat').val(position.jb);
-			$('#address_lng').val(position.kb);
+			$('#address_lat').val(position.jb.toFixed(10));
+			$('#address_lng').val(position.kb.toFixed(10));
 		}
 
 		if(address_lat && address_lng && address_houseno) {
@@ -198,6 +198,20 @@
 		} else {
 			$('#address-geo-verified').removeClass('green').addClass('red');
 		}
+
+		// Hashing
+		var address_hash = $('#address_hash').val();
+		if(!address_hash || address_hash === '') {
+			var address_hashNew = sha256_digest(position.jb + '_' + position.kb);
+			$('#address_hash').val(address_hashNew);
+		}
+
+		if(address_hash || address_hash != '') {
+			$('#address-hash-verified').removeClass('red').addClass('green');
+		} else {
+			$('#address-hash-verified').removeClass('green').addClass('red');
+		}
+
 
 //		console.log(position);
 //		console.log(address);
