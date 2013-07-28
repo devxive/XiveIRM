@@ -53,7 +53,7 @@
 			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_TRANSPORT_TIMESTAMP"
 			filter="safehtml" />
 
-		<field name="f_poi_id" type="sql" default="0" class="inputbox"
+		<field name="f_poi_id" type="sql" default="0" class="input-control chzn-select-poi-address"
 			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_POI_ID"
 			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_POI_ID"
 			query="SELECT id, concat(coalesce(last_name,''), ', ', coalesce(first_name,''), ' (', coalesce(company,''),' )') AS value FROM #__xiveirm_contacts WHERE catid=40"
@@ -106,7 +106,7 @@
 			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_LAT"
 			filter="string" />
 
-		<field name="f_address_long" type="text"
+		<field name="f_address_lng" type="text"
 			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_F_ADDRESS_LONG"
 			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_LONG"
 			filter="string" />
@@ -116,7 +116,7 @@
 			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_F_ADDRESS_HASH"
 			filter="string" />
 
-		<field name="t_poi_id" type="sql" default="0" class="inputbox"
+		<field name="t_poi_id" type="sql" default="0" class="input-control chzn-select-poi-address"
 			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_POI_ID"
 			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_POI_ID"
 			query="SELECT id, concat(coalesce(last_name,''), ', ', coalesce(first_name,''), ' (', coalesce(company,''),' )') AS value FROM #__xiveirm_contacts WHERE catid=40"
@@ -159,6 +159,11 @@
 			filter="string"
 			maxlength="100" />
 
+		<field name="t_address_region" type="text" size="40" class="inputbox"
+			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_REGION"
+			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_REGION"
+			filter="safehtml" />
+
 		<field name="t_address_country" type="text" size="40" class="inputbox"
 			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_COUNTRY"
 			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_COUNTRY"
@@ -170,7 +175,7 @@
 			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_LAT"
 			filter="string" />
 
-		<field name="t_address_long" type="text"
+		<field name="t_address_lng" type="text"
 			label="COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_T_ADDRESS_LONG"
 			description="COM_XIVETRANSCORDER_FORM_DESC_TRANSCORDER_T_ADDRESS_LONG"
 			filter="string" />
