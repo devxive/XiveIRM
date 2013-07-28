@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_tabapps` (
 `asset_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
 `client_id` INT(11) NOT NULL COMMENT 'usergroup id',
 `plugin` VARCHAR(100) NOT NULL COMMENT 'tab_key',
+`folder` VARCHAR(100) NOT NULL COMMENT 'plugin group',
 `catid` INT(11) NOT NULL COMMENT 'XIRM categories',
 `config` TEXT NOT NULL,
 `state` TINYINT(1) NOT NULL DEFAULT '1',
