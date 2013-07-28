@@ -15,12 +15,13 @@ jimport('joomla.application.component.view');
 /**
  * View class for a list of Xiveirm.
  */
-class XiveirmViewContacts extends JViewLegacy
+class XiveirmViewDashboard extends JViewLegacy
 {
 	protected $items;
 	protected $pagination;
 	protected $state;
-    protected $params;
+	protected $params;
+	protected $modules;
 
 	/**
 	 * Display the view
@@ -28,7 +29,7 @@ class XiveirmViewContacts extends JViewLegacy
 	public function display($tpl = null)
 	{
         $app                = JFactory::getApplication();
-        
+        $this->modules	= JFactory::getDocument()->loadRenderer('modules');
         $this->state		= $this->get('State');
         $this->items		= $this->get('Items');
         $this->pagination	= $this->get('Pagination');
