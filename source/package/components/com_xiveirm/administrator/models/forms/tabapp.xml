@@ -18,6 +18,12 @@
 			query="SELECT element, name FROM #__extensions WHERE folder LIKE 'irmtabs%' OR folder LIKE 'irmwidgets%'"
 			key_field="element" value_field="name" />
 
+		<field name="folder" type="sql" class="inputbox"
+			label="Plugin Folder"
+			description="COM_XIVEIRM_FORM_DESC_TABAPP_PLUGIN"
+			query="SELECT folder FROM #__extensions WHERE folder LIKE 'irmtabs%' OR folder LIKE 'irmwidgets%'"
+			key_field="folder" value_field="folder" />
+
 		<field name="catid" type="category"
 			label="COM_XIVEIRM_FORM_LBL_TABAPP_CATEGORY"
 			description="COM_XIVEIRM_FORM_DESC_TABAPP_CATEGORY"

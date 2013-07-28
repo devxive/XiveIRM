@@ -61,6 +61,10 @@ $document->addStyleSheet('components/com_xiveirm/assets/css/xiveirm.css');
 				<div class="controls"><?php echo $this->form->getInput('plugin'); ?></div>
 			</div>
 			<div class="control-group">
+				<div class="control-label"><?php echo $this->form->getLabel('folder'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('folder'); ?></div>
+			</div>
+			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('catid'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('catid'); ?></div>
 			</div>
