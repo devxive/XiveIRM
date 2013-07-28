@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     XAP.Plugin
- * @subpackage  IRMWidgetsTranscorder.corewidget
+ * @subpackage  IRMWidgetsTranscorder.corewidgettoca
  *
  * @copyright   Copyright (C) 1997 - 2013 devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -13,10 +13,10 @@ defined('JPATH_BASE') or die;
  * An example custom profile plugin.
  *
  * @package     XAP.Plugin
- * @subpackage  IRMWidgetsTranscorder.corewidget
+ * @subpackage  IRMWidgetsTranscorder.corewidgettoca
  * @since       5.0
  */
-class PlgIrmWidgetsTranscorderCorewidget extends JPlugin
+class PlgIrmWidgetsTranscorderCorewidgetToca extends JPlugin
 {
 	/**
 	 * Stores the tab app name
@@ -31,7 +31,7 @@ class PlgIrmWidgetsTranscorderCorewidget extends JPlugin
 	public function __construct(& $subject, $config)
 	{
 		parent::__construct($subject, $config);
-		$this->tab_key = 'corewidget';
+		$this->tab_key = 'corewidgettoca';
 		$this->loadLanguage();
 	}
 

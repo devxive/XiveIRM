@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.1" type="plugin" group="irmwidgetstranscorder" method="upgrade">
-	<name>plg_irmwidgetstranscorder_corewidget</name>
+	<name>plg_irmwidgetstranscorder_corewidgettoca</name>
 	<author>devXive</author>
 	<creationDate>July 2013</creationDate>
 	<copyright>(C) 1997 - 2013 devXive - research and development. All rights reserved.</copyright>
@@ -14,10 +14,10 @@
 		<filename>index.html</filename>
 	</files>
 	<languages folder="language">
-		<language tag="en-GB">en-GB/en-GB.plg_irmwidgetstranscorder_corewidget.ini</language>
-		<language tag="en-GB">en-GB/en-GB.plg_irmwidgetstranscorder_corewidget.sys.ini</language>
-		<language tag="de-DE">de-DE/de-DE.plg_irmwidgetstranscorder_corewidget.ini</language>
-		<language tag="de-DE">de-DE/de-DE.plg_irmwidgetstranscorder_corewidget.sys.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_irmwidgetstranscorder_corewidgettoca.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_irmwidgetstranscorder_corewidgettoca.sys.ini</language>
+		<language tag="de-DE">de-DE/de-DE.plg_irmwidgetstranscorder_corewidgettoca.ini</language>
+		<language tag="de-DE">de-DE/de-DE.plg_irmwidgetstranscorder_corewidgettoca.sys.ini</language>
 	</languages>
 	<config>
 		<fields name="params">
