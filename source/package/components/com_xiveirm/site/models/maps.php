@@ -13,7 +13,7 @@ jimport('joomla.application.component.modellist');
 /**
  * Methods supporting a list of Xiveirm records.
  */
-class XiveirmModelDashboard extends JModelList {
+class XiveirmModelMaps extends JModelList {
 
     /**
      * Constructor.
