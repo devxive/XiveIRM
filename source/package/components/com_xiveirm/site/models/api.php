@@ -93,28 +93,32 @@ class XiveirmModelApi extends JModelForm
 			$columns = array();
 			$values = array();
 
-			// Check if we have a multiform
-
-	// TODO IF WE'RE IN MULTIFORM, WE COULD SAVE THE COUNT VAR INTO THE USER STATE AND ACCESS THEM LATER TO PROCESS MESSAGES OR SOMETHING ELSE
-
-			if(is_array($data->core['multiform'])) {
-				$multiformTotal = count($data->core['multiform']);
-// debug				echo 'Multiform detected. Processing ' . $multiformTotal . ' transports...';
-				$lastArray = array_pop($data->core['multiform']);
-				foreach($lastArray as $key => $val) {
+			// Remaster the col/val vars
+			foreach($dataCore as $key => $val) {
+				// Ensure that only non arrays are set. If we have an array, its may a multiform! See checks after this!
+				if(!is_array($val)) {
 					// Set the columns
 					$columns[] = $key;
 
 					// Set the values
 					$values[] = $db->quote($val);
 				}
-			} else {
-				foreach($dataCore as $key => $val) {
-					// Set the columns
-					$columns[] = $key;
+			}
 
-					// Set the values
-					$values[] = $db->quote($val);
+			// Check if we have a multiform - if true, append to columns[] and values[]
+			// TODO IF WE'RE IN MULTIFORM, WE COULD SAVE THE COUNT VAR INTO THE USER STATE AND ACCESS THEM LATER TO PROCESS MESSAGES OR SOMETHING ELSE
+			if(isset($dataCore['multiform'])) {
+				if(is_array($dataCore['multiform'])) {
+					$multiformTotal = count($dataCore['multiform']);
+// debug					echo 'Multiform detected. Processing ' . $multiformTotal . ' transports...';
+					$lastArray = array_pop($dataCore['multiform']);
+					foreach($lastArray as $key => $val) {
+						// Set the columns
+						$columns[] = $key;
+
+						// Set the values
+						$values[] = $db->quote($val);
+					}
 				}
 			}
 
@@ -154,10 +158,27 @@ class XiveirmModelApi extends JModelForm
 			$fields = array();
 			$field = '';
 
+			// Remaster the fields var
 			foreach($dataCore as $key => $val) {
-				// Set the fields
-				$fields[] = $key . ' = ' . $db->quote($val);
+				// Ensure that only non arrays are set. If we have an array, its may a multiform! See checks after this!
+				if(!is_array($val)) {
+					// Set the fields
+					$fields[] = $key . ' = ' . $db->quote($val);
+				}
+			}
 
+			// Check if we have a multiform - if true, append to columns[] and values[]
+			// TODO IF WE'RE IN MULTIFORM, WE COULD SAVE THE COUNT VAR INTO THE USER STATE AND ACCESS THEM LATER TO PROCESS MESSAGES OR SOMETHING ELSE
+			if(isset($dataCore['multiform'])) {
+				if(is_array($dataCore['multiform'])) {
+					$multiformTotal = count($dataCore['multiform']);
+// debug					echo 'Multiform detected. Processing ' . $multiformTotal . ' transports...';
+					$lastArray = array_pop($dataCore['multiform']);
+					foreach($lastArray as $key => $val) {
+						// Set the fields
+						$fields[] = $key . ' = ' . $db->quote($val);
+					}
+				}
 			}
 
 			// Set additionals we need for update process
