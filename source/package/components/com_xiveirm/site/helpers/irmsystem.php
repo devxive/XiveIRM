@@ -158,7 +158,7 @@ class IRMSystem
 		} else if($ext == 'options' && $alias != null) {
 			// Prepare the query
 			$query
-				->select(array('a.opt_value', 'a.opt_name', 'a.access', 'b.id', 'b.alias'))
+				->select(array('a.id AS opt_id', 'a.opt_value', 'a.opt_name', 'a.access', 'b.id', 'b.alias'))
 				->from('#__xiveirm_options AS a')
 				->join('INNER', '#__categories as b ON (a.catid = b.id)')
 				->where('b.alias = ' . $db->quote($alias) . '')
@@ -176,11 +176,18 @@ class IRMSystem
 			$client = array(); // Based on currently user authorized view levels
 			$global = array(); // Based on com_xiveirm settings
 
+			// check for the gender clause (which is varchar, therefore we need thevalue itself) else the option id
+			if($alias == 'gender') {
+				$array_key = 'opt_value';
+			} else {
+				$array_key = 'opt_id';
+			}
+
 			foreach ($results as $result) {
 				if($result->access != $globalAccessLvl) {
-					$client[$result->opt_value] = $result->opt_name;
+					$client[$result->$array_key] = $result->opt_name;
 				} else {
-					$global[$result->opt_value] = $result->opt_name;
+					$global[$result->$array_key] = $result->opt_name;
 				}
 			}
 
@@ -281,7 +288,7 @@ class IRMSystem
 	 * @return		Object		With informations from tabApp config and joined extensions (folder)
 	 * 					id, appNames (plugin element name), folder to perform the NUserAccess::getPermissions(), catid, config (JSON)
 	 */
-	public function getPlugins($catid, $loadGroup = 'all', $client_id = false)
+	public function getPlugins($catid, $coreApp = null, $loadGroup = 'all', $client_id = false)
 	{
 		// Init checks
 		if( !(int) $catid ) {
@@ -302,10 +309,18 @@ class IRMSystem
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
 
+		$table = '#__xiveirm_tabapps';
+		$appName = substr($coreApp, 0, -1);
+
+		$widgets = 'irmwidgets' . $appName;
+		$tabs = 'irmtabs' . $appName;
+		
+
 		$query
 			->select(array('a.id', 'a.plugin', 'a.catid', 'a.config', 'b.folder'))
-			->from('#__xiveirm_tabapps AS a')
+			->from('' . $table . ' AS a')
 			->join('LEFT', '#__extensions as b ON (a.plugin = b.element)')
+			->where('b.folder = ' . $db->quote($widgets) . ' || b.folder = ' . $db->quote($tabs) . '')
 			->where('b.enabled = 1 AND ((a.catid = 0 AND a.client_id IN (' . $db->quote($global_client_id) . ',' . $db->quote($client_id) . ')) OR (a.catid = ' . $db->quote($catid) . ' AND a.client_id = ' . $db->quote($client_id) . '))');
 
 		$db->setQuery($query);
@@ -465,4 +480,78 @@ class IRMSystem
 		// Return the html build
 		return $return_html;
 	}
+
+	/*
+	 * Method to get the contact and all related tabApps in a single object. Mostly used for other extensions, such as the XiveTransCorder App.
+	 *
+	 * @since 5.0
+	 */
+	public function getContactObject($contactId)
+	{
+		$results = new JObject();
+		$db = JFactory::getDbo();
+
+		// Create a new query object for the contact.
+		$query = $db->getQuery(true);
+
+		// Prepare the query
+		$query
+			->select('a.*')
+			->from('#__xiveirm_contacts AS a')
+			->where('a.id = ' . $contactId . '');
+
+		// Join over the users for the checked out user.
+		$query->select('uc.name AS editor_name');
+		$query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
+
+		// Join over the created by field 'created_by'
+		$query->select('created_by.name AS creator_name');
+		$query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
+
+		// Join over the category 'catid'
+		$query->select('catid.title AS catid_title');
+		$query->join('LEFT', '#__categories AS catid ON catid.id = a.catid');
+
+		// Join over the category 'gender'
+		$query->select('gender.title AS gender_title');
+		$query->join('LEFT', '#__categories AS gender ON gender.id = a.gender');
+
+		// Join over the flags
+		$query->select('flags.flag AS flagged');
+		$query->join('LEFT', '#__xiveirm_flags AS flags ON flags.item = CONCAT(\'contacts.\', a.id)');
+
+		// Join over the tabapps
+//		$query->select(array('tabapps.tab_key as tab_key', 'tabapps.tab_value AS tab_value'));
+//		$query->join('LEFT', '#__xiveirm_contact_tabappvalues AS tabapps ON tabapps.contact_id = a.id');
+
+		$db->setQuery($query);
+		$coreResults = $db->loadObjectList();
+
+		foreach($coreResults as $coreResult) {
+			$results->contact = $coreResult;
+		}
+
+		// Create a new query object for the tabApps.
+		$query = $db->getQuery(true);
+
+		// Prepare the query
+		$query
+			->select(array('b.tab_key as tab_key', 'b.tab_value AS tab_value'))
+			->from('#__xiveirm_contact_tabappvalues AS b')
+			->where('b.contact_id = ' . $contactId . '');
+
+		$db->setQuery($query);
+		$tabResults = $db->loadObjectList();
+
+		$tabsObject = new stdClass();
+		foreach($tabResults as $tabResult) {
+			$tabKey = $tabResult->tab_key;
+			$tabsObject->$tabKey = json_decode($tabResult->tab_value);
+		}
+
+		$results->tabs = $tabsObject;
+
+		return $results;
+	}
+
 }
