@@ -145,12 +145,19 @@ class XiveirmControllerApi extends XiveirmController
 
 			if(isset($dataCore['catid']) && isset($dataCore['id'])) {
 				$catId = $dataCore['catid'];
-				$contactId = (int) $dataCore['id'];
+				$coreId = (int) $dataCore['id'];
+				if($coreApp != 'contacts') {
+					if(isset($dataCore['contact_id'])) {
+						$contactId = (int) $dataCore['contact_id'];
+					} else {
+						self::closeOnError(999, 'Controller: Get no contact_id');
+					}
+				}
 			} else {
-				self::closeOnError(999, 'Get either no catid or id');
+				self::closeOnError(999, 'Controller: Get either no catid or id');
 			}
 		} else {
-			self::closeOnError(999, 'Get no Coreapp ID');
+			self::closeOnError(999, 'Controller: Get no Coreapp ID');
 		}
 
 		// Build the data object
@@ -158,35 +165,20 @@ class XiveirmControllerApi extends XiveirmController
 		$data->core = $dataCore;
 		$data->api = $dataAPI;
 
-		// Strip the last letter from $coreApp to get the correct string within the tabs/widgets and table which we're store in
-		$permissionsString = 'xiveirm_' . $coreApp . '.';
-		$tabAppPluginFolderName = 'irmtabs' . substr($coreApp, 0, -1);
-		$tabAppTableName = '#__xiveirm_' . substr($coreApp, 0, -1);
-
-		// Import Plugins (only those that are set / configured in the #__xiveirm_tabapps table. Category 0 and its related global_client-id (usergroup) always load, because its global (means for all)
-		// There is an extra check in, where we check also against the client_id (component global usergroup and client related usergroup)
-		// Because we use the returned values from the getPlugin, we have all informations on tabs that are loaded in the form.
-		// Widgets do not have form values, therefore we do not load them! Even there is no need to load the event dispatcher! (((At this time!!!!)))
-		// Pro for use the getPlugins Method: We'll get the tabconfig row id, we need for the permission checks below!!!!
-		$plugins = IRMSystem::getPlugins($catId, $tabAppPluginFolderName); // Array with all available plugins, that are already loaded with this request!!!
+		// Set some vars -- Strip the last letter from $coreApp to get the correct string within the tabs/widgets and table which we're store in
+		$data->api['tablenamewithoutprefix'] = 'xiveirm_' . $coreApp;
+		$data->api['coretable'] = '#__xiveirm_' . $coreApp;
+		$data->api['tabapptable'] = '#__xiveirm_' . substr($coreApp, 0, -1) . '_tabappvalues';
+		$data->api['tabapptableidname'] = substr($coreApp, 0, -1) . '_id';
 
 		// Go to models and try to save the contacts datas.
 		// In all cases (new, update), if return isn't false, we got the item row id for further processing the TabApp datas.
 		// Check if the user have the rights to save the data for the contacts by checking the components ACL.
-		$permissionsCore = NUserAccess::getPermissions($coreComponent, false, false, $permissionsString . $contactId);
-		if( ($contactId == 0 && $permissionsCore->get('core.create')) || ($contactId > 0 && ($permissionsCore->get('core.edit') || $permissionsCore->get('core.edit.own'))) ) {
+		$permissionsCore = NUserAccess::getPermissions($coreComponent, false, false, $data->api['tablenamewithoutprefix'] . '.' . $coreId);
+		if( ($coreId == 0 && $permissionsCore->get('core.create')) || ($coreId > 0 && ($permissionsCore->get('core.edit') || $permissionsCore->get('core.edit.own'))) ) {
 			$return = $model->savecore($data);
 		} else {
-			$return_arr = array();
-			$return_arr["apiReturnId"] = 0;
-			$return_arr["apiReturnCode"] = 1100;
-			$return_arr["apiReturnMessage"] = 'Please Note: You have no rights edit or save the core datas. Please contact the support or your administrator to get further informations!';
-
-			$return = $return_arr;
-
-			echo json_encode($return);
-
-			$this->app->close();
+			self::closeOnError(1100, 'Controller: Please Note: You have no rights edit or save the core datas. Please contact the support or your administrator to get further informations!');
 		}
 
 		/**
@@ -203,30 +195,44 @@ class XiveirmControllerApi extends XiveirmController
 		 * $canEditOwn	= $this->user->authorise('core.edit.own',		'com_xiveirm');
 		 * 
 		 */
+
+		// Import Plugins (only those that are set / configured in the #__xiveirm_tabapps table. Category 0 and its related global_client-id (usergroup) always load, because its global (means for all)
+		// There is an extra check in, where we check also against the client_id (component global usergroup and client related usergroup)
+		// Because we use the returned values from the getPlugin, we have all informations on tabs that are loaded in the form.
+		// Widgets do not have form values, therefore we do not load them! Even there is no need to load the event dispatcher! (((At this time!!!!)))
+		// Pro for use the getPlugins Method: We'll get the tabconfig row id, we need for the permission checks below!!!!
+		$plugins = IRMSystem::getPlugins($catId, $coreApp); // Array with all available plugins, that should load as set in the tabapp configuration!!!
+
+
 		if($plugins) {
-			// ok we have installed and enabled TabApps, lets play
-			if( ($return["apiReturnCode"] == 'UPDATED' || $return["apiReturnCode"] == 'SAVED') && $return["apiReturnId"] > 0 )
+			// ok we have installed and enabled TabApps, lets play. Check first if we get a positive response and a valid contact id from the savecore method
+			if( ($return["apiReturnCode"] == 'UPDATED' || $return["apiReturnCode"] == 'SAVED') && $return["apiReturnId"] > 0 && (int)$return["apiReturnId"] )
 			{
 				foreach($plugins as $tabApp)
 				{
-					// Check permissions based on the TabApp config with extra permission if the user can edit its own contact and related tabapps (we use the $contactId in the if core.create condition, to check if we have a new contact and the user is able to create.)
+					// Check permissions based on the TabApp config with extra permission if the user can edit its own contact and related tabapps (we use the $coreId in the if core.create condition, to check if we have a new contact and the user is able to create.)
 					// XiveTODO: We should check if it make sense to add a userid (created_by) column in the tabappvalue table
-					$permissionsTab = NUserAccess::getPermissions($coreComponent, 'tabapp', $tabApp->id, $permissionsString . $return["apiReturnId"]);
+					$permissionsTab = NUserAccess::getPermissions($coreComponent, 'tabapp', $tabApp->id, $data->api['tablenamewithoutprefix'] . '.' . $return["apiReturnId"]);
 
-					// We use the contactId we've get via the formsubmission to check if it is a new contact. The Id returned from the save contacts process is only used to build the relation to the contact itself.
+					// Check permissions and save related data in the tabappvalue db table
 					if( $permissionsTab->get('core.edit') || $permissionsTab->get('core.edit.own') ) {
 				 		// Get the tabForm data.
 						$dataTabs = JFactory::getApplication()->input->get($tabApp->plugin, array(), 'array');
 
+						// Build new data object
+						unset($data->core);
+						unset($data->tab);
+						$data->tab = $dataTabs;
+
 						// Attempt to save the tabdata, if we got any, bound to the appropriate TabApp.
-						if($dataTabs) {
-							$return = $model->savetab($dataTabs, $return["apiReturnId"], $tabApp->plugin); // Return goes directly to echo json_decode (after checkin the contact)
+						if($data->tab) {
+							$return = $model->savetab($data, $return["apiReturnId"], $tabApp->plugin); // Return goes directly to echo json_encode (after checkIn the coreId)
 						}
 					} else {
 						$return_arr = array();
 						$return_arr["apiReturnId"] = $return["apiReturnId"];
 						$return_arr["apiReturnCode"] = 'NOTICE';
-						$return_arr["apiReturnMessage"] = 'Please Note: You have no rights to edit or save the ' . $tabApp->plugin . '-datas! Please contact the support or your administrator to get further informations!';
+						$return_arr["apiReturnMessage"] = 'Controller: Please note that you have no rights to edit or save the <strong>' . $coreApp . ' (' . $tabApp->plugin . '-datas)</strong>! Please contact the support or your administrator to get further informations!';
 
 						$return = $return_arr;
 					}
@@ -236,17 +242,17 @@ class XiveirmControllerApi extends XiveirmController
 				$return_arr = array();
 				$return_arr["apiReturnId"] = 0;
 				$return_arr["apiReturnCode"] = 1600;
-				$return_arr["apiReturnMessage"] = 'Cant get a row id from the customer db table to perform tabApp save/create processing';
+				$return_arr["apiReturnMessage"] = 'Controller: Get an invalid row id from the savecore model process or we get an error in the model itself.';
 
 				$return = $return_arr;
 			}
 		} else {
 			// we have no apps, therefore we use the return code from the save/update process from core contacts table
-//			echo 'No Plugins Load because there are no active';
+//			echo 'Controller: No Plugins Load because there are no active';
 		}
 
 		// If all done, check in the core item
-		NItemHelper::checkIn('xiveirm_contacts', $contactId);
+		NItemHelper::checkIn($data->api['tablenamewithoutprefix'], $coreId);
 
 		echo json_encode($return);
 
@@ -538,18 +544,27 @@ class XiveirmControllerApi extends XiveirmController
 //    
 //    
 
-	public function closeOnError($errorCode = 999, $errorMessage = 'ERROR') {
+	public function closeOnError($errorCode = 999, $errorMessage = 'ERROR', $errorId = 0) {
 		$return_arr = array();
-		$return_arr["apiReturnId"] = 0;
+		$return_arr["apiReturnId"] = $errorId;
 		$return_arr["apiReturnCode"] = $errorCode;
 		$return_arr["apiReturnMessage"] = $errorMessage;
 
 		$return = $return_arr;
-	echo'<pre>';
-		print_r($return);
-	echo'</pre>';
+
+		echo json_encode($return);
 
 		$this->app->close();
 	}
+
+	public function test($ttt = '')
+	{
+		$return = $ttt . ' \n ' . json_encode($_POST);
+
+		$file = 'test.txt';
+		file_put_contents($file, $return);
+		self::closeOnError('ERROR', 'ERROR');
+	}
+
 
 }
