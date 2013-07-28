@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     5.0.0
+ * @version     4.2.3
  * @package     com_xiveirm
  * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -467,52 +467,3 @@ function fnFormatDetails ( oTable, nTr )
 <br>
 <br>
 <hr>
-<?php $testDate = '07/15/2013 10:38'; ?>
-<abbr class="xtooltip ntime-fromnow" data-calendar="<?php echo $testDate; ?>" title="<?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($testDate)); ?>" data-content-prefix="Termin:" data-icon-class="icon-calendar">WIRD UEBERSCHRIEBEN</abbr>
-<br>
-<br>
-<pre class="prettify">
-<?php
-echo '<strong><em>devXive - Nawala Framework 4.2.8alpha -> abstract class NHtmlJavaScript::loadMoment() (( nimport(\'NHtml.JavaScript\'); ))</em></strong>';
-echo '<br>';
-echo '<br>';
-	echo htmlentities(" <?php \$testDate = '07/15/2013 10:38'; ?> ");
-echo '<br>';
-echo '<br>';
-
-echo '<strong><em>abbr tag => timeago (javascript supported)</em></strong>';
-	echo htmlentities('
-	<abbr
-		class="xtooltip ntime-fromnow"
-		data-time="2013-07-15 10:38"
-		title="Monday, 15 July 2013 10:38"
-		data-content-prefix="Termin:"
-		data-icon-class="icon-calendar">
-			WIRD UEBERSCHRIEBEN
-	</abbr>
-	');
-echo '<br>';
-echo '<br>';
-
-echo '<strong><em>abbr tag => calendar (javascript supported)</em></strong>';
-	echo htmlentities('
-	<abbr
-		class="xtooltip ntime-fromnow"
-		data-calendar="2013-07-15 10:38"
-		title="Monday, 15 July 2013 10:38"
-		data-content-prefix="Termin:"
-		data-icon-class="icon-calendar">
-			WIRD UEBERSCHRIEBEN
-	</abbr>
-	');
-echo '<br>';
-echo '<br>';
-
-echo '<strong><em>span tag => none (bootstrap supported)</em></strong>';
-	echo htmlentities('
-	<span class="xtooltip" data-original-title="Monday, 15 July 2013 10:38">
-		<i class="icon-clock"></i> 2013-07-15 10:38
-	</span>
-	');
-?>
-</pre>
