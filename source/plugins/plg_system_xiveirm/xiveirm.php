@@ -1,13 +1,21 @@
 ﻿<?php
 /**
- * @package     XiveIRM.Plugin
- * @subpackage  System.xiveirm
+ * @project		XAP Project - Xive-Application-Platform
+ * @subProject	Nawala Framework - A PHP and Javascript framework
  *
- * @copyright   Copyright (C) 1997 - 2013 devXive - research and development. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @package		XAP.plugin
+ * @subPackage	System.xiveirm
+ * @version		6.0
+ *
+ * @author		devXive - research and development <support@devxive.com> (http://www.devxive.com)
+ * @copyright		Copyright (C) 1997 - 2013 devXive - research and development. All rights reserved.
+ * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @assetsLicense	devXive Proprietary Use License (http://www.devxive.com/license)
+ *
+ * @since		1.0
  */
 
-defined('JPATH_BASE') or die;
+defined('_JEXEC') or die();
 
 require_once JPATH_SITE.'/components/com_xiveirm/helpers/irmsystem.php';
 
@@ -43,6 +51,12 @@ class PlgSystemXiveIrm extends JPlugin
 	public function onAfterInitialise()
 	{
 		JLoader::registerPrefix('IRM', JPATH_LIBRARIES . '/xiveirm');
+
+		// Define version
+		if (!defined('IRMVERSION')) {
+			$irmversion = new IRMVersion();
+			define('IRMVERSION', $irmversion->getShortVersion());
+		}
 	}
 
  	/**
