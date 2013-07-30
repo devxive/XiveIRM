@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <extension version="3.1" type="plugin" group="system" method="upgrade">
 	<name>plg_system_xiveirm</name>
 	<author>devXive</author>
@@ -7,7 +7,7 @@
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>support@devxive.com</authorEmail>
 	<authorUrl>www.devxive.com</authorUrl>
-	<version>1.2.0</version>
+	<version>2.0.0</version>
 	<description>PLG_SYSTEM_XIVEIRM_XML_DESCRIPTION</description>
 	<files>
 		<filename plugin="xiveirm">xiveirm.php</filename>
