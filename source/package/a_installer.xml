@@ -29,22 +29,29 @@
 	</files>
 
 	<cogs>
-<!--		Install Nawala Framework first
-		<cog type="library" enabled="true" protected="false">
-			libraries/lib_nawala
-			<name>Nawala Framework</name>
-			<description>The Nawala Framework Shared Library for XAP, MOOTOMBO! and Joomla!</description>
-		</cog>
-		<cog type="plugin" client="site" ordering="1" access="1" enabled="true" protected="false">
-			plugins/plg_system_nawala
-			<name>Nawala Framework - System Plugin</name>
-			<description>The Nawala Framework - System Plugin</description>
-		</cog>
+<!--
+		Check for installed Nawala Framework first
 -->
+		<cog type="library" enabled="true" protected="false">
+			libraries/xiveirm
+			<name>XiveIRM Application Library</name>
+			<description>The XiveIRM Application Library</description>
+		</cog>
 		<cog type="plugin" client="site" ordering="1" access="1" enabled="true" protected="false">
 			plugins/plg_system_xiveirm
 			<name>XiveIRM - System Plugin</name>
-			<description>XiveIRM System Plugin for provision client ability</description>
+			<description>XiveIRM System Plugin to use the XiveIRM Application Library and for provision system wide client ability</description>
 		</cog>
+		<cog type="plugin" client="site" ordering="1" access="1" enabled="true" protected="false">
+			plugins/plg_user_xiveirmclientprofile
+			<name>XiveIRM - User Plugin (Client Profiles)</name>
+			<description>XiveIRM User Plugin for provision system wide client ability</description>
+		</cog>
+		<cog type="plugin" client="site" ordering="1" access="1" enabled="true" protected="false">
+			plugins/plg_irmwidgetscontact_corewidget
+			<name>XiveIRM - IRMWidget Contacts Core Plugin</name>
+			<description>Provide a basic widget to use with the Contacts App</description>
+		</cog>
+
 	</cogs>
 </extension>
