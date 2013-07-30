@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * @package     XiveIRM.Plugin
  * @subpackage  System.xiveirm
@@ -33,6 +33,16 @@ class PlgSystemXiveIrm extends JPlugin
 		parent::__construct( $subject, $config );
 
 		// Do some extra initialisation in this constructor if required
+	}
+
+	/**
+	 * Method to register the library.
+	 *
+	 * return  void
+	 */
+	public function onAfterInitialise()
+	{
+		JLoader::registerPrefix('IRM', JPATH_LIBRARIES . '/xiveirm');
 	}
 
  	/**
