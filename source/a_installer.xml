@@ -42,7 +42,7 @@
 		</cog>
 
 		<!-- --- --- XiveIRM Core and Contacts App --- --- -->
-		<cog type="component" client="site" ordering="1" access="1" enabled="true" protected="false">
+		<cog type="component" client="administrator" ordering="1" access="1" enabled="true" protected="false">
 			components/com_xiveirm
 			<name>XiveIRM Core - Contacts Application</name>
 			<description>XiveIRM Core App (include Contacts App)</description>
@@ -59,7 +59,7 @@
 		</cog>
 
 		<!-- --- --- XiveIRM TransCorder App --- --- -->
-		<cog type="component" client="site" access="1" enabled="true" protected="false" remove_admin_menu="true">
+		<cog type="component" client="administrator" access="1" enabled="true" protected="false" remove_admin_menu="true">
 			components/com_xivetranscorder
 			<name>XiveIRM TransCorder - Transport Order and Coordination Application</name>
 			<description>Transport Coordination and Order Application for XiveIRM</description>
