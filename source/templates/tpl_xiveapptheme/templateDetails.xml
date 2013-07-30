@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE install PUBLIC "-//Joomla! 2.5//DTD template 1.0//EN" "http://www.joomla.org/xml/dtd/2.5/template-install.dtd">
+<extension version="3.1" type="template" client="site">
+	<name>XiveAppTheme</name>
+	<version>2.0.0</version>
+	<creationDate>2013-07-25</creationDate>
+	<author>devXive</author>
+	<authorEmail>support@devxive.com</authorEmail>
+	<authorUrl>http://devxive.com</authorUrl>
+	<copyright>Copyright (C) 1997 - 2013 devXive - research and development. All rights reserved.</copyright>
+	<description>TPL_XIVEAPPTHEME_XML_DESCRIPTION</description>
+	<files>
+		<filename>component.php</filename>
+		<filename>config.php</filename>
+		<filename>error.php</filename>
+		<filename>favicon.ico</filename>
+		<filename>index.php</filename>
+		<filename>offline.php</filename>
+		<filename>templateDetails.xml</filename>
+		<folder>assets</folder>
+		<folder>html</folder>
+		<folder>language</folder>
+	</files>
+	<positions>
+		<position>sidebar</position>
+		<position>sidebar-shortcuts</position>
+		<position>breadcrumbs</position>
+		<position>login</position>
+		<position>mytasks</position>
+		<position>clientactivity</position>
+		<position>mymessages</position>
+		<position>search</position>
+		<position>position-5</position>
+		<position>dashboard-top</position>
+		<position>dashboard-left</position>
+		<position>dashboard-right</position>
+		<position>dashboard-bottom</position>
+		<position>position-12</position>
+		<position>position-13</position>
+		<position>footer</position>
+		<position>debug</position>
+	</positions>
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.tpl_xiveapptheme.ini</language>
+		<language tag="en-GB">en-GB/en-GB.tpl_xiveapptheme.sys.ini</language>
+	</languages>
+	<config>
+		<fields name="params">
+			<fieldset name="advanced">
+				<field name="templateColor" class="" type="color" default="#08C"
+					label="TPL_XIVEAPPTHEME_COLOR_LABEL"
+					description="TPL_XIVEAPPTHEME_COLOR_DESC" />
+
+				<field name="templateBackgroundColor" class="" type="color" default="#F4F6F7"
+					label="TPL_XIVEAPPTHEME_BACKGROUND_COLOR_LABEL"
+					description="TPL_XIVEAPPTHEME_BACKGROUND_COLOR_DESC" />
+
+				<field name="logoFile" class="" type="media" default=""
+					label="TPL_XIVEAPPTHEME_LOGO_LABEL"
+					description="TPL_XIVEAPPTHEME_LOGO_DESC" />
+					
+				<field name="sitetitle"  type="text" default=""
+					label="JGLOBAL_TITLE"
+					description="JFIELD_ALT_PAGE_TITLE_LABEL"
+					filter="string" />
+
+				<field name="sitedescription"  type="text" default=""
+					label="JGLOBAL_DESCRIPTION"
+					description="JGLOBAL_SUBHEADING_DESC"
+					filter="string" />
+
+				<field name="googleFont"
+					type="radio"
+					class="btn-group"
+					default="1"
+					label="TPL_XIVEAPPTHEME_FONT_LABEL"
+					description="TPL_XIVEAPPTHEME_FONT_DESC"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field name="googleFontName" class="" type="text" default="Open+Sans"
+					label="TPL_XIVEAPPTHEME_FONT_NAME_LABEL"
+					description="TPL_XIVEAPPTHEME_FONT_NAME_DESC" />
+
+				<field name="fixedLayout"
+					type="radio"
+					class="btn-group"
+					default="1"
+					label="TPL_XIVEAPPTHEME_FIXED_LAYOUT_LABEL"
+					description="TPL_XIVEAPPTHEME_FIXED_LAYOUT_LABEL_DESC"
+				>
+					<option value="0">TPL_XIVEAPPTHEME_FLUID</option>
+					<option value="1">TPL_XIVEAPPTHEME_FIXED</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>
