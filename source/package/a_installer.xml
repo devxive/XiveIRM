@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.1" type="plugin" group="system" method="upgrade">
+	<name>Installer</name>
+	<author>devXive</author>
+	<creationDate>2013-04-20</creationDate>
+	<copyright>(C) 1997 - 2013 devXive - research and development. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>support@devxive.com</authorEmail>
+	<authorUrl>http://devxive.com</authorUrl>
+	<version>6.0.0</version>
+	<description>
+		<![CDATA[
+			<h1>XiveIRM - Interoberable Relationship Management</h2>
+			<p>
+				XiveIRM is a sophisticated, super-flexible relationship management system that takes a classical Customer Relationship Management and an Enterprise Resource Planning system to new highs. XiveIRM is easy to integrate, simple and intuitive to use and also powerful enough to handle anything you want to throw at it.<br>
+				<br>
+				Look out: Enhance your productivity with over 100 extensions, avaliable at <a href="http://devXive.com/irm">devXive</a>*.
+				<br>
+				<br>
+				<small>*Scheduled for Q3/2013</small>
+			</p>
+		]]>
+	</description>
+
+	<scriptfile>install.script.php</scriptfile>
+
+	<files>
+		<filename plugin="xiveirm_installer">installer.php</filename>
+	</files>
+
+	<cogs>
+<!--		Install Nawala Framework first
+		<cog type="library" enabled="true" protected="false">
+			libraries/lib_nawala
+			<name>Nawala Framework</name>
+			<description>The Nawala Framework Shared Library for XAP, MOOTOMBO! and Joomla!</description>
+		</cog>
+		<cog type="plugin" client="site" ordering="1" access="1" enabled="true" protected="false">
+			plugins/plg_system_nawala
+			<name>Nawala Framework - System Plugin</name>
+			<description>The Nawala Framework - System Plugin</description>
+		</cog>
+-->
+		<cog type="plugin" client="site" ordering="1" access="1" enabled="true" protected="false">
+			plugins/plg_system_xiveirm
+			<name>XiveIRM - System Plugin</name>
+			<description>XiveIRM System Plugin for provision client ability</description>
+		</cog>
+	</cogs>
+</extension>
