@@ -15,12 +15,12 @@
  * @since		5.0
  */
 
-if (!class_exists('PlgSystemxiveirm_installerInstallerScript')) {
+if (!class_exists('PlgSystemXiveIRMinstallerInstallerScript')) {
 
 	/**
 	 *
 	 */
-	class PlgSystemxiveirm_installerInstallerScript
+	class PlgSystemXiveIRMinstallerInstallerScript
 	{
 		/**
 		 * @var array

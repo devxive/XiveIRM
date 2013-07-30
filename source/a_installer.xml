@@ -25,7 +25,7 @@
 	<scriptfile>install.script.php</scriptfile>
 
 	<files>
-		<filename plugin="xiveirm_installer">installer.php</filename>
+		<filename plugin="XiveIRMinstaller">installer.php</filename>
 	</files>
 
 	<cogs>
@@ -56,6 +56,11 @@
 			components/com_xiveirm
 			<name>XiveIRM - Core</name>
 			<description>XiveIRM Core App</description>
+		</cog>
+		<cog type="component" client="site" access="0" enabled="true" protected="false" remove_admin_menu="true">
+			com_gantry
+			<name>XiveTransCorder - Transport Coordination and Order Application</name>
+			<description>The XiveTransCorder - Transport Coordination and Order Application</description>
 		</cog>
 
 	</cogs>
