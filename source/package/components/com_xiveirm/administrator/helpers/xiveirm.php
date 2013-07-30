@@ -25,14 +25,13 @@ class XiveirmHelper
 			'index.php?option=com_xiveirm&view=contacts',
 			$vName == 'contacts'
 		);
-		JHtmlSidebar::addEntry(
-			JText::_('COM_XIVEIRM_CONTACTS_CATEGORIES'),
-			"index.php?option=com_categories&extension=com_xiveirm.contacts",
-			$vName == 'categories.contacts'
-		);
 		
-		if ($vName=='categories.contacts') {
-			JToolBarHelper::title('COM_XIVEIRM_CONTACTS_CATEGORIES');
+		if ($vName=='contacts' || $vName=='categories.contacts') {
+			JHtmlSidebar::addEntry(
+				JText::_('COM_XIVEIRM_CONTACTS_CATEGORIES'),
+				"index.php?option=com_categories&extension=com_xiveirm.contacts",
+				$vName == 'categories.contacts'
+			);
 		}
 
 		JHtmlSidebar::addEntry(
@@ -41,14 +40,12 @@ class XiveirmHelper
 			$vName == 'options'
 		);
 
-		JHtmlSidebar::addEntry(
-			JText::_('COM_XIVEIRM_OPTIONS_CATEGORIES'),
-			"index.php?option=com_categories&extension=com_xiveirm.options",
-			$vName == 'categories.options'
-		);
-
-		if ($vName=='categories.options') {
-			JToolBarHelper::title('COM_XIVEIRM_OPTIONS_CATEGORIES');
+		if ($vName=='options' || $vName=='categories.options') {
+			JHtmlSidebar::addEntry(
+				JText::_('COM_XIVEIRM_OPTIONS_CATEGORIES'),
+				"index.php?option=com_categories&extension=com_xiveirm.options",
+				$vName == 'categories.options'
+			);
 		}
 
 		JHtmlSidebar::addEntry(
