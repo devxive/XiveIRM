@@ -29,10 +29,8 @@
 	</files>
 
 	<cogs>
-<!--
-		Check for installed Nawala Framework first
--->
-		<cog type="library" enabled="true" protected="false">
+		<!-- --- --- XiveIRM Library --- --- -->
+ 		<cog type="library" enabled="true" protected="false">
 			libraries/xiveirm
 			<name>XiveIRM Application Library</name>
 			<description>The XiveIRM Application Library</description>
@@ -42,26 +40,59 @@
 			<name>XiveIRM - System Plugin</name>
 			<description>XiveIRM System Plugin to use the XiveIRM Application Library and for provision system wide client ability</description>
 		</cog>
-		<cog type="plugin" client="site" ordering="1" access="1" enabled="true" protected="false">
-			plugins/plg_user_xiveirmclientprofile
-			<name>XiveIRM - User Plugin (Client Profiles)</name>
-			<description>XiveIRM User Plugin for provision system wide client ability</description>
+
+		<!-- --- --- XiveIRM Core and Contacts App --- --- -->
+		<cog type="component" client="site" ordering="1" access="1" enabled="true" protected="false">
+			components/com_xiveirm
+			<name>XiveIRM Core - Contacts Application</name>
+			<description>XiveIRM Core App (include Contacts App)</description>
 		</cog>
 		<cog type="plugin" client="site" ordering="1" access="1" enabled="true" protected="false">
 			plugins/plg_irmwidgetscontact_corewidget
-			<name>XiveIRM - IRMWidget Contacts Core Plugin</name>
-			<description>Provide a basic widget to use with the Contacts App</description>
+			<name>XiveIRM Widget - Contact App (Core Widget)</name>
+			<description>Provide a basic widget to use with the XiveContacts App</description>
 		</cog>
-		<cog type="component" client="site" ordering="1" access="1" enabled="true" protected="false">
-			components/com_xiveirm
-			<name>XiveIRM - Core</name>
-			<description>XiveIRM Core App</description>
-		</cog>
-		<cog type="component" client="site" access="0" enabled="true" protected="false" remove_admin_menu="true">
-			com_gantry
-			<name>XiveTransCorder - Transport Coordination and Order Application</name>
-			<description>The XiveTransCorder - Transport Coordination and Order Application</description>
+		<cog type="plugin" client="site" ordering="1" access="1" enabled="true" protected="false">
+			plugins/plg_user_xiveirmclientprofile
+			<name>User Plugin - XiveIRM Client Profile</name>
+			<description>XiveIRM User Plugin for provision system wide client ability</description>
 		</cog>
 
+		<!-- --- --- XiveIRM TransCorder App --- --- -->
+		<cog type="component" client="site" access="1" enabled="true" protected="false" remove_admin_menu="true">
+			components/com_xivetranscorder
+			<name>XiveIRM TransCorder - Transport Order and Coordination Application</name>
+			<description>Transport Coordination and Order Application for XiveIRM</description>
+		</cog>
+		<cog type="plugin" client="site" ordering="1" access="1" enabled="true" protected="false">
+			plugins/plg_irmwidgetstranscorder_corewidgettoca
+			<name>XiveIRM Widget - TransCorder App (TOCA) (Core Widget)</name>
+			<description>Provide a basic widget to use with the XiveTransCorder App</description>
+		</cog>
+		<cog type="plugin" client="site" ordering="1" access="1" enabled="true" protected="false">
+			plugins/plg_irmtabscontact_medicaldetails
+			<name>XiveIRM TabApp - Medical Details</name>
+			<description>Provide Medical Details form tab in the XiveContacts App</description>
+		</cog>
+
+		<!-- --- --- XiveAppTheme Template --- --- -->
+		<cog type="template" client="site" access="1" enabled="true" protected="false" remove_style="true">
+			templates/tpl_xiveapptheme
+			<name>XiveAppTheme - Template</name>
+			<description>An multiview optimized application template</description>
+			<style name="XiveAppTheme - Default" default="false" master="true" />
+		</cog>
+		<cog type="module" client="site" access="1" enabled="true" protected="false">
+			modules/mod_xapptheme_sidebarshortcuts
+			<name>XiveAppTheme Module - Sidebar Shortcut Icons</name>
+			<description>RokSprocket Module</description>
+		</cog>
+
+		<!-- --- --- XiveIRM Modules for the XiveAppTheme --- --- -->
+		<cog type="module" client="site" access="1" enabled="true" protected="false">
+			modules/mod_xiveirm_alertbox_mytasks
+			<name>XiveIRM Module - MyTasks</name>
+			<description>A simple task module with predefined Tasks to work with</description>
+		</cog>
 	</cogs>
 </extension>
