@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<extension type="library" method="upgrade" version="3.1">
+	<name>XiveIRM</name>
+	<libraryname>xiveirm</libraryname>
+	<author>devXive</author>
+	<creationDate>2013-02-14</creationDate>
+	<copyright>Copyright (C) 1997 - 2013 devXive - research and development. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later.</license>
+	<authorEmail>support@devxive.com</authorEmail>
+	<authorUrl>www.devxive.com</authorUrl>
+	<version>6.0.0</version>
+	<description>Shared classes and tools for XiveIRM related components. Do not remove!</description>
+	<files>
+		<folder>access</folder>
+		<folder>application</folder>
+		<folder>controller</folder>
+		<folder>database</folder>
+		<folder>date</folder>
+		<folder>form</folder>
+		<folder>html</folder>
+		<folder>image</folder>
+		<folder>installer</folder>
+		<folder>menu</folder>
+		<folder>model</folder>
+		<folder>object</folder>
+		<folder>table</folder>
+		<folder>toolbar</folder>
+		<folder>version</folder>
+		<file>framework.php</file>
+		<file>library.php</file>
+	</files>
+</extension>
