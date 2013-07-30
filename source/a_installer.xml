@@ -52,6 +52,11 @@
 			<name>XiveIRM - IRMWidget Contacts Core Plugin</name>
 			<description>Provide a basic widget to use with the Contacts App</description>
 		</cog>
+		<cog type="component" client="site" ordering="1" access="1" enabled="true" protected="false">
+			components/com_xiveirm
+			<name>XiveIRM - Core</name>
+			<description>XiveIRM Core App</description>
+		</cog>
 
 	</cogs>
 </extension>
