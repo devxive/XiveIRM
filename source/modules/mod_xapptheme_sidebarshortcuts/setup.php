@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * @project		XAP Project - Xive-Application-Platform
  * @subProject	Nawala Framework - A PHP and Javascript framework
@@ -15,4 +15,13 @@
  * @since		5.0
  */
 
-die();
+$message = array();
+
+$message[] = '<i class="icon-ok"></i> Module published';
+$message[] = '<i class="icon-ok"></i> Module-Position Set';
+
+if (!empty($message)) {
+	return $message;
+} else {
+	return true;
+}

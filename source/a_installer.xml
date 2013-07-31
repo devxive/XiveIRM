@@ -8,7 +8,8 @@
 	<authorEmail>support@devxive.com</authorEmail>
 	<authorUrl>http://devxive.com</authorUrl>
 	<version>6.0.0</version>
-	<description>
+	<description>XiveIRM - Interoberable Relationship Management</description>
+	<coreDescription>
 		<![CDATA[
 			<h1>XiveIRM - Interoberable Relationship Management</h2>
 			<p>
@@ -20,7 +21,7 @@
 				<small>*Scheduled for Q3/2013</small>
 			</p>
 		]]>
-	</description>
+	</coreDescription>
 
 	<scriptfile>install.script.php</scriptfile>
 

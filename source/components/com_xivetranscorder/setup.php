@@ -15,4 +15,14 @@
  * @since		5.0
  */
 
-die();
+$message = array();
+
+$message[] = '<i class="icon-ok"></i> Prepared database tables';
+$message[] = '<i class="icon-ok"></i> Added submenu items to XiveIRM main menu';
+$message[] = '<i class="icon-ok"></i> Removed temporary files';
+
+if (!empty($message)) {
+	return $message;
+} else {
+	return true;
+}

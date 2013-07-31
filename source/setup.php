@@ -15,4 +15,12 @@
  * @since		5.0
  */
 
-die();
+$message = array();
+
+$message[] = '<i class="icon-cancel"></i> Removed installation files';
+
+if (!empty($message)) {
+	return $message;
+} else {
+	return true;
+}
