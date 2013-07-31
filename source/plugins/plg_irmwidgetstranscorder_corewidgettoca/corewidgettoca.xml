@@ -10,7 +10,7 @@
 	<version>1.0.0</version>
 	<description>PLG_IRMWIDGETSTRANSCORDER_COREWIDGET_XML_DESC</description>
 	<files>
-		<filename plugin="corewidget">corewidget.php</filename>
+		<filename plugin="corewidgettoca">corewidgettoca.php</filename>
 		<filename>index.html</filename>
 	</files>
 	<languages folder="language">
