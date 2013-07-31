@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * @version     5.0.0
  * @package     com_xivetranscorder
@@ -22,7 +22,6 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_xivetranscorder'))
 
 // Include dependancies
 jimport('joomla.application.component.controller');
-nimport('NItem.Helper', false);
 
 $controller	= JControllerLegacy::getInstance('Xivetranscorder');
 $controller->execute(JFactory::getApplication()->input->get('task'));

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * @version     6.0.0
  * @package     com_xiveirm
@@ -16,7 +16,6 @@ require_once JPATH_COMPONENT.'/helpers/irmsystem.php';
 
 // Include dependancies
 jimport('joomla.application.component.controller');
-nimport('NItem.Helper', false);
 
 // Execute the task.
 $controller	= JControllerLegacy::getInstance('Xiveirm');

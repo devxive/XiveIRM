@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * @version     6.0.0
  * @package     com_xiveirm
@@ -18,7 +18,6 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_xiveirm'))
 
 // Include dependancies
 jimport('joomla.application.component.controller');
-nimport('NItem.Helper', false);
 
 $controller = JControllerLegacy::getInstance('Xiveirm');
 $controller->execute(JFactory::getApplication()->input->get('task'));
