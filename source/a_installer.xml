@@ -30,7 +30,6 @@
 	</files>
 
 	<cogs>
-		<!-- --- --- XiveIRM Library --- --- -->
  		<cog type="library" enabled="true" protected="false">
 			libraries/xiveirm
 			<name>XiveIRM Application Library</name>
@@ -42,7 +41,6 @@
 			<description>XiveIRM System Plugin to use the XiveIRM Application Library and for provision system wide client ability</description>
 		</cog>
 
-		<!-- --- --- XiveIRM Core and Contacts App --- --- -->
 		<cog type="component" client="administrator" ordering="1" access="1" enabled="true" protected="false">
 			components/com_xiveirm
 			<name>XiveIRM Core - Contacts Application</name>
@@ -59,7 +57,6 @@
 			<description>XiveIRM User Plugin for provision system wide client ability</description>
 		</cog>
 
-		<!-- --- --- XiveIRM TransCorder App --- --- -->
 		<cog type="component" client="administrator" access="1" enabled="true" protected="false" remove_admin_menu="true">
 			components/com_xivetranscorder
 			<name>XiveIRM TransCorder - Transport Order and Coordination Application</name>
@@ -76,7 +73,6 @@
 			<description>Provide Medical Details form tab in the XiveContacts App</description>
 		</cog>
 
-		<!-- --- --- XiveAppTheme Template --- --- -->
 		<cog type="template" client="site" access="1" enabled="true" protected="false" remove_style="true">
 			templates/tpl_xiveapptheme
 			<name>XiveAppTheme - Template</name>
@@ -89,7 +85,6 @@
 			<description>RokSprocket Module</description>
 		</cog>
 
-		<!-- --- --- XiveIRM Modules for the XiveAppTheme --- --- -->
 		<cog type="module" client="site" access="1" enabled="true" protected="false">
 			modules/mod_xiveirm_alertbox_mytasks
 			<name>XiveIRM Module - MyTasks</name>
