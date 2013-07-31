@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * @project		XAP Project - Xive-Application-Platform
  * @subProject	Nawala Framework - A PHP and Javascript framework
@@ -43,30 +43,22 @@ class PlgSystemXiveIrm extends JPlugin
 		// Do some extra initialisation in this constructor if required
 	}
 
-	/**
-	 * Method to register the library.
-	 *
-	 * return  void
-	 */
-	public function onAfterInitialise()
-	{
-		JLoader::registerPrefix('IRM', JPATH_LIBRARIES . '/xiveirm');
-
-		// Define version
-		if (!defined('IRMVERSION')) {
-			$irmversion = new IRMVersion();
-			define('IRMVERSION', $irmversion->getShortVersion());
-		}
-	}
-
  	/**
-	 * Every App, have access to the XiveIRM System session t get the client_id from the user.
+	 * Every App, have access to the XiveIRM System session to get the client_id from the user.
 	 * If the Client ability is disabled, the system uses the global client_id "0"
 	 * 
 	 * @since   3.4
 	 */
 	public function onAfterInitialise()
 	{
+		// Register the library and define the version first!
+		JLoader::registerPrefix('IRM', JPATH_LIBRARIES . '/xiveirm');
+		// Define version
+		if (!defined('IRMVERSION')) {
+			$irmversion = new IRMVersion();
+			define('IRMVERSION', $irmversion->getShortVersion());
+		}
+
 		$user = JFactory::getUser()->id;
 
 		// If we are in admin area we have to check if the logged in user is in the group of the given minimum user group (future version)
