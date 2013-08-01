@@ -20,18 +20,18 @@ if (version_compare(PHP_VERSION, '5.3.2', '<=')) {
     $errors[] = 'Needs a minimum PHP version of 5.3.2. You are running PHP version ' . PHP_VERSION;
 }
 
-if (!defined('NFWVERSION')) {
+$jversion = new JVersion();
+if (!$jversion->isCompatible('3.1')) {
+	$errors[] = '<i class="icon-warning"></i> XiveIRM will only run on XAP 13.6+, MOOTOMBO 3+ or Joomla! 3.1+ ';
+}
+
+if (!defined('_NFW_FRAMEWORK')) {
 	$errors[] = '<i class="icon-warning"></i> The Nawala Framework have to be installed first!';
 } else {
 	$nfwversion = new NFWVersion();
 	if (version_compare($nfwversion->getShortVersion(), '6.0.0', 'gt')) {
 		$errors[] = '<i class="icon-warning"></i> Please update Nawala Framework to the latest version. You are running ' . $nfwversion->getLongVersion();
 	}
-}
-
-$jversion = new JVersion();
-if (!$jversion->isCompatible('3.1')) {
-	$errors[] = '<i class="icon-warning"></i> XiveIRM will only run on XAP 13.6+, MOOTOMBO 3+ or Joomla! 3.1+ ';
 }
 
 if (!function_exists('gd_info')) {
