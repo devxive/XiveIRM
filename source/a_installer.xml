@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <extension version="3.1" type="plugin" group="system" method="upgrade">
 	<name>Installer</name>
 	<author>devXive</author>
@@ -57,7 +57,7 @@
 			<description>XiveIRM User Plugin for provision system wide client ability</description>
 		</cog>
 
-		<cog type="component" client="administrator" access="1" enabled="true" protected="false" remove_admin_menu="true">
+		<cog type="component" client="administrator" access="1" enabled="true" protected="false" remove_admin_menu="false">
 			components/com_xivetranscorder
 			<name>XiveIRM TransCorder - Transport Order and Coordination Application</name>
 			<description>Transport Coordination and Order Application for XiveIRM</description>
