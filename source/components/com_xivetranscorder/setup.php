@@ -41,11 +41,11 @@ if ($package['installer']->getInstallType() == 'install') {
 		 * Set transport categories
 		 *
 		 */
-		NFWTableCategory::store(array('extension' => 'com_xivetranscorder.transcorders','title' => 'Krankenfahrt'));
-		NFWTableCategory::store(array('extension' => 'com_xivetranscorder.transcorders','title' => 'Qualifizierter Krankentransport'));
-		NFWTableCategory::store(array('extension' => 'com_xivetranscorder.transcorders','title' => 'Materialtransport'));
-		NFWTableCategory::store(array('extension' => 'com_xivetranscorder.transcorders','title' => 'Despatcher Auftrag'));
-		NFWTableCategory::store(array('extension' => 'com_xivetranscorder.transcorders','title' => 'Servienvorlage'));
+		NFWTableCategory::store(array('extension' => 'com_xivetranscorder.transcorders','title' => 'COM_XIVETRANSCORDER_CATEGORY_PATIENT_TRANSPORT'));
+		NFWTableCategory::store(array('extension' => 'com_xivetranscorder.transcorders','title' => 'COM_XIVETRANSCORDER_CATEGORY_QUALIFIED_PATIENT_AMBULANCE_TRANSPORT'));
+		NFWTableCategory::store(array('extension' => 'com_xivetranscorder.transcorders','title' => 'COM_XIVETRANSCORDER_CATEGORY_STUFF_TRANSPORT'));
+		NFWTableCategory::store(array('extension' => 'com_xivetranscorder.transcorders','title' => 'COM_XIVETRANSCORDER_CATEGORY_DESPATCHING_ORDER'));
+		NFWTableCategory::store(array('extension' => 'com_xivetranscorder.transcorders','title' => 'COM_XIVETRANSCORDER_CATEGORY_TRANSPORT_TEMPLATE'));
 
 		/*
 		 * Set options categories
