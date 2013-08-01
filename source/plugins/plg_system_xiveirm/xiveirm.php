@@ -40,6 +40,10 @@ class PlgSystemXiveIrm extends JPlugin
 	{
 		parent::__construct( $subject, $config );
 
+		// Add Include Paths to the table classes of the components
+		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_xiveirm/tables');
+		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_xivetranscorder/tables');
+
 		// Do some extra initialisation in this constructor if required
 	}
 
