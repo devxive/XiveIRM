@@ -21,80 +21,37 @@ $element = 'com_xivetranscorder';
 $parent_menu = 'com_xiveirm';
 
 if ($package['installer']->getInstallType() == 'install') {
-	// Restore assets from backup
-	if (NFWInstallerHelper::restoreAssets($element)) {
-		$message[] = '<i class="icon-ok"></i> Assets restored successfully';
-	}
+	// Set the Parent Category for all categories in the TOCA App
+	$parentCategoryId = NFWTableCategory::store(array('extension' => 'com_xiveirm','title' => 'COM_XIVECONTACTS_PARENT_CATEGORY', 'alias' => 'com-xivecontacts'));
 
-	// Make the admin menu item a child of the $parent_menu (element, parent)
-	if (NFWInstallerHelper::setComponentChildMenuItem($element, $parent_menu)) {
-		$message[] = '<i class="icon-ok"></i> Added submenu items to ' . $parent_menu . ' main menu';
-	} else {
-		$message[] = '<i class="icon-cancel red"></i> Adding submenu item to ' . $parent_menu . ' main menu failed';
-	}
+	//Set gender category
+	$genderId = NFWTableCategory::store(array('extension' => 'com_xiveirm', 'title' => 'COM_XIVETRANSCORDER_CATEGORY_GENDER', 'alias' => 'gender', 'parent_id' => $parentCategoryId));
 
-	// Fill up the database with core values
-	$db = JFactory:: getDBO();
-	$query = $db->getQuery(true);
+	// Set the gender option values
+	if($genderId) {
+		$rows[] = array('client_id' => 2, 'catid' => $genderId, 'opt_value' => 'unknown', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_GENDER_TRAIT_UNKNOWN', 'access' => 2);
+		$rows[] = array('client_id' => 2, 'catid' => $genderId, 'opt_value' => 'female', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_GENDER_TRAIT_FEMALE', 'access' => 2);
+		$rows[] = array('client_id' => 2, 'catid' => $genderId, 'opt_value' => 'male', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_GENDER_TRAIT_MALE', 'access' => 2);
+		$rows[] = array('client_id' => 2, 'catid' => $genderId, 'opt_value' => 'company', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_GENDER_TRAIT_COMPANY', 'access' => 2);
 
-		/*
-		 * Set the xiverim_options
-		 *
-		 */
-		$query->clear();
+		$data = (object) $rows;
+		$return = NFWTableData::store( 'Option', 'XiveirmTable', $data);
 
-		// Set the columns
-		$columns = array('id', 'client_id', 'catid', 'opt_key', 'opt_value', 'opt_name', 'access', 'ordering');
-
-		// Prepare the query
-		$query
-			->insert($db->quoteName('#__xiveirm_options'))
-			->columns($db->quoteName($columns));
-			->values(implode(',', $values));
-
-		$query->values(implode(',', array('1', '2', 'catid', '', 'COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_UNKNOWN', 'unknown', '2', ''));
-		$query->values(implode(',', array('2', '2', 'catid', '', 'COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_FEMALE', 'female', '2', ''));
-		$query->values(implode(',', array('3', '2', 'catid', '', 'COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_MALE', 'male', '2', ''));
-		$query->values(implode(',', array('4', '2', 'catid', '', 'COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_COMPANY', 'company', '2', ''));
-
-		// Set the query string
-		$query->setQuery($query);
-
-		try {
-			$db->execute();
-			// $insertedId = (int)$db->insertid();
-			$message[] = '<i class="icon-ok"></i> Added core values to the database';
-		} catch (Exception $e) {
-			$message[] = '<i class="icon-cancel"></i> Error ' . (int)$e->getCode() . ' ends up wit message: ' . $e->getMessage();
+		if($return) {
+			$message[] = '<i class="icon-ok"></i> Form - Set gender values ... OK';
+		} else {
+			$message[] = '<i class="icon-cancel"></i> Form - Set gender values ... FAILED';
 		}
-} else {
-	// Make the admin menu item a child of the $parent_menu (element, parent)
-	if (NFWInstallerHelper::setComponentChildMenuItem($element, $parent_menu)) {
-		$message[] = '<i class="icon-ok"></i> Added submenu items to ' . $parent_menu . ' main menu';
+
+		$message[] = '<i class="icon-ok"></i> Set gender category ... OK';
 	} else {
-		$message[] = '<i class="icon-cancel red"></i> Adding submenu item to ' . $parent_menu . ' main menu failed';
+		$message[] = '<i class="icon-cancel"></i> Set gender category ... FAILED';
 	}
-}
+
+	// Set the core contacts categories
 	
-
-
-
-// Set the option values
-// $columns = array('id', 'client_id', 'catid', 'opt_key', 'opt_value', 'opt_name', 'access', 'ordering');
-// $values_1 = array('1', '2', 'catid', '', 'COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_UNKNOWN', 'unknown', '2', '');
-// $values_2 = array('2', '2', 'catid', '', 'COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_FEMALE', 'female', '2', '');
-// $values_3 = array('3', '2', 'catid', '', 'COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_MALE', 'male', '2', '');
-// $values_4 = array('4', '2', 'catid', '', 'COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_COMPANY', 'company', '2', '');
-// 
-// $query
-// 	->insert($db->quoteName('#__xiveirm_options'))
-// 	->columns($db->quoteName($columns))
-// 	->values(implode(',', $values));
-// 
-// $query->setQuery($query);
-
-
-
+} else {
+}
 
 $message[] = '<i class="icon-ok"></i> Removed temporary files';
 
