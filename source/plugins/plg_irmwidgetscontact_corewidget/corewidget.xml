@@ -7,7 +7,7 @@
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>support@devxive.com</authorEmail>
 	<authorUrl>www.devxive.com</authorUrl>
-	<version>1.0.1</version>
+	<version>5.0.0</version>
 	<description>PLG_IRMWIDGETSCONTACT_COREWIDGET_XML_DESC</description>
 	<files>
 		<filename plugin="corewidget">corewidget.php</filename>

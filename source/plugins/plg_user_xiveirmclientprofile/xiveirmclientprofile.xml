@@ -7,7 +7,7 @@
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>support@devxive.com</authorEmail>
 	<authorUrl>www.devxive.com</authorUrl>
-	<version>2.0.0</version>
+	<version>5.0.0</version>
 	<description>PLG_USER_XIVEIRMCLIENTPROFILE_XML_DESC</description>
 	<files>
 		<filename plugin="xiveirmclientprofile">xiveirmclientprofile.php</filename>
