@@ -4,10 +4,10 @@
 	<creationDate>2013-07-19</creationDate>
 	<copyright>Copyright (c) 1997 - 2013 by devXive - research and development. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-	<author>devXive - research and development</author>
+	<author>devXive</author>
 	<authorEmail>support@devxive.com</authorEmail>
 	<authorUrl>http://devxive.com</authorUrl>
-	<version>5.0.0</version>
+	<version>6.0.0</version>
 	<description>The Transport Coordination Order App for XiveIRM</description>
 
 	<install> <!-- Runs on install -->
@@ -41,7 +41,6 @@
 		<submenu>
 			<menu link="option=com_xivetranscorder&amp;view=transcorders" view="transcorders" img="components/com_xivetranscorder/assets/images/s_transcorders.png" alt="Xivetranscorder/Transcorders">COM_XIVETRANSCORDER_TITLE_TRANSCORDERS</menu>
 			<menu link="option=com_categories&amp;extension=com_xivetranscorder.transcorders" view="categories" img="components/com_xivetranscorder/assets/images/s_transcorders.png" alt="Xivetranscorder/Categories">COM_XIVETRANSCORDER_TRANSCORDERS_CATID</menu>
-			<menu link="option=com_xivetranscorder&amp;view=tabapps" view="tabapps" img="components/com_xivetranscorder/assets/images/s_tabapps.png" alt="Xivetranscorder/Tabapps">COM_XIVETRANSCORDER_TITLE_TABAPPS</menu>
 		</submenu>
 
 		<files folder="administrator">
