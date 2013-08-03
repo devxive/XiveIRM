@@ -17,8 +17,12 @@
 
 $message = array();
 
-$message[] = '<i class="icon-ok"></i> Module published';
-$message[] = '<i class="icon-ok"></i> Module-Position Set';
+if ($package['installer']->getInstallType() == 'install') {
+	// Runs on install
+	$message[] = '<i class="icon-ok"></i> Set module position';
+} else {
+	// Runs on update
+}
 
 if (!empty($message)) {
 	return $message;
