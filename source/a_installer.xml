@@ -79,16 +79,16 @@
 			<description>An multiview optimized application template</description>
 			<style name="XiveAppTheme - Default" default="false" master="true" />
 		</cog>
-		<cog type="module" client="site" access="1" enabled="true" protected="false">
+		<cog type="module" client="site" access="1" enabled="true" protected="false" position="sidebar-shortcuts">
 			modules/mod_xapptheme_sidebarshortcuts
 			<name>XiveAppTheme Module - Sidebar Shortcut Icons</name>
-			<description>RokSprocket Module</description>
+			<description>Sidebar-Shortcuts Module for XiveAppTheme Template</description>
 		</cog>
 
-		<cog type="module" client="site" access="1" enabled="true" protected="false">
+		<cog type="module" client="site" access="1" enabled="true" protected="false" position="my-tasks">
 			modules/mod_xiveirm_alertbox_mytasks
 			<name>XiveIRM Module - MyTasks</name>
-			<description>A simple task module with predefined Tasks to work with</description>
+			<description>A simple task module with predefined Tasks to work with for the XiveAppTheme Template</description>
 		</cog>
 	</cogs>
 </extension>
