@@ -13,9 +13,6 @@
  * @assetsLicense	devXive Proprietary Use License (http://www.devxive.com/license)
  *
  * @since		5.0
- *
- * NOTE: Normally installer will look for setup.php in component folder during component install. Usage of z_setup.php will prevent the execution during component installation,
- *       remains directory consistency and will be included in the setup.php in the root folder of installation and executes in the postflight section of the install script.
  */
 
 // Set variables
@@ -85,7 +82,7 @@ if ($package['installer']->getInstallType() == 'install') {
 
 		//Set transport device category
 		$transportDeviceId = NFWTableCategory::store(array('extension' => 'com_xiveirm', 'title' => 'COM_XIVEIRM_CATEGORY_XIVETRANSCORDER_TRANSPORT_FORM_TRANSPORT_DEVICE', 'alias' => 'transport-form-transport-devices', 'access' => 2, 'language' => '*', 'parent_id' => $parentFormCategoryId));
-		if($transportDeviceId) {
+		if ( $transportDeviceId ) {
 			$message[] = '<i class="icon-ok"></i> Set transport device category ... OK';
 
 			//Set transport device values
@@ -97,8 +94,7 @@ if ($package['installer']->getInstallType() == 'install') {
 			$rows[] = array('client_id' => 2, 'catid' => $transportDeviceId, 'opt_value' => 'ITA', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_TRANSPORT_DEVICE_INTENSIVE_TRANSPORT_AMBULANCE', 'access' => 2);
 
 			$data = (object) $rows;
-			$return = NFWTableData::store( 'Option', 'XiveirmTable', $data);
-
+			$return = NFWTableData::store( 'Option', 'XiveirmTable', $data, '', true);
 			if($return) {
 				$message[] = '<i class="icon-ok"></i> Form - Set transport device values ... OK';
 			} else {
@@ -110,7 +106,7 @@ if ($package['installer']->getInstallType() == 'install') {
 
 		//Set transport type category
 		$transportTypeId = NFWTableCategory::store(array('extension' => 'com_xiveirm', 'title' => 'COM_XIVEIRM_CATEGORY_XIVETRANSCORDER_TRANSPORT_FORM_TRANSPORT_TYPE', 'alias' => 'transport-form-transport-types', 'access' => 2, 'language' => '*', 'parent_id' => $parentFormCategoryId));
-		if($transportTypeId) {
+		if ( $transportTypeId ) {
 			$message[] = '<i class="icon-ok"></i> Set transport type category ... OK';
 
 			//Set transport type values
@@ -122,8 +118,7 @@ if ($package['installer']->getInstallType() == 'install') {
 			$rows[] = array('client_id' => 2, 'catid' => $transportTypeId, 'opt_value' => 'EWC', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_TRANSPORT_TYPE_ELECTRIC_WHEELCHAIR', 'access' => 2);
 
 			$data = (object) $rows;
-			$return = NFWTableData::store( 'Option', 'XiveirmTable', $data);
-
+			$return = NFWTableData::store( 'Option', 'XiveirmTable', $data, '', true);
 			if($return) {
 				$message[] = '<i class="icon-ok"></i> Form - Set transport type values ... OK';
 			} else {
@@ -135,7 +130,7 @@ if ($package['installer']->getInstallType() == 'install') {
 
 		//Set order type category
 		$orderTypeId = NFWTableCategory::store(array('extension' => 'com_xiveirm', 'title' => 'COM_XIVEIRM_CATEGORY_XIVETRANSCORDER_TRANSPORT_FORM_ORDER_TYPE', 'alias' => 'transport-form-order-types', 'access' => 2, 'language' => '*', 'parent_id' => $parentFormCategoryId));
-		if($transportDeviceId) {
+		if ( $orderTypeId ) {
 			$message[] = '<i class="icon-ok"></i> Set order type category ... OK';
 
 			//Set order type values
@@ -157,8 +152,7 @@ if ($package['installer']->getInstallType() == 'install') {
 			$rows[] = array('client_id' => 2, 'catid' => $orderTypeId, 'opt_value' => 'OTHER', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_ORDER_TYPE_OTHER', 'access' => 2);
 
 			$data = (object) $rows;
-			$return = NFWTableData::store( 'Option', 'XiveirmTable', $data);
-
+			$return = NFWTableData::store( 'Option', 'XiveirmTable', $data, '', true);
 			if($return) {
 				$message[] = '<i class="icon-ok"></i> Form - Set order type values ... OK';
 			} else {

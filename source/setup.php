@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * @project		XAP Project - Xive-Application-Platform
  * @subProject	Nawala Framework - A PHP and Javascript framework
@@ -17,6 +17,21 @@
 
 $message = array();
 
+
+/*
+ * Set all rows (if set), collected from all setup files for single process in postflight, due to the fact, that NFWTable can be processing only once
+ * TODO: Use the new Class NFWDatabase::save() to perform first a check and then a update/save process based on the settings that will be passed
+ */
+if ( !empty($this->tableQueryHelper) ) {
+	$data = (object) $this->tableQueryHelper;
+	$return = NFWTableData::store( 'Option', 'XiveirmTable', $data);
+	if($return) {
+		$message[] = '<i class="icon-ok"></i> Form - Published option values ... OK';
+	} else {
+		$message[] = '<i class="icon-cancel"></i> Form - Published option values ... FAILED';
+	}
+}
+print_r($tableQueryHelper);
 $message[] = '<i class="icon-cancel"></i> Removed installation files';
 
 if (!empty($message)) {

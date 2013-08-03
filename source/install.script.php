@@ -23,17 +23,25 @@ if (!class_exists('PlgSystemXiveIRMinstallerInstallerScript')) {
 	class PlgSystemXiveIRMinstallerInstallerScript
 	{
 		/**
+		 * @var    array    $tableQueryHelper    Store the value rows to process in the postflight setup file
+		 */
+		protected $tableQueryHelper = array();
+
+		/**
 		 * @var array
 		 */
 		protected $packages = array();
+
 		/**
 		 * @var
 		 */
 		protected $sourcedir;
+
 		/**
 		 * @var
 		 */
 		protected $installerdir;
+
 		/**
 		 * @var
 		 */
