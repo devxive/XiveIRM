@@ -17,7 +17,7 @@
 
 defined('_JEXEC') or die();
 
-require_once JPATH_SITE.'/components/com_xiveirm/helpers/irmsystem.php';
+// require_once JPATH_SITE.'/components/com_xiveirm/helpers/irmsystem.php';
 
 /**
  * Do checks to get the right coice of everything. Stores essential things in the session if a user login!
@@ -44,6 +44,9 @@ class PlgSystemXiveIrm extends JPlugin
 		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_xiveirm/tables');
 		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_xivetranscorder/tables');
 
+		// Register the library and define the version first!
+		JLoader::registerPrefix('IRM', JPATH_LIBRARIES . '/xiveirm');
+
 		// Do some extra initialisation in this constructor if required
 	}
 
@@ -55,14 +58,6 @@ class PlgSystemXiveIrm extends JPlugin
 	 */
 	public function onAfterInitialise()
 	{
-		// Register the library and define the version first!
-		JLoader::registerPrefix('IRM', JPATH_LIBRARIES . '/xiveirm');
-		// Define version
-		if (!defined('IRMVERSION')) {
-			$irmversion = new IRMVersion();
-			define('IRMVERSION', $irmversion->getShortVersion());
-		}
-
 		$user = JFactory::getUser()->id;
 
 		// If we are in admin area we have to check if the logged in user is in the group of the given minimum user group (future version)
