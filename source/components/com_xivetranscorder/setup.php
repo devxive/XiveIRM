@@ -44,9 +44,9 @@ if ($package['installer']->getInstallType() == 'install') {
 	 */
 	$parentCategoryId = NFWTableCategory::store(array('extension' => 'com_xiveirm','title' => 'COM_XIVEIRM_CATEGORY_PARENT_XIVETRANSCORDER', 'alias' => 'com-xivetranscorder', 'access' => 2, 'language' => '*'));
 	if ($parentCategoryId) {
-		$message[] = '<i class="icon-ok"></i> XiveTransCorder category ... OK';
+		$message[] = '<i class="icon-ok"></i> Set global XiveTransCorder category ... OK';
 	} else {
-		$message[] = '<i class="icon-cancel"></i> XiveTransCorder category ... FAILED';
+		$message[] = '<i class="icon-cancel"></i> Set global XiveTransCorder category ... FAILED';
 	}
 
 
@@ -85,6 +85,9 @@ if ($package['installer']->getInstallType() == 'install') {
 		if ( $transportDeviceId ) {
 			$message[] = '<i class="icon-ok"></i> Set transport device category ... OK';
 
+			// Get the helper var
+			$rows = $this->tableQueryHelper;
+
 			//Set transport device values
 			$rows[] = array('client_id' => 2, 'catid' => $transportDeviceId, 'opt_value' => 'TTV', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_TRANSPORT_DEVICE_TAXI_TRANSPORT_VEHICLE', 'access' => 2);
 			$rows[] = array('client_id' => 2, 'catid' => $transportDeviceId, 'opt_value' => 'RTV', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_TRANSPORT_DEVICE_RENTAL_TRANSPORT_VEHICLE', 'access' => 2);
@@ -93,13 +96,8 @@ if ($package['installer']->getInstallType() == 'install') {
 			$rows[] = array('client_id' => 2, 'catid' => $transportDeviceId, 'opt_value' => 'RTA', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_TRANSPORT_DEVICE_RESCUE_TRANSPORT_AMBULANCE', 'access' => 2);
 			$rows[] = array('client_id' => 2, 'catid' => $transportDeviceId, 'opt_value' => 'ITA', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_TRANSPORT_DEVICE_INTENSIVE_TRANSPORT_AMBULANCE', 'access' => 2);
 
-			$data = (object) $rows;
-			$return = NFWTableData::store( 'Option', 'XiveirmTable', $data, '', true);
-			if($return) {
-				$message[] = '<i class="icon-ok"></i> Form - Set transport device values ... OK';
-			} else {
-				$message[] = '<i class="icon-cancel"></i> Form - Set transport device values ... FAILED';
-			}
+			// Set the helper var
+			$this->tableQueryHelper = $rows;
 		} else {
 			$message[] = '<i class="icon-cancel"></i> Set transport device category ... FAILED';
 		}	
@@ -109,6 +107,9 @@ if ($package['installer']->getInstallType() == 'install') {
 		if ( $transportTypeId ) {
 			$message[] = '<i class="icon-ok"></i> Set transport type category ... OK';
 
+			// Get the helper var
+			$rows = $this->tableQueryHelper;
+
 			//Set transport type values
 			$rows[] = array('client_id' => 2, 'catid' => $transportTypeId, 'opt_value' => 'ATW', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_TRANSPORT_TYPE_ABLE_TO_WALK', 'access' => 2);
 			$rows[] = array('client_id' => 2, 'catid' => $transportTypeId, 'opt_value' => 'WC', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_TRANSPORT_TYPE_WHEELCHAIR', 'access' => 2);
@@ -117,13 +118,8 @@ if ($package['installer']->getInstallType() == 'install') {
 			$rows[] = array('client_id' => 2, 'catid' => $transportTypeId, 'opt_value' => 'L', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_TRANSPORT_TYPE_LYING', 'access' => 2);
 			$rows[] = array('client_id' => 2, 'catid' => $transportTypeId, 'opt_value' => 'EWC', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_TRANSPORT_TYPE_ELECTRIC_WHEELCHAIR', 'access' => 2);
 
-			$data = (object) $rows;
-			$return = NFWTableData::store( 'Option', 'XiveirmTable', $data, '', true);
-			if($return) {
-				$message[] = '<i class="icon-ok"></i> Form - Set transport type values ... OK';
-			} else {
-				$message[] = '<i class="icon-cancel"></i> Form - Set transport type values ... FAILED';
-			}
+			// Set the helper var
+			$this->tableQueryHelper = $rows;
 		} else {
 			$message[] = '<i class="icon-cancel"></i> Set transport device category ... FAILED';
 		}	
@@ -132,6 +128,9 @@ if ($package['installer']->getInstallType() == 'install') {
 		$orderTypeId = NFWTableCategory::store(array('extension' => 'com_xiveirm', 'title' => 'COM_XIVEIRM_CATEGORY_XIVETRANSCORDER_TRANSPORT_FORM_ORDER_TYPE', 'alias' => 'transport-form-order-types', 'access' => 2, 'language' => '*', 'parent_id' => $parentFormCategoryId));
 		if ( $orderTypeId ) {
 			$message[] = '<i class="icon-ok"></i> Set order type category ... OK';
+
+			// Get the helper var
+			$rows = $this->tableQueryHelper;
 
 			//Set order type values
 			$rows[] = array('client_id' => 2, 'catid' => $orderTypeId, 'opt_value' => 'AMBU', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_ORDER_TYPE_AMBULANT', 'access' => 2);
@@ -151,13 +150,8 @@ if ($package['installer']->getInstallType() == 'install') {
 			$rows[] = array('client_id' => 2, 'catid' => $orderTypeId, 'opt_value' => 'DAYHOS', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_ORDER_TYPE_DAY_HOSPITAL', 'access' => 2);
 			$rows[] = array('client_id' => 2, 'catid' => $orderTypeId, 'opt_value' => 'OTHER', 'opt_name' => 'COM_XIVETRANSCORDER_OPTION_ORDER_TYPE_OTHER', 'access' => 2);
 
-			$data = (object) $rows;
-			$return = NFWTableData::store( 'Option', 'XiveirmTable', $data, '', true);
-			if($return) {
-				$message[] = '<i class="icon-ok"></i> Form - Set order type values ... OK';
-			} else {
-				$message[] = '<i class="icon-cancel"></i> Form - Set order type values ... FAILED';
-			}
+			// Set the helper var
+			$this->tableQueryHelper = $rows;
 		} else {
 			$message[] = '<i class="icon-cancel"></i> Set order type category ... FAILED';
 		}	
@@ -168,8 +162,6 @@ if ($package['installer']->getInstallType() == 'install') {
 	// Runs on update
 }
 	
-$message[] = '<i class="icon-ok"></i> Removed temporary files';
-
 if (!empty($message)) {
 	return $message;
 } else {
