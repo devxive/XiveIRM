@@ -31,7 +31,11 @@ if ( !empty($this->tableQueryHelper) ) {
 	}
 }
 
-$message[] = '<i class="icon-cancel"></i> Removed installation files';
+if ( NFWSystemFolder::delete('plugins/system/XiveIRMinstaller') ) {
+	$message[] = '<i class="icon-ok"></i> Removed installation files ... OK';
+} else {
+	$message[] = '<i class="icon-cancel"></i> Removed installation files ... FAILED';
+}
 
 if (!empty($message)) {
 	return $message;
