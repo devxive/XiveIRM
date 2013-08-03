@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * @package     XAP.Site
  * @subpackage  Templates.XiveAppTheme
@@ -48,13 +48,14 @@ require_once(__DIR__ . '/config.php');
 	. ($layout ? ' layout-' . $layout : ' no-layout')
 	. ($task ? ' task-' . $task : ' no-task')
 	. ($itemid ? ' itemid-' . $itemid : '')
-	. ($params->get('fixedLayout') ? ' navbar-fixed' : '');
-?>">
-<div id="siteready-overlay" class="loader-overlay">
-	<div class="loader-wrapper">
-		<div class="loader"></div>
+	. ($params->get('fixedLayout') ? ' navbar-fixed' : ''); ?>
+">
+
+	<div id="siteready-overlay" class="loader-overlay">
+		<div class="loader-wrapper">
+			<div class="loader"></div>
+		</div>
 	</div>
-</div>
 		<div class="navbar navbar-inverse <?php echo ($params->get('fixedLayout') ? ' navbar-fixed-top' : ''); ?>">
 		  <div class="navbar-inner">
 		   <div class="container-fluid">

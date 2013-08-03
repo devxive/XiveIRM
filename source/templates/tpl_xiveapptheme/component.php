@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * @package     XAP.Site
  * @subpackage  Templates.XiveAppTheme
@@ -14,39 +14,25 @@ $doc   = JFactory::getDocument();
 $this->language = $doc->language;
 $this->direction = $doc->direction;
 
-// Add JavaScript Frameworks
-JHtml::_('bootstrap.framework');
-
-// Add Stylesheets
-$doc->addStyleSheet('media/nawala/css/bootstrap.min.css');
-$doc->addStyleSheet('media/nawala/css/bootstrap-responsive.min.css');
+// Load framework dependencies
+NFWHtml::loadJsFramework();
+NFWHtml::loadCssFramework();
 
 // Load optional rtl Bootstrap css and Bootstrap bugfixes
-JHtmlBootstrap::loadCss($includeMaincss = false, $this->direction);
-
-/**
- * Load framework dependencies
- */
-nimport('NHelper.Template', false);
-$templateHelper = new NHelperTemplate();
-
-$templateHelper->addNewCssHead('file', 'font-awesome.css', 'framework');
-$templateHelper->addNewCssHead('file', 'nfw-icon-animation.css', 'framework');
-
-/**
- * Load and perform template based settings
- */
-$templateHelper->removeGenerator();
-$templateHelper->forceIeChromeFrame();
+NFWHtml::loadCssFramework($includeMaincss = false, $this->direction);
 
 // Added template specific styles
-$templateHelper->addNewCssHead('file', 'ace.css', 'xiveapptheme');
-$templateHelper->addNewCssHead('file', 'ace-responsive.css', 'xiveapptheme');
-$templateHelper->addNewCssHead('file', 'skin5.css', 'xiveapptheme');
-$templateHelper->addNewCssHead('file', 'custom.css', 'xiveapptheme');
+JHtml::_('stylesheet', 'templates/xiveapptheme/assets/css/ace.css', false, false);
+JHtml::_('stylesheet', 'templates/xiveapptheme/assets/css/ace-responsive.css', false, false);
+JHtml::_('stylesheet', 'templates/xiveapptheme/assets/css/skin5.css', false, false);
+JHtml::_('stylesheet', 'nawala/font-awesome.css', false, true);
+JHtml::_('stylesheet', 'nawala/nfw-icon-animation.css', false, true);
+JHtml::_('stylesheet', 'templates/xiveapptheme/assets/css/custom.css', false, false);
 
-
-
+// Added template specific scripts
+JHtml::_('script', 'templates/xiveapptheme/assets/js/uncompressed/ace-elements.js', false, false);
+JHtml::_('script', 'templates/xiveapptheme/assets/js/uncompressed/ace.js', false, false);
+JHtml::_('script', 'templates/xiveapptheme/assets/js/devxive/template.js', false, false);
 
 ?>
 <!DOCTYPE html>

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * @package     XAP.Site
  * @subpackage  Templates.XiveAppTheme
@@ -46,51 +46,31 @@ $doc = JFactory::getDocument();
 	$this->language = $doc->language;
 	$this->direction = $doc->direction;
 
-/**
- * Load the minor core variables
- */
+// Load the minor core variables
 $user = JFactory::getUser();
 
-// Import HTML and Helper Classes
-nimport('NHtml.JavaScript');
-NHtmlJavaScript::setSiteReadyOverlay();
+// Load framework dependencies
+NFWHtml::loadJsFramework();
+NFWHtml::loadCssFramework();
 
-/**
- * Load framework dependencies
- */
-nimport('NHelper.Template', false);
-$templateHelper = new NHelperTemplate();
-
-// $templateHelper->addNewJsHead();
-
-$templateHelper->addNewCssHead('file', 'bootstrap.min.css', 'framework');
-$templateHelper->addNewCssHead('file', 'bootstrap-responsive.min.css', 'framework');
-$templateHelper->addNewCssHead('file', 'font-awesome.css', 'framework');
-$templateHelper->addNewCssHead('file', 'nfw-icon-animation.css', 'framework');
-
-/**
- * Load and perform template based settings
- */
-// remove unused scripts, styles and tags
-// $templateHelper->removeScript('mootools-core.js,caption.js');
-// $templateHelper->removeStyle('');
-$templateHelper->removeGenerator();
-$templateHelper->forceIeChromeFrame();
+// Load optional rtl Bootstrap css and Bootstrap bugfixes
+NFWHtml::loadCssFramework($includeMaincss = false, $this->direction);
 
 // Added template specific styles
-$templateHelper->addNewCssHead('file', 'ace.css', 'xiveapptheme');
-$templateHelper->addNewCssHead('file', 'ace-responsive.css', 'xiveapptheme');
-$templateHelper->addNewCssHead('file', 'skin5.css', 'xiveapptheme');
-$templateHelper->addNewCssHead('file', 'custom.css', 'xiveapptheme');
+JHtml::_('stylesheet', 'templates/xiveapptheme/assets/css/ace.css', false, false);
+JHtml::_('stylesheet', 'templates/xiveapptheme/assets/css/ace-responsive.css', false, false);
+JHtml::_('stylesheet', 'templates/xiveapptheme/assets/css/skin5.css', false, false);
+JHtml::_('stylesheet', 'nawala/font-awesome.css', false, true);
+JHtml::_('stylesheet', 'nawala/nfw-icon-animation.css', false, true);
+JHtml::_('stylesheet', 'templates/xiveapptheme/assets/css/custom.css', false, false);
 
 // Added template specific scripts
-$templateHelper->addNewJsBodyBottom('file', 'uncompressed/ace-elements.js', 'xiveapptheme', '1000');
-$templateHelper->addNewJsBodyBottom('file', 'uncompressed/ace.js', 'xiveapptheme', '1001');
-$templateHelper->addNewJsBodyBottom('file', 'devxive/template.js', 'xiveapptheme', '5000');
+JHtml::_('script', 'templates/xiveapptheme/assets/js/uncompressed/ace-elements.js', false, false);
+JHtml::_('script', 'templates/xiveapptheme/assets/js/uncompressed/ace.js', false, false);
+JHtml::_('script', 'templates/xiveapptheme/assets/js/devxive/template.js', false, false);
 
-// Getting page class suffix and template path
-// $pageclass = $params->get('pageclass_sfx');
-// $tpath = $this->baseurl.'/templates/'.$this->template;
+// Set Siteready overlay function
+NFWHtmlJavascript::setSiteReadyOverlay();
 
 // Logo file or site title param
 if ($params->get('logoFile'))
@@ -105,52 +85,3 @@ else
 {
 	$logo = '<span class="site-title" title="XiveAppTheme">XiveAppTheme by devXive</span>';
 }
-
-
-
-
-
-
-
-/**
- * used in /components/com_xiveirm/views/irmmasterdatas/tmpl/default.php
- */
-$templateHelper->addNewJsBodyBottom('file', 'chosen.jquery.min.js', 'xiveapptheme', '1004');
-$templateHelper->addNewJsBodyBottom('file', '/devxive/jquery.gritter.bootstrap.js', 'xiveapptheme', '1007');
-$templateHelper->addNewJsBodyBottom('file', 'jquery.timeago.js', 'xiveapptheme', '1008');
-
-
-
-
-$doc->addScript('/templates/' . $this->template . '/assets/js/uncompressed/ace.js');
-$doc->addScript('/templates/' . $this->template . '/assets/js/uncompressed/ace-elements.js');
-$doc->addScript('/templates/' . $this->template . '/assets/js/devxive/template.js');
-
-
-
-
-
-
-$componentCustomScript = '
-	// TimeAgoScript
-	jQuery("abbr.timeago").timeago();
-
-';
-
-$templateHelper->addNewJsBodyBottom('custom', $componentCustomScript, 'xiveapptheme', '2000');
-
-
-// STRIP OUT JUI HEAD DATA
-
-JHtml::_('bootstrap.framework');
-$doc = JFactory::getDocument();
-$headData = $doc->getHeadData();
-$head = (array) $headData['scripts'];
-unset($head['/media/jui/js/jquery.min.js']);
-unset($head['/media/jui/js/jquery-noconflict.js']);
-unset($head['/media/jui/js/bootstrap.min.js']);
-
-// print_r(JFactory::getDocument()->getHeadData());
-// print_r($head);
-
-?>
