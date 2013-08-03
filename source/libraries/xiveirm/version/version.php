@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 /**
  * @project		XAP Project - Xive-Application-Platform
- * @subProject	Nawala Framework - A PHP and Javascript framework
+ * @subProject	IRM Library - The XiveIRM Library
  *
  * @package		XiveIRM.Library
  * @subPackage	Framework
@@ -15,8 +15,7 @@
  * @since		3.2
  */
 
-defined('_JEXEC') or die();
-
+defined('_NFW_FRAMEWORK') or die();
 
 /**
  * Version information class for the XiveIRM package.
