@@ -99,7 +99,7 @@ class XiveirmTableoption extends JTable
 
 		// Verify that the option is unique
 		$tableHelper = JTable::getInstance('Option', 'XiveirmTable');
-		$data  = array('client_id' => $this->client_id, 'catid' => $this->catid, 'opt_key' => $this->opt_key);
+		$data  = array('client_id' => $this->client_id, 'catid' => $this->catid, 'opt_value' => $this->opt_value);
 
 		if ($tableHelper->load($data) && ($tableHelper->id != $this->id || $this->id == 0)) {
 			$this->setError(JText::_('COM_XIVEIRM_ERROR_OPTION_UNIQUE_OPTION'));
