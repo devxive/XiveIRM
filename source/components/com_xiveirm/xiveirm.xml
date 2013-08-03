@@ -42,6 +42,7 @@
 
 		<submenu>
 			<menu link="option=com_xiveirm&amp;view=contacts" view="contacts" img="components/com_xiveirm/assets/images/s_contacts.png" alt="xiveirm/contacts">COM_XIVEIRM_TITLE_CONTACTS</menu>
+			<menu link="option=com_categories&amp;extension=com_xiveirm" view="categories" img="components/com_xiveirm/assets/images/s_contacts.png" alt="xiveirm/categories">COM_XIVEIRM_CATEGORIES</menu>
 			<menu link="option=com_xiveirm&amp;view=options" view="options" img="components/com_xiveirm/assets/images/s_options.png" alt="xiveirm/options">COM_XIVEIRM_TITLE_OPTIONS</menu>
 			<menu link="option=com_xiveirm&amp;view=tabapps" view="tabapps" img="components/com_xiveirm/assets/images/s_tabapps.png" alt="xiveirm/tabapps">COM_XIVEIRM_TITLE_TABAPPS</menu>
 		</submenu>
