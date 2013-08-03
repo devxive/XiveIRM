@@ -7,8 +7,8 @@
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>support@devxive.com</authorEmail>
 	<authorUrl>www.devxive.com</authorUrl>
-	<version>5.0.0</version>
-	<description>PLG_SYSTEM_XIVEIRM_XML_DESCRIPTION</description>
+	<version>5.5.0</version>
+	<description>PLG_SYSTEM_XIVEIRM_XML_DESC</description>
 	<files>
 		<filename plugin="xiveirm">xiveirm.php</filename>
 		<filename>index.html</filename>
