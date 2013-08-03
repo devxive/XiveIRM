@@ -25,15 +25,6 @@ class XivetranscorderHelper
 			'index.php?option=com_xivetranscorder&view=transcorders',
 			$vName == 'transcorders'
 		);
-		JHtmlSidebar::addEntry(
-			JText::_('COM_XIVETRANSCORDER_TITLE_TRANSCORDERS_CATEGORIES'),
-			"index.php?option=com_categories&extension=com_xivetranscorder.transcorders",
-			$vName == 'categories.transcorders'
-		);
-
-		if ($vName=='categories.transcorders') {
-			JToolBarHelper::title(JText::_('COM_XIVETRANSCORDER_SITE_TITLE_TRANSCORDERS_CATEGORIES'));
-		}
 	}
 
 	/**

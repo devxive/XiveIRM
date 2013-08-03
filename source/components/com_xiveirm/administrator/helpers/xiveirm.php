@@ -25,14 +25,6 @@ class XiveirmHelper
 			'index.php?option=com_xiveirm&view=contacts',
 			$vName == 'contacts'
 		);
-		
-		if ($vName=='contacts' || $vName=='categories.contacts') {
-			JHtmlSidebar::addEntry(
-				JText::_('COM_XIVEIRM_CONTACTS_CATEGORIES'),
-				"index.php?option=com_categories&extension=com_xiveirm.contacts",
-				$vName == 'categories.contacts'
-			);
-		}
 
 		JHtmlSidebar::addEntry(
 			JText::_('COM_XIVEIRM_TITLE_OPTIONS'),
@@ -40,13 +32,11 @@ class XiveirmHelper
 			$vName == 'options'
 		);
 
-		if ($vName=='options' || $vName=='categories.options') {
-			JHtmlSidebar::addEntry(
-				JText::_('COM_XIVEIRM_OPTIONS_CATEGORIES'),
-				"index.php?option=com_categories&extension=com_xiveirm.options",
-				$vName == 'categories.options'
-			);
-		}
+		JHtmlSidebar::addEntry(
+			JText::_('COM_XIVEIRM_CATEGORIES'),
+			"index.php?option=com_categories&extension=com_xiveirm",
+			$vName == 'categories'
+		);
 
 		JHtmlSidebar::addEntry(
 			JText::_('COM_XIVEIRM_TITLE_TABAPPS'),
