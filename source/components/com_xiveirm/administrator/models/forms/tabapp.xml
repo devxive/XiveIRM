@@ -27,7 +27,7 @@
 		<field name="catid" type="category"
 			label="COM_XIVEIRM_FORM_LBL_TABAPP_CATEGORY"
 			description="COM_XIVEIRM_FORM_DESC_TABAPP_CATEGORY"
-			extension="com_xiveirm.contacts"
+			extension="com_xiveirm"
 			filter="raw">
 				<option value="0">COM_XIVEIRM_FORM_OPTION_TABAPP_CATEGORY</option>
 		</field>
@@ -35,7 +35,7 @@
 		<field name="filter_catid" type="category"
 			label="COM_XIVEIRM_FORM_LBL_TABAPP_CATEGORY"
 			description="COM_XIVEIRM_FORM_DESC_TABAPP_CATEGORY"
-			extension="com_xiveirm.contacts"
+			extension="com_xiveirm"
 			show_root="1"
 			onchange="this.form.submit();" />
 
