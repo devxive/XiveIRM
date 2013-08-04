@@ -1,38 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-	<fieldset name="component"
-		label="COM_XIVETRANSCORDER_COMPONENT_LABEL"
-		description="COM_XIVETRANSCORDER_COMPONENT_DESC"
-	>
+	<fieldset name="component" label="COM_XIVETRANSCORDER_COMPONENT_LABEL" description="COM_XIVETRANSCORDER_COMPONENT_DESC">
+		<field name="test" type="radio"
+			label="COM_XIVETRANSCORDER_TEST_LABEL"
+			description="COM_XIVETRANSCORDER_TEST_DESC"
+			default="0">
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+		</field>
 
-        <field name="test"
-             type="radio"
-             default="1"
-             label="COM_XIVETRANSCORDER_TEST_LABEL"
-             description="COM_XIVETRANSCORDER_TEST_DESC">
-                 <option value="0">JHIDE</option>
-                 <option value="1">JSHOW</option>
-         </field>
-
+		<field name="parent_app_category" type="category"
+			label="COM_XIVEIRM_SYSTEM_CATEGORY_LBL"
+			description="COM_XIVEIRM_SYSTEM_CATEGORY_DESC"
+			extension="com_xiveirm"
+			filter="raw">
+				<option value="0">JOPTION_SELECT_CATEGORY</option>
+		</field>
 	</fieldset>
 
-	<fieldset name="permissions"
-		description="JCONFIG_PERMISSIONS_DESC"
-		label="JCONFIG_PERMISSIONS_LABEL"
-	>
-
-		<field 
-            name="rules" 
-            type="rules"
-			component="com_xivetranscorder"
-            class="inputbox"
+	<fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL">
+		<field name="rules" type="rules" class="inputbox"
+			label="JCONFIG_PERMISSIONS_LABEL"
 			filter="rules"
 			validate="rules"
-			label="JCONFIG_PERMISSIONS_LABEL"
+			component="com_xivetranscorder"
 			section="component" />
 	</fieldset>
-
 </config>
+
 <!--
 ########################################################################################
 The following are a list of all the different types of fields you can add to this file

@@ -9,6 +9,14 @@
 				<option value="1">JSHOW</option>
 		</field>
 
+		<field name="parent_app_category" type="category"
+			label="COM_XIVEIRM_SYSTEM_CATEGORY_LBL"
+			description="COM_XIVEIRM_SYSTEM_CATEGORY_DESC"
+			extension="com_xiveirm"
+			filter="raw">
+				<option value="0">JOPTION_SELECT_CATEGORY</option>
+		</field>
+
 		<field name="global_group" type="usergroup"
 			label="COM_XIVEIRM_SYSTEM_USERGROUP_LBL"
 			description="COM_XIVEIRM_SYSTEM_USERGROUP_DESC"
