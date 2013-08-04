@@ -1,10 +1,10 @@
 <?php
 /**
  * @project		XAP Project - Xive-Application-Platform
- * @subProject	IRM Library - The XiveIRM Library
+ * @subProject	XiveIRM - Interoperable Relationship Management System
  *
- * @package		XiveIRM.Library
- * @subPackage	Framework
+ * @package		XiveIRM
+ * @subPackage	Library
  * @version		6.0
  *
  * @author		devXive - research and development <support@devxive.com> (http://www.devxive.com)
