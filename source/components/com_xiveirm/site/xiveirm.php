@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * @version     6.0.0
  * @package     com_xiveirm
@@ -11,8 +11,6 @@ defined('_JEXEC') or die;
 
 require_once JPATH_COMPONENT.'/helpers/xiveirm.php';
 require_once JPATH_COMPONENT.'/helpers/irmsystem.php';
-
-// $irm = new IRMSystem();
 
 // Include dependancies
 jimport('joomla.application.component.controller');

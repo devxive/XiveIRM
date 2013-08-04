@@ -15,36 +15,6 @@ defined('_JEXEC') or die;
 class IRMSystem
 {
 	/*
-	 * Method to get the global client id as set in the component settings
-	 *
-	 * @return		int	Return the global client_id as set in the component settings, else false.
-	 */
-	public function getGlobalClientId()
-	{
-		if($global_client_id = JComponentHelper::getParams('com_xiveirm')->get('global_group')) {
-			return $global_client_id;
-		} else {
-			return false;
-		}
-	}
-
-	/*
-	 * Method to get access the XiveIRMSystem session
-	 *
-	 * @return		
-	 */
-	public function getSession($value = false)
-	{
-		if(!$value) {
-			$result = JFactory::getSession()->get('XiveIRMSystem');
-		} else {
-			$result = JFactory::getSession()->get('XiveIRMSystem')->$value;
-		}
-
-		return $result;
-	}
-
-	/*
 	 * 
 	 * returns a prepared array
 	 */
@@ -94,7 +64,7 @@ class IRMSystem
 	 * $table without prefix, category alias for the join left clause, client id (based on users usergroup and the xiveirm options where we declare which is the global group)
 	 * the alias could also be a client_id id we want to get all contacts related to the client which is logged on. in this case alias have to be an integer
 	 */
-	public function getListOptions($ext, $alias = null, $app = 'com_xiveirm.contacts')
+	public function getListOptions($ext, $alias = null, $app = 'com_xiveirm')
 	{
 		// Create a new query object.
 		$db = JFactory::getDbo();
@@ -129,7 +99,8 @@ class IRMSystem
 				->from('#__categories')
 				->where('extension = ' . $db->quote($extension) . '')
 				->where('published = 1')
-				->where('access IN (' . $viewlevels . ')');
+				->where('access IN (' . $viewlevels . ')')
+				->where('parent_id = 423'); // ' . IRMComponentHelper($app) . '
 
 			$db->setQuery($query);
 			$results = $db->loadObjectList();
@@ -447,7 +418,7 @@ class IRMSystem
 		}
 
 		// Include JS framework
-		NHtml::loadJsFramework();
+		NFWHtml::loadJsFramework();
 
 		$return_html = '';
 		$return_jsdec = "jQuery(document).ready(function() {";
