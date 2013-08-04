@@ -11,8 +11,15 @@
 	<version>6.0.0</version>
 	<description>Shared classes and tools for XiveIRM related components. Do not remove!</description>
 	<files>
+		<folder>access</folder>
+		<folder>component</folder>
+		<folder>form</folder>
 		<folder>html</folder>
+		<folder>plugin</folder>
+		<folder>session</folder>
 		<folder>version</folder>
+		<file>factory.php</file>
 		<file>index.html</file>
+		<file>library.php</file>
 	</files>
 </extension>
