@@ -10,9 +10,9 @@
 defined('_JEXEC') or die;
 
 // Import HTML and Helper Classes
-nimport('NHtml.JavaScript');
+// nimport('NHtml.JavaScript');
 // selector, url, debug
-NHtmlJavascript::loadTypeahead('#typeahead-search', '#search-query', 'index.php?option=com_xiveirm&task=search.typeahead');
+NFWHtmlJavascript::loadTypeahead('#typeahead-search', '#search-query', 'index.php?option=com_xiveirm&task=search.typeahead');
 
 // Load the XiveIRMSystem Session Data (Performed by the XiveIRM System Plugin)
 $xsession = JFactory::getSession()->get('XiveIRMSystem');

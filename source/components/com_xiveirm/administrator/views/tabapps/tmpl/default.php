@@ -87,6 +87,7 @@ if (!empty($this->extra_sidebar)) {
 			<div class="btn-group pull-right">
 				<label for="sortTable" class="element-invisible"><?php echo JText::_('JGLOBAL_SORT_BY');?></label>
 
+
 				<select name="sortTable" id="sortTable" class="input-medium" onchange="Joomla.orderTable()">
 					<option value=""><?php echo JText::_('JGLOBAL_SORT_BY');?></option>
 					<?php echo JHtml::_('select.options', $sortFields, 'value', 'text', $listOrder);?>
@@ -184,7 +185,8 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<td>
-					<?php echo NItemHelper::getTitleById('usergroup', $item->client_id); ?>
+
+					<?php echo NFWItemHelper::getTitleById('usergroup', $item->client_id); ?>
 				</td>
 				<td>
 				<?php if (isset($item->checked_out) && $item->checked_out) : ?>

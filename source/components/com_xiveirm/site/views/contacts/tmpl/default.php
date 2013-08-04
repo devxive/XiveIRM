@@ -12,15 +12,15 @@ defined('_JEXEC') or die;
 $app = JFactory::getApplication();
 
 // Import HTML and Helper Classes
-nimport('NHtml.JavaScript');
-nimport('NHtml.DataTables');
-nimport('NItem.Helper', false);
+// nimport('NHtml.JavaScript');
+// nimport('NHtml.DataTables');
+// nimport('NItem.Helper', false);
 
-NHtmlJavaScript::setAutoRemove();
-NHtmlJavaScript::setToggle('extended', 'toggleExtend');
-NHtmlJavaScript::setTooltip('.xtooltip');
-NHtmlJavaScript::setPopover('.xpopover');
-NHtmlJavaScript::loadMoment();
+NFWHtmlJavascript::setAutoRemove();
+NFWHtmlJavascript::setToggle('extended', 'toggleExtend');
+NFWHtmlJavascript::setTooltip('.xtooltip');
+NFWHtmlJavascript::setPopover('.xpopover');
+NFWHtmlJavascript::loadMoment();
 
 // Init the dataTable
 $tableParams = '
@@ -61,7 +61,7 @@ $tableParams = '
 //	"aaSorting": [[1, 'asc']]
 
 
-NHtmlDataTables::loadDataTable('table_contacts', $tableParams, true);
+NFWHtmlDatatables::loadDataTable('table_contacts', $tableParams, true);
 
 // Load the XiveIRMSystem Session Data (Performed by the XiveIRM System Plugin)
 $xsession = JFactory::getSession()->get('XiveIRMSystem');
@@ -91,7 +91,7 @@ jQuery(function() {
 				<span><?php echo JText::_('COM_XIVEIRM_CONTACT_LIST_CONTACTS_ALL'); ?></span>
 			<?php } else if($filter_catid) { ?>
 				<span><?php echo JText::_('COM_XIVEIRM_CONTACT_LIST_CONTACTS_CAT'); ?></span>
-				<?php echo NItemHelper::getTitleById('category', $filter_catid); ?>
+				<?php echo NFWItemHelper::getTitleById('category', $filter_catid); ?>
 			<?php } else if($filter_pdk) { ?>
 				<span><span class="hidden-phone"><?php echo JText::_('COM_XIVEIRM_CONTACT_LIST_CONTACTS_FILTER_PDK'); ?></span> <?php echo JText::_('COM_XIVEIRM_CONTACT_LIST_CONTACTS_FILTER_' . strtoupper($filter_pdk)); ?></span>
 			<?php } else if($filter_global) { ?>
@@ -113,14 +113,14 @@ jQuery(function() {
 				<div class="pull-right">
 					<?php if(JFactory::getUser()->authorise('core.create','com_xiveirm')): ?>
 						<form action="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.edit'); ?>" class="inline">
-							<?php NHtmlJavaScript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
+							<?php NFWHtmlJavascript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 							<div class="input-xlarge">
 								<select name="catid" class="chzn-select-category" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_NEW_CONTACT'); ?>" onchange="this.form.submit()">
 									<option value=""></option>
 									<?php
 										$options = IRMSystem::getListOptions('categories', false);
 										if($options->client) {
-											echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
+											echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NFWItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
 												foreach ($options->client as $key => $val) {
 													echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
 												}
@@ -158,14 +158,14 @@ jQuery(function() {
 						<div class="control-group">
 							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_FILTER_CATEGORY_LBL'); ?></label>
 							<div class="controls controls-row">
-								<?php NHtmlJavaScript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
+								<?php NFWHtmlJavascript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 								<div class="span12">
 									<select name="search_catid" class="chzn-select-category" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" onchange="this.form.submit()">
 										<option value=""></option>
 										<?php
 											$options = IRMSystem::getListOptions('categories', false);
 											if($options->client) {
-												echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
+												echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NFWItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
 													foreach ($options->client as $key => $val) {
 														echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
 													}
@@ -272,7 +272,7 @@ jQuery(function() {
 		?>
 			<?php if($item->state == 1 || ($item->state == 0 && JFactory::getUser()->authorise('core.edit.own',' com_xiveirm'))) : $show = true; ?>
 			<tr>
-				<td><?php echo NItemHelper::getTitleById('category', $item->catid); ?></td>
+				<td><?php echo NFWItemHelper::getTitleById('category', $item->catid); ?></td>
 				<td class="center hidden-phone">
 					<?php if($item->checked_out):
 						echo '<div style="font-size: 20px;"><i class="icon-lock red"></i></div>';
@@ -457,13 +457,16 @@ function fnFormatDetails ( oTable, nTr )
 </script>
 
 
-
-<h3 class="header lighter pink">Tests</h3>
-
-<a onClick="alert('Dieser Eintrag wurde Archiviert --> Achtung DEMO!!!')" class="btn btn-small btn-app radius-4 <?php echo $item->state == 0 ? 'btn-light' : ''; ?>">
-	<i class="icon-archive"></i>
-	<?php echo $item->state == 0 ? JText::_("COM_XIVEIRM_PUBLISH_ITEM") : JText::_("COM_XIVEIRM_UNPUBLISH_ITEM"); ?>
-</a>
-<br>
-<br>
 <hr>
+
+
+
+<?php
+		$component = IRMComponentHelper::getConfig('com_xiveirm')->get('parent_app_category');
+		$catId = 423;
+		$categories = JTable::getInstance('Category');
+		$cat = $categories->getTree($catId);
+		echo '<pre>';
+		print_r($component);
+		echo '</pre>';
+?>

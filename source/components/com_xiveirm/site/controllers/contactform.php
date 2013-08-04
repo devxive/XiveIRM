@@ -199,7 +199,7 @@ class XiveirmControllerContactForm extends XiveirmController
 //	function cancel()
 //	{
 //		$id = JFactory::getApplication()->input->get('id', '', 'INT');
-//		$return = NItemHelper::checkIn('xiveirm_customer', $id);
+//		$return = NFWItemHelper::checkIn('xiveirm_customer', $id);
 //
 //		$menu = & JSite::getMenu();
 //		$item = $menu->getActive();
@@ -262,6 +262,7 @@ class XiveirmControllerContactForm extends XiveirmController
 //			// Redirect back to the edit screen.
 //			$id = (int)$app->getUserState('com_xiveirm.edit.contact.id');
 //			$this->setMessage(JText::sprintf('Delete failed', $model->getError()), 'warning');
+
 //			$this->setRedirect(JRoute::_('index.php?option=com_xiveirm&view=contact&layout=edit&id='.$id, false));
 //			return false;
 //		}

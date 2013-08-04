@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modelform');
 jimport('joomla.event.dispatcher');
-nimport('NItem.Helper', false);
+// nimport('NItem.Helper', false);
 
 /**
  * Xiveirm model.
@@ -124,7 +124,7 @@ class XiveirmModelApi extends JModelForm
 
 			// Set additionals we need for create process
 			$columns[] = 'created';
-			$values[] = $db->quote(NItemHelper::getDate('MySQL'));
+			$values[] = $db->quote(NFWItemHelper::getDate('MySQL'));
 			$columns[] = 'created_by';
 			$values[] = $db->quote(JFactory::getUser()->id);
 
@@ -182,7 +182,7 @@ class XiveirmModelApi extends JModelForm
 			}
 
 			// Set additionals we need for update process
-			$fields[] = 'modified = ' . $db->quote(NItemHelper::getDate('MySQL'));
+			$fields[] = 'modified = ' . $db->quote(NFWItemHelper::getDate('MySQL'));
 
 			$query
 				->update($db->quoteName($dataApi['coretable']))
@@ -559,6 +559,7 @@ class XiveirmModelApi extends JModelForm
 			$sOrder = substr_replace( $sOrder, "", -2 );
 			if ( $sOrder == "ORDER BY" )
 			{
+
 				$sOrder = "";
 			}
 		}

@@ -13,12 +13,12 @@ defined('_JEXEC') or die;
 $modules = $this->modules;
 
 // Import HTML and Helper Classes
-nimport('NHtml.JavaScript');
-nimport('NHtml.DataTables');
-nimport('NItem.Helper', false);
+// nimport('NHtml.JavaScript');
+// nimport('NHtml.DataTables');
+// nimport('NItem.Helper', false);
 
-NHtmlJavaScript::setAutoRemove();
-NHtmlJavaScript::setToggle('extended', 'toggleExtend');
+NFWHtmlJavascript::setAutoRemove();
+NFWHtmlJavascript::setToggle('extended', 'toggleExtend');
 
 // Load the XiveIRMSystem Session Data (Performed by the XiveIRM System Plugin)
 $xsession = JFactory::getSession()->get('XiveIRMSystem');

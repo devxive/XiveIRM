@@ -14,23 +14,23 @@ defined('_JEXEC') or die;
 // JHtml::_('behavior.formvalidation');
 
 // Import HTML and Helper Classes
-nimport('NHtml.JavaScript');
-nimport('NItem.Helper', false);
-nimport('NUser.Access', false);
-nimport('NPlugins.Sha256');
+// nimport('NHtml.JavaScript');
+// nimport('NItem.Helper', false);
+// nimport('NUser.Access', false);
+// nimport('NPlugins.Sha256');
 
-NHtmlJavaScript::setToggle('extended', 'toggleExtend');
-NHtmlJavaScript::setTextLimit('.limited', 250);
-NHtmlJavaScript::setTextAutosize('.autosize');
-NHtmlJavaScript::setTooltip('.xtooltip');
-NHtmlJavaScript::setPopover('.xpopover');
-NHtmlJavaScript::setPreventFormSubmitByKey();
-NHtmlJavaScript::loadGritter();
-NHtmlJavaScript::loadAlertify();
-NHtmlJavaScript::setPreventFormLeaveIfChanged('#form-contact');
-NHtmlJavaScript::loadEasyPie('.ep-chart', false, false);
-NHtmlJavaScript::loadBootbox('.bootbox');
-NPluginsSHA256::loadSHA256('js.sha256');
+NFWHtmlJavascript::setToggle('extended', 'toggleExtend');
+NFWHtmlJavascript::setTextLimit('.limited', 250);
+NFWHtmlJavascript::setTextAutosize('.autosize');
+NFWHtmlJavascript::setTooltip('.xtooltip');
+NFWHtmlJavascript::setPopover('.xpopover');
+NFWHtmlJavascript::setPreventFormSubmitByKey();
+NFWHtmlJavascript::loadGritter();
+NFWHtmlJavascript::loadAlertify();
+NFWHtmlJavascript::setPreventFormLeaveIfChanged('#form-contact');
+NFWHtmlJavascript::loadEasyPie('.ep-chart', false, false);
+NFWHtmlJavascript::loadBootbox('.bootbox');
+NFWPluginsSHA256::loadSHA256('js.sha256');
 
 //Load admin language file
 $lang = JFactory::getLanguage();
@@ -40,7 +40,7 @@ $lang->load('com_xiveirm', JPATH_ADMINISTRATOR);
 $xsession = JFactory::getSession()->get('XiveIRMSystem');
 
 // Get Permissions
-$permissions = NUserAccess::getPermissions('com_xiveirm', false, false, 'xiveirm_contacts.' . $this->item->id);
+$permissions = NFWUserAccess::getPermissions('com_xiveirm', false, false, 'xiveirm_contacts.' . $this->item->id);
 
 // If it's a new contact and we have set the catid in the prevoius link!
 if(!$this->item->catid) {
@@ -61,9 +61,9 @@ $checkoutParams = array(
 	'checkinTime' => 10,
 	'userlink' => '#'
 );
-$checkedOut = NHtmlJavaScript::getCheckoutMessage($this->item->checked_out, $this->item->checked_out_time, '#checkout-message', $checkoutParams);
+$checkedOut = NFWHtmlJavascript::getCheckoutMessage($this->item->checked_out, $this->item->checked_out_time, '#checkout-message', $checkoutParams);
 
-// used for javascript processed messages
+// used for Javascript processed messages
 $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 ?>
 <!--
@@ -167,18 +167,18 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 							<div class="control-group">
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_FORM_LBL_CONTACT_CATEGORY'); ?></label>
 								<div class="controls controls-row">
-									<?php NHtmlJavaScript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
+									<?php NFWHtmlJavascript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 									<div class="span6">
 										<?php if($this->item->catid && !$this->item->id) { ?>
 											<input type="hidden" name="contacts[catid]" value="<?php echo $this->item->catid; ?>">
-											<a class="btn btn-small btn-warning disabled" disabled="disabled"><i class="icon-double-angle-left"></i> <?php echo NItemHelper::getTitleById('category', $this->item->catid); ?></a>
+											<a class="btn btn-small btn-warning disabled" disabled="disabled"><i class="icon-double-angle-left"></i> <?php echo NFWItemHelper::getTitleById('category', $this->item->catid); ?></a>
 										<?php } else { ?>
 										<select name="contacts[catid]" class="chzn-select-category input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
 											<option value=""></option>
 											<?php
 												$options = IRMSystem::getListOptions('categories', false);
 												if($options->client) {
-													echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
+													echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NFWItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
 														foreach ($options->client as $key => $val) {
 															if($this->item->catid == $key) {
 																echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
@@ -212,7 +212,7 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID_LABEL'); ?></label>
 								<div class="controls controls-row">
 									<input type="text" name="contacts[customer_id]" class="input-control span6" id="prependedInput" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID'); ?>" value="<?php echo $this->item->customer_id; ?>">
-									<?php NHtmlJavaScript::setChosen('.chzn-select-parent', false, array('allow_single_deselect' => true, 'disable_search_threshold' => '10', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
+									<?php NFWHtmlJavascript::setChosen('.chzn-select-parent', false, array('allow_single_deselect' => true, 'disable_search_threshold' => '10', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 									<div class="span6">
 										<select name="contacts[parent_id]" class="chzn-select-parent input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_PARENT'); ?>" required>
 											<?php
@@ -261,14 +261,14 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 									<span class="help-button xpopover" data-trigger="hover" data-placement="top" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_DESC'); ?>" data-original-title="The Gender take over effects!">?</span>
 								</label>
 								<div class="controls controls-row">
-									<?php NHtmlJavaScript::setChosen('.chzn-select-gender', false, array('width' => '100%', 'disable_search' => true)); ?>
+									<?php NFWHtmlJavascript::setChosen('.chzn-select-gender', false, array('width' => '100%', 'disable_search' => true)); ?>
 									<div class="span6">
 										<select name="contacts[gender]" class="chzn-select-gender input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
 											<option value=""><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_SELECT'); ?></option>
 											<?php
 												$options = IRMSystem::getListOptions('options', 'gender');
 												if($options->client) {
-													echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_TRAITS_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
+													echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_TRAITS_SPECIFIC', NFWItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
 														foreach ($options->client as $key => $val) {
 															if($this->item->gender == $key) {
 																echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';

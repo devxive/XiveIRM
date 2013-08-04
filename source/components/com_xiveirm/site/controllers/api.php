@@ -13,8 +13,8 @@ defined('_JEXEC') or die;
 require_once JPATH_COMPONENT.'/controller.php';
 
 // Import HTML and Helper Classes
-nimport('NItem.Helper', false);
-nimport('NUser.Access', false);
+// nimport('NItem.Helper', false);
+// nimport('NUser.Access', false);
 
 /**
  * Api controller class.
@@ -50,7 +50,7 @@ class XiveirmControllerApi extends XiveirmController
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		$data = $this->app->input->get('irmapi', array(), 'array');
-		$return = NItemHelper::checkOut('xiveirm_' . $data['coreapp'], $data['id'], NItemHelper::getDate('MySQL'), JFactory::getUser()->id);
+		$return = NFWItemHelper::checkOut('xiveirm_' . $data['coreapp'], $data['id'], NFWItemHelper::getDate('MySQL'), JFactory::getUser()->id);
 
 		if($return) {
 			$return_arr = array();
@@ -84,7 +84,7 @@ class XiveirmControllerApi extends XiveirmController
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		$data = $this->app->input->get('irmapi', array(), 'array');
-		$return = NItemHelper::checkIn('xiveirm_' . $data['coreapp'], $data['id']);
+		$return = NFWItemHelper::checkIn('xiveirm_' . $data['coreapp'], $data['id']);
 
 		if($return) {
 			$return_arr = array();
@@ -174,7 +174,7 @@ class XiveirmControllerApi extends XiveirmController
 		// Go to models and try to save the contacts datas.
 		// In all cases (new, update), if return isn't false, we got the item row id for further processing the TabApp datas.
 		// Check if the user have the rights to save the data for the contacts by checking the components ACL.
-		$permissionsCore = NUserAccess::getPermissions($coreComponent, false, false, $data->api['tablenamewithoutprefix'] . '.' . $coreId);
+		$permissionsCore = NFWUserAccess::getPermissions($coreComponent, false, false, $data->api['tablenamewithoutprefix'] . '.' . $coreId);
 		if( ($coreId == 0 && $permissionsCore->get('core.create')) || ($coreId > 0 && ($permissionsCore->get('core.edit') || $permissionsCore->get('core.edit.own'))) ) {
 			$return = $model->savecore($data);
 		} else {
@@ -184,8 +184,8 @@ class XiveirmControllerApi extends XiveirmController
 		/**
 		 * Example of doing Permission Checks
 		 * 
-		 * $permissionsCore = NUserAccess::getPermissions('com_xiveirm');
-		 * $permissionsTab = NUserAccess::getPermissions('com_xiveirm', 'tabapp', $tabApp->id);
+		 * $permissionsCore = NFWUserAccess::getPermissions('com_xiveirm');
+		 * $permissionsTab = NFWUserAccess::getPermissions('com_xiveirm', 'tabapp', $tabApp->id);
 		 * 
 		 * $canView		= $this->user->authorise('core.view',		'com_xiveirm.tabapp.2');
 		 * $canCreate		= $this->user->authorise('core.create',		'com_xiveirm');
@@ -212,7 +212,7 @@ class XiveirmControllerApi extends XiveirmController
 				{
 					// Check permissions based on the TabApp config with extra permission if the user can edit its own contact and related tabapps (we use the $coreId in the if core.create condition, to check if we have a new contact and the user is able to create.)
 					// XiveTODO: We should check if it make sense to add a userid (created_by) column in the tabappvalue table
-					$permissionsTab = NUserAccess::getPermissions($coreComponent, 'tabapp', $tabApp->id, $data->api['tablenamewithoutprefix'] . '.' . $return["apiReturnId"]);
+					$permissionsTab = NFWUserAccess::getPermissions($coreComponent, 'tabapp', $tabApp->id, $data->api['tablenamewithoutprefix'] . '.' . $return["apiReturnId"]);
 
 					// Check permissions and save related data in the tabappvalue db table
 					if( $permissionsTab->get('core.edit') || $permissionsTab->get('core.edit.own') ) {
@@ -252,7 +252,7 @@ class XiveirmControllerApi extends XiveirmController
 		}
 
 		// If all done, check in the core item
-		NItemHelper::checkIn($data->api['tablenamewithoutprefix'], $coreId);
+		NFWItemHelper::checkIn($data->api['tablenamewithoutprefix'], $coreId);
 
 		echo json_encode($return);
 
@@ -295,7 +295,7 @@ class XiveirmControllerApi extends XiveirmController
 	function cancel()
 	{
 		$id = JFactory::getApplication()->input->get('id', '', 'INT');
-		$return = NItemHelper::checkIn('xiveirm_contacts', $id);
+		$return = NFWItemHelper::checkIn('xiveirm_contacts', $id);
 
 		$menu = & JSite::getMenu();
 		$item = $menu->getActive();
