@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts` (
 `checked_out` INT(11) NOT NULL DEFAULT '0',
 `checked_out_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 `modified` DATETIME NOT NULL,
+`modified_by` INT(11) NOT NULL,
 `catid` INT(11) NOT NULL COMMENT 'XIRM categories',
 `customer_id` VARCHAR(50) NOT NULL,
 `company` VARCHAR(150) NOT NULL,

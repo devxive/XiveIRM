@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorders` (
 `checked_out` INT(11) NOT NULL DEFAULT '0',
 `checked_out_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 `modified` DATETIME NOT NULL,
+`modified_by` INT(11) NOT NULL,
 `catid` INT(11) NOT NULL COMMENT 'XIRM Transcorder categories',
 `contact_id` INT(11) NOT NULL,
 `order_id` VARCHAR(100) NOT NULL,
