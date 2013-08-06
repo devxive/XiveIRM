@@ -22,19 +22,26 @@ $message = array();
  * TODO: Use the new Class NFWDatabase::save() to perform first a check and then a update/save process based on the settings that will be passed
  */
 if ( !empty($this->tableQueryHelper) ) {
+	// Runs on install
+
+	// Store all database values, collected from each setup file
 	$data = (object) $this->tableQueryHelper;
-	$return = NFWTableData::store( 'Option', 'XiveirmTable', $data);
+	$return = NFWTableData::store( 'Option', 'XiveirmTable', $data );
 	if($return) {
 		$message[] = '<i class="icon-ok"></i> Form - Published option values ... OK';
 	} else {
 		$message[] = '<i class="icon-cancel"></i> Form - Published option values ... FAILED';
 	}
-}
 
-if ( NFWSystemFolder::delete('plugins/system/XiveIRMinstaller') ) {
-	$message[] = '<i class="icon-ok"></i> Removed installation files ... OK';
+	// Delete temporary installer folder
+	if ( NFWSystemFolder::delete('plugins/system/XiveIRMinstaller') == true ) {
+		$message[] = '<i class="icon-ok"></i> Removed installation files ... OK';
+	} else {
+		$message[] = '<i class="icon-cancel"></i> Removed installation files ... FAILED';
+	}
 } else {
-	$message[] = '<i class="icon-cancel"></i> Removed installation files ... FAILED';
+	// Runs on update
+	$message[] = '<i class="icon-ok"></i> Check integrity ... OK';
 }
 
 if (!empty($message)) {
