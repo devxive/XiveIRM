@@ -158,8 +158,58 @@ if ($package['installer']->getInstallType() == 'install') {
 	} else {
 		$message[] = '<i class="icon-cancel"></i> Set parent transport form category ... FAILED';
 	}
+
+
+	/*
+	 * Build the menu items
+	 */
+	// Get the component id
+	$component = 'com_xivetranscorder';
+	$com = JComponentHelper::getComponent($component);
+	$eid = (is_object($com) && isset($com->id)) ? $com->id : 0;
+
+	$menu = array('title' => 'ControlCenter', 'alias' => 'controlcenter', 'link' => '', 'component_id' => 0, 'type' => 'heading', 'params' => '{"menu-anchor_title":"","menu-anchor_css":"icon-desktop"}');
+	$menuId = NFWInstallerHelper::addMenuItem($menu, 'xiveirm');
+	if ( $menu ) {
+		$message[] = '<i class="icon-ok"></i> Add ControlCenter menu ... OK';
+	} else {
+		$message[] = '<i class="icon-cancel"></i> Add ControlCenter menu ... FAILED';
+	}
+
+	$menu = array('parent_id' => $menuId, 'title' => 'Order List', 'alias' => 'order-list', 'link' => 'index.php?option=' . $component . '&view=transcorders', 'component_id' => $eid, 'params' => '{"menu-anchor_title":"","menu-anchor_css":"icon-double-angle-right","menu_image":"","menu_text":0,"page_title":"","show_page_heading":0,"page_heading":"","pageclass_sfx":"","menu-meta_description":"","menu-meta_keywords":"","robots":"","secure":0}');
+	NFWInstallerHelper::addMenuItem($menu, 'xiveirm');
+	if ( $menu ) {
+		$message[] = '<i class="icon-ok"></i> Add Order List menu ... OK';
+	} else {
+		$message[] = '<i class="icon-cancel"></i> Add Order List menu ... FAILED';
+	}
+
+	$menu = array('parent_id' => $menuId, 'title' => 'Despatcher', 'alias' => 'despatcher', 'link' => 'index.php?option=' . $component . '&view=despatcher', 'component_id' => $eid, 'params' => '{"menu-anchor_title":"","menu-anchor_css":"icon-double-angle-right","menu_image":"","menu_text":0,"page_title":"","show_page_heading":0,"page_heading":"","pageclass_sfx":"","menu-meta_description":"","menu-meta_keywords":"","robots":"","secure":0}');
+	NFWInstallerHelper::addMenuItem($menu, 'xiveirm');
+	if ( $menu ) {
+		$message[] = '<i class="icon-ok"></i> Add Despatcher menu ... OK';
+	} else {
+		$message[] = '<i class="icon-cancel"></i> Add Despatcher menu ... FAILED';
+	}
+
+	$menu = array('parent_id' => $menuId, 'title' => 'Templates', 'alias' => 'templates', 'link' => 'index.php?option=' . $component . '&view=templates', 'component_id' => $eid, 'params' => '{"menu-anchor_title":"","menu-anchor_css":"icon-double-angle-right","menu_image":"","menu_text":0,"page_title":"","show_page_heading":0,"page_heading":"","pageclass_sfx":"","menu-meta_description":"","menu-meta_keywords":"","robots":"","secure":0}');
+	NFWInstallerHelper::addMenuItem($menu, 'xiveirm');
+	if ( $menu ) {
+		$message[] = '<i class="icon-ok"></i> Add Templates menu ... OK';
+	} else {
+		$message[] = '<i class="icon-cancel"></i> Add Templates menu ... FAILED';
+	}
+
+	$menu = array('parent_id' => $menuId, 'title' => 'Scheduling', 'alias' => 'scheduling', 'link' => 'index.php?option=' . $component . '&view=scheduling', 'component_id' => $eid, 'params' => '{"menu-anchor_title":"","menu-anchor_css":"icon-double-angle-right","menu_image":"","menu_text":0,"page_title":"","show_page_heading":0,"page_heading":"","pageclass_sfx":"","menu-meta_description":"","menu-meta_keywords":"","robots":"","secure":0}');
+	NFWInstallerHelper::addMenuItem($menu, 'xiveirm');
+	if ( $menu ) {
+		$message[] = '<i class="icon-ok"></i> Add Scheduling menu ... OK';
+	} else {
+		$message[] = '<i class="icon-cancel"></i> Add Scheduling menu ... FAILED';
+	}
 } else {
 	// Runs on update
+	$message[] = '<i class="icon-ok"></i> Check integrity ... OK';
 }
 	
 if (!empty($message)) {

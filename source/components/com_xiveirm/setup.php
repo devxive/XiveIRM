@@ -24,6 +24,17 @@ JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_xiveirm/tables');
 if ($package['installer']->getInstallType() == 'install') {
 	// Runs on install
 
+	// Check if a XiveIRM sidebar menu exist for frontend usage, if not create it. Also create a menu module
+	$checkMenu = NFWDatabase::select( 'menu_types', '*', array('menutype' => 'xiveirm') );
+	if ( isset($checkMenu['status']) && $checkMenu['status'] == false ) {
+		$returnedId = NFWInstallerHelper::addMenuType( array('menutype' => 'xiveirm', 'title' => 'XiveIRM', 'description' => 'XiveIRM Menu'), true );
+	}
+	if( isset($returnedId['status']) && $returnedId['status'] == true ) {
+		$message[] = '<i class="icon-ok"></i> Set XiveIRM Menu Sidebar Module ... OK';
+	} else {
+		$message[] = '<i class="icon-cancel"></i> Set XiveIRM Menu Sidebar Module ... FAILED';
+	}
+
 	/*
 	 * Set the parent category for all categories for the XiveContacts App
 	 */
@@ -82,8 +93,81 @@ if ($package['installer']->getInstallType() == 'install') {
 	} else {
 		$message[] = '<i class="icon-cancel"></i> Set parent contacts category ... FAILED';
 	}
+
+	/*
+	 * Build the menu items
+	 */
+	// Get the component id
+	$component = 'com_xiveirm';
+	$com = JComponentHelper::getComponent($component);
+	$eid = (is_object($com) && isset($com->id)) ? $com->id : 0;
+
+	$menu = array('title' => 'Dashboard', 'alias' => 'dashboard', 'link' => 'index.php?option=' . $component . '&view=dashboard', 'component_id' => $eid, 'params' => '{"menu-anchor_title":"","menu-anchor_css":"icon-dashboard","menu_image":"","menu_text":0,"page_title":"","show_page_heading":0,"page_heading":"","pageclass_sfx":"","menu-meta_description":"","menu-meta_keywords":"","robots":"","secure":0}');
+	NFWInstallerHelper::addMenuItem($menu, 'xiveirm');
+	if ( $menu ) {
+		$message[] = '<i class="icon-ok"></i> Add Dashboard menu ... OK';
+	} else {
+		$message[] = '<i class="icon-cancel"></i> Add Dashboard menu ... FAILED';
+	}
+
+	$menu = array('title' => 'Contacts', 'alias' => 'contacts', 'link' => 'index.php?option=' . $component . '&view=contacts', 'component_id' => $eid, 'params' => '{"menu-anchor_title":"","menu-anchor_css":"icon-group","menu_image":"","menu_text":0,"page_title":"","show_page_heading":0,"page_heading":"","pageclass_sfx":"","menu-meta_description":"","menu-meta_keywords":"","robots":"","secure":0}');
+	NFWInstallerHelper::addMenuItem($menu, 'xiveirm');
+	if ( $menu ) {
+		$message[] = '<i class="icon-ok"></i> Add Contacts menu ... OK';
+	} else {
+		$message[] = '<i class="icon-cancel"></i> Add Contacts menu ... FAILED';
+	}
+
+	$menu = array('title' => 'Maps', 'alias' => 'maps', 'link' => 'index.php?option=' . $component . '&view=maps', 'component_id' => $eid, 'params' => '{"menu-anchor_title":"","menu-anchor_css":"icon-globe","menu_image":"","menu_text":0,"page_title":"","show_page_heading":0,"page_heading":"","pageclass_sfx":"","menu-meta_description":"","menu-meta_keywords":"","robots":"","secure":0}');
+	NFWInstallerHelper::addMenuItem($menu, 'xiveirm');
+	if ( $menu ) {
+		$message[] = '<i class="icon-ok"></i> Add Maps menu ... OK';
+	} else {
+		$message[] = '<i class="icon-cancel"></i> Add Maps menu ... FAILED';
+	}
+
+	$menu = array('title' => 'Toolbox', 'alias' => 'toolbox', 'link' => '', 'component_id' => 0, 'type' => 'heading', 'params' => '{"menu-anchor_title":"","menu-anchor_css":"icon-dashboard"}');
+	$menuId = NFWInstallerHelper::addMenuItem($menu, 'xiveirm');
+	if ( $menu ) {
+		$message[] = '<i class="icon-ok"></i> Add Toolbox menu ... OK';
+	} else {
+		$message[] = '<i class="icon-cancel"></i> Add Toolbox menu ... FAILED';
+	}
+
+	$menu = array('parent_id' => $menuId, 'title' => 'inSearch', 'alias' => 'insearch', 'link' => 'index.php?option=' . $component . '&view=search', 'component_id' => $eid, 'params' => '{"menu-anchor_title":"","menu-anchor_css":"icon-double-angle-right","menu_image":"","menu_text":0,"page_title":"","show_page_heading":0,"page_heading":"","pageclass_sfx":"","menu-meta_description":"","menu-meta_keywords":"","robots":"","secure":0}');
+	NFWInstallerHelper::addMenuItem($menu, 'xiveirm');
+	if ( $menu ) {
+		$message[] = '<i class="icon-ok"></i> Add inSearch menu ... OK';
+	} else {
+		$message[] = '<i class="icon-cancel"></i> Add inSearch menu ... FAILED';
+	}
+
+	$menu = array('parent_id' => $menuId, 'title' => 'Userlist', 'alias' => 'userlist', 'link' => 'index.php?option=' . $component . '&view=userlist', 'component_id' => $eid, 'params' => '{"menu-anchor_title":"","menu-anchor_css":"icon-double-angle-right","menu_image":"","menu_text":0,"page_title":"","show_page_heading":0,"page_heading":"","pageclass_sfx":"","menu-meta_description":"","menu-meta_keywords":"","robots":"","secure":0}');
+	NFWInstallerHelper::addMenuItem($menu, 'xiveirm');
+	if ( $menu ) {
+		$message[] = '<i class="icon-ok"></i> Add Userlist menu ... OK';
+	} else {
+		$message[] = '<i class="icon-cancel"></i> Add Userlist menu ... FAILED';
+	}
+
+	$menu = array('parent_id' => $menuId, 'title' => 'Transportation Safety Board (TSB)', 'alias' => 'transportation-safety-board-tsb', 'link' => 'index.php?option=' . $component . '&view=tsb', 'component_id' => $eid, 'params' => '{"menu-anchor_title":"","menu-anchor_css":"icon-double-angle-right","menu_image":"","menu_text":0,"page_title":"","show_page_heading":0,"page_heading":"","pageclass_sfx":"","menu-meta_description":"","menu-meta_keywords":"","robots":"","secure":0}');
+	NFWInstallerHelper::addMenuItem($menu, 'xiveirm');
+	if ( $menu ) {
+		$message[] = '<i class="icon-ok"></i> Add Transportation Safety Board (TSB) menu ... OK';
+	} else {
+		$message[] = '<i class="icon-cancel"></i> Add Transportation Safety Board (TSB) menu ... FAILED';
+	}
+
+	$menu = array('parent_id' => $menuId, 'title' => 'Interface (API)', 'alias' => 'interface-api', 'link' => 'index.php?option=' . $component . '&view=interface', 'component_id' => $eid, 'params' => '{"menu-anchor_title":"","menu-anchor_css":"icon-double-angle-right","menu_image":"","menu_text":0,"page_title":"","show_page_heading":0,"page_heading":"","pageclass_sfx":"","menu-meta_description":"","menu-meta_keywords":"","robots":"","secure":0}');
+	NFWInstallerHelper::addMenuItem($menu, 'xiveirm');
+	if ( $menu ) {
+		$message[] = '<i class="icon-ok"></i> Add Interface (API) menu ... OK';
+	} else {
+		$message[] = '<i class="icon-cancel"></i> Add Interface (API) menu ... FAILED';
+	}
 } else {
 	// Runs on update
+	$message[] = '<i class="icon-ok"></i> Check integrity ... OK';
 }
 
 if (!empty($message)) {

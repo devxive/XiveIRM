@@ -39,6 +39,8 @@ if ( !empty($this->tableQueryHelper) ) {
 	} else {
 		$message[] = '<i class="icon-cancel"></i> Removed installation files ... FAILED';
 	}
+
+	$message[] = '<i class="icon-warning"></i> You may have to reorder the XiveIRM menu items to get nested menus into force!';
 } else {
 	// Runs on update
 	$message[] = '<i class="icon-ok"></i> Check integrity ... OK';
