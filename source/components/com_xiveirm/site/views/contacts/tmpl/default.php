@@ -462,11 +462,4 @@ function fnFormatDetails ( oTable, nTr )
 
 
 <?php
-		$component = IRMComponentHelper::getConfig('com_xiveirm')->get('parent_app_category');
-		$catId = 423;
-		$categories = JTable::getInstance('Category');
-		$cat = $categories->getTree($catId);
-		echo '<pre>';
-		print_r($component);
-		echo '</pre>';
 ?>
