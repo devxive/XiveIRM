@@ -29,8 +29,23 @@ abstract class IRMComponentHelper
 	 */
 	public function getGlobalClientId()
 	{
-		if($global_client_id = JComponentHelper::getParams('com_xiveirm')->get('global_group')) {
+		if( $global_client_id = JComponentHelper::getParams('com_xiveirm')->get('global_group') ) {
 			return $global_client_id;
+		} else {
+			return false;
+		}
+	}
+
+
+	/*
+	 * Method to get the global viewlevel / accesslevel as set in the component settings
+	 *
+	 * @return		int	Return the global client_id as set in the component settings, else false.
+	 */
+	public function getGlobalViewLvl()
+	{
+		if( $global_viewlevel = JComponentHelper::getParams('com_xiveirm')->get('access') ) {
+			return $global_viewlevel;
 		} else {
 			return false;
 		}
