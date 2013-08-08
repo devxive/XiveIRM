@@ -23,7 +23,7 @@ defined('_NFW_FRAMEWORK') or die();
 class IRMFormList
 {
 	/*
-	 * Method to build a select list for the main category options
+	 * Method to get an array of categories to build a select list for the main category options
 	 *
 	 * @param     string    $app       The name of the component as stored in components folder (com_mycomponent)
 	 *

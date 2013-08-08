@@ -8,15 +8,6 @@
 				default="2"
 				filter="raw" />
 
-			<field name="show_globals" type="list"
-				label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_SHOW_GLOBALS_LBL"
-				description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_SHOW_GLOBALS_DESC"
-				default="1"
-				filter="raw">
-					<option value="1">JYES</option>
-					<option value="0">JNO</option>
-			</field>
-
 			<field name="jobtitle" type="text" size="30" id="jobtitle"
 				label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_LBL"
 				description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_DESC"

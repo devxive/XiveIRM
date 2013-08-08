@@ -35,14 +35,6 @@
 						<option value="0">JDISABLED</option>
 				</field>
 
-				<field name="register-show_globals" type="list" default="2"
-					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_GLOBALCLIENTID_LBL"
-					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_GLOBALCLIENTID_DESC">
-						<option value="2">JOPTION_REQUIRED</option>
-						<option value="1">JOPTION_OPTIONAL</option>
-						<option value="0">JDISABLED</option>
-				</field>
-
 				<field name="register-jobtitle" type="list" default="1"
 					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_DESC"
 					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_LBL">
@@ -61,14 +53,6 @@
 				<field name="profile-client_id" type="list" default="2"
 					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_CLIENTID_LBL"
 					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_CLIENTID_DESC">
-						<option value="2">JOPTION_REQUIRED</option>
-						<option value="1">JOPTION_OPTIONAL</option>
-						<option value="0">JDISABLED</option>
-				</field>
-
-				<field name="profile-show_globals" type="list" default="2"
-					label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_GLOBALCLIENTID_LBL"
-					description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_GLOBALCLIENTID_DESC">
 						<option value="2">JOPTION_REQUIRED</option>
 						<option value="1">JOPTION_OPTIONAL</option>
 						<option value="0">JDISABLED</option>

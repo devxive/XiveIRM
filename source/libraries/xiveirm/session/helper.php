@@ -23,45 +23,12 @@ defined('_NFW_FRAMEWORK') or die();
 class IRMSessionHelper
 {
 	/*
-	 * Method to get access the XiveIRMSystem session
-	 *
-	 * @param     object    $values    If set, only a single value is returned.
-	 *
-	 * @return    mixed                 Return an object with all values from the session or if a value is set, only the value
-	 */
-	public function setValues($values = false)
-	{
-		// Get the session object
-		$session = JFactory::getSession();
-
-		// Check for an existing session object
-		if ( !$session->get('XiveIRMSystem') ) {
-			$sessionHelper = new JObject;
-		} else {
-			$sessionHelper = $session->get('XiveIRMSystem');
-		}
-
-		if ( $values ) {
-			// Inject the values into the sessionHelper object
-			foreach ($values as $key => $value) {
-				$sessionHelper->$key = $value;
-			}
-		} else {
-			return false;
-		}
-
-		// Pull back into the session
-		$session->set('XiveIRMSystem', $sessionHelper);
-
-		return true;
-	}
-
-	/*
 	 * Method to check if the XiveIRMSystem session exist
 	 *
 	 * @param     string    If set, only a single value is returned.
 	 *
 	 * @return    mixed     Return an object with all values from the session or if a value is set, only the value
+	 * TODO: Integrate checks to prevent session highjacking
 	 */
 	public function check()
 	{
@@ -76,6 +43,7 @@ class IRMSessionHelper
 				if ( $user->id == $session->user_id ) {
 					return true;
 				} else {
+					self::error('Potential Session Highjacking detected! Session closed!');
 					return false;
 				}
 			} else {
@@ -85,6 +53,7 @@ class IRMSessionHelper
 			return false;
 		}
 	}
+
 
 	/*
 	 * Method to get access the XiveIRMSystem session
@@ -104,6 +73,36 @@ class IRMSessionHelper
 
 		return $result;
 	}
+
+
+	/*
+	 * Method to save values in the XiveIRMSystem session
+	 *
+	 * @param     object    $values    If set, only a single value is returned.
+	 *
+	 * @return    mixed                 Return an object with all values from the session or if a value is set, only the value
+	 */
+	protected function setValues($values = false)
+	{
+		if ( !$values ) {
+			self::error('Potential Session Highjacking detected! Could not initate session vars => Session closed!');
+		}
+
+		// Get the session object
+		$session = JFactory::getSession();
+
+		$sessionHelper = new JObject;
+
+		// Build the object to store in session
+		foreach ($values as $key => $value) {
+			$sessionHelper->$key = $value;
+		}
+
+		$session->set('XiveIRMSystem', $sessionHelper);
+
+		return true;
+	}
+
 
 	/*
 	 * Method to initialise the XiveIRMSystem session
@@ -153,23 +152,10 @@ class IRMSessionHelper
 			$values[$key] = json_decode($result->profile_value, true);
 		}
 
-		// Check if we have a client_id from the users profile, if not, then use the global client_id as client_id for the user from the component
-		if( !isset($values['client_id']) ) {
-			$values['client_id'] = IRMComponentHelper::getGlobalClientId();
-		}
-
-		// Check if user want to get global list options. If yes, store the global_client_id instead of show_globals because we need the global client id elsewhere , else unset this option
-		if( isset($values['show_globals']) && $values['show_globals'] == 1 ) {
-			$values['global_client_id'] = IRMComponentHelper::getGlobalClientId();
-			unset($values['show_globals']);
-		} else {
-			unset($values['show_globals']);
-		}
-
 		// Override informations if we're in admin
 		if ($app->isAdmin()) {
 			// If we are in admin area we have to check if the logged in user is in the group of the given minimum user group (future version)
-			$values['client_id'] = IRMComponentHelper::getGlobalClientId();
+			$values['client_id'] = 8;
 			$values['jobtitle'] = 'System Administrator';
 		}
 
@@ -186,12 +172,17 @@ class IRMSessionHelper
 	/*
 	 *
 	 */
-	public function error()
+	public function error($msg = false)
 	{
 		// Get the session object
 		$session = JFactory::getSession();
 
-		JError::raiseError( 403, 'You\'re not authorized to work with this system at present. Please check back again later or feel free to contact the support!' );
+		if ( $msg ) {
+			JError::raiseError( 409, $msg );
+		} else {
+			JError::raiseError( 403, 'You\'re not authorized to work with this system at present. Please check back again later or feel free to contact the support!' );
+		}
+
 		$session->destroy();
 		JFactory::getApplication()->close();
 	}

@@ -41,14 +41,6 @@ abstract class IRMAccessHelper
 		// Get the array of users view levels
 		$usersViewLvl = JAccess::getAuthorisedViewLevels($session->user_id);
 
-		// Get the view lvls based on the global usergroup
-		$globalViewLvl = IRMComponentHelper::getGlobalViewLvl();
-
-		// If the user has set the show_globals, we have a global_client_id in the session. If true add the global viewlvl to the users viewlvl
-		if ( isset($session->global_client_id) ) {
-			$usersViewLvl[] = $globalViewLvl;
-		}
-
 		// Sort, kick duplicates and reindex values
 		sort($usersViewLvl);
 		$viewLvls = array_unique($usersViewLvl);
@@ -83,42 +75,6 @@ abstract class IRMAccessHelper
 		$assetName = 'com_xiveirm.category.' . (int) $itemId;
 
 		$actions = JAccess::getActions('com_xiveirm', 'category');
-
-		foreach( $actions as $action ) {
-			$result->set( $action->name, $user->authorise($action->name, $assetName) );
-		}
-
-		return $result;
-	}
-
-
-	/*
-	 * Method to get the global client id as set in the component settings
-	 *
-	 * @param     string    $app       The components name
-	 * @param     string    $type      The type of the action to check for as set in access.xml in components admin folder. [ component|category|tabapp ]
-	 * @param     int       $itemId    The item id, can be eiter a category id or a plugin id
-	 *
-	 * @return    void
-	 */
-	public function getActions($app = 'com_xiveirm', $type = 'category', $itemId = 0)
-	{
-		// Check for itemId
-		if ( $itemId == 0 ) {
-			return false;
-		}
-
-		$user   = JFactory::getUser();
-		$result = new JObject();
-
-		if ( empty($itemId) ) {
-			$assetName = $app;
-		}
-		else {
-			$assetName = $app . '.' . $type . '.' . (int) $itemId;
-		}
-
-		$actions = JAccess::getActions($app, $type);
 
 		foreach( $actions as $action ) {
 			$result->set( $action->name, $user->authorise($action->name, $assetName) );

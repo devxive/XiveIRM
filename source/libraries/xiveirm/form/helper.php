@@ -23,7 +23,7 @@ defined('_NFW_FRAMEWORK') or die();
 class IRMFormHelper
 {
 	/*
-	 * Method to get a list of available categories based on the parent that is set (child categories).
+	 * Method to get a list of available child categories based on the parent id as set in component settings
 	 *
 	 * @param     string    $app       The name of the component as stored in components folder (com_mycomponent)
 	 * @param     string    $parent    If true, the parent item will be included in returned list
@@ -33,11 +33,11 @@ class IRMFormHelper
 	public static function getChildCategories($app, $parent = false)
 	{
 		// Get the category as set in the component settings
-		$parentCategoryId = IRMComponentHelper::getConfig($app)->get('parent_app_category');
+		$parent = IRMComponentHelper::getConfig($app)->get('parent_app_category');
 
 		// Get the child categories
 		$categories = JTable::getInstance('Category');
-		$childrens = $categories->getTree($parentCategoryId);
+		$childrens = $categories->getTree($parent);
 
 		// Unset the parent item and reindex with array_values
 		if ( !$parent ) {

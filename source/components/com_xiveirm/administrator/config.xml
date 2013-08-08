@@ -8,18 +8,6 @@
 			filter="raw">
 				<option value="0">JOPTION_SELECT_CATEGORY</option>
 		</field>
-
-		<field name="global_group" type="usergroup"
-			label="COM_XIVEIRM_SYSTEM_USERGROUP_LBL"
-			description="COM_XIVEIRM_SYSTEM_USERGROUP_DESC"
-			default="2"
-			filter="raw" />
-
-		<field name="access" type="accesslevel"
-			label="COM_XIVEIRM_SYSTEM_ACCESS_LBL"
-			description="COM_XIVEIRM_SYSTEM_ACCESS_DESC"
-			default="2"
-			filter="raw" />
 	</fieldset>
 
 	<fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL">
