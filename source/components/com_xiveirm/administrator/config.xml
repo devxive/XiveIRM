@@ -10,6 +10,16 @@
 		</field>
 	</fieldset>
 
+	<fieldset name="component" label="COM_XIVEIRM_COMPONENT_LABEL" description="COM_XIVEIRM_COMPONENT_DESC">
+		<field name="parent_gender_category" type="category"
+			label="COM_XIVEIRM_SYSTEM_CATEGORY_LBL"
+			description="COM_XIVEIRM_SYSTEM_CATEGORY_DESC"
+			extension="com_xiveirm"
+			filter="raw">
+				<option value="0">JOPTION_SELECT_CATEGORY</option>
+		</field>
+	</fieldset>
+
 	<fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL">
 		<field name="rules" type="rules" class="inputbox"
 			label="JCONFIG_PERMISSIONS_LABEL"
