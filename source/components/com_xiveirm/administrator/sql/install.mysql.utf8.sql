@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts` (
 `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `client_id` INT(11) NOT NULL COMMENT 'usergroup id',
 `parent_id` INT(11) NOT NULL COMMENT 'parent contact id',
+`haschild` TINYINT(1) NOT NULL DEFAULT '0' COMMENT 'Could have child contacts',
 `state` TINYINT(1) NOT NULL DEFAULT '1',
 `created` DATETIME NOT NULL,
 `created_by` INT(11) NOT NULL,
