@@ -20,7 +20,7 @@
 		<action name="core.edit.own" title="JACTION_EDITOWN" description="COM_CATEGORIES_ACCESS_EDITOWN_DESC" />
 	</section>
 
-	<section name="tabapp">
+	<section name="plugin">
 		<action name="core.view" title="JACTION_VIEW" description="JACTION_VIEW_COMPONENT_DESC" />
 		<action name="core.delete" title="JACTION_DELETE" description="JACTION_DELETE_COMPONENT_DESC" />
 		<action name="core.edit" title="JACTION_EDIT" description="JACTION_EDIT_COMPONENT_DESC" />
