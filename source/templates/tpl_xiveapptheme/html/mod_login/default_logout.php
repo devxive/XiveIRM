@@ -9,7 +9,8 @@
 
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.keepalive');
+// JHtml::_('behavior.keepalive');
+
 ?>
 <li class="user-profile no-border margin-1">
 	<a class="user-menu dropdown-toggle" href="#" data-toggle="dropdown">

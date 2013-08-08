@@ -9,8 +9,8 @@
 
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.keepalive');
-JHtml::_('bootstrap.tooltip');
+// JHtml::_('behavior.keepalive');
+// JHtml::_('bootstrap.tooltip');
 
 $usersConfig = JComponentHelper::getParams('com_users');
 ?>
