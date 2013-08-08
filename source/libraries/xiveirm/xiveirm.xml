@@ -12,6 +12,7 @@
 	<description>Shared classes and tools for XiveIRM related components. Do not remove!</description>
 	<files>
 		<folder>access</folder>
+		<folder>app</folder>
 		<folder>component</folder>
 		<folder>form</folder>
 		<folder>html</folder>
