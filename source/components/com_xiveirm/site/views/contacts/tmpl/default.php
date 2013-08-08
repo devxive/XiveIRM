@@ -118,20 +118,11 @@ jQuery(function() {
 								<select name="catid" class="chzn-select-category" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_NEW_CONTACT'); ?>" onchange="this.form.submit()">
 									<option value=""></option>
 									<?php
-										$options = IRMSystem::getListOptions('categories', false);
-										if($options->client) {
-											echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NFWItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
-												foreach ($options->client as $key => $val) {
-													echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-												}
-											echo '</optgroup>';
-										}
-										if($options->global) {
-											echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
-												foreach ($options->global as $key => $val) {
-													echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-												}
-											echo '</optgroup>';
+										$options = IRMFormList::getCategoryOptions('com_xiveirm');
+										if($options) {
+											foreach ($options as $key => $val) {
+												echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+											}
 										}
 									?>
 								</select>
@@ -163,20 +154,11 @@ jQuery(function() {
 									<select name="search_catid" class="chzn-select-category" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" onchange="this.form.submit()">
 										<option value=""></option>
 										<?php
-											$options = IRMSystem::getListOptions('categories', false);
-											if($options->client) {
-												echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NFWItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
-													foreach ($options->client as $key => $val) {
-														echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-													}
-												echo '</optgroup>';
-											}
-											if($options->global) {
-												echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
-													foreach ($options->global as $key => $val) {
-														echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-													}
-												echo '</optgroup>';
+											$options = IRMFormList::getCategoryOptions('com_xiveirm');
+											if($options) {
+												foreach ($options as $key => $val) {
+													echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+												}
 											}
 										?>
 									</select>
@@ -455,11 +437,3 @@ function fnFormatDetails ( oTable, nTr )
 	return sOut;
 }
 </script>
-
-
-<hr>
-
-
-
-<?php
-?>
