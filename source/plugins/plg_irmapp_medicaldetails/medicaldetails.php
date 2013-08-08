@@ -1,7 +1,7 @@
 <?php
 /**
- * @package     XAP.Plugin
- * @subpackage  IRMTabsContact.medicaldetails
+ * @package     IRM.Plugin
+ * @subpackage  IRMApp.medicaldetails
  *
  * @copyright   Copyright (C) 1997 - 2013 devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -12,9 +12,9 @@ defined('JPATH_BASE') or die;
 /**
  * An example custom profile plugin.
  *
- * @package     XAP.Plugin
- * @subpackage  IRMTabsContact.medicaldetails
- * @since       3.0
+ * @package     IRM.Plugin
+ * @subpackage  IRMApp.medicaldetails
+ * @since       6.0
  *
  *
  *
@@ -72,7 +72,7 @@ class PlgIrmAppMedicaldetails extends JPlugin
 	 * This is also used in the controller to know which additional datas (tabs) we have to save.
 	 * Since all form fields are used in one form we have to identify the form fields by using <input name="<?php echo $this->appKey; ?>[FORMNAME]" />
 	 */
-	public function registerApp(&$item = null, &$params = null)
+	public function IRMregisterApp(&$item = null, &$params = null)
 	{
 		return $this->tab_key;
 
