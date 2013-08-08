@@ -214,7 +214,7 @@ if ($package['installer']->getInstallType() == 'install') {
 //	 */
 //	$componentData = array(
 //		'extension_id' => $eid,
-//		'params' => '{"test":"0", "parent_app_category":"' . $parentTransportationsCategoryId . '"}'
+//		'params' => '{"parent_app_category":"' . $parentTransportationsCategoryId . '"}'
 //	);
 //	$setComponentParams = NFWDatabase::save('extensions', $componentData);
 //	DOES NOT WORK AT PRESENT BECAUSE THE SAVE FUNCTION ONLY DETECTS id TO UPDATE AN ITEM !!!!!

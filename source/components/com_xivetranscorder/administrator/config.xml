@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
 	<fieldset name="component" label="COM_XIVETRANSCORDER_COMPONENT_LABEL" description="COM_XIVETRANSCORDER_COMPONENT_DESC">
-		<field name="test" type="radio"
-			label="COM_XIVETRANSCORDER_TEST_LABEL"
-			description="COM_XIVETRANSCORDER_TEST_DESC"
-			default="0">
-				<option value="0">JHIDE</option>
-				<option value="1">JSHOW</option>
-		</field>
-
 		<field name="parent_app_category" type="category"
 			label="COM_XIVEIRM_SYSTEM_CATEGORY_LBL"
 			description="COM_XIVEIRM_SYSTEM_CATEGORY_DESC"
