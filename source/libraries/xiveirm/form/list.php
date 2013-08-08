@@ -88,26 +88,85 @@ class IRMFormList
 	{
 		$list = array();
 
-		// TODO Add a field where to set if this contact could hace childs!
 		$select = array(
 			'id',
 			'customer_id',
 			'first_name',
 			'last_name',
-			'company'
+			'company',
+			'dob'
 		);
-		// TODO add client id(s) to where clause
+		// TODO add client id(s) to where clause // for each client id one new request to build the optgroups
 		$conditions = array(
 			'haschilds' => 1
 		);
-		$values = NFWDatabase::select('xiveirm_options', $select, $conditions);
+		$values = NFWDatabase::select('xiveirm_contacts', $select, $conditions);
+
+		// return false if no results
+		if ( !isset($values[0]) ) {
+			return false;
+		}
 
 		// TODO: preformat the values as id => string ( $string =  1 optgroup per client_id, #customer_id - company - last_name, first_name (birthday) )
 		// Preformat in the IRMHtmlBuilder class similar to client id method
-//		foreach ( $values as $value ) {
-//			$list[$value->opt_value] = JText::_($value->opt_name);
-//		}
-		$list = $values;
+		foreach ( $values as $value ) {
+			$customer_id = isset($value->customer_id) ? $value->customer_id : false;
+			$company     = isset($value->company)     ? $value->company     : false;
+			$last_name   = isset($value->last_name)   ? $value->last_name   : false;
+			$first_name  = isset($value->first_name)  ? $value->first_name  : false;
+			$dob         = isset($value->dob)         ? $value->dob         : false;
+
+			$opt_name = '';
+
+			// Build the placeholder between
+			if ( $company ) {
+				if ( $customer_id ) {
+					$opt_name .= $customer_id . ' - ' . $company;
+				} else {
+					$opt_name .= $company;
+				}
+			} else if ( $last_name && $first_name ) {
+				if ( $customer_id ) {
+					$opt_name .= $customer_id . ' - ';
+				}
+				if ( $dob ) {
+					$opt_name .= $last_name . ', ' . $first_name . ' (*' . $dob . ')';
+				} else {
+					$opt_name .= $last_name . ', ' . $first_name;
+				}
+			} else if ( $last_name ) {
+				if ( $customer_id ) {
+					$opt_name .= $customer_id . ' - ';
+				}
+				if ( $dob ) {
+					$opt_name .= $last_name . ' (*' . $dob . ')';
+				} else {
+					$opt_name .= $last_name;
+				}
+			} else if ( $first_name ) {
+				if ( $customer_id ) {
+					$opt_name .= $customer_id . ' - ';
+				}
+				if ( $dob ) {
+					$opt_name .= $first_name . ' (*' . $dob . ')';
+				} else {
+					$opt_name .= $first_name;
+				}
+			} else {
+				if ( $customer_id ) {
+					$opt_name .= $customer_id . ' - ';
+				}
+				if ( $dob ) {
+					$opt_name .= ' (*' . $dob . ')';
+				} else {
+					$opt_name = false;
+				}
+			}
+
+			if ( $opt_name != false ) {
+				$list[$value->id] = $opt_name;
+			}
+		}
 
 		return $list;
 	}
