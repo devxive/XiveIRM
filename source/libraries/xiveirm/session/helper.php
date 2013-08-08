@@ -20,7 +20,7 @@ defined('_NFW_FRAMEWORK') or die();
 /**
  * Component helper class
  */
-abstract class IRMSessionHelper
+class IRMSessionHelper
 {
 	/*
 	 * Method to get access the XiveIRMSystem session
@@ -57,6 +57,36 @@ abstract class IRMSessionHelper
 	}
 
 	/*
+	 * Method to check if the XiveIRMSystem session exist
+	 *
+	 * @param     string    If set, only a single value is returned.
+	 *
+	 * @return    mixed     Return an object with all values from the session or if a value is set, only the value
+	 */
+	public function check()
+	{
+		// Init vars
+		$session = JFactory::getSession()->get('XiveIRMSystem');
+		$user = JFactory::getUser();
+
+		if( $session ) {
+			// Session exist, check now for a valid user_id in the session
+			if ( $session->user_id > 0 ) {
+				// There is a valid user_id, check now if the session user id is the same as the logged in users id
+				if ( $user->id == $session->user_id ) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	/*
 	 * Method to get access the XiveIRMSystem session
 	 *
 	 * @param     string    If set, only a single value is returned.
@@ -65,20 +95,14 @@ abstract class IRMSessionHelper
 	 */
 	public function getValues()
 	{
-		// Init core vars
-		$user = JFactory::getUser();
-
-		// Check if we have a logged in user and a valid user id to check if we have a valid session or not
-		if( $user->id != 0  && (int) $user->id )
-		{
-			$result = JFactory::getSession()->get('XiveIRMSystem');
-
-			if( !$result ) {
-				return false;
-			}
-
-			return $result;
+		// If check is false then return false
+		if ( !self::check() ) {
+			return false;
 		}
+
+		$result = JFactory::getSession()->get('XiveIRMSystem');
+
+		return $result;
 	}
 
 	/*
@@ -93,8 +117,8 @@ abstract class IRMSessionHelper
 	 */
 	public function init()
 	{
-		// Self check
-		if ( self::getValues() ) {
+		// If check true, return false, because we have a valid session, else fwd to register app and user values
+		if ( self::check() ) {
 			return false;
 		}
 
@@ -108,7 +132,7 @@ abstract class IRMSessionHelper
 
 		// Set the vars based on the user object
 		$values = array(
-			'userId'      => $user->id,
+			'user_id'     => $user->id,
 			'username'    => $user->username,
 			'name'        => $user->name,
 			'email'       => $user->email,
@@ -134,7 +158,7 @@ abstract class IRMSessionHelper
 			$values['client_id'] = IRMComponentHelper::getGlobalClientId();
 		}
 
-		// Check if user want to get global list options. If yes, store the global_client_id, else unset this option
+		// Check if user want to get global list options. If yes, store the global_client_id instead of show_globals because we need the global client id elsewhere , else unset this option
 		if( isset($values['show_globals']) && $values['show_globals'] == 1 ) {
 			$values['global_client_id'] = IRMComponentHelper::getGlobalClientId();
 			unset($values['show_globals']);
@@ -150,7 +174,7 @@ abstract class IRMSessionHelper
 		}
 
 		// Check if we have the minimum required fields and push the final object to session. If not, close the $app with an error message!
-		if ( isset($values['id']) && isset($values['client_id']) ) {
+		if ( isset($values['user_id']) && isset($values['client_id']) ) {
 			self::setValues($values);
 		} else {
 			if ( !$app->isAdmin() && $user->id > 0 ) {
