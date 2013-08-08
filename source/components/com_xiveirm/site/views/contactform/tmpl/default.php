@@ -466,11 +466,8 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 
 				<input type="hidden" name="contacts[id]" id="customer_cid" value="<?php echo isset($this->item->id) ? $this->item->id : '0'; ?>" />
 
-				<?php if(empty($this->item->client_id)){ ?>
-					<input type="hidden" name="contacts[client_id]" value="<?php echo $xsession->client_id; ?>" maxlength="50" />
-				<?php } else { ?>
-					<input type="hidden" name="contacts[client_id]" value="<?php echo $this->item->client_id; ?>" maxlength="50" />
-				<?php } ?>
+				<?php echo IRMHtmlBuilder::getClientId($this->item->client_id, $options = array('name' => 'contacts[client_id]')); ?>
+
 				<input type="hidden" name="contacts[state]" value="<?php echo $this->item->state; ?>" />
 				<input type="hidden" id="checkEditForm" name="checkEditForm" value="0" />
 				<input type="hidden" name="irmapi[coreapp]" value="contacts" />
