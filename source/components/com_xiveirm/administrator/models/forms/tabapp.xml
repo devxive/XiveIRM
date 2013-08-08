@@ -15,14 +15,12 @@
 		<field name="plugin" type="sql" class="inputbox"
 			label="COM_XIVEIRM_FORM_LBL_TABAPP_PLUGIN"
 			description="COM_XIVEIRM_FORM_DESC_TABAPP_PLUGIN"
-			query="SELECT element, name FROM #__extensions WHERE folder LIKE 'irmtabs%' OR folder LIKE 'irmwidgets%'"
+			query="SELECT element, name FROM #__extensions WHERE folder = 'irmapp'"
 			key_field="element" value_field="name" />
 
-		<field name="folder" type="sql" class="inputbox"
+		<field name="folder" type="text" class="inputbox disabled" disabled="disabled"
 			label="Plugin Folder"
-			description="COM_XIVEIRM_FORM_DESC_TABAPP_PLUGIN"
-			query="SELECT folder FROM #__extensions WHERE folder LIKE 'irmtabs%' OR folder LIKE 'irmwidgets%'"
-			key_field="folder" value_field="folder" />
+			description="COM_XIVEIRM_FORM_DESC_TABAPP_PLUGIN" />
 
 		<field name="catid" type="category"
 			label="COM_XIVEIRM_FORM_LBL_TABAPP_CATEGORY"
