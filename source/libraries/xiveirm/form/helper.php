@@ -25,12 +25,12 @@ class IRMFormHelper
 	/*
 	 * Method to get a list of available child categories based on the parent id as set in component settings
 	 *
-	 * @param     string    $app       The name of the component as stored in components folder (com_mycomponent)
-	 * @param     string    $parent    If true, the parent item will be included in returned list
+	 * @param     string    $app           The name of the component as stored in components folder (com_mycomponent)
+	 * @param     string    $showParent    If true, the parent item will be included in returned list
 	 *
-	 * @return    object               This will return an object with categories which are plugins related to. Eg. for XiveContacts => Contact Types; XiveTranscorder => Transportation Types
+	 * @return    object                   This will return an object with categories which are plugins related to. Eg. for XiveContacts => Contact Types; XiveTranscorder => Transportation Types
 	 */
-	public static function getChildCategories($app, $parent = false)
+	public static function getChildCategories($app, $showParent = false)
 	{
 		// Get the category as set in the component settings
 		$parent = IRMComponentHelper::getConfig($app)->get('parent_app_category');
@@ -40,7 +40,7 @@ class IRMFormHelper
 		$childrens = $categories->getTree($parent);
 
 		// Unset the parent item and reindex with array_values
-		if ( !$parent ) {
+		if ( !$showParent ) {
 			unset($childrens[0]);
 			array_values($childrens);
 		}
