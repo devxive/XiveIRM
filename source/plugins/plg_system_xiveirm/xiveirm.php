@@ -56,4 +56,10 @@ class PlgSystemXiveIrm extends JPlugin
 		// Initialise the XiveIRM Session
 		IRMSessionHelper::init();
 	}
+
+	public function onBeforeCompileHead()
+	{
+		// Remove JUI stuff for frontend
+		NFWHtml::removeJUI(true, false);
+	}
 }
