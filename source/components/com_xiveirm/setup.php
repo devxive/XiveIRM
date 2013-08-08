@@ -25,14 +25,15 @@ if ($package['installer']->getInstallType() == 'install') {
 	// Runs on install
 
 	// Check if a XiveIRM sidebar menu exist for frontend usage, if not create it. Also create a menu module
-	$checkMenu = NFWDatabase::select( 'menu_types', '*', array('menutype' => 'xiveirm') );
-	if ( isset($checkMenu['status']) && $checkMenu['status'] == false ) {
-		$returnedId = NFWInstallerHelper::addMenuType( array('menutype' => 'xiveirm', 'title' => 'XiveIRM', 'description' => 'XiveIRM Menu'), true );
-	}
-	if( isset($returnedId['status']) && $returnedId['status'] == true ) {
-		$message[] = '<i class="icon-ok"></i> Set XiveIRM Menu Sidebar Module ... OK';
-	} else {
-		$message[] = '<i class="icon-cancel"></i> Set XiveIRM Menu Sidebar Module ... FAILED';
+	$checkMenu = NFWDatabase::select( 'menu_types', '*', array('menutype' => 'xiveirm5') );
+	if ( !isset($checkMenu['id']) ) {
+		$returnedId = NFWInstallerHelper::addMenuType( array('menutype' => 'xiveirm5', 'title' => 'XiveIRM', 'description' => 'XiveIRM Menu'), true );
+
+		if( $returnedId ) {
+			$message[] = '<i class="icon-ok"></i> Set XiveIRM Menu Sidebar Module ... OK';
+		} else {
+			$message[] = '<i class="icon-cancel"></i> Set XiveIRM Menu Sidebar Module ... FAILED';
+		}
 	}
 
 	/*
@@ -78,6 +79,7 @@ if ($package['installer']->getInstallType() == 'install') {
 		// Kunde
 		$cc1 = NFWTableCategory::store(array('extension' => 'com_xiveirm','title' => 'COM_XIVEIRM_CATEGORY_XIVECONTACTS_CONTACTS_CUSTOMER', 'alias' => 'contacts-customer', 'access' => 2, 'language' => '*', 'parent_id' => $contactsCategoryId));
 		// Lieferant
+
 		$cc2 = NFWTableCategory::store(array('extension' => 'com_xiveirm','title' => 'COM_XIVEIRM_CATEGORY_XIVECONTACTS_CONTACTS_SUPPLIER', 'alias' => 'contacts-supplier', 'access' => 2, 'language' => '*', 'parent_id' => $contactsCategoryId));
 		// Subunternehmer
 		$cc3 = NFWTableCategory::store(array('extension' => 'com_xiveirm','title' => 'COM_XIVEIRM_CATEGORY_XIVECONTACTS_CONTACTS_SUBCONTRACTOR', 'alias' => 'contacts-subcontractor', 'access' => 2, 'language' => '*', 'parent_id' => $contactsCategoryId));
@@ -165,6 +167,17 @@ if ($package['installer']->getInstallType() == 'install') {
 	} else {
 		$message[] = '<i class="icon-cancel"></i> Add Interface (API) menu ... FAILED';
 	}
+
+
+//	/*
+//	 * Set the component settings in database
+//	 */
+//	$componentData = array(
+//		'extension_id' => $eid,
+//		'params' => '{"test":"0", "parent_app_category":"' . $contactsCategoryId . '"}'
+//	);
+//	$setComponentParams = NFWDatabase::save('extensions', $componentData);
+//	DOES NOT WORK AT PRESENT BECAUSE THE SAVE FUNCTION ONLY DETECTS id TO UPDATE AN ITEM !!!!!
 } else {
 	// Runs on update
 	$message[] = '<i class="icon-ok"></i> Check integrity ... OK';

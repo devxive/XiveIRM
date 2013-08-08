@@ -207,6 +207,17 @@ if ($package['installer']->getInstallType() == 'install') {
 	} else {
 		$message[] = '<i class="icon-cancel"></i> Add Scheduling menu ... FAILED';
 	}
+
+
+//	/*
+//	 * Set the component settings in database
+//	 */
+//	$componentData = array(
+//		'extension_id' => $eid,
+//		'params' => '{"test":"0", "parent_app_category":"' . $parentTransportationsCategoryId . '"}'
+//	);
+//	$setComponentParams = NFWDatabase::save('extensions', $componentData);
+//	DOES NOT WORK AT PRESENT BECAUSE THE SAVE FUNCTION ONLY DETECTS id TO UPDATE AN ITEM !!!!!
 } else {
 	// Runs on update
 	$message[] = '<i class="icon-ok"></i> Check integrity ... OK';
