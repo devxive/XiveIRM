@@ -93,14 +93,6 @@ class PlgUserXiveIrmClientProfile extends JPlugin
 			JForm::addFormPath(dirname(__FILE__).'/profiles');
 			$form->loadFile('profile', false);
 
-			// Toggle whether the usergroup (client id) field is required.
-			if ($this->params->get('profile-client_id', 1) > 0)
-			{
-				$form->setFieldAttribute('client_id', 'required', $this->params->get('profile-client_id') == 2, 'xiveirmclientprofile');
-			} else {
-				$form->removeField('client_id', 'xiveirmclientprofile');
-			}
-
 			// Toggle whether the jobtitle field is required.
 			if ($this->params->get('profile-jobtitle', 1) > 0)
 			{
@@ -116,14 +108,6 @@ class PlgUserXiveIrmClientProfile extends JPlugin
 			// Add the registration fields to the form.
 			JForm::addFormPath(dirname(__FILE__).'/profiles');
 			$form->loadFile('profile', false);
-
-			// Toggle whether the usergroup (client id) field is required.
-			if ($this->params->get('register-client_id', 1) > 0)
-			{
-				$form->setFieldAttribute('client_id', 'required', $this->params->get('register-client_id') == 2, 'xiveirmclientprofile');
-			} else {
-				$form->removeField('client_id', 'xiveirmclientprofile');
-			}
 
 			// Toggle whether the jobtitle field is required.
 			if ($this->params->get('register-jobtitle', 1) > 0)

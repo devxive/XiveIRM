@@ -2,12 +2,6 @@
 <form>
 	<fields name="xiveirmclientprofile">
 		<fieldset name="xiveirmclientprofile" label="PLG_USER_XIVEIRMCLIENTPROFILE_SLIDER_LBL" >
-			<field name="client_id" type="usergroup"
-				label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_CLIENTID_LBL"
-				description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_CLIENTID_DESC"
-				default="2"
-				filter="raw" />
-
 			<field name="jobtitle" type="text" size="30" id="jobtitle"
 				label="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_LBL"
 				description="PLG_USER_XIVEIRMCLIENTPROFILE_FIELD_JOBTITLE_DESC"
