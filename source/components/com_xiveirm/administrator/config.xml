@@ -8,9 +8,6 @@
 			filter="raw">
 				<option value="0">JOPTION_SELECT_CATEGORY</option>
 		</field>
-	</fieldset>
-
-	<fieldset name="component" label="COM_XIVEIRM_COMPONENT_LABEL" description="COM_XIVEIRM_COMPONENT_DESC">
 		<field name="parent_gender_category" type="category"
 			label="COM_XIVEIRM_SYSTEM_CATEGORY_LBL"
 			description="COM_XIVEIRM_SYSTEM_CATEGORY_DESC"
