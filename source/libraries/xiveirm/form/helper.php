@@ -20,23 +20,33 @@ defined('_NFW_FRAMEWORK') or die();
 /**
  * Component helper class
  */
-abstract class IRMFormHelper
+class IRMFormHelper
 {
 	/*
-	 * Method to get a list of available categories based on the parent that is set.
+	 * Method to get a list of available categories based on the parent that is set (child categories).
 	 *
-	 * @param     string    The name of the component as stored in components folder (com_mycomponent)
+	 * @param     string    $app       The name of the component as stored in components folder (com_mycomponent)
+	 * @param     string    $parent    If true, the parent item will be included in returned list
 	 *
-	 * @return    object    This will return an object with categories which are plugins related to. Eg. for XiveContacts => Contact Types; XiveTranscorder => Transportation Types
+	 * @return    object               This will return an object with categories which are plugins related to. Eg. for XiveContacts => Contact Types; XiveTranscorder => Transportation Types
 	 */
-	public function getContactCategoryList($app)
+	public static function getChildCategories($app, $parent = false)
 	{
-		// Get an object with all contact categories
+		// Get the category as set in the component settings
 		$parentCategoryId = IRMComponentHelper::getConfig($app)->get('parent_app_category');
+
+		// Get the child categories
 		$categories = JTable::getInstance('Category');
 		$childrens = $categories->getTree($parentCategoryId);
 
-		// Bis hierhin habe ich jetzt schonmal die grunddaten!
+		// Unset the parent item and reindex with array_values
+		if ( !$parent ) {
+			unset($childrens[0]);
+			array_values($childrens);
+		}
+
+		return $childrens;
+	}
 
 
 	/*
@@ -45,7 +55,7 @@ abstract class IRMFormHelper
 	 * $table without prefix, category alias for the join left clause, client id (based on users usergroup and the xiveirm options where we declare which is the global group)
 	 * the alias could also be a client_id id we want to get all contacts related to the client which is logged on. in this case alias have to be an integer
 	 */
-	public function getListOptions($ext, $alias = null, $app = 'com_xiveirm')
+	public static function getListOptions($ext, $alias = null, $app = 'com_xiveirm')
 	{
 		// Create a new query object.
 		$db = JFactory::getDbo();
@@ -228,24 +238,5 @@ abstract class IRMFormHelper
 		} else {
 			return JFactory::getApplication()->enqueueMessage('You have an error in your syntax', 'error');;
 		}
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	}
 }
