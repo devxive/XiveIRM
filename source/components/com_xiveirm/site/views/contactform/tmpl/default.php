@@ -9,16 +9,6 @@
 // no direct access
 defined('_JEXEC') or die;
 
-// JHtml::_('behavior.keepalive');
-// JHtml::_('behavior.tooltip');
-// JHtml::_('behavior.formvalidation');
-
-// Import HTML and Helper Classes
-// nimport('NHtml.JavaScript');
-// nimport('NItem.Helper', false);
-// nimport('NUser.Access', false);
-// nimport('NPlugins.Sha256');
-
 NFWHtmlJavascript::setToggle('extended', 'toggleExtend');
 NFWHtmlJavascript::setTextLimit('.limited', 250);
 NFWHtmlJavascript::setTextAutosize('.autosize');
@@ -30,25 +20,31 @@ NFWHtmlJavascript::loadAlertify();
 NFWHtmlJavascript::setPreventFormLeaveIfChanged('#form-contact');
 NFWHtmlJavascript::loadEasyPie('.ep-chart', false, false);
 NFWHtmlJavascript::loadBootbox('.bootbox');
-NFWPluginsSHA256::loadSHA256('js.sha256');
+// NFWPluginsSHA256::loadSHA256('js.sha256');
 
 //Load admin language file
 $lang = JFactory::getLanguage();
 $lang->load('com_xiveirm', JPATH_ADMINISTRATOR);
 
-// Load the XiveIRMSystem Session Data (Performed by the XiveIRM System Plugin)
-$xsession = JFactory::getSession()->get('XiveIRMSystem');
-
-// Get Permissions
-$permissions = NFWUserAccess::getPermissions('com_xiveirm', false, false, 'xiveirm_contacts.' . $this->item->id);
+// Load the XiveIRMSystem Session Data
+$session = IRMSessionHelper::getValues();
 
 // If it's a new contact and we have set the catid in the prevoius link!
 if(!$this->item->catid) {
 	$this->item->catid = JFactory::getApplication()->getUserState('com_xiveirm.edit.contact.catid');
 }
 
+// Get Permissions based on category
+if ( !$this->item->catid ) {
+	// We have no category id and use the components acl
+	$acl = NFWAccessHelper::getActions('com_xiveirm');
+} else {
+	// We have a category id and use the category acl
+	$acl = NFWAccessHelper::getActions('com_xiveirm', 'category', $this->item->catid);
+}
+
 // Import all TabApps based on the XiveIRM TabApp configs and the related catid!
-IRMSystem::getPlugins($this->item->catid, 'contacts');
+// IRMSystem::getPlugins($this->item->catid, 'contacts');
 $dispatcher = JDispatcher::getInstance();
 
 // Check for checked out item
@@ -66,38 +62,6 @@ $checkedOut = NFWHtmlJavascript::getCheckoutMessage($this->item->checked_out, $t
 // used for Javascript processed messages
 $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 ?>
-<!--
-<script type="text/javascript">
-	function getScript(url,success) {
-		var script = document.createElement('script');
-		script.src = url;
-		var head = document.getElementsByTagName('head')[0],
-			done = false;
-
-		// Attach handlers for all browsers
-		script.onload = script.onreadystatechange = function() {
-			if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete'))
-			{
-				done = true;
-				success();
-				script.onload = script.onreadystatechange = null;
-				head.removeChild(script);
-			}
-		};
-
-		head.appendChild(script);
-	}
-
-	getScript('//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',function() {
-		js = jQuery.noConflict();
-		js(document).ready(function(){
-			js('#form-contact').submit(function(event){
-			});
-
-		});
-	});
-</script>
--->
 <div class="row-fluid">
 	<!-- ---------- ---------- ---------- ---------- ---------- BEGIN PAGE HEADER ---------- ---------- ---------- ---------- ---------- -->
 
@@ -113,7 +77,7 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 			</span>
 			<span class="span5">
 				<div class="btn-group pull-right inline">
-					<?php if( ($this->item->id && $checkedOut['by'] != 'other') && ($permissions->get('core.edit') || $permissions->get('core.edit.own')) ): ?>
+					<?php if( ($this->item->id && $checkedOut['by'] != 'other') && ($acl->get('core.edit') || $acl->get('core.edit.own')) ): ?>
 						<a onClick="enableEdit()" id="loading-btn-edit" data-loading-text="<?php echo JText::_('COM_XIVEIRM_API_PLEASE_WAIT_BUTTON'); ?>" data-error-text="<?php echo JText::_('COM_XIVEIRM_API_ERROR_TRY_AGAIN_BUTTON'); ?>" class="btn btn-warning btn-mini edit-form-button"><i class="icon-edit"></i> <?php echo JText::_('COM_XIVEIRM_EDIT_ITEM'); ?></a>
 					<?php endif; ?>
 					<?php if($checkedOut['by'] == 'other'): ?>
@@ -176,28 +140,11 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 										<select name="contacts[catid]" class="chzn-select-category input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
 											<option value=""></option>
 											<?php
-												$options = IRMSystem::getListOptions('categories', false);
-												if($options->client) {
-													echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NFWItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
-														foreach ($options->client as $key => $val) {
-															if($this->item->catid == $key) {
-																echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
-															} else {
-																echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-															}
-														}
-													echo '</optgroup>';
-												}
-												if($options->global) {
-													echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
-														foreach ($options->global as $key => $val) {
-															if($this->item->catid == $key) {
-																echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
-															} else {
-																echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-															}
-														}
-													echo '</optgroup>';
+												$options = IRMFormList::getCategoryOptions('com_xiveirm');
+												if($options) {
+													foreach ($options as $key => $val) {
+														echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+													}
 												}
 											?>
 										</select>
@@ -220,24 +167,24 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 													echo '<option value="0" selected>' . JText::_('COM_XIVEIRM_SELECT_NO_PARENT') . '</option>';
 												}
 
-												$options_parent_id = IRMSystem::getListOptions('parents', $xsession->client_id);
-												foreach($options_parent_id->categories as $catid => $name) {
-													echo '<optgroup label="' . $name . '">';
-														foreach($options_parent_id->contacts as $contactgroupid => $contactgroup) {
-															if($catid == $contactgroupid) {
-																foreach($contactgroup as $contact) {
-																	if($this->item->parent_id == $contact['id']) {
-																		echo '<option value="' . $contact['id'] . '" selected>#' . $contact['customer_id'] . ' - ' . $contact['company'] . ' ( ' . $contact['last_name'] . ', ' . $contact['first_name'] . ' )</option>';
-																	} else {
-																		echo '<option value="' . $contact['id'] . '">#' . $contact['customer_id'] . ' - ' . $contact['company'] . ' ( ' . $contact['last_name'] . ', ' . $contact['first_name'] . ' )</option>';
-																	}
-																}
-																unset($options_parent_id->contacts[$contactgroupid]);
-															}
-														}
-													echo '</optgroup>';
-												}
-												unset($options_parent_id->categories, $options_parent_id->contacts);
+//												$options_parent_id = IRMSystem::getListOptions('parents', $xsession->client_id);
+//												foreach($options_parent_id->categories as $catid => $name) {
+//													echo '<optgroup label="' . $name . '">';
+//														foreach($options_parent_id->contacts as $contactgroupid => $contactgroup) {
+//															if($catid == $contactgroupid) {
+//																foreach($contactgroup as $contact) {
+//																	if($this->item->parent_id == $contact['id']) {
+//																		echo '<option value="' . $contact['id'] . '" selected>#' . $contact['customer_id'] . ' - ' . $contact['company'] . ' ( ' . $contact['last_name'] . ', ' . $contact['first_name'] . ' )</option>';
+//																	} else {
+//																		echo '<option value="' . $contact['id'] . '">#' . $contact['customer_id'] . ' - ' . $contact['company'] . ' ( ' . $contact['last_name'] . ', ' . $contact['first_name'] . ' )</option>';
+//																	}
+//																}
+//																unset($options_parent_id->contacts[$contactgroupid]);
+//															}
+//														}
+//													echo '</optgroup>';
+//												}
+//												unset($options_parent_id->categories, $options_parent_id->contacts);
 											?>
 										</select>
 									</div>
@@ -266,28 +213,13 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 										<select name="contacts[gender]" class="chzn-select-gender input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
 											<option value=""><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_SELECT'); ?></option>
 											<?php
-												$options = IRMSystem::getListOptions('options', 'gender');
-												if($options->client) {
-													echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_TRAITS_SPECIFIC', NFWItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
-														foreach ($options->client as $key => $val) {
-															if($this->item->gender == $key) {
-																echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
-															} else {
-																echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-															}
-														}
-													echo '</optgroup>';
-												}
-												if($options->global) {
-													echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
-														foreach ($options->global as $key => $val) {
-															if($this->item->gender == $key) {
-																echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
-															} else {
-																echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-															}
-														}
-													echo '</optgroup>';
+												$options = IRMFormList::getGenderOptions();
+												foreach ($options as $key => $val) {
+													if($this->item->gender == $key) {
+														echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
+													} else {
+														echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+													}
 												}
 											?>
 										</select>
