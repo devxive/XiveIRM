@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts` (
 `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `client_id` INT(11) NOT NULL COMMENT 'usergroup id',
-`parent_id` INT(11) NOT NULL COMMENT 'parent contact id',
+`parent_id` INT(11) NOT NULL COMMENT 'parent contacts id',
 `haschilds` TINYINT(1) NOT NULL DEFAULT '0' COMMENT 'Could have child contacts',
 `state` TINYINT(1) NOT NULL DEFAULT '1',
 `created` DATETIME NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts` (
 `first_name` VARCHAR(150) NOT NULL,
 `gender` VARCHAR(150) NOT NULL COMMENT 'VARCHAR 150 based on opt_value in option table',
 `dob` DATE NOT NULL DEFAULT '0000-00-00',
-`poi_id` INT(11) NOT NULL DEFAULT '0' COMMENT 'Additional XiveIRM Contact Id',
+`poi_id` INT(11) NOT NULL DEFAULT '0' COMMENT 'Additional XiveIRM Contacts Id',
 `address_name` VARCHAR(150) NOT NULL,
 `address_name_add` VARCHAR(100) NOT NULL,
 `address_street` VARCHAR(100) NOT NULL,
@@ -40,12 +40,12 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts` (
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci;
 
-CREATE TABLE IF NOT EXISTS `#__xiveirm_contact_tabappvalues` (
-`contact_id` INT(11)  NOT NULL COMMENT '#__contacts id',
+CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts_appvalues` (
+`contacts_id` INT(11)  NOT NULL COMMENT '#__contacts id',
 `tab_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
 `tab_value` MEDIUMTEXT NOT NULL,
-UNIQUE KEY `idx_contact_id_tab_key` (`contact_id`,`tab_key`)
-) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex contact data storage table';
+UNIQUE KEY `idx_contacts_id_tab_key` (`contacts_id`,`tab_key`)
+) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex contacts data storage table';
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_options` (
 `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,

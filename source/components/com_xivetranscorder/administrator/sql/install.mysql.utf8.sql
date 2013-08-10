@@ -45,30 +45,30 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorders` (
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci;
 
-CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorder_tabappvalues` (
-`transcorder_id` INT(11) NOT NULL COMMENT '#__transcorders id',
+CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorders_appvalues` (
+`transcorders_id` INT(11) NOT NULL COMMENT '#__transcorders id',
 `tab_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
 `tab_value` MEDIUMTEXT NOT NULL,
-UNIQUE KEY `idx_transcorder_id_tab_key` (`transcorder_id`,`tab_key`)
-) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex transcorder data storage table';
+UNIQUE KEY `idx_transcorders_id_tab_key` (`transcorders_id`,`tab_key`)
+) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex transcorders data storage table';
 
-CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorder_billings` (
-`transcorder_id` INT(11) NOT NULL COMMENT '#__transcorders id',
+CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorders_billings` (
+`transcorders_id` INT(11) NOT NULL COMMENT '#__transcorders id',
 `tab_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
 `tab_value` MEDIUMTEXT NOT NULL,
-UNIQUE KEY `idx_transcorder_id_tab_key` (`transcorder_id`,`tab_key`)
-) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex transcorder data storage table';
+UNIQUE KEY `idx_transcorders_id_tab_key` (`transcorders_id`,`tab_key`)
+) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex transcorders data storage table';
 
-CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorder_statistics` (
-`transcorder_id` INT(11) NOT NULL COMMENT '#__transcorders id',
+CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorders_statistics` (
+`transcorders_id` INT(11) NOT NULL COMMENT '#__transcorders id',
 `tab_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
 `tab_value` MEDIUMTEXT NOT NULL,
-UNIQUE KEY `idx_transcorder_id_tab_key` (`transcorder_id`,`tab_key`)
-) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex transcorder data storage table';
+UNIQUE KEY `idx_transcorders_id_tab_key` (`transcorders_id`,`tab_key`)
+) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex transcorders data storage table';
 
-CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorder_revisions` (
-`transcorder_id` INT(11) NOT NULL COMMENT '#__transcorders id',
+CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorders_revisions` (
+`transcorders_id` INT(11) NOT NULL COMMENT '#__transcorders id',
 `tab_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
 `tab_value` MEDIUMTEXT NOT NULL,
-UNIQUE KEY `idx_transcorder_id_tab_key` (`transcorder_id`,`tab_key`)
-) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex transcorder data storage table';
+UNIQUE KEY `idx_transcorders_id_tab_key` (`transcorders_id`,`tab_key`)
+) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex transcorders data storage table';
