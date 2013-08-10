@@ -12,15 +12,15 @@ defined('_JEXEC') or die;
 NFWHtmlJavascript::setToggle('extended', 'toggleExtend');
 NFWHtmlJavascript::setTextLimit('.limited', 250);
 NFWHtmlJavascript::setTextAutosize('.autosize');
-NFWHtmlJavascript::setTooltip('.xtooltip');
-NFWHtmlJavascript::setPopover('.xpopover');
+NFWHtmlJavascript::setTooltip( '.xtooltip' );
+NFWHtmlJavascript::setPopover( '.xpopover', array('html' => true) );
 NFWHtmlJavascript::setPreventFormSubmitByKey();
 NFWHtmlJavascript::loadGritter();
 NFWHtmlJavascript::loadAlertify();
 NFWHtmlJavascript::setPreventFormLeaveIfChanged('#form-contact');
 NFWHtmlJavascript::loadEasyPie('.ep-chart', false, false);
 NFWHtmlJavascript::loadBootbox('.bootbox');
-// NFWPluginsSHA256::loadSHA256('js.sha256');
+NFWPluginsSha256::loadSHA256('js.sha256');
 
 //Load admin language file
 $lang = JFactory::getLanguage();
@@ -44,7 +44,7 @@ if ( !$this->item->catid ) {
 }
 
 // Import all TabApps based on the XiveIRM TabApp configs and the related catid!
-// IRMSystem::getPlugins($this->item->catid, 'contacts');
+IRMAppHelper::importPlugins('com_xiveirm', $this->item->catid);
 $dispatcher = JDispatcher::getInstance();
 
 // Check for checked out item
@@ -61,6 +61,10 @@ $checkedOut = NFWHtmlJavascript::getCheckoutMessage($this->item->checked_out, $t
 
 // used for Javascript processed messages
 $full_name = $this->item->first_name . ' ' . $this->item->last_name;
+
+// Count loaded apps
+$appCounter = count( IRMAppHelper::getRegistered() );
+
 ?>
 <div class="row-fluid">
 	<!-- ---------- ---------- ---------- ---------- ---------- BEGIN PAGE HEADER ---------- ---------- ---------- ---------- ---------- -->
@@ -161,30 +165,18 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 									<input type="text" name="contacts[customer_id]" class="input-control span6" id="prependedInput" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID'); ?>" value="<?php echo $this->item->customer_id; ?>">
 									<?php NFWHtmlJavascript::setChosen('.chzn-select-parent', false, array('allow_single_deselect' => true, 'disable_search_threshold' => '10', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 									<div class="span6">
-										<select name="contacts[parent_id]" class="chzn-select-parent input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_PARENT'); ?>" required>
+										<select name="contacts[parent_id]" class="chzn-select-parent input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_PARENT'); ?>">
 											<?php
-												if(!$this->item->parent_id) {
-													echo '<option value="0" selected>' . JText::_('COM_XIVEIRM_SELECT_NO_PARENT') . '</option>';
-												}
+												echo '<option value="" selected>' . JText::_('COM_XIVEIRM_SELECT_NO_PARENT') . '</option>';
 
-//												$options_parent_id = IRMSystem::getListOptions('parents', $xsession->client_id);
-//												foreach($options_parent_id->categories as $catid => $name) {
-//													echo '<optgroup label="' . $name . '">';
-//														foreach($options_parent_id->contacts as $contactgroupid => $contactgroup) {
-//															if($catid == $contactgroupid) {
-//																foreach($contactgroup as $contact) {
-//																	if($this->item->parent_id == $contact['id']) {
-//																		echo '<option value="' . $contact['id'] . '" selected>#' . $contact['customer_id'] . ' - ' . $contact['company'] . ' ( ' . $contact['last_name'] . ', ' . $contact['first_name'] . ' )</option>';
-//																	} else {
-//																		echo '<option value="' . $contact['id'] . '">#' . $contact['customer_id'] . ' - ' . $contact['company'] . ' ( ' . $contact['last_name'] . ', ' . $contact['first_name'] . ' )</option>';
-//																	}
-//																}
-//																unset($options_parent_id->contacts[$contactgroupid]);
-//															}
-//														}
-//													echo '</optgroup>';
-//												}
-//												unset($options_parent_id->categories, $options_parent_id->contacts);
+												$options = IRMFormList::getParentContactOptions();
+												foreach($options as $key => $val) {
+													if($this->item->parent_id == $key) {
+														echo '<option value="' . $key . '" selected>' . $val . '</option>';
+													} else {
+														echo '<option value="' . $key . '">' . $val . '</option>';
+													}
+												}
 											?>
 										</select>
 									</div>
@@ -245,13 +237,13 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 										</p>
 									</div>
 								</div>
+								<div class="controls extended">
+									<input type="text" id="address_name" name="contacts[address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->address_name; ?>">
+								</div>
+								<div class="controls extended">
+									<input type="text" id="address_name_add" name="contacts[address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->address_name_add; ?>">
+								</div>
 								<div id="inner-address-block">
-									<div class="controls extended">
-										<input type="text" id="address_name" name="contacts[address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->address_name; ?>">
-									</div>
-									<div class="controls extended">
-										<input type="text" id="address_name_add" name="contacts[address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->address_name_add; ?>">
-									</div>
 									<div class="controls controls-row">
 										<input type="text" id="address_street" name="contacts[address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->address_street; ?>">
 										<input type="text" id="address_houseno" name="contacts[address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->address_houseno; ?>">
@@ -264,9 +256,9 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 										<input type="text" id="address_region" name="contacts[address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->address_region; ?>">
 										<input type="text" id="address_country" name="contacts[address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->address_country; ?>">
 									</div>
-									<input type="text" placeholder="lat" class="purple span4" id="address_lat" name="contacts[address_lat]" value="<?php echo $this->item->address_lat; ?>" />
-									<input type="text" placeholder="lng" class="purple span4" id="address_lng" name="contacts[address_lng]" value="<?php echo $this->item->address_lng; ?>" />
-									<input type="text" placeholder="hash" class="purple span4" id="address_hash" name="contacts[address_hash]" value="<?php echo $this->item->address_hash; ?>" />
+									<input type="hidden" placeholder="lat" class="purple span4" id="address_lat" name="contacts[address_lat]" value="<?php echo $this->item->address_lat; ?>" />
+									<input type="hidden" placeholder="lng" class="purple span4" id="address_lng" name="contacts[address_lng]" value="<?php echo $this->item->address_lng; ?>" />
+									<input type="hidden" placeholder="hash" class="purple span4" id="address_hash" name="contacts[address_hash]" value="<?php echo $this->item->address_hash; ?>" />
 								</div>
 							</div>
 							
@@ -316,7 +308,7 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 						<div class="span5">
 							<div class="well">
 							
-							<!-- ---------- ---------- ---------- ---------- ---------- BEGIN TAB.PLUGIN_MAIN-WIDGETS ---------- ---------- ---------- ---------- ---------- -->
+							<!-- ---------- ---------- ---------- ---------- ---------- BEGIN APP.PLUGIN_MAIN-WIDGETS ---------- ---------- ---------- ---------- ---------- -->
 							<?php
 								echo '<style>';
 									echo '.widget-box .btn-app.btn-mini span { font-size: 11px; }';
@@ -348,26 +340,26 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 									echo '</div>';
 								echo '</div>';
 
-								foreach($dispatcher->trigger( 'loadInBasedataContainerFirst', array(&$this->item) ) as $inBaseWidget)
+								foreach($dispatcher->trigger( 'inBaseWidgetTop', array(&$this->item) ) as $inBaseWidget)
 								{
 									echo '<div id="' . $inBaseWidget['tab_key'] . '">';
 									echo $inBaseWidget['tabContent'];
 									echo '</div>';
 								}
-								foreach($dispatcher->trigger( 'loadInBasedataContainer', array(&$this->item) ) as $inBaseWidget)
+								foreach($dispatcher->trigger( 'inBaseWidget', array(&$this->item) ) as $inBaseWidget)
 								{
 									echo '<div id="' . $inBaseWidget['tab_key'] . '">';
 									echo $inBaseWidget['tabContent'];
 									echo '</div>';
 								}
-								foreach($dispatcher->trigger( 'loadInBasedataContainerLast', array(&$this->item) ) as $inBaseWidget)
+								foreach($dispatcher->trigger( 'inBaseWidgetBottom', array(&$this->item) ) as $inBaseWidget)
 								{
 									echo '<div id="' . $inBaseWidget['tab_key'] . '">';
 									echo $inBaseWidget['tabContent'];
 									echo '</div>';
 								}
 							?>
-							<!-- ---------- ---------- ---------- ---------- ---------- END TAB.PLUGIN_MAIN-WIDGETS ---------- ---------- ---------- ---------- ---------- -->
+							<!-- ---------- ---------- ---------- ---------- ---------- END APP.PLUGIN_MAIN-WIDGETS ---------- ---------- ---------- ---------- ---------- -->
 							
 							</div>
 						</div>
@@ -628,3 +620,21 @@ function geocodeInputHelper() {
 		jQuery(".widget-box .btn").attr("disabled", true);
 	<?php endif; ?>
 </script>
+
+
+
+<?php
+
+$test = IRMAppHelper::getPlugins('com_xiveirm', 517);
+
+// $test = $dispatcher->trigger( 'inBaseWidgetTop', array(&$this->item) );
+
+
+echo '<pre>';
+ print_r($test);
+echo '</pre>';
+
+echo '<pre>';
+ print_r($appCounter);
+echo '</pre>';
+?>
