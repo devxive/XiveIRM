@@ -61,6 +61,6 @@
 			filter="rules"
 			validate="rules"
 			component="com_xiveirm"
-			section="tabapp" />
+			section="plugin" />
 	</fieldset>
 </form>
