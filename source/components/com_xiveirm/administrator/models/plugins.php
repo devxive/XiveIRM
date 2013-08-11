@@ -114,9 +114,9 @@ class XiveirmModelplugins extends JModelList {
 
 		$query->from('`#__xiveirm_plugins` AS a');
 
-		// Join over the user field 'client_id'
-		$query->select('client_id.name AS client_id');
-		$query->join('LEFT', '#__users AS client_id ON client_id.id = a.client_id');
+		// Join over the usergroup field 'client_id'
+		$query->select('client_id.title AS client_id');
+		$query->join('LEFT', '#__usergroups AS client_id ON client_id.id = a.client_id');
 
 		// Join over the category 'catid'
 		$query->select('catid.title AS catid');
