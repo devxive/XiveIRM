@@ -59,18 +59,17 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_options` (
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Simple or client related opt-list storage table with viewlevels';
 
-CREATE TABLE IF NOT EXISTS `#__xiveirm_tabapps` (
+CREATE TABLE IF NOT EXISTS `#__xiveirm_plugins` (
 `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 `asset_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
 `client_id` INT(11) NOT NULL COMMENT 'usergroup id',
 `plugin` VARCHAR(100) NOT NULL COMMENT 'tab_key',
-`folder` VARCHAR(100) NOT NULL COMMENT 'plugin group',
 `catid` INT(11) NOT NULL COMMENT 'XIRM categories',
 `config` TEXT NOT NULL,
 `state` TINYINT(1) NOT NULL DEFAULT '1',
 `ordering` INT(11) NOT NULL,
 PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Storage Table for the TabApp and Widget configurations';
+) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Storage Table for the plugin configurations';
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_flags` (
 `item` varchar(100) NOT NULL COMMENT 'table.id - like contacts.3',
