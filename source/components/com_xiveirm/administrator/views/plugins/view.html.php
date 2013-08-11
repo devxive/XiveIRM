@@ -118,7 +118,6 @@ class XiveirmViewPlugins extends JViewLegacy
 			JText::_("JOPTION_SELECT_ACCESS"),
 			'filter_plugin',
 			JHtml::_('select.options', JHtml::_("access.assetgroups", true, true), "value", "text", $this->state->get('filter.plugin'), true)
-
 		);
 
 		JHtmlSidebar::addFilter(
@@ -145,9 +144,9 @@ class XiveirmViewPlugins extends JViewLegacy
 	{
 		return array(
 		'a.id' => JText::_('JGRID_HEADING_ID'),
-		'a.client_id' => JText::_('COM_XIVEIRM_PLUGINS_CLIENT_ID'),
+		'a.client_id' => JText::_('COM_XIVEIRM_PLUGINS_USERGROUP'),
 		'a.plugin' => JText::_('COM_XIVEIRM_PLUGINS_PLUGIN'),
-		'a.catid' => JText::_('COM_XIVEIRM_PLUGINS_CATID'),
+		'a.catid' => JText::_('COM_XIVEIRM_PLUGINS_CATEGORY'),
 		'a.state' => JText::_('JSTATUS'),
 		'a.ordering' => JText::_('JGRID_HEADING_ORDERING'),
 		);
