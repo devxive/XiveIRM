@@ -40,8 +40,8 @@ class XiveirmHelper
 
 		JHtmlSidebar::addEntry(
 			JText::_('COM_XIVEIRM_TITLE_TABAPPS'),
-			'index.php?option=com_xiveirm&view=tabapps',
-			$vName == 'tabapps'
+			'index.php?option=com_xiveirm&view=plugins',
+			$vName == 'plugins'
 		);
 	}
 

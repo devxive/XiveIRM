@@ -15,7 +15,7 @@ jimport('joomla.application.component.modeladmin');
 /**
  * Xiveirm model.
  */
-class XiveirmModeltabapp extends JModelAdmin
+class XiveirmModelplugin extends JModelAdmin
 {
 	/**
 	 * @var		string	The prefix to use with controller messages.
@@ -33,7 +33,7 @@ class XiveirmModeltabapp extends JModelAdmin
 	 * @return	JTable	A database object
 	 * @since	1.6
 	 */
-	public function getTable($type = 'Tabapp', $prefix = 'XiveirmTable', $config = array())
+	public function getTable($type = 'Plugin', $prefix = 'XiveirmTable', $config = array())
 	{
 		return JTable::getInstance($type, $prefix, $config);
 	}
@@ -52,7 +52,7 @@ class XiveirmModeltabapp extends JModelAdmin
 		$app	= JFactory::getApplication();
 
 		// Get the form.
-		$form = $this->loadForm('com_xiveirm.tabapp', 'tabapp', array('control' => 'jform', 'load_data' => $loadData));
+		$form = $this->loadForm('com_xiveirm.plugin', 'plugin', array('control' => 'jform', 'load_data' => $loadData));
 		if (empty($form)) {
 			return false;
 		}
@@ -69,7 +69,7 @@ class XiveirmModeltabapp extends JModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_xiveirm.edit.tabapp.data', array());
+		$data = JFactory::getApplication()->getUserState('com_xiveirm.edit.plugin.data', array());
 
 		if (empty($data)) {
 			$data = $this->getItem();
@@ -111,7 +111,7 @@ class XiveirmModeltabapp extends JModelAdmin
 			// Set ordering to the last item if not set
 			if (@$table->ordering === '') {
 				$db = JFactory::getDbo();
-				$db->setQuery('SELECT MAX(ordering) FROM #__xiveirm_tabapps');
+				$db->setQuery('SELECT MAX(ordering) FROM #__xiveirm_plugins');
 				$max = $db->loadResult();
 				$table->ordering = $max+1;
 			}

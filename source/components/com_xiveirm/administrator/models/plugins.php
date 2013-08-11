@@ -13,7 +13,7 @@ jimport('joomla.application.component.modellist');
 /**
  * Methods supporting a list of Xiveirm records.
  */
-class XiveirmModeltabapps extends JModelList {
+class XiveirmModelplugins extends JModelList {
 
 	/**
 	 * Constructor.
@@ -56,6 +56,12 @@ class XiveirmModeltabapps extends JModelList {
 		$published = $app->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
 		$this->setState('filter.state', $published);
 
+		//Filtering client_id
+		$this->setState('filter.client_id', $app->getUserStateFromRequest($this->context.'.filter.client_id', 'filter_client_id', '', 'string'));
+
+		//Filtering plugin
+		$this->setState('filter.plugin', $app->getUserStateFromRequest($this->context.'.filter.plugin', 'filter_plugin', '', 'string'));
+
 		//Filtering catid
 		$this->setState('filter.catid', $app->getUserStateFromRequest($this->context.'.filter.catid', 'filter_catid', '', 'string'));
 
@@ -67,7 +73,7 @@ class XiveirmModeltabapps extends JModelList {
 		parent::populateState('a.id', 'asc');
 	}
 
-	/**
+		/**
 	 * Method to get a store id based on model configuration state.
 	 *
 	 * This is necessary because the model is used by the component and
@@ -106,7 +112,11 @@ class XiveirmModeltabapps extends JModelList {
 			)
 		);
 
-		$query->from('`#__xiveirm_tabapps` AS a');
+		$query->from('`#__xiveirm_plugins` AS a');
+
+		// Join over the user field 'client_id'
+		$query->select('client_id.name AS client_id');
+		$query->join('LEFT', '#__users AS client_id ON client_id.id = a.client_id');
 
 		// Join over the category 'catid'
 		$query->select('catid.title AS catid');
@@ -127,7 +137,20 @@ class XiveirmModeltabapps extends JModelList {
 				$query->where('a.id = ' . (int) substr($search, 3));
 			} else {
 				$search = $db->Quote('%' . $db->escape($search, true) . '%');
+				$query->where('( a.client_id LIKE '.$search.'  OR  a.plugin LIKE '.$search.'  OR  a.catid LIKE '.$search.' )');
 			}
+		}
+
+		//Filtering client_id
+		$filter_client_id = $this->state->get("filter.client_id");
+		if ($filter_client_id) {
+			$query->where("a.client_id = '".$db->escape($filter_client_id)."'");
+		}
+
+		//Filtering plugin
+		$filter_plugin = $this->state->get("filter.plugin");
+		if ($filter_plugin) {
+			$query->where("a.plugin = '".$db->escape($filter_plugin)."'");
 		}
 
 		//Filtering catid

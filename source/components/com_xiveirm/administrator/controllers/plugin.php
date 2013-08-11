@@ -15,10 +15,11 @@ jimport('joomla.application.component.controllerform');
 /**
  * Tabapp controller class.
  */
-class XiveirmControllerTabapp extends JControllerForm
+class XiveirmControllerPlugin extends JControllerForm
 {
-	function __construct() {
-		$this->view_list = 'tabapps';
+	function __construct()
+	{
+		$this->view_list = 'plugins';
 		parent::__construct();
 	}
 }
