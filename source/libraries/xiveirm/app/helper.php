@@ -23,21 +23,32 @@ defined('_NFW_FRAMEWORK') or die();
 class IRMAppHelper
 {
 	/*
-	 * Method to get all registered Apps ( as loaded in IRMAppHelper::loadApp() )
+	 * Method to get all registered Apps ( IRMAppHelper::importPlugins() have to be called first )
+	 *
+	 * @param    boolean    $count    Return the counted registered forms.
+	 *                                Includes the workaround for http://stackoverflow.com/questions/15402333/php-count-return-1-for-empty-array-solution-on-server
 	 *
 	 * @return    array    Array with all Apps that are registered on the appropriate site where method is called.
 	 *                     Return false if nothing is registered
 	 */
-	public function getRegistered()
+	public function getRegisteredForms($count = false)
 	{
 		// Get the JDispatcher instance
 		$dispatcher = JDispatcher::getInstance();
 
-		// Get the registered apps by the IRMregisterApp event
-		$registered = $dispatcher->trigger( 'IRMregisterApp' );
+		// Get the registered apps by the registerIrmApp event
+		$registered = $dispatcher->trigger( 'registerIrmAppForm' );
 
 		if ( empty($registered) ) {
 			$registered = false;
+		}
+
+		if ( $count ) {
+			if ( is_array($registered) ) {
+				$registered = count($registered);
+			} else {
+				$registered = 0;
+			}
 		}
 
 		return $registered;
@@ -81,10 +92,10 @@ class IRMAppHelper
 		$query = $db->getQuery(true);
 
 		// Get active and configurated plugins, join extended with plugin folder from #__extensions
-		// TODO: remove plugins from tabapps table, because we get it from extensions
+		// TODO: remove folder from plugins table, because we get it from extensions
 		$query
 			->select( array('a.id', 'a.client_id', 'a.plugin', 'a.catid', 'a.config', 'b.folder') )
-			->from( '#__xiveirm_tabapps AS a' )
+			->from( '#__xiveirm_plugins AS a' )
 			->join( 'LEFT', '#__extensions as b ON (a.plugin = b.element)' )
 			->where( 'b.enabled = 1' )
 			->where( 'a.catid IN (' . $catIdString . ')' )
@@ -113,7 +124,7 @@ class IRMAppHelper
 			return false;
 		}
 
-		$plugins = self::getplugins($app, $catid);
+		$plugins = self::getPlugins($app, $catid);
 
 		foreach( $plugins as $plugin ) {
 			JPluginHelper::importPlugin( $plugin->folder, $plugin->plugin );
@@ -125,9 +136,9 @@ class IRMAppHelper
 	 * 
 	 * returns a prepared array
 	 */
-	public function getTabData($contact_id, $tab_key)
+	public function getTabData($contact_id, $appKey)
 	{
-		if(!$contact_id || !$tab_key)
+		if(!$contact_id || !$appKey)
 		{
 			return false;
 		}
@@ -137,9 +148,9 @@ class IRMAppHelper
 
 		$query
 			->select('*')
-			->from('#__xiveirm_contact_tabappvalues')
+			->from('#__xiveirm_contacts_appvalues')
 			->where('contact_id = ' . $db->quote($contact_id) . '')
-			->where('tab_key = ' . $db->quote($tab_key) . '');
+			->where('app_key = ' . $db->quote($appKey) . '');
 		$db->setQuery($query);
 
 		// Try to get the data or the error code for debugging
@@ -148,8 +159,8 @@ class IRMAppHelper
 			$result = $db->loadObject();
 
 			if($result) {
-				$tab_value = json_decode($result->tab_value);
-				$result->tab_value = $tab_value;
+				$app_value = json_decode($result->app_value);
+				$result->app_value = $app_value;
 			} else {
 				$result = new stdClass;
 			}
