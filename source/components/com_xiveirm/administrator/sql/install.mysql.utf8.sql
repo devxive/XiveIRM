@@ -42,9 +42,9 @@ PRIMARY KEY (`id`)
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts_appvalues` (
 `contacts_id` INT(11)  NOT NULL COMMENT '#__contacts id',
-`tab_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
-`tab_value` MEDIUMTEXT NOT NULL,
-UNIQUE KEY `idx_contacts_id_tab_key` (`contacts_id`,`tab_key`)
+`app_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
+`app_value` MEDIUMTEXT NOT NULL,
+UNIQUE KEY `idx_contacts_id_app_key` (`contacts_id`,`app_key`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex contacts data storage table';
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_options` (
