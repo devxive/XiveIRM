@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.controllerform');
 
 /**
- * Tabapp controller class.
+ * Plugin controller class.
  */
 class XiveirmControllerPlugin extends JControllerForm
 {

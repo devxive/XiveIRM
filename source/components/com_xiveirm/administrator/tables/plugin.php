@@ -11,7 +11,7 @@
 defined('_JEXEC') or die;
 
 /**
- * tabapp Table class
+ * Plugin Table class
  */
 class XiveirmTableplugin extends JTable
 {

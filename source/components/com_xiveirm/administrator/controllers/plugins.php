@@ -13,15 +13,15 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.controlleradmin');
 
 /**
- * Tabapps list controller class.
+ * Plugins list controller class.
  */
-class XiveirmControllerTabapps extends JControllerAdmin
+class XiveirmControllerPlugins extends JControllerAdmin
 {
 	/**
 	 * Proxy for getModel.
 	 * @since	1.6
 	 */
-	public function getModel($name = 'tabapp', $prefix = 'XiveirmModel')
+	public function getModel($name = 'plugin', $prefix = 'XiveirmModel')
 	{
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
 		return $model;

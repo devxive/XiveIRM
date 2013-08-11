@@ -8,10 +8,11 @@
 			readonly="true" />
 
 		<field name="client_id" type="usergroup"
-			label="COM_XIVEIRM_FORM_LBL_PLUGIN_CLIENT_ID"
-			description="COM_XIVEIRM_FORM_DESC_PLUGIN_CLIENT_ID"
-			required="true"
-			filter="raw" />
+			label="COM_XIVEIRM_FORM_LBL_PLUGIN_USERGROUP"
+			description="COM_XIVEIRM_FORM_DESC_PLUGIN_USERGROUP"
+			filter="raw">
+				<option value="0">COM_XIVEIRM_FORM_OPTION_PLUGIN_USERGROUP</option>
+		</field>
 
 		<field name="filter_client_id" type="usergroup" onchange="this.form.submit();" />
 
@@ -28,8 +29,8 @@
 			key_field="element" value_field="name" />
 
 		<field name="catid" type="category"
-			label="COM_XIVEIRM_FORM_LBL_PLUGIN_CATID"
-			description="COM_XIVEIRM_FORM_DESC_PLUGIN_CATID"
+			label="COM_XIVEIRM_FORM_LBL_PLUGIN_CATEGORY"
+			description="COM_XIVEIRM_FORM_DESC_PLUGIN_CATEGORY"
 			required="true"
 			extension="com_xiveirm"
 			filter="raw">
@@ -37,8 +38,8 @@
 		</field>
 
 		<field name="filter_catid" type="category"
-			label="COM_XIVEIRM_FORM_LBL_PLUGIN_CATID"
-			description="COM_XIVEIRM_FORM_DESC_PLUGIN_CATID"
+			label="COM_XIVEIRM_FORM_LBL_PLUGIN_CATEGORY"
+			description="COM_XIVEIRM_FORM_DESC_PLUGIN_CATEGORY"
 			extension="com_xiveirm"
 			show_root="1"
 			onchange="this.form.submit();" />
