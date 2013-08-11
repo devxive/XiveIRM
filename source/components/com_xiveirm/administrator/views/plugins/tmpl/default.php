@@ -1,10 +1,10 @@
 <?php
 /**
- * @version     1.0.0
+ * @version     6.0.0
  * @package     com_xiveirm
- * @copyright   Copyright (C) 2013. All rights reserved.
+ * @copyright   Copyright (C) 1997 - 2013 by devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
- * @author      Lahmizzar <lahmizzar@devxive.com> - http://walz.ag
+ * @author      devXive <support@devxive.com> - http://devxive.com
  */
 
 // no direct access
