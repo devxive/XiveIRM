@@ -33,7 +33,7 @@ abstract class IRMHtmlBuilder
 	 *                                 id    => the id attribute
 	 *                                 style => the style attributes
 	 *
-	 * @return    html                 With informations from tabApp config and joined extensions (folder)
+	 * @return    html                 With informations from plugin config and joined extensions (folder)
 	 *
 	 * @see                            NFWUserGroup::getParents()
 	 */
