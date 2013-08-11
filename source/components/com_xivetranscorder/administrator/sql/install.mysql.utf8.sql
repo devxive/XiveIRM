@@ -47,28 +47,28 @@ PRIMARY KEY (`id`)
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorders_appvalues` (
 `transcorders_id` INT(11) NOT NULL COMMENT '#__transcorders id',
-`tab_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
-`tab_value` MEDIUMTEXT NOT NULL,
-UNIQUE KEY `idx_transcorders_id_tab_key` (`transcorders_id`,`tab_key`)
+`app_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
+`app_value` MEDIUMTEXT NOT NULL,
+UNIQUE KEY `idx_transcorders_id_app_key` (`transcorders_id`,`app_key`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex transcorders data storage table';
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorders_billings` (
 `transcorders_id` INT(11) NOT NULL COMMENT '#__transcorders id',
-`tab_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
-`tab_value` MEDIUMTEXT NOT NULL,
-UNIQUE KEY `idx_transcorders_id_tab_key` (`transcorders_id`,`tab_key`)
+`app_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
+`app_value` MEDIUMTEXT NOT NULL,
+UNIQUE KEY `idx_transcorders_id_app_key` (`transcorders_id`,`app_key`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex transcorders data storage table';
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorders_statistics` (
 `transcorders_id` INT(11) NOT NULL COMMENT '#__transcorders id',
-`tab_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
-`tab_value` MEDIUMTEXT NOT NULL,
-UNIQUE KEY `idx_transcorders_id_tab_key` (`transcorders_id`,`tab_key`)
+`app_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
+`app_value` MEDIUMTEXT NOT NULL,
+UNIQUE KEY `idx_transcorders_id_app_key` (`transcorders_id`,`app_key`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex transcorders data storage table';
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorders_revisions` (
 `transcorders_id` INT(11) NOT NULL COMMENT '#__transcorders id',
-`tab_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
-`tab_value` MEDIUMTEXT NOT NULL,
-UNIQUE KEY `idx_transcorders_id_tab_key` (`transcorders_id`,`tab_key`)
+`app_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
+`app_value` MEDIUMTEXT NOT NULL,
+UNIQUE KEY `idx_transcorders_id_app_key` (`transcorders_id`,`app_key`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex transcorders data storage table';
