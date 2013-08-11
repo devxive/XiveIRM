@@ -111,13 +111,13 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_PLUGINS_CLIENT_ID', 'a.client_id', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_PLUGINS_USERGROUP', 'a.client_id', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
 				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_PLUGINS_PLUGIN', 'a.plugin', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_PLUGINS_CATID', 'a.catid', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('grid.sort',  'COM_XIVEIRM_PLUGINS_CATEGORY', 'a.catid', $listDirn, $listOrder); ?>
 				</th>
                     
                     
@@ -147,7 +147,7 @@ if (!empty($this->extra_sidebar)) {
 			<?php foreach ($this->items as $i => $item) :
 				$ordering   = ($listOrder == 'a.ordering');
                 $canCreate	= $user->authorise('core.create',		'com_xiveirm');
-                $canEdit	= $user->authorise('core.edit',			'com_xiveirm');
+                $canEdit	= $user->authorise('core.edit',		'com_xiveirm');
                 $canCheckin	= $user->authorise('core.manage',		'com_xiveirm');
                 $canChange	= $user->authorise('core.edit.state',	'com_xiveirm');
 				?>
@@ -184,7 +184,7 @@ if (!empty($this->extra_sidebar)) {
                     
 				<td>
 
-					<?php echo $item->client_id; ?>
+					<?php echo NFWItemHelper::getTitleById('usergroup', $item->client_id); ?>
 				</td>
 				<td>
 
