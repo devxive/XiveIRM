@@ -49,7 +49,7 @@ abstract class IRMAccessHelper
 		// Set the viewlvls to the returned ACL object (access)
 		$aclObject->access = $viewLvls;
 
-		$cat = JAccess::getActions('com_xiveirm', 'tabapp');
+		$cat = JAccess::getActions('com_xiveirm', 'plugin');
 
 		return $cat;
 	}
