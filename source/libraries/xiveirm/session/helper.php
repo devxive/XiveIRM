@@ -25,9 +25,9 @@ class IRMSessionHelper
 	/*
 	 * Method to check if the XiveIRMSystem session exist
 	 *
-	 * @param     string    If set, only a single value is returned.
+	 * @param     string     If set, only a single value is returned.
 	 *
-	 * @return    mixed     Return an object with all values from the session or if a value is set, only the value
+	 * @return    boolean    Return true if the ckeck is positive, else the check returns false
 	 * TODO: Integrate checks to prevent session highjacking
 	 */
 	public function check()
@@ -39,7 +39,7 @@ class IRMSessionHelper
 		if( $session ) {
 			// Session exist, check now for a valid user_id in the session
 			if ( $session->user_id > 0 ) {
-				// There is a valid user_id, check now if the session user id is the same as the logged in users id
+				// There is a valid user_id, check now if the session user id is the same as the logged in user id
 				if ( $user->id == $session->user_id ) {
 					return true;
 				} else {
@@ -117,7 +117,7 @@ class IRMSessionHelper
 	public function init()
 	{
 		// If check true, return false, because we have a valid session, else fwd to register app and user values
-		if ( self::check() ) {
+		if ( !self::check() ) {
 			return false;
 		}
 
@@ -160,7 +160,7 @@ class IRMSessionHelper
 		}
 
 		// Check if we have the minimum required fields and push the final object to session. If not, close the $app with an error message!
-		if ( isset($values['user_id']) && isset($values['client_id']) ) {
+		if ( isset($values['user_id']) && isset($values['jobtitle']) ) {
 			self::setValues($values);
 		} else {
 			if ( !$app->isAdmin() && $user->id > 0 ) {
