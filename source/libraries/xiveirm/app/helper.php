@@ -56,6 +56,30 @@ class IRMAppHelper
 
 
 	/*
+	 * Method to get the id from the plugin config table
+	 *
+	 * @param     string    $element    The plugin / appKey - name (foldername in the plugin irmapp group)
+	 * @param     string    $catid      The category id where the app is related to
+	 *
+	 * @return    array                 Return an array with appropriate plugins
+	 */
+	public function getId($app, $catid)
+	{
+		if ( !$app || !$catid ) {
+			return false;
+		}
+
+		$id = NFWDatabase::select( 'xiveirm_plugins', array('id'), array('plugin' => $app, 'catid' => $catid) );
+
+		if ( isset($id['id']) ) {
+			return $id['id'];
+		} else {
+			return false;
+		}
+	}
+
+
+	/*
 	 * Method to get a list of plugins / apps for the related category, based and as set in the "XiveIRM - App Config"
 	 * NOTE: WORKS ALREADY WITH THE NEW SITUATION THAT ONE USER COULD HAVE MORE THAN ONE CLIENT_ID (USERGROUPS)
 	 *
