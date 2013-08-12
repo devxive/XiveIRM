@@ -62,9 +62,18 @@ $checkedOut = NFWHtmlJavascript::getCheckoutMessage($this->item->checked_out, $t
 // used for Javascript processed messages
 $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 
-// Count loaded apps
-$appCounter = count( IRMAppHelper::getRegistered() );
+// Prebuild the tabs
+$appContainer = new stdClass();
+foreach($dispatcher->trigger('htmlBuildTab', array(&$this->item)) as $tab)
+{
+	$appHelper = new JObject();
+	$appKey = $tab['appKey'];
 
+	$appHelper->appKey     = $tab['appKey'];
+	$appHelper->tabButton  = $tab['tabButton'];
+	$appHelper->tabBody    = $tab['tabBody'];
+	$appContainer->$appKey = $appHelper;
+}
 ?>
 <div class="row-fluid">
 	<!-- ---------- ---------- ---------- ---------- ---------- BEGIN PAGE HEADER ---------- ---------- ---------- ---------- ---------- -->
@@ -108,22 +117,31 @@ $appCounter = count( IRMAppHelper::getRegistered() );
 				<li class="active"><a data-toggle="tab" href="#base-data"><i class="green icon-home bigger-110"></i> <?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TAB_BASICDATA'); ?></a></li>
 				<!-- TAB.PLUGIN_BUTTON -->
 				<?php
-					foreach($dispatcher->trigger( 'loadTabButton', array(&$this->item) ) as $tabButton)
+					$i = 0; $tabMax = 5; $appCount = count($appContainer);
+					foreach( $appContainer as $irmApp )
 					{
-						echo '<li><a data-toggle="tab" href="#' . $tabButton['tab_key'] . '">';
-						echo $tabButton['tabButtonName'];
-						echo '</a></li>';
+						$i++; // count right from beginning
+
+						if ( $i < $tabMax ) {
+							echo '<li><a data-toggle="tab" href="#' . $irmApp->appKey . '">' . $irmApp->tabButton . '</a></li>';
+						}
+
+						if ( $i == $tabMax ) {
+							echo '<li class="dropdown">';
+								echo '<a data-toggle="dropdown" class="dropdown-toggle" href="#">' . JText::_('COM_XIVEIRM_CONTACT_FORM_TAB_MORE') . ' <b class="caret"></b></a>';
+								echo '<ul class="dropdown-menu dropdown-info">';
+									echo '<li><a data-toggle="tab" href="#' . $irmApp->appKey . '">' . $irmApp->tabButton . '</a></li>';
+						}
+
+						if ( $i > $tabMax ) {
+							echo '<li><a data-toggle="tab" href="#' . $irmApp->appKey . '">' . $irmApp->tabButton . '</a></li>';
+						}
+
+						if ( $i >= $tabMax && $i == $appCount ) {
+							echo '</ul></li>';
+						}
 					}
 				?>
-				<!-- TAB.PLUGIN_BUTTON -->
-				<li class="dropdown">
-					<a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TAB_MORE'); ?> <b class="caret"></b></a>
-					<ul class="dropdown-menu dropdown-info">
-						<li><a data-toggle="tab" href="#dropdown1">@Anwendung 4</a></li>
-						<li><a data-toggle="tab" href="#dropdown2">@Anwendung 5</a></li>
-						<li><a data-toggle="tab" href="#">@Anwendung 6</a></li>
-					</ul>
-				</li>
 			</ul>
 	
 			<!-- ---------- ---------- ---------- ---------- ---------- BEGIN master-tab-pane-container ---------- ---------- ---------- ---------- ---------- -->
@@ -137,7 +155,7 @@ $appCounter = count( IRMAppHelper::getRegistered() );
 								<div class="controls controls-row">
 									<?php NFWHtmlJavascript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 									<div class="span6">
-										<?php if($this->item->catid && !$this->item->id) { ?>
+										<?php if ( ($this->item->catid && !$this->item->id) || ($this->item->catid && $appCounter > 0) ) { ?>
 											<input type="hidden" name="contacts[catid]" value="<?php echo $this->item->catid; ?>">
 											<a class="btn btn-small btn-warning disabled" disabled="disabled"><i class="icon-double-angle-left"></i> <?php echo NFWItemHelper::getTitleById('category', $this->item->catid); ?></a>
 										<?php } else { ?>
@@ -147,7 +165,11 @@ $appCounter = count( IRMAppHelper::getRegistered() );
 												$options = IRMFormList::getCategoryOptions('com_xiveirm');
 												if($options) {
 													foreach ($options as $key => $val) {
-														echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+														if($this->item->catid == $key) {
+															echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
+														} else {
+															echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+														}
 													}
 												}
 											?>
@@ -379,23 +401,26 @@ $appCounter = count( IRMAppHelper::getRegistered() );
 
 				<!-- ---------- ---------- ---------- ---------- ---------- BEGIN TAB.PLUGINS_CONTENT ---------- ---------- ---------- ---------- ---------- -->
 				<?php
-					foreach($dispatcher->trigger( 'loadTabContainer', array(&$this->item) ) as $tabContainer)
+					foreach( $appContainer as $irmApp )
 					{
-						echo '<div id="' . $tabContainer['tab_key'] . '" class="tab-pane">';
-						echo $tabContainer['tabContent'];
+						echo '<div id="' . $irmApp->appKey . '" class="tab-pane">';
+						echo $irmApp->tabBody;
 						echo '</div>';
 					}
 				?>
 				<!-- ---------- ---------- ---------- ---------- ---------- END TAB.PLUGINS_CONTENT ---------- ---------- ---------- ---------- ---------- -->
 
 				<input type="hidden" name="contacts[id]" id="customer_cid" value="<?php echo isset($this->item->id) ? $this->item->id : '0'; ?>" />
+				<input type="hidden" name="contacts[created_by]" value="<?php echo isset($this->item->created_by) ? $this->item->created_by : NFWUser::getId(); ?>" />
 
 				<?php echo IRMHtmlBuilder::getClientId($this->item->client_id, $options = array('name' => 'contacts[client_id]')); ?>
 
 				<input type="hidden" name="contacts[state]" value="<?php echo $this->item->state; ?>" />
 				<input type="hidden" id="checkEditForm" name="checkEditForm" value="0" />
+
 				<input type="hidden" name="irmapi[coreapp]" value="contacts" />
 				<input type="hidden" name="irmapi[component]" value="com_xiveirm" />
+
 				<?php echo JHtml::_('form.token'); ?>
 
 				<div class="form-actions">
@@ -477,31 +502,15 @@ function geocodeInputHelper() {
 
 			$.post('index.php?option=com_xiveirm&task=api.ajaxsave', $("#form-contact").serialize(),
 			function(data){
-				if(data.apiReturnCode === 'SAVED'){
+				if(data.status === true){
 					$.gritter.add({
 						title: 'Successfully saved',
 						text: 'You have successfully saved all items for the customer <?php echo $this->item->first_name . ' ' . $this->item->last_name; ?>',
 						icon: 'icon-check',
 						class_name: 'alert-success'
 					});
-					$("#customer_cid").val(data.apiReturnId);
+					$("#customer_cid").val(data.id);
 
-					$("#loading-btn-save").removeClass("btn-warning");
-					$("#loading-btn-save").button("complete");
-					$("#loading-btn-save").button("reset");
-
-					<?php if(!$this->item->catid) { ?>
-						var cId = $("#customer_cid").val();
-						window.location.href = "<?php echo JRoute::_('index.php?task=contact.edit&id='); ?>" + cId;
-					<?php } ?>
-
-				} else if(data.apiReturnCode === 'UPDATED') {
-					$.gritter.add({
-						title: 'Successfully updated',
-						text: 'You have successfully saved all items for the customer <?php echo $this->item->first_name . ' ' . $this->item->last_name; ?>',
-						icon: 'icon-globe',
-						class_name: 'alert-info'
-					});
 					$("#loading-btn-save").removeClass("btn-warning");
 					$("#loading-btn-save").button("complete");
 					$("#loading-btn-save").button("reset");
@@ -514,30 +523,15 @@ function geocodeInputHelper() {
 					$("#form-buttons").addClass("hidden");
 					$(".widget-box .btn").attr("disabled", false);
 
-				} else if(data.apiReturnCode === 'NOTICE') {
-					$.gritter.add({
-						title: 'Successfully updated',
-						text: 'You have successfully saved all core items for the customer <?php echo $this->item->first_name . ' ' . $this->item->last_name; ?><br><br>' + data.apiReturnMessage,
-						icon: 'icon-info',
-						sticky: true,
-						class_name: 'alert-warning'
-					});
-					$("#loading-btn-save").removeClass("btn-warning");
-					$("#loading-btn-save").button("complete");
-					$("#loading-btn-save").button("reset");
-
-					$("#loading-btn-edit").removeClass("hidden");
-					$("#loading-btn-edit").button("complete");
-					$("#loading-btn-edit").button("reset");
-
-					$("#form-contact .input-control").attr("disabled", true);
-					$("#form-buttons").addClass("hidden");
-					$(".widget-box .btn").attr("disabled", false);
+					<?php if(!$this->item->catid) { ?>
+						var cId = $("#customer_cid").val();
+						window.location.href = "<?php echo JRoute::_('index.php?task=contact.edit&id='); ?>" + cId;
+					<?php } ?>
 
 				} else {
 					$.gritter.add({
 						title: 'An error occured',
-						text: 'An error occured while trying to save or update. <br><br>Error code: ' + data.apiReturnCode + '<br><br>error message: ' + data.apiReturnMessage + '<br><br>If this error is persistant, please contact the support immediately with the given error!',
+						text: 'Error code: ' + data.code + '<br><br>error message: ' + data.message + '<br><br>If this error persists, please contact the support immediately with the given error!',
 						icon: 'icon-warning-sign',
 						sticky: true,
 						class_name: 'alert-error'
@@ -581,7 +575,7 @@ function geocodeInputHelper() {
 
 		jQuery.post('index.php?option=com_xiveirm&task=api.ajaxcheckout', $("#form-contact-cica").serialize(),
 			function(data){
-				if(data.apiReturnCode === 'TRUE'){
+				if(data.status === true){
 					$.gritter.add({
 						title: '<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_INFO_TITLE'); ?>',
 						text: '<?php echo JText::sprintf('COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_INFO_BODY', $full_name); ?>',
@@ -603,7 +597,7 @@ function geocodeInputHelper() {
 				} else {
 					$.gritter.add({
 						title: 'An error occured',
-						text: 'An error occured while trying to check out for editing. <br><br>Error code: ' + data.apiReturnCode + '<br><br>Error message: ' + data.apiReturnMessage + '<br><br>If this error is persistant, please contact the support immediately with the given error!',
+						text: 'Error code: ' + data.code + '<br><br>error message: ' + data.message + '<br><br>If this error persists, please contact the support immediately with the given error!',
 						icon: 'icon-warning-sign',
 						sticky: true,
 						class_name: 'alert-error'
@@ -625,16 +619,10 @@ function geocodeInputHelper() {
 
 <?php
 
-$test = IRMAppHelper::getPlugins('com_xiveirm', 517);
-
-// $test = $dispatcher->trigger( 'inBaseWidgetTop', array(&$this->item) );
-
-
+$rr = NFWAccessHelper::getActions( 'com_xiveirm', 'plugin', 88 );
 echo '<pre>';
- print_r($test);
+ print_r($appContainer);
 echo '</pre>';
 
-echo '<pre>';
- print_r($appCounter);
-echo '</pre>';
+
 ?>
