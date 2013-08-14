@@ -325,8 +325,8 @@ jQuery(function() {
 							<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.remove&id=' . $item->id); ?>').submit()" class="btn btn-mini btn-danger" title="<?php echo JText::_("COM_XIVEIRM_DELETE_ITEM"); ?>"><i class="icon-trash icon-only"></i></a>
 						<?php endif; ?>
 						<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.edit&id=' . $item->id); ?>" class="btn btn-mini btn-info"><i class="icon-edit icon-only"></i></a>
-						<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.flag&id=' . $item->id); ?>" class="btn btn-mini <?php if(IRMSystem::flagIt($item->id, 'check')) { echo 'btn-warning'; } ?>"><i class="icon-flag icon-only"></i></a>
-						<a id="rowToggle" class="btn btn-mini btn-light"><i class="icon-eye-close icon-only"></i></a>
+						<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contactform.flag&id=' . $item->id); ?>" class="btn btn-mini <?php if(IRMItemHelper::flagIt($item->id, 'check')) { echo 'btn-warning'; } ?>"><i class="icon-flag icon-only"></i></a>
+						<a class="rowToggle btn btn-mini btn-light"><i class="icon-eye-close icon-only"></i></a>
 					</div>
 					<div class="hidden-desktop visible-phone">
 						<div class="inline position-relative">
@@ -348,8 +348,7 @@ jQuery(function() {
 				</td>
 				<td class="hide">
 					<?php if ($item->modified != '0000-00-00 00:00:00') { ?>
-						<i class="icon-time orange"></i> <?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)); ?> <span class="small-margin-left hidden-phone"></span><i class="icon-user orange"></i> <a href="#" target="_blank">Rosalinda Garcia</a>
-						<br><em>TODO: New data have to come from user activity app!</em>
+						<i class="icon-time orange"></i> <?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)); ?> <span class="small-margin-left hidden-phone"></span><i class="icon-user orange"></i> <a href="#" target="_blank"><?php echo $item->modified_by; ?></a>
 					<?php } ?>
 				</td>
 				<td class="hide">
