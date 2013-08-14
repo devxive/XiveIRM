@@ -50,20 +50,22 @@ class XiveirmControllerApi extends XiveirmController
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		$data = $this->app->input->get('irmapi', array(), 'array');
-		$return = NFWItemHelper::checkOut('xiveirm_' . $data['coreapp'], $data['id'], NFWItemHelper::getDate('MySQL'), JFactory::getUser()->id);
+		$result = NFWItemHelper::checkOut( 'xiveirm_' . $data['coreapp'], $data['id'], NFWItemHelper::getDate('MySQL'), NFWUser::getId() );
 
-		if($return) {
-			$return_arr = array();
-			$return_arr["apiReturnId"] = $data['id'];
-			$return_arr["apiReturnCode"] = 'TRUE';
+		$return = array();
+
+		if($result) {
+			$return["status"] = true;
+			$return["id"] = $data['id'];
+			$return["message"] = '';
 		} else {
-			$return_arr = array();
-			$return_arr["apiReturnId"] = $data['id'];
-			$return_arr["apiReturnCode"] = 1000;
-			$return_arr["apiReturnMessage"] = 'An Error occured in the Nawala Framework API-Processor';
+			$return["status"] = false;
+			$return["id"] = $data['id'];
+			$return["code"] = 1000;
+			$return["message"] = 'An Error occured in the Nawala Framework API-Processor. Please contact the support!';
 		}
 
-		echo json_encode($return_arr);
+		echo json_encode($return);
 
 		$this->app->close();
 	}
@@ -84,20 +86,22 @@ class XiveirmControllerApi extends XiveirmController
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		$data = $this->app->input->get('irmapi', array(), 'array');
-		$return = NFWItemHelper::checkIn('xiveirm_' . $data['coreapp'], $data['id']);
+		$result = NFWItemHelper::checkIn('xiveirm_' . $data['coreapp'], $data['id']);
 
-		if($return) {
-			$return_arr = array();
-			$return_arr["apiReturnId"] = $data['id'];
-			$return_arr["apiReturnCode"] = TRUE;
+		$return = array();
+
+		if($result) {
+			$return["status"] = true;
+			$return["id"] = $data['id'];
+			$return["message"] = '';
 		} else {
-			$return_arr = array();
-			$return_arr["apiReturnId"] = $data['id'];
-			$return_arr["apiReturnCode"] = 1000;
-			$return_arr["apiReturnMessage"] = 'An Error occured in the Nawala Framework API-Processor';
+			$return["status"] = false;
+			$return["id"] = $data['id'];
+			$return["code"] = 1000;
+			$return["message"] = 'An Error occured in the Nawala Framework API-Processor. Please contact the support!';
 		}
 
-		echo json_encode($return_arr);
+		echo json_encode($return);
 
 		$this->app->close();
 	}
@@ -121,7 +125,7 @@ class XiveirmControllerApi extends XiveirmController
 		 * change, making it impossible for AJAX to work.
 		 */
 
-//		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		$model = $this->getModel('Api', 'XiveirmModel');
 
@@ -144,8 +148,9 @@ class XiveirmControllerApi extends XiveirmController
 			$dataCore = $this->app->input->get($coreApp, array(), 'array');
 
 			if(isset($dataCore['catid']) && isset($dataCore['id'])) {
-				$catId = $dataCore['catid'];
+				$catId = (int) $dataCore['catid'];
 				$coreId = (int) $dataCore['id'];
+				// TODO: Could be removed if we add in the contacts app an empty field for that. We then only have to check if we have an contact_id. Since we use the new NFWDatabase::save() method, it only stores vars that fields exist in database!
 				if($coreApp != 'contacts') {
 					if(isset($dataCore['contact_id'])) {
 						$contactId = (int) $dataCore['contact_id'];
@@ -167,97 +172,86 @@ class XiveirmControllerApi extends XiveirmController
 
 		// Set some vars -- Strip the last letter from $coreApp to get the correct string within the tabs/widgets and table which we're store in
 		$data->api['tablenamewithoutprefix'] = 'xiveirm_' . $coreApp;
-		$data->api['coretable'] = '#__xiveirm_' . $coreApp;
-		$data->api['tabapptable'] = '#__xiveirm_' . substr($coreApp, 0, -1) . '_tabappvalues';
-		$data->api['tabapptableidname'] = substr($coreApp, 0, -1) . '_id';
+		$data->api['coretable'] = 'xiveirm_' . $coreApp;
+		$data->api['apptable'] = 'xiveirm_' . $coreApp . '_appvalues';
+		$data->api['apptableidname'] = $coreApp . '_id';
 
 		// Go to models and try to save the contacts datas.
 		// In all cases (new, update), if return isn't false, we got the item row id for further processing the TabApp datas.
-		// Check if the user have the rights to save the data for the contacts by checking the components ACL.
-		$permissionsCore = NFWUserAccess::getPermissions($coreComponent, false, false, $data->api['tablenamewithoutprefix'] . '.' . $coreId);
-		if( ($coreId == 0 && $permissionsCore->get('core.create')) || ($coreId > 0 && ($permissionsCore->get('core.edit') || $permissionsCore->get('core.edit.own'))) ) {
-			$return = $model->savecore($data);
+
+		// Get Permissions based on category id, else for component
+		if ( !$catId ) {
+			// We have no category id and use the components acl as set in the form
+			$acl = NFWAccessHelper::getActions($coreComponent);
 		} else {
-			self::closeOnError(1100, 'Controller: Please Note: You have no rights edit or save the core datas. Please contact the support or your administrator to get further informations!');
+			// We have a category id and use the category acl, since all categories are handled in com_xiveirm
+			$acl = NFWAccessHelper::getActions('com_xiveirm', 'category', $catId);
 		}
 
-		/**
-		 * Example of doing Permission Checks
-		 * 
-		 * $permissionsCore = NFWUserAccess::getPermissions('com_xiveirm');
-		 * $permissionsTab = NFWUserAccess::getPermissions('com_xiveirm', 'tabapp', $tabApp->id);
-		 * 
-		 * $canView		= $this->user->authorise('core.view',		'com_xiveirm.tabapp.2');
-		 * $canCreate		= $this->user->authorise('core.create',		'com_xiveirm');
-		 * $canDelete		= $this->user->authorise('core.delete',		'com_xiveirm');
-		 * $canEdit		= $this->user->authorise('core.edit',		'com_xiveirm');
-		 * $canChange		= $this->user->authorise('core.edit.state',	'com_xiveirm');
-		 * $canEditOwn	= $this->user->authorise('core.edit.own',		'com_xiveirm');
-		 * 
-		 */
+		// If it is an existing item, get the created by id
+		$createdBy = isset($dataCore['created_by']) ? $dataCore['created_by'] : 0;
 
-		// Import Plugins (only those that are set / configured in the #__xiveirm_tabapps table. Category 0 and its related global_client-id (usergroup) always load, because its global (means for all)
+		// Check if the user have the rights to save the data for current item. Note, we have to check against the created_by id because, we're setting the ACL for the contacts ONLY via the categories inherited by the component!
+		// TODO: Check followed situation: If its a new contact -> close with error, because the user can't create a core app item. If it is an exising contact, and the user can't save this item, we have to jump to plugins, where we check if the user can save the app values ?!?! NOTE: We do also a check against the plugin assets
+		if( ($coreId == 0 && $acl->get('core.create')) || ($coreId > 0 && $acl->get('core.edit')) || ($coreId > 0 && $acl->get('core.edit.own') && NFWUser::getId() == $createdBy) ) {
+			$return = $model->savecore($data);
+		} else {
+			self::closeOnError(1100, 'Controller: Please Note: You have insufficient permissions to save this. Please contact the support or your administrator to get further informations!');
+		}
+
+		// Import Plugins (only those that are set / configured in the #__xiveirm_apps table. Category 0 and its related global_client-id (usergroup) always load, because its global (means for all)
 		// There is an extra check in, where we check also against the client_id (component global usergroup and client related usergroup)
 		// Because we use the returned values from the getPlugin, we have all informations on tabs that are loaded in the form.
 		// Widgets do not have form values, therefore we do not load them! Even there is no need to load the event dispatcher! (((At this time!!!!)))
 		// Pro for use the getPlugins Method: We'll get the tabconfig row id, we need for the permission checks below!!!!
-		$plugins = IRMSystem::getPlugins($catId, $coreApp); // Array with all available plugins, that should load as set in the tabapp configuration!!!
 
+		// Import all plugins based on the XiveIRM plugin configs and the related catid!
+		IRMAppHelper::importPlugins('com_xiveirm', $catId);
 
+		// Get apps that register form fields
+		$plugins = IRMAppHelper::getRegisteredForms(); // Array with all available plugins, that should load as set in the com_xiveirm app configuration!!!
 		if($plugins) {
-			// ok we have installed and enabled TabApps, lets play. Check first if we get a positive response and a valid contact id from the savecore method
-			if( ($return["apiReturnCode"] == 'UPDATED' || $return["apiReturnCode"] == 'SAVED') && $return["apiReturnId"] > 0 && (int)$return["apiReturnId"] )
+			// Check first if we get a positive response and a valid contact id from the savecore method
+			if ( $return->status == true && (int) $return->id > 0 )
 			{
-				foreach($plugins as $tabApp)
+				// Unset core data from object
+				unset($data->core);
+
+				foreach($plugins as $regApp)
 				{
-					// Check permissions based on the TabApp config with extra permission if the user can edit its own contact and related tabapps (we use the $coreId in the if core.create condition, to check if we have a new contact and the user is able to create.)
-					// XiveTODO: We should check if it make sense to add a userid (created_by) column in the tabappvalue table
-					$permissionsTab = NFWUserAccess::getPermissions($coreComponent, 'tabapp', $tabApp->id, $data->api['tablenamewithoutprefix'] . '.' . $return["apiReturnId"]);
+					// Plugin permission checks!
+					$appAcl = NFWAccessHelper::getActions( 'com_xiveirm', 'plugin', IRMAppHelper::getId($regApp, $catId) );
 
-					// Check permissions and save related data in the tabappvalue db table
-					if( $permissionsTab->get('core.edit') || $permissionsTab->get('core.edit.own') ) {
-				 		// Get the tabForm data.
-						$dataTabs = JFactory::getApplication()->input->get($tabApp->plugin, array(), 'array');
+					// Check if the user have the rights to save the app values for the current item.
+					if( ($coreId == 0 && $appAcl->get('core.create')) || ($coreId > 0 && $appAcl->get('core.edit')) || ($coreId > 0 && $appAcl->get('core.edit.own') && NFWUser::getId() == $createdBy) ) {
+				 		// Get the app values data.
+						$dataApp = JFactory::getApplication()->input->get($regApp, array(), 'array');
 
-						// Build new data object
-						unset($data->core);
+						// Set dataTabs to data object
 						unset($data->tab);
-						$data->tab = $dataTabs;
+						$data->tab = $dataApp;
 
-						// Attempt to save the tabdata, if we got any, bound to the appropriate TabApp.
-						if($data->tab) {
-							$return = $model->savetab($data, $return["apiReturnId"], $tabApp->plugin); // Return goes directly to echo json_encode (after checkIn the coreId)
+						// Attempt to save the plugin values, if we got any, bound to the appropriate plugin.
+						if( $data->tab ) {
+							$return = $model->saveAppData($data, $return->id, $regApp);
+						} else {
+							// Nothing in here. May we could delete app value item from db
 						}
 					} else {
-						$return_arr = array();
-						$return_arr["apiReturnId"] = $return["apiReturnId"];
-						$return_arr["apiReturnCode"] = 'NOTICE';
-						$return_arr["apiReturnMessage"] = 'Controller: Please note that you have no rights to edit or save the <strong>' . $coreApp . ' (' . $tabApp->plugin . '-datas)</strong>! Please contact the support or your administrator to get further informations!';
-
-						$return = $return_arr;
+						self::closeOnError(1100, 'Controller: Please Note: You have insufficient permissions to save the <strong>' . $coreApp . ' (' . $tabApp->plugin . '-datas)</strong>! Please contact the support or your administrator to get further informations!');
 					}
 				}
 			} else {
-				// Perform the return array. In this condition, the contacts returned no error but an id lover 0, or an correct id but an ERROR in the returnCode
-				$return_arr = array();
-				$return_arr["apiReturnId"] = 0;
-				$return_arr["apiReturnCode"] = 1600;
-				$return_arr["apiReturnMessage"] = 'Controller: Get an invalid row id from the savecore model process or we get an error in the model itself.';
-
-				$return = $return_arr;
+				self::closeOnError(1600, 'Controller: There is an error in the response (Code: ' . $return->code . '). Message: ' . $return->message . '. Please contact the devXive support team or your administrator to get further informations!');
 			}
 		} else {
-			// we have no apps, therefore we use the return code from the save/update process from core contacts table
-//			echo 'Controller: No Plugins Load because there are no active';
+			// Nothing in here ( No plugins loaded, see app config )
 		}
 
 		// If all done, check in the core item
-		NFWItemHelper::checkIn($data->api['tablenamewithoutprefix'], $coreId);
+		NFWItemHelper::checkIn($data->api['coretable'], $coreId);
 
 		echo json_encode($return);
-
-//		// Flush the data from the session.
-//		$this->app->setUserState('com_xiveirm.edit.api.data', null);
 
 		$this->app->close();
 	}
@@ -294,7 +288,16 @@ class XiveirmControllerApi extends XiveirmController
 
 	function cancel()
 	{
-		$id = JFactory::getApplication()->input->get('id', '', 'INT');
+		// TODO FIND A WAY TO FLUSH THE DATA FROM THE userSTATE. AS WE'RE IN AJAX API, WE ONLY NEED THIS FOR THE CANCEL BUTTONS, BECAUSE WE DO NOT HAVE A PAGERELOAD AFTER
+		// WE HAVE TO AUTODETECT OR FIND ANY OTHER WAY TO DETERMINE EVERY PART FROM THE STATE ( com_xiveirm + edit + contact OR com_xivetranscorder + edit + transcorder ) !!!
+//		$dataAPI = $this->app->input->get('irmapi', array(), 'array');
+//		$singleState = $dataAPI['singlestate'];
+//		$this->app->->getUserState('com_xiveirm.edit');
+		// Flush the data from the session.
+//		$this->app->setUserState('com_xiveirm.edit.contact', null);
+//		$this->app->setUserState('com_xiveirm.edit.api', null);
+
+		$id = $this->app->input->get('id', '', 'INT');
 		$return = NFWItemHelper::checkIn('xiveirm_contacts', $id);
 
 		$menu = & JSite::getMenu();
@@ -310,7 +313,7 @@ class XiveirmControllerApi extends XiveirmController
 	public function getlist()
 	{
 		/*
-		 * NOTE: we do a different token check at the moment, because the old is not working at the moment.
+		 * NOTE: we do a different token check, because the old one is not working at the moment.
 		 */
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 		$app = JFactory::getApplication();
@@ -545,12 +548,11 @@ class XiveirmControllerApi extends XiveirmController
 //    
 
 	public function closeOnError($errorCode = 999, $errorMessage = 'ERROR', $errorId = 0) {
-		$return_arr = array();
-		$return_arr["apiReturnId"] = $errorId;
-		$return_arr["apiReturnCode"] = $errorCode;
-		$return_arr["apiReturnMessage"] = $errorMessage;
-
-		$return = $return_arr;
+		$return = array();
+		$return["status"] = false;
+		$return["id"] = $errorId;
+		$return["code"] = $errorCode;
+		$return["message"] = $errorMessage;
 
 		echo json_encode($return);
 
