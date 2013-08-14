@@ -74,7 +74,7 @@ class XiveirmControllerContactForm extends XiveirmController
 		// Get the the current edit id.
 		$id = JFactory::getApplication()->input->getInt('id', null, 'array');
 
-		$flag = IRMSystem::flagIt($id);
+		$flag = IRMItemHelper::flagIt($id);
 
 		$name = '';
 
