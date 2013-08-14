@@ -64,7 +64,7 @@ $full_name = $this->item->first_name . ' ' . $this->item->last_name;
 
 // Prebuild the tabs
 $appContainer = new stdClass();
-foreach($dispatcher->trigger('htmlBuildTab', array(&$this->item)) as $tab)
+foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params) ) as $tab)
 {
 	$appHelper = new JObject();
 	$appKey = $tab['appKey'];
@@ -123,18 +123,18 @@ foreach($dispatcher->trigger('htmlBuildTab', array(&$this->item)) as $tab)
 						$i++; // count right from beginning
 
 						if ( $i < $tabMax ) {
-							echo '<li><a data-toggle="tab" href="#' . $irmApp->appKey . '">' . $irmApp->tabButton . '</a></li>';
+							echo '<li><a data-toggle="tab" href="#' . $irmApp->appKey . '_tabbody" class="' . $irmApp->appKey . '_tabbutton">' . $irmApp->tabButton . '</a></li>';
 						}
 
 						if ( $i == $tabMax ) {
 							echo '<li class="dropdown">';
 								echo '<a data-toggle="dropdown" class="dropdown-toggle" href="#">' . JText::_('COM_XIVEIRM_CONTACT_FORM_TAB_MORE') . ' <b class="caret"></b></a>';
 								echo '<ul class="dropdown-menu dropdown-info">';
-									echo '<li><a data-toggle="tab" href="#' . $irmApp->appKey . '">' . $irmApp->tabButton . '</a></li>';
+									echo '<li><a data-toggle="tab" href="#' . $irmApp->appKey . '_tabbody" class="' . $irmApp->appKey . '_tabbutton">' . $irmApp->tabButton . '</a></li>';
 						}
 
 						if ( $i > $tabMax ) {
-							echo '<li><a data-toggle="tab" href="#' . $irmApp->appKey . '">' . $irmApp->tabButton . '</a></li>';
+							echo '<li><a data-toggle="tab" href="#' . $irmApp->appKey . '_tabbody" class="' . $irmApp->appKey . '_tabbutton">' . $irmApp->tabButton . '</a></li>';
 						}
 
 						if ( $i >= $tabMax && $i == $appCount ) {
@@ -155,7 +155,7 @@ foreach($dispatcher->trigger('htmlBuildTab', array(&$this->item)) as $tab)
 								<div class="controls controls-row">
 									<?php NFWHtmlJavascript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 									<div class="span6">
-										<?php if ( ($this->item->catid && !$this->item->id) || ($this->item->catid && $appCounter > 0) ) { ?>
+										<?php if ( ($this->item->catid && !$this->item->id) || ($this->item->catid && $appCount > 0) ) { ?>
 											<input type="hidden" name="contacts[catid]" value="<?php echo $this->item->catid; ?>">
 											<a class="btn btn-small btn-warning disabled" disabled="disabled"><i class="icon-double-angle-left"></i> <?php echo NFWItemHelper::getTitleById('category', $this->item->catid); ?></a>
 										<?php } else { ?>
@@ -287,16 +287,14 @@ foreach($dispatcher->trigger('htmlBuildTab', array(&$this->item)) as $tab)
 							<!-- ---------- ---------- ---------- ---------- ---------- BEGIN INCORE-FORM RECOMMENDED FORMFIELDS ---------- ---------- ---------- ---------- ---------- -->
 
 							<?php
-								foreach($dispatcher->trigger( 'loadInCoreformForm', array() ) as $formFields)
+								foreach($dispatcher->trigger( 'htmlBuildPseudoForms', array(&$this->item, &$this->params) ) as $formFields)
 								{
-							?>
-							<div class="control-group">
-								<label class="control-label"><?php echo $formFields['formLabel']; ?></label>
-								<div class="controls controls-row">
-									<?php echo $formFields['formFields']; ?>
-								</div>
-							</div>
-							<?php
+									echo '<div class="control-group ' . $formFields['appKey'] . '_pseudoform">';
+										echo '<label class="control-label">' . $formFields['formLabel'] . '</label>';
+										echo '<div class="controls controls-row">';
+											echo $formFields['formFields'];
+										echo '</div>';
+									echo '</div>';
 								}
 							?>
 
@@ -352,32 +350,32 @@ foreach($dispatcher->trigger('htmlBuildTab', array(&$this->item)) as $tab)
 									echo '</div>';
 									echo '<div class="widget-body">';
 										echo '<div class="widget-main padding-5">';
-											foreach($dispatcher->trigger( 'loadActionButton', array(&$this->item) ) as $inBaseWidget)
+											foreach($dispatcher->trigger( 'htmlBuildAction', array(&$this->item, &$this->params) ) as $actionButton)
 											{
-												echo '<span id="' . $inBaseWidget['tab_key'] . '_button">';
-												echo $inBaseWidget['tabContent'];
+												echo '<span id="' . $actionButton['appKey'] . '_actionbutton">';
+												echo $actionButton['button'];
 												echo '</span>';
 											}
 										echo '</div>';
 									echo '</div>';
 								echo '</div>';
 
-								foreach($dispatcher->trigger( 'inBaseWidgetTop', array(&$this->item) ) as $inBaseWidget)
+								foreach( $dispatcher->trigger( 'htmlBuildWidgetTop', array(&$this->item, &$this->params) ) as $inWidget )
 								{
-									echo '<div id="' . $inBaseWidget['tab_key'] . '">';
-									echo $inBaseWidget['tabContent'];
+									echo '<div id="' . $inWidget['appKey'] . '_widget-top">';
+									echo $inWidget['html'];
 									echo '</div>';
 								}
-								foreach($dispatcher->trigger( 'inBaseWidget', array(&$this->item) ) as $inBaseWidget)
+								foreach( $dispatcher->trigger( 'htmlBuildWidget', array(&$this->item, &$this->params) ) as $inWidget )
 								{
-									echo '<div id="' . $inBaseWidget['tab_key'] . '">';
-									echo $inBaseWidget['tabContent'];
+									echo '<div id="' . $inWidget['appKey'] . '_widget">';
+									echo $inWidget['html'];
 									echo '</div>';
 								}
-								foreach($dispatcher->trigger( 'inBaseWidgetBottom', array(&$this->item) ) as $inBaseWidget)
+								foreach( $dispatcher->trigger( 'htmlBuildWidgetBottom', array(&$this->item, &$this->params) ) as $inWidget )
 								{
-									echo '<div id="' . $inBaseWidget['tab_key'] . '">';
-									echo $inBaseWidget['tabContent'];
+									echo '<div id="' . $inWidget['appKey'] . '"_widget-bottom>';
+									echo $inWidget['html'];
 									echo '</div>';
 								}
 							?>
@@ -389,21 +387,11 @@ foreach($dispatcher->trigger('htmlBuildTab', array(&$this->item)) as $tab)
 				</div>
 				<!-- ---------- ---------- ---------- ---------- ---------- END BASE-DATA_TAB_CORE ---------- ---------- ---------- ---------- ---------- -->
 
-
-				<!-- ---------- ---------- ---------- ---------- ---------- BEGIN DROPDOWN TAB PANE TEST ---------- ---------- ---------- ---------- ---------- -->
-				<div id="dropdown1" class="tab-pane">
-					<p>Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic lomo retro fanny pack lo-fi farm-to-table readymade.</p>
-				</div>
-				<div id="dropdown2" class="tab-pane">
-					<p>Trust fund seitan letterpress, keytar raw denim keffiyeh etsy art party before they sold out master cleanse gluten-free squid scenester freegan cosby sweater. Fanny pack portland seitan DIY, art party locavore wolf cliche high life echo park Austin.</p>
-				</div>
-				<!-- ---------- ---------- ---------- ---------- ---------- END DROPDOWN TAB PANE TEST ---------- ---------- ---------- ---------- ---------- -->
-
 				<!-- ---------- ---------- ---------- ---------- ---------- BEGIN TAB.PLUGINS_CONTENT ---------- ---------- ---------- ---------- ---------- -->
 				<?php
 					foreach( $appContainer as $irmApp )
 					{
-						echo '<div id="' . $irmApp->appKey . '" class="tab-pane">';
+						echo '<div id="' . $irmApp->appKey . '_tabbody" class="tab-pane">';
 						echo $irmApp->tabBody;
 						echo '</div>';
 					}
@@ -450,10 +438,10 @@ foreach($dispatcher->trigger('htmlBuildTab', array(&$this->item)) as $tab)
 
 	<!-- ---------- ---------- ---------- ---------- ---------- BEGIN EXTERN FORMS ---------- ---------- ---------- ---------- ---------- -->
 	<?php
-		foreach($dispatcher->trigger( 'loadExternForms', array(&$this->item) ) as $externForm)
+		foreach($dispatcher->trigger( 'loadExternForms', array(&$this->item, &$this->params) ) as $externForm)
 		{
-			echo '<span id="' . $externForm['tab_key'] . '_form">';
-			echo $externForm['tabContent'];
+			echo '<span id="' . $externForm['appKey'] . '_form">';
+			echo $externForm['appForm'];
 			echo '</span>';
 		}
 	?>
@@ -614,15 +602,3 @@ function geocodeInputHelper() {
 		jQuery(".widget-box .btn").attr("disabled", true);
 	<?php endif; ?>
 </script>
-
-
-
-<?php
-
-$rr = NFWAccessHelper::getActions( 'com_xiveirm', 'plugin', 88 );
-echo '<pre>';
- print_r($appContainer);
-echo '</pre>';
-
-
-?>
