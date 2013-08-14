@@ -59,4 +59,21 @@ abstract class IRMComponentHelper
 			return false;
 		}
 	}
+
+
+	/*
+	 * Method to load the core language files (mostly used in other components, plugins or anything else)
+	 *
+	 * @param     string    $app    The name of the component (eg. com_mycomponent)
+	 *
+	 * @return    void
+	 */
+	public function loadLanguage($app = 'com_xiveirm')
+	{
+		$lang = JFactory::getLanguage();
+		$base_dir = JPATH_SITE;
+		$language_tag = 'en-GB';
+		$reload = true;
+		$lang->load($app, $base_dir, $language_tag, $reload);
+	}
 }
