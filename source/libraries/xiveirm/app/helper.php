@@ -160,43 +160,25 @@ class IRMAppHelper
 	 * 
 	 * returns a prepared array
 	 */
-	public function getTabData($contact_id, $appKey)
+	public function getTabData($coreApp, $id, $appKey)
 	{
-		if(!$contact_id || !$appKey)
+		if(!$coreApp || !$id || !$appKey)
 		{
 			return false;
 		}
 
-		$db = JFactory::getDBO();
-		$query = $db->getQuery(true);
+		$table = 'xiveirm_' . $coreApp . '_appvalues';
+		$conditions = array($coreApp . '_id' => $id, 'app_key' => $appKey);
 
-		$query
-			->select('*')
-			->from('#__xiveirm_contacts_appvalues')
-			->where('contact_id = ' . $db->quote($contact_id) . '')
-			->where('app_key = ' . $db->quote($appKey) . '');
-		$db->setQuery($query);
+		$result = NFWDatabase::select( $table, 'app_value', $conditions, 'OBJECT' );
 
-		// Try to get the data or the error code for debugging
-		try
-		{
-			$result = $db->loadObject();
-
-			if($result) {
-				$app_value = json_decode($result->app_value);
-				$result->app_value = $app_value;
-			} else {
-				$result = new stdClass;
-			}
-
-			return $result;
-		} catch (Exception $e) {
-			$error = array();
-			$error['code'] = (int)$e->getCode();
-			$error['message'] = $e->getMessage();
-
-			return $error;
+		if($result) {
+			$app_value = json_decode($result->app_value);
+			$result->app_value = $app_value;
+		} else {
+			$result = new stdClass;
 		}
-		
+
+		return $result;
 	}
 }
