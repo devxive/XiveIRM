@@ -57,10 +57,10 @@ if ($package['installer']->getInstallType() == 'install') {
 		$rows = $this->tableQueryHelper;
 
 		// Set the gender option values
-		$rows[] = array('client_id' => 2, 'catid' => $genderCategoryId, 'opt_value' => 'unknown', 'opt_name' => 'COM_XIVEIRM_XIVECONTACTS_GENDER_TRAIT_UNKNOWN', 'access' => 2);
-		$rows[] = array('client_id' => 2, 'catid' => $genderCategoryId, 'opt_value' => 'female', 'opt_name' => 'COM_XIVEIRM_XIVECONTACTS_GENDER_TRAIT_FEMALE', 'access' => 2);
-		$rows[] = array('client_id' => 2, 'catid' => $genderCategoryId, 'opt_value' => 'male', 'opt_name' => 'COM_XIVEIRM_XIVECONTACTS_GENDER_TRAIT_MALE', 'access' => 2);
-		$rows[] = array('client_id' => 2, 'catid' => $genderCategoryId, 'opt_value' => 'company', 'opt_name' => 'COM_XIVEIRM_XIVECONTACTS_GENDER_TRAIT_COMPANY', 'access' => 2);
+		$rows[] = array('client_id' => 2, 'catid' => $genderCategoryId, 'opt_value' => 'UNKNOWN', 'opt_name' => 'COM_XIVEIRM_XIVECONTACTS_GENDER_TRAIT_UNKNOWN', 'access' => 2);
+		$rows[] = array('client_id' => 2, 'catid' => $genderCategoryId, 'opt_value' => 'FEMALE', 'opt_name' => 'COM_XIVEIRM_XIVECONTACTS_GENDER_TRAIT_FEMALE', 'access' => 2);
+		$rows[] = array('client_id' => 2, 'catid' => $genderCategoryId, 'opt_value' => 'MALE', 'opt_name' => 'COM_XIVEIRM_XIVECONTACTS_GENDER_TRAIT_MALE', 'access' => 2);
+		$rows[] = array('client_id' => 2, 'catid' => $genderCategoryId, 'opt_value' => 'COMPANY', 'opt_name' => 'COM_XIVEIRM_XIVECONTACTS_GENDER_TRAIT_COMPANY', 'access' => 2);
 
 		// Set the helper var
 		$this->tableQueryHelper = $rows;
