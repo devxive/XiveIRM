@@ -347,7 +347,6 @@ class PlgIrmAppMedicaldetails extends JPlugin
 						<select id="selectCatId" class="chzn-select-category" data-placeholder="<?php echo JText::_('PLG_IRMAPP_MEDICALDETAILS_FORM_PLEASE_SELECT_TYPE'); ?>" onchange="setCategoryId()">
 							<option value=""></option>
 							<?php
-								$options = IRMFormList::getCategoryOptions('com_xivetranscorder');
 								if($options) {
 									foreach ($options as $key => $val) {
 										echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
