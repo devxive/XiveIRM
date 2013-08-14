@@ -26,223 +26,54 @@ class XiveirmModelApi extends JModelForm
 	 *
 	 * @param	array		The form data.
 	 * @return	mixed		The user id on success, false on failure.
-	 * @since	1.6
+	 * @since	6.0
 	 */
 	public function savecore($data)
 	{
-		// Now we get raw $data from the controller and have to perform the save request
-		// first we have to check if we got any datas and split the data into separate values
-
-		//check if we get any data
+		// Check if we get any data
 		if(!$data)
 		{
 			// Perform the return array
-			$return_arr = array();
-			$return_arr["apiReturnId"] = 0;
-			$return_arr["apiReturnCode"] = 2000;
-			$return_arr["apiReturnMessage"] = 'The form is completely empty: Neither an appId, a tabId nor a masterdataId is given!';
+			$result = array();
+			$result["status"] = false;
+			$result["id"] = null;
+			$result["code"] = 2000;
+			$result["message"] = 'The form is completely empty: Neither an appId, a tabId nor a masterdataId is given!';
 
-			return $return_arr;
+			return $result;
 		}
 
 		$dataCore = $data->core;
 		$dataApi = $data->api;
 
-//		$id = (!empty($data['id'])) ? $data['id'] : (int)$this->getState('contacts.id');
-//		$state = (!empty($data['state'])) ? 1 : 0;
-//		$user = JFactory::getUser();
-//
-//		if($id)
-//		{
-//			//Check the user can edit this item
-//			$authorised = $user->authorise('core.edit', 'com_xiveirm.contacts.'.$id) || $authorised = $user->authorise('core.edit.own', 'com_xiveirm.contacts.'.$id);
-//			if($user->authorise('core.edit.state', 'com_xiveirm.contacts.'.$id) !== true && $state == 1){ //The user cannot edit the state of the item.
-//				$data['state'] = 0;
-//			}
-//		} else {
-//			//Check the user can create new items in this section
-//			$authorised = $user->authorise('core.create', 'com_xiveirm');
-//			if($user->authorise('core.edit.state', 'com_xiveirm.contacts.'.$id) !== true && $state == 1){ //The user cannot edit the state of the item.
-//				$data['state'] = 0;
-//			}
-//		}
-//
-//		if ($authorised !== true) {
-//			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
-//			return false;
-//		}
+		// Prepare data to store with NFWDatabase::save() mehod
+		$result = NFWDatabase::save( $dataApi['coretable'], $data->core, 'OBJECT' );
 
-		// Check if we have an id for an update, else we have to create
-		if( isset($dataCore['id']) && $dataCore['id'] > 0 ) {
-			$id = (int)$dataCore['id'];
-			$doNew = false;
-		} else {
-			$id = 0;
-			$doNew = true;
-		}
-
-		// Init database object.
-		$db = JFactory::getDBO();
-		$query = $db->getQuery(true);
-
-		if($doNew) {
-			// Unset datas from form we do not need in the db query to save or to override (eg. id, created by)
-			unset($dataCore['id']);
-
-			// Build columns and values, check if we're in a multiform
-			$columns = array();
-			$values = array();
-
-			// Remaster the col/val vars
-			foreach($dataCore as $key => $val) {
-				// Ensure that only non arrays are set. If we have an array, its may a multiform! See checks after this!
-				if(!is_array($val)) {
-					// Set the columns
-					$columns[] = $key;
-
-					// Set the values
-					$values[] = $db->quote($val);
-				}
-			}
-
-			// Check if we have a multiform - if true, append to columns[] and values[]
-			// TODO IF WE'RE IN MULTIFORM, WE COULD SAVE THE COUNT VAR INTO THE USER STATE AND ACCESS THEM LATER TO PROCESS MESSAGES OR SOMETHING ELSE
-			if(isset($dataCore['multiform'])) {
-				if(is_array($dataCore['multiform'])) {
-					$multiformTotal = count($dataCore['multiform']);
-// debug					echo 'Multiform detected. Processing ' . $multiformTotal . ' transports...';
-					$lastArray = array_pop($dataCore['multiform']);
-					foreach($lastArray as $key => $val) {
-						// Set the columns
-						$columns[] = $key;
-
-						// Set the values
-						$values[] = $db->quote($val);
-					}
-				}
-			}
-
-			// Set additionals we need for create process
-			$columns[] = 'created';
-			$values[] = $db->quote(NFWItemHelper::getDate('MySQL'));
-			$columns[] = 'created_by';
-			$values[] = $db->quote(JFactory::getUser()->id);
-
-			$query
-				->insert($db->quoteName($dataApi['coretable']))
-				->columns($db->quoteName($columns))
-				->values(implode(',', $values));
-			$db->setQuery($query);
-	
-			// Try to store or get the error code for debugging
-			$apiReturn = array();
-	
-			try
-			{
-				$db->execute();
-				$apiReturnId = (int)$db->insertid();
-				$apiReturnCode = 'SAVED';
-				$apiReturnMessage = 'Succesfully saved';
-			} catch (Exception $e) {
-				$apiReturnId = null;
-				$apiReturnCode = (int)$e->getCode();
-				$apiReturnMessage = $e->getMessage();
-			}
-		}
-		else if(!$doNew)
-		{
-			// Unset datas from form we do not need in the db query to save or to override (eg. id, created by)
-			unset($dataCore['id']);
-
-			// Build fields
-			$fields = array();
-			$field = '';
-
-			// Remaster the fields var
-			foreach($dataCore as $key => $val) {
-				// Ensure that only non arrays are set. If we have an array, its may a multiform! See checks after this!
-				if(!is_array($val)) {
-					// Set the fields
-					$fields[] = $key . ' = ' . $db->quote($val);
-				}
-			}
-
-			// Check if we have a multiform - if true, append to columns[] and values[]
-			// TODO IF WE'RE IN MULTIFORM, WE COULD SAVE THE COUNT VAR INTO THE USER STATE AND ACCESS THEM LATER TO PROCESS MESSAGES OR SOMETHING ELSE
-			if(isset($dataCore['multiform'])) {
-				if(is_array($dataCore['multiform'])) {
-					$multiformTotal = count($dataCore['multiform']);
-// debug					echo 'Multiform detected. Processing ' . $multiformTotal . ' transports...';
-					$lastArray = array_pop($dataCore['multiform']);
-					foreach($lastArray as $key => $val) {
-						// Set the fields
-						$fields[] = $key . ' = ' . $db->quote($val);
-					}
-				}
-			}
-
-			// Set additionals we need for update process
-			$fields[] = 'modified = ' . $db->quote(NFWItemHelper::getDate('MySQL'));
-
-			$query
-				->update($db->quoteName($dataApi['coretable']))
-				->set($fields)
-				->where('id = ' . $db->quote($id) . '');
-
-			$db->setQuery($query);
-
-			// Try to store or get the error code for debugging
-			try
-			{
-				$db->execute();
-				$apiReturnId = (int)$id;
-				$apiReturnCode = 'UPDATED';
-				$apiReturnMessage = 'Succesfully updated';
-			} catch (Exception $e) {
-				$apiReturnId = null;
-				$apiReturnCode = (int)$e->getCode();
-				$apiReturnMessage = $e->getMessage();
-			}
-		}
-		else
-		{
-			$apiReturnId = null;
-			$apiReturnCode = 2066;
-			$apiReturnMessage = 'Unbekannter Fehler';
-		}
-	
-		// Perform the return array
-		$return_arr = array();
-		$return_arr["apiReturnId"] = (int)$apiReturnId;
-		$return_arr["apiReturnCode"] = $apiReturnCode;
-		$return_arr["apiReturnMessage"] = $apiReturnMessage;
-
-		return $return_arr;
+		return $result;
 	}
 
 	/**
-	 * Method to save the tabform data.
+	 * Method to save the appform data.
 	 *
 	 * @param	array		The form data.
 	 * @return	mixed		The user id on success, false on failure.
-	 * @since	1.6
+	 * @since	6.0
 	 */
-	public function savetab($data, $id, $tabKey)
+	public function saveAppData($data, $id, $appKey)
 	{
-		// Now we get raw $data from the controller and have to perform the save request
-		// first we have to check if we got any datas and split the data into separate values
-
-		//check if we get any data
+		// Check if we get any data
 		if(!$data)
 		{
 			// Perform the return array
-			$return_arr = array();
-			$return_arr["apiReturnId"] = (int)$id;
-			$return_arr["apiReturnCode"] = 2500;
-			$return_arr["apiReturnMessage"] = 'The tabApp form is completely empty: Neither an appId, a tabId nor a masterdataId is given!';
+			$result = array();
+			$result["status"] = false;
+			$result["id"] = null;
+			$result["code"] = 2500;
+			$result["message"] = 'The tabApp form is completely empty: Neither an appId, a tabId nor a masterdataId is given!';
 
-			return $return_arr;
+			return $result;
 		}
+
 		$dataTab = $data->tab;
 		$dataApi = $data->api;
 
@@ -267,128 +98,32 @@ class XiveirmModelApi extends JModelForm
 			}
 		}
 
-		// JSONize the new array
-		$newData = json_encode($newDataArray);
+		// Prepare the data array
+		$dataApp = array();
 
-		// Init database object.
-		$db = JFactory::getDBO();
-		$query = $db->getQuery(true);
+		// Save the table id to the appropriate table id column name
+		$table_id_name = $dataApi['apptableidname'];
+		$dataApp[$table_id_name] = $id;
+		$dataApp['app_key'] = $appKey;
 
-		// Lets have a look first if we have already a tab with that tab_key saved for this customer! Happens if the user attemp to click more than once on save
-		$query
-			->select('*')
-			->from($db->quoteName($dataApi['tabapptable']))
-			->where('' . $dataApi['tabapptableidname'] . ' = ' . $db->quote($id) . '')
-			->where('tab_key = ' . $db->quote($tabKey) . '');
+		// Convert to JSON string!
+		$dataApp['app_value'] = json_encode($newDataArray);
 
-		$db->setQuery($query);
-		$result = $db->loadObject();
+		// Create conditions for the $diffId array processor in NFWDatabase
+		$diffId = array($dataApi['apptableidname'] => $id, 'app_key' => $appKey);
 
-		// Override query by call new bcz old values in select query cause errors on firther queries!!!
-		$query = $db->getQuery(true);
+		// Prepare data to store with NFWDatabase::save() mehod
+		$result = NFWDatabase::save( $dataApi['apptable'], $dataApp, 'OBJECT', $diffId );
 
-		if($result) {
-			$tab_exist = true;
-		} else {
-			$tab_exist = false;
+		// If result status is true, we have to insert the original id for the return code because we got none for unique key processes
+		if ( $result->status == true ) {
+			$result->id = $id;
+			$result->message = 'updated';
 		}
 
-		if(!$tab_exist && $id != 0)
-		{
-			// Set the columns
-			$columns = array($dataApi['tabapptableidname'], 'tab_key', 'tab_value');
-
-			// Set the values
-			$values = array($db->quote($id), $db->quote($tabKey), $db->quote($newData));
-
-			$query
-				->insert($db->quoteName($dataApi['tabapptable']))
-				->columns($db->quoteName($columns))
-				->values(implode(',', $values));
-			$db->setQuery($query);
-
-			// Try to store or get the error code for debugging
-			try
-			{
-				$db->execute();
-				$apiReturnId = (int)$id;
-				$apiReturnCode = 'SAVED';
-				$apiReturnMessage = 'Succesfully saved';
-			} catch (Exception $e) {
-				$apiReturnId = null;
-				$apiReturnCode = (int)$e->getCode();
-				$apiReturnMessage = $e->getMessage();
-			}
-		}
-		else if($tab_exist && $id != 0)
-		{
-			// If tab exist but array is empty, delete the row!
-			if( $newData == '[]' ) {
-				$conditions = array(
-					'' . $dataApi['tabapptableidname'] . ' = ' . $db->quote($id) . '',
-					'tab_key = ' . $db->quote($tabKey) . '');
-
-				$query
-					->delete($db->quoteName($dataApi['tabapptable']))
-					->where($conditions);
-				$db->setQuery($query);
-
-				// Try to store or get the error code for debugging
-				try
-				{
-					$db->execute();
-					$apiReturnId = (int)$id;
-					$apiReturnCode = 'UPDATED';
-					$apiReturnMessage = 'Succesfully saved core and deleted tabApp values';
-				} catch (Exception $e) {
-					$apiReturnId = null;
-					$apiReturnCode = (int)$e->getCode();
-					$apiReturnMessage = $e->getMessage();
-				}
-			} else {
-				// Set the fields
-				$fields = array(
-					'' . $dataApi['tabapptableidname'] . ' = ' . $db->quote($id) . '',
-					'tab_key = ' . $db->quote($tabKey) . '',
-					'tab_value = ' . $db->quote($newData) . '');
-
-				$query
-					->update($db->quoteName($dataApi['tabapptable']))
-					->set($fields)
-					->where('' . $dataApi['tabapptableidname'] . ' = ' . $db->quote($id) . '')
-					->where('tab_key = ' . $db->quote($tabKey) . '');
-
-				$db->setQuery($query);
-
-				// Try to store or get the error code for debugging
-				try
-				{
-					$db->execute();
-					$apiReturnId = (int)$id;
-					$apiReturnCode = 'UPDATED';
-					$apiReturnMessage = 'Succesfully updated';
-				} catch (Exception $e) {
-					$apiReturnId = null;
-					$apiReturnCode = (int)$e->getCode();
-					$apiReturnMessage = $e->getMessage();
-				}
-			}
-		}
-		else
-		{
-			$apiReturnId = (int)$id;
-			$apiReturnCode = 2566;
-			$apiReturnMessage = 'Unbekannter Fehler';
-		}
-
-		// Perform the return array
-		$return_arr = array();
-		$return_arr["apiReturnId"] = (int)$id;
-		$return_arr["apiReturnCode"] = $apiReturnCode;
-		$return_arr["apiReturnMessage"] = $apiReturnMessage;
-
-		return $return_arr;
+		return $result;
 	}
+
 
 	function delete($data)
 	{
