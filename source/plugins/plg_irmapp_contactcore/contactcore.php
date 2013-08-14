@@ -19,11 +19,12 @@ defined('JPATH_BASE') or die;
 class PlgIrmAppContactcore extends JPlugin
 {
 	/**
-	 * Stores the tab app name
-	 * @var	tab_key
-	 * @since	3.1
+	 * Stores the app name
+	 * @var	appKey
+	 * @since	6.0
 	 */
-	var $tab_key;
+	var $appKey;
+
 
 	/**
 	 * INITIATE THE CONSTRUCTOR
@@ -31,19 +32,29 @@ class PlgIrmAppContactcore extends JPlugin
 	public function __construct(& $subject, $config)
 	{
 		parent::__construct($subject, $config);
-		$this->tab_key = 'contactcore';
+		$this->appKey = 'contactcore';
 		$this->loadLanguage();
 	}
+
 
 	/**
 	 * @param   object	&$item		The item referenced object which includes the system id of this contact
 	 *
-	 * @return  array			tab_key = The tab identification, tabContent = Content of the Container
+	 * @return  array			appKey = The tab identification, tabContent = Content of the Container
 	 *
 	 * @since   3.0
 	 */
-	public function inBaseWidgetTop(&$item = null, &$params = null)
+	public function htmlBuildWidgetTop( &$item = null, &$params = null )
 	{
+		// Get Permissions based on category
+		if ( !$item->catid ) {
+			// We have no category id and use the components acl
+			$acl = NFWAccessHelper::getActions('com_xiveirm');
+		} else {
+			// We have a category id and use the category acl
+			$acl = NFWAccessHelper::getActions('com_xiveirm', 'category', $item->catid);
+		}
+
 		// Check if we have geo coordinates in db to manipulate the script Declaration or the icon-globe class
 		if($item->address_lat && $item->address_lng) {
 			$address_geo_verified = true;
@@ -83,10 +94,6 @@ class PlgIrmAppContactcore extends JPlugin
 		if(!empty($item->address_country)) {
 			$initAddress .= ' ' . $item->address_country;
 		}
-
-//		echo '<pre>';
-//		print_r($item);
-//		echo '</pre>';
 
 		NFWHtmlJavascript::detectChanges();
 		NFWHtmlJavaScript::loadAutoGeocoder('#location', false, 'components/com_xiveirm/assets/js/');
@@ -132,15 +139,8 @@ class PlgIrmAppContactcore extends JPlugin
 					var address_hash = sha256_digest(address_full);
 					$('#address_hash').val(address_hash);
 
-					// Check and set the geo globe icon
-					if(address_lat != '' && address_lng != '') {
-						$('#address-geo-verified').removeClass('red').addClass('green');
-					} else {
-						$('#address-geo-verified').removeClass('green').addClass('red');
-					}
-
 					// Check and set the hash ancor icon
-					if(address_hash != '' && address_hash != address_hashEmpty) {
+					if( address_hash != '' && address_hash != address_hashEmpty ) {
 						$('#address-hash-verified').removeClass('red').addClass('green');
 					} else {
 						$('#address-hash-verified').removeClass('green').addClass('red');
@@ -157,7 +157,7 @@ class PlgIrmAppContactcore extends JPlugin
 
 		ob_start();
 		?>
-		<!---------- Begin output buffering: <?php echo $this->tab_key; ?> ---------->
+		<!---------- Begin output buffering: <?php echo $this->appKey; ?> ---------->
 
 		<div class="widget-box light-border small-margin-top">
 			<div class="widget-header header-color-dark">
@@ -213,14 +213,14 @@ class PlgIrmAppContactcore extends JPlugin
 			</center>
 		</div>
 
-		<!---------- End output buffering: <?php echo $this->tab_key; ?> ---------->
+		<!---------- End output buffering: <?php echo $this->appKey; ?> ---------->
 		<?php
 
-		$tabContent = ob_get_clean();
+		$html = ob_get_clean();
 
 		$inMasterContainer = array(
-			'tab_key' => $this->tab_key,
-			'tabContent' => $tabContent
+			'appKey' => $this->appKey,
+			'html' => $html
 		);
 
 		return $inMasterContainer;
@@ -229,18 +229,18 @@ class PlgIrmAppContactcore extends JPlugin
 	/**
 	 * @param   object	&$item		The item referenced object which includes the system id of this contact
 	 *
-	 * @return  array			tab_key = The tab identification, tabContent = Content of the Container
+	 * @return  array			appKey = The tab identification, tabContent = Content of the Container
 	 *
 	 * @since   3.0
 	 */
-	public function inBaseWidgetBottom_OUTDATED(&$item = null, &$params = null)
+	public function inBaseWidgetBottom_OUTDATED( &$item = null, &$params = null )
 	{
 //		$plzUrl = 'http://www.postdirekt.de/plzserver/PlzSearchServlet?app=miniapp&amp;w=350&amp;h=315&amp;fr=0&amp;frc=000000&amp;bg=FFFFFF&amp;hl2=A5A5A5&amp;fc=000000&amp;lc=000000&amp;ff=Arial&amp;fs=10&amp;lnc=000000&amp;hdc=000000&amp;app=miniapp&amp;loc=http%3A//plzkarte.com/plz-suche/';
 		$plzUrl = 'http://www.postdirekt.de/plzserver/PlzSearchServlet?app=miniapp&fr=0&bg=FFF&hl2=FC0&fc=000&lc=000000&ff=Verdana&fs=10&lnc=000000&hdc=000000';
 
 		ob_start();
 		?>
-		<!---------- Begin output buffering: <?php echo $this->tab_key; ?> ---------->
+		<!---------- Begin output buffering: <?php echo $this->appKey; ?> ---------->
 
 		<div class="widget-box small-margin-top extended">
 			<div class="widget-header" style="background: url(/images/system/widgets/logo_deutschepost.png) 95% 40% no-repeat #FC0; height: 31px;">
@@ -255,13 +255,13 @@ class PlgIrmAppContactcore extends JPlugin
 			</div>
 		</div>
 
-		<!---------- End output buffering: <?php echo $this->tab_key; ?> ---------->
+		<!---------- End output buffering: <?php echo $this->appKey; ?> ---------->
 		<?php
 
 		$tabContent = ob_get_clean();
 
 		$inMasterContainer = array(
-			'tab_key' => $this->tab_key,
+			'appKey' => $this->appKey,
 			'tabContent' => $tabContent
 		);
 
