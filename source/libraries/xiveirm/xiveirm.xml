@@ -16,6 +16,7 @@
 		<folder>component</folder>
 		<folder>form</folder>
 		<folder>html</folder>
+		<folder>item</folder>
 		<folder>plugin</folder>
 		<folder>session</folder>
 		<folder>version</folder>
