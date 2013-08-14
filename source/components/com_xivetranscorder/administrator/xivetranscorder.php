@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * @version     5.0.0
  * @package     com_xivetranscorder
@@ -10,9 +10,6 @@
 
 // no direct access
 defined('_JEXEC') or die;
-
-require_once JPATH_SITE.'/components/com_xiveirm/helpers/xiveirm.php';
-require_once JPATH_SITE.'/components/com_xiveirm/helpers/irmsystem.php';
 
 // Access check.
 if (!JFactory::getUser()->authorise('core.manage', 'com_xivetranscorder')) 
