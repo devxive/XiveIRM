@@ -8,6 +8,13 @@
 			filter="raw">
 				<option value="0">JOPTION_SELECT_CATEGORY</option>
 		</field>
+		<field name="poi_category" type="category"
+			label="COM_XIVEIRM_SYSTEM_CATEGORY_POI_LBL"
+			description="COM_XIVEIRM_SYSTEM_CATEGORY_POI_DESC"
+			extension="com_xiveirm"
+			filter="raw">
+				<option value="0">JOPTION_SELECT_CATEGORY</option>
+		</field>
 	</fieldset>
 
 	<fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL">
