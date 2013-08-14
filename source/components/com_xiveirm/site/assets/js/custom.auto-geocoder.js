@@ -1,8 +1,8 @@
 (function($) {
 	var geocoder = new google.maps.Geocoder();
 
-	// used to prevent alertify to display message on initail check
-	var checkerTrigger = 0;
+	// used to prevent alertify to display message on initial check
+	var initCounter = 0;
 
 	var autoGeocoder = $.fn.autoGeocoder = function(options) {
 		var options = $.extend(true, {}, autoGeocoder.defaults, options || {}),
@@ -103,8 +103,9 @@
 
 					$(this).trigger('auto-geocoder.onGeocodeSuccess', [results, status]);
 
-					checkerTrigger++;
-
+					/*
+					 * Get and set the form fields
+					 */
 					var address = results[0].address_components;
 
 					addressHelper = new Object();
@@ -136,15 +137,25 @@
 					// Pull out the message
 					if(address_street && address_houseno && address_zip && address_city && address_region && address_country) {
 						// If all is set
-						alertify.success("We could find and verify an address. Click the Additional fields button to check if all address fields are filled correct!");
+//						alertify.success("We could find and verify an address. Click the Additional fields button to check if all address fields are filled correct!");
 					}
-					if(checkerTrigger < 1 && !address_houseno) {
+					if( !address_houseno ) {
 						// We have no house number
-						alertify.error("There is no street number given in your request. Geo-Location could be different!");
+						alertify.error("There is no house number given in your request. Geo-Location could be different!");
 					}
-					if(!address_street && !address_houseno && !address_zip && !address_city && !address_region && !address_country && checkerTrigger < 2) {
+					if( !address_street && !address_houseno && !address_zip && !address_city && !address_region && !address_country ) {
 						alertify.alert("<div class='modal-header'><h3>Address verification failed!</h3></div><div class='modal-body'>Sorry, we can't verify the address you typed in! Please try the following:<ul><li>Try to type in similar words</li><li>Try to type in the state or the country</li><li>Try to check the address on google maps</li></ul></div>");
 					}
+
+					// Check and set the geo globe icon
+					var address_lat      = ( $('#address_lat').val() )      ? $('#address_lat').val()            : false;
+					var address_lng      = ( $('#address_lng').val() )      ? $('#address_lng').val()            : false;
+					if( address_lat && address_lng && address_houseno ) {
+						$('#address-geo-verified').removeClass('red').addClass('green');
+					} else {
+						$('#address-geo-verified').removeClass('green').addClass('red');
+					}
+
 
 					// Set the vars to form field values
 					$('#address_street').val(address_street);
@@ -154,10 +165,22 @@
 					$('#address_region').val(address_region);
 					$('#address_country').val(address_country);
 
-					// Geo Coordinates
-					if(position.lb && position.mb) {
-						var set_address_lat = position.lb.toFixed(10);
-						var set_address_lng = position.mb.toFixed(10);
+					// Geo Coordinates ( check for values with matches of the length and with geo coordinates bcz G is changing those vars from time to time )
+					var posCounter = 0;
+					var geoPos = new Object();
+					$.each(position, function(key, val) {
+						if( key.match(/^.b$/) ) {
+//							console.log(val);
+							geoPos[posCounter] = val;
+							posCounter++;
+						}
+					});
+
+//					console.log(geoPos);
+
+					if(geoPos[0] && geoPos[1]) {
+						var set_address_lat = geoPos[0].toFixed(10);
+						var set_address_lng = geoPos[1].toFixed(10);
 						$('#address_lat').val(set_address_lat);
 						$('#address_lng').val(set_address_lng);
 					} else {
@@ -172,7 +195,6 @@
 //					console.log(address);
 
 //					console.log(addressHelper);
-
 				} else {
 					var initial = options.initial;
 
