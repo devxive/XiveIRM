@@ -293,11 +293,11 @@ jQuery(function() {
 				</td>
 				<td class="hidden-phone">
 					<?php
-						if($item->gender == 'm') {
+						if($item->gender == 'MALE') {
 							echo '<i class="icon-male blue"></i>';
-						} else if($item->gender == 'f') {
+						} else if($item->gender == 'FEMALE') {
 							echo '<i class="icon-female red"></i>';
-						} else if($item->gender == 'c') {
+						} else if($item->gender == 'COMPANY') {
 							echo'<i class="icon-building green"></i>';
 						} else {
 							echo '<i class="icon-user"></i>';
