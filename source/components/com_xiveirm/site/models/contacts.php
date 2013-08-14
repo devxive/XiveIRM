@@ -102,6 +102,10 @@ class XiveirmModelContacts extends JModelList {
 	$query->select('created_by.name AS created_by');
 	$query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
 
+	// Join over the modified by field 'modified_by'
+	$query->select('modified_by.name AS modified_by');
+	$query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
+
 	// Join over the category 'catid'
 	$query->select('catid.title AS catid_title');
 	$query->join('LEFT', '#__categories AS catid ON catid.id = a.catid');
