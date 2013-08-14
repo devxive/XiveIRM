@@ -52,34 +52,39 @@ class XivetranscorderModelTranscorders extends JModelList {
         parent::populateState($ordering, $direction);
     }
 
-    /**
-     * Build an SQL query to load the list data.
-     *
-     * @return	JDatabaseQuery
-     * @since	1.6
-     */
-    protected function getListQuery() {
-        // Create a new query object.
-        $db = $this->getDbo();
-        $query = $db->getQuery(true);
+	/**
+	 * Build an SQL query to load the list data.
+	 *
+	 * @return	JDatabaseQuery
+	 * @since	1.6
+	 */
+	protected function getListQuery()
+	{
+		// Create a new query object.
+		$db = $this->getDbo();
+		$query = $db->getQuery(true);
 
-        // Select the required fields from the table.
-        $query->select(
-                $this->getState(
-                        'list.select', 'a.*'
-                )
-        );
+		// Select the required fields from the table.
+		$query->select(
+			$this->getState(
+				'list.select', 'a.*'
+			)
+		);
 
-        $query->from('`#__xiveirm_transcorders` AS a');
+		$query->from('`#__xiveirm_transcorders` AS a');
 
-        
-    // Join over the users for the checked out user.
-    $query->select('uc.name AS editor');
-    $query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
-    
+		// Join over the users for the checked out user.
+		$query->select('uc.name AS editor');
+		$query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
+
 		// Join over the created by field 'created_by'
 		$query->select('created_by.name AS created_by');
 		$query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
+
+		// Join over the users for the modified_by out user.
+		$query->select('modified_by.name AS modified_by');
+		$query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
+    
 		// Join over the category 'catid'
 		$query->select('catid.title AS catid_title');
 		$query->join('LEFT', '#__categories AS catid ON catid.id = a.catid');
