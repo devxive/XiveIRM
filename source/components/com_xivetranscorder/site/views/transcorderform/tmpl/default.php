@@ -10,16 +10,9 @@
 defined('_JEXEC') or die;
 
 // JHtml::_('behavior.keepalive');
-// JHtml::_('behavior.tooltip');
 // JHtml::_('behavior.formvalidation');
 
 JHtml::_('stylesheet', 'nawala/nawala.import.css', false, true, false, false);
-
-// Import HTML and Helper Classes
-// nimport('NHtml.JavaScript');
-// nimport('NItem.Helper', false);
-// nimport('NUser.Access', false);
-// nimport('NPlugins.Sha256');
 
 NFWHtmlJavascript::setToggle('extended', 'toggleExtend');
 NFWHtmlJavascript::setTooltip('.xtooltip');
@@ -28,20 +21,19 @@ NFWHtmlJavascript::setPreventFormSubmitByKey();
 NFWHtmlJavascript::loadGritter();
 NFWHtmlJavascript::loadAlertify();
 // NFWHtmlJavascript::setPreventFormLeaveIfChanged('#form-transcorder');
-NFWHtmlJavascript::setChosen('.chzn-select-poi-address', false, array('allow_single_deselect' => true, 'disable_search_threshold' => '10', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%'));
+NFWHtmlJavascript::setChosen('.chzn-select', false, array('allow_single_deselect' => true, 'disable_search_threshold' => '10', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%'));
+// NFWHtmlJavascript::setChosen('.chzn-select-trans', false, array('width' => '100%', 'disable_search' => true));
 NFWHtmlJavascript::loadMomentOnly();
-// NFWPluginsSha256::loadSHA256('jquery.hash.sha256');
+NFWPluginsSha256::loadSHA256('js.sha256');
+NFWHtmlJavascript::detectChanges();
 
 //Load admin language file
 $lang = JFactory::getLanguage();
 $lang->load('com_xiveirm', JPATH_SITE);
 $lang->load('com_xivetranscorder', JPATH_ADMINISTRATOR);
 
-// Load the XiveIRMSystem Session Data (Performed by the XiveIRM System Plugin)
-$xsession = JFactory::getSession()->get('XiveIRMSystem');
-
-// Get Permissions
-// $permissions = NUserAccess::getPermissions('com_xiveirm', false, false, 'xiveirm_transcorders.' . $this->item->id);
+// Load the XiveIRMSystem Session Data
+$session = IRMSessionHelper::getValues();
 
 // If it's a new order and we have set the catid in the prevoius link!
 if(!$this->item->catid) {
@@ -52,9 +44,24 @@ if(!$this->item->catid) {
 if(!$this->item->contact_id) {
 	$this->item->contact_id = JFactory::getApplication()->getUserState('com_xivetranscorder.edit.transcorder.contactid');
 }
+// Get the contact Object
+if($this->item->contact_id) {
+	$contactObject = IRMItemHelper::getContactObject($this->item->contact_id);
+}
+// used for Javascript processed messages
+$full_name = IRMFormName::formatContactName($contactObject->contact);
+
+// Get Permissions based on category
+if ( !$this->item->catid ) {
+	// We have no category id and use the components acl
+	$acl = NFWAccessHelper::getActions('com_xiveirm');
+} else {
+	// We have a category id and use the category acl
+	$acl = NFWAccessHelper::getActions('com_xiveirm', 'category', $this->item->catid);
+}
 
 // Import all TabApps based on the XiveIRM TabApp configs and the related catid!
-// IRMSystem::getPlugins($this->item->catid, 'transcorders');
+IRMAppHelper::importPlugins('com_xivetranscorder', $this->item->catid);
 $dispatcher = JDispatcher::getInstance();
 
 // Check for checked out item
@@ -69,23 +76,6 @@ $checkoutParams = array(
 );
 $checkedOut = NFWHtmlJavascript::getCheckoutMessage($this->item->checked_out, $this->item->checked_out_time, '#checkout-message', $checkoutParams);
 
-// Get and build the name if id, used for javascript processed messages and title header
-if($this->item->contact_id) {
-	$full_name = NFWItemHelper::getNameById($this->item->contact_id, 'xiveirm_contacts', true);
-} else {
-	$full_name = 'Full Name PLACEHOLDER';
-}
-
-// Get the contact Object
-if($this->item->contact_id) {
-	$contactObject = IRMItemHelper::getContactObject($this->item->contact_id);
-}
-
-$menu = JSite::getMenu();
-// echo '<pre>';
-// print_r($menu->getActive());
-// echo '</pre>';
-
 // Get the POI Category from com_xivetranscorder config options and build the options list
 $poiCat = IRMComponentHelper::getConfigValue('com_xivetranscorder', 'poi_category');
 $poiOptions = IRMFormList::getContactOptions( $poiCat );
@@ -95,6 +85,18 @@ $transportDeviceOptions = IRMFormList::getTransportDeviceOptions();
 $transportTypeOptions = IRMFormList::getTransportTypeOptions();
 $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 
+// Prebuild the tabs
+$appContainer = new stdClass();
+foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params) ) as $tab)
+{
+	$appHelper = new JObject();
+	$appKey = $tab['appKey'];
+
+	$appHelper->appKey     = $tab['appKey'];
+	$appHelper->tabButton  = $tab['tabButton'];
+	$appHelper->tabBody    = $tab['tabBody'];
+	$appContainer->$appKey = $appHelper;
+}
 ?>
 <div class="row-fluid">
 	<!-- ---------- ---------- ---------- ---------- ---------- BEGIN PAGE HEADER ---------- ---------- ---------- ---------- ---------- -->
@@ -138,22 +140,31 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 				<li class="active"><a data-toggle="tab" href="#base-data"><i class="green icon-home bigger-110"></i> <?php echo JText::_('COM_XIVETRANSCORDER_ORDER_FORM_TAB_BASICDATA'); ?></a></li>
 				<!-- TAB.PLUGIN_BUTTON -->
 				<?php
-					foreach($dispatcher->trigger( 'loadTabButton', array(&$this->item) ) as $tabButton)
+					$i = 0; $tabMax = 5; $appCount = count($appContainer);
+					foreach( $appContainer as $irmApp )
 					{
-						echo '<li><a data-toggle="tab" href="#' . $tabButton['tab_key'] . '">';
-						echo $tabButton['tabButtonName'];
-						echo '</a></li>';
+						$i++; // count right from beginning
+
+						if ( $i < $tabMax ) {
+							echo '<li><a data-toggle="tab" href="#' . $irmApp->appKey . '_tabbody" class="' . $irmApp->appKey . '_tabbutton">' . $irmApp->tabButton . '</a></li>';
+						}
+
+						if ( $i == $tabMax ) {
+							echo '<li class="dropdown">';
+								echo '<a data-toggle="dropdown" class="dropdown-toggle" href="#">' . JText::_('COM_XIVEIRM_CONTACT_FORM_TAB_MORE') . ' <b class="caret"></b></a>';
+								echo '<ul class="dropdown-menu dropdown-info">';
+									echo '<li><a data-toggle="tab" href="#' . $irmApp->appKey . '_tabbody" class="' . $irmApp->appKey . '_tabbutton">' . $irmApp->tabButton . '</a></li>';
+						}
+
+						if ( $i > $tabMax ) {
+							echo '<li><a data-toggle="tab" href="#' . $irmApp->appKey . '_tabbody" class="' . $irmApp->appKey . '_tabbutton">' . $irmApp->tabButton . '</a></li>';
+						}
+
+						if ( $i >= $tabMax && $i == $appCount ) {
+							echo '</ul></li>';
+						}
 					}
 				?>
-				<!-- TAB.PLUGIN_BUTTON -->
-				<li class="dropdown">
-					<a data-toggle="dropdown" class="dropdown-toggle" href="#"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TAB_MORE'); ?> <b class="caret"></b></a>
-					<ul class="dropdown-menu dropdown-info">
-						<li><a data-toggle="tab" href="#dropdown1">@Anwendung 4</a></li>
-						<li><a data-toggle="tab" href="#dropdown2">@Anwendung 5</a></li>
-						<li><a data-toggle="tab" href="#">@Anwendung 6</a></li>
-					</ul>
-				</li>
 			</ul>
 	
 			<!-- ---------- ---------- ---------- ---------- ---------- BEGIN master-tab-pane-container ---------- ---------- ---------- ---------- ---------- -->
@@ -165,13 +176,12 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 							<div class="control-group">
 								<label class="control-label"><?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ORDER_CATEGORY'); ?></label>
 								<div class="controls controls-row">
-									<?php NFWHtmlJavascript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 									<div class="span6">
 										<?php if($this->item->catid && !$this->item->id) { ?>
 											<input type="hidden" name="transcorders[catid]" value="<?php echo $this->item->catid; ?>">
 											<a class="btn btn-small btn-warning disabled" disabled="disabled"><i class="icon-double-angle-left"></i> <?php echo NFWItemHelper::getTitleById('category', $this->item->catid); ?></a>
 										<?php } else { ?>
-										<select name="transcorders[catid]" class="chzn-select-category input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
+										<select name="transcorders[catid]" class="chzn-select input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
 											<option value=""></option>
 											<?php
 												$options = IRMFormList::getCategoryOptions('com_xivetranscorder');
@@ -197,7 +207,6 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 							<div class="control-group">
 								<label class="control-label"><?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_CONTACT'); ?></label>
 								<div class="controls controls-row">
-									<?php NFWHtmlJavascript::setChosen('.chzn-select-parent', false, array('allow_single_deselect' => true, 'disable_search_threshold' => '10', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 									<div class="span12">
 										<?php if($this->item->contact_id) { ?>
 										<div class="widget-box">
@@ -269,7 +278,7 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 											<input type="hidden" name="transcorders[contact_id]" value="<?php echo $this->item->contact_id; ?>" />
 										</div>
 										<?php } else { ?>
-										<select name="transcorders[contact_id]" class="chzn-select-parent input-control" data-placeholder="<?php echo JText::_('COM_XIVETRANSCORDER_FORM_SELECT_CONTACT'); ?>" required>
+										<select name="transcorders[contact_id]" class="chzn-select input-control" data-placeholder="<?php echo JText::_('COM_XIVETRANSCORDER_FORM_SELECT_CONTACT'); ?>" required>
 											<?php
 												if(!$this->item->contact_id) {
 													echo '<option value="0" selected>' . JText::_('COM_XIVETRANSCORDER_FORM_SELECT_CONTACT') . '</option>';
@@ -324,16 +333,14 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 							<!-- ---------- ---------- ---------- ---------- ---------- BEGIN INCORE-FORM RECOMMENDED FORMFIELDS ---------- ---------- ---------- ---------- ---------- -->
 
 							<?php
-								foreach($dispatcher->trigger( 'loadInCoreformForm', array() ) as $formFields)
+								foreach($dispatcher->trigger( 'htmlBuildPseudoForms', array(&$this->item, &$this->params) ) as $formFields)
 								{
-							?>
-							<div class="control-group">
-								<label class="control-label"><?php echo $formFields['formLabel']; ?></label>
-								<div class="controls controls-row">
-									<?php echo $formFields['formFields']; ?>
-								</div>
-							</div>
-							<?php
+									echo '<div class="control-group ' . $formFields['appKey'] . '_pseudoform">';
+										echo '<label class="control-label">' . $formFields['formLabel'] . '</label>';
+										echo '<div class="controls controls-row">';
+											echo $formFields['formFields'];
+										echo '</div>';
+									echo '</div>';
 								}
 							?>
 
@@ -343,7 +350,7 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 						<div class="span5">
 							<div class="well">
 							
-							<!-- ---------- ---------- ---------- ---------- ---------- BEGIN TAB.PLUGIN_MAIN-WIDGETS ---------- ---------- ---------- ---------- ---------- -->
+							<!-- ---------- ---------- ---------- ---------- ---------- BEGIN APP.PLUGIN_MAIN-WIDGETS ---------- ---------- ---------- ---------- ---------- -->
 							<?php
 								echo '<style>';
 									echo '.widget-box .btn-app.btn-mini span { font-size: 11px; }';
@@ -351,41 +358,57 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 								echo '<div class="widget-box widget-box-tabapps light-border" style="margin-top: -10px;">';
 									echo '<div class="widget-header red">';
 										echo '<h5 class="smaller">Actiontoolbar</h5>';
+										echo '<div class="widget-toolbar">';
+											echo '<label>';
+												if(!empty($this->item->address_street) && !empty($this->item->address_houseno) && !empty($this->item->address_zip) && !empty($this->item->address_city) && !empty($this->item->address_country)) {
+													echo '<a class="xpopover link-control btn btn-mini btn-light" href="http://google.com/maps/preview#!q=' . $this->item->address_street . '+' . $this->item->address_houseno . '+' . $this->item->address_zip . '+' . $this->item->address_city . '" target="_blank" data-placement="bottom" data-content="Show the address with a map marker in the new Google Maps" title="Google Maps 2.0"><img src="http://www.zdnet.de/wp-content/uploads/2012/11/googlemaps-icon.png" style="height: 15px; margin-top: -2px;"></a>';
+												}
+
+												echo '<a href="javascript:alert(\'PrintPDF: In sandbox not available at present\');" class="link-control btn btn-mini btn-light"><i class="icon-print icon-only"></i></a>';
+												echo '<a href="javascript:alert(\'DocUpload: In sandbox not available at present\');" class="link-control btn btn-mini btn-light"><i class="icon-cloud-upload icon-only"></i></a>';
+												echo '<a href="javascript:alert(\'ShareIt: In sandbox not available at present\');" class="link-control btn btn-mini btn-light"><i class="icon-share-alt icon-only"></i></a>';
+											echo '</label>';
+										echo '</div>';
 									echo '</div>';
 									echo '<div class="widget-body">';
 										echo '<div class="widget-main padding-5">';
-										?>
-
-										<?php
 											if(!$device = $this->item->distcalc_device) {
 												$device = 'drive';
 											}
-										?>
-										<?php if($this->item->id) { ?>
-											<div class="row-fluid extended margin-top center">
-												<div data-toggle="buttons-radio" class="btn-group directions">
-													<button class="device btn btn-small btn-light xtooltip <?php echo $device == 'drive' ? 'active' : ''; ?>" type="button" data-val="drive" title="Drive">
-														<div class="mode-icon drive-icon"></div>
-													</button>
-													<button class="device btn btn-small btn-light xtooltip <?php echo $device == 'transit' ? 'active' : ''; ?>" type="button" data-val="transit" title="Transit">
-														<div class="mode-icon transit-icon"></div>
-													</button>
-													<button class="device btn btn-small btn-light xtooltip <?php echo $device == 'walk' ? 'active' : ''; ?>" type="button" data-val="walk" title="Walk">
-														<div class="mode-icon walk-icon"></div>
-													</button>
-													<button class="device btn btn-small btn-light xtooltip <?php echo $device == 'bicycle' ? 'active' : ''; ?>" type="button" data-val="bicycle" title="Bicycle">
-														<div class="mode-icon bicycle-icon"></div>
-													</button>
-													<button class="device btn btn-small btn-light xtooltip <?php echo $device == 'airplane' ? 'active' : ''; ?>" type="button" data-val="airplane" title="Airplane">
-														<div class="mode-icon airplane-icon"></div>
-													</button>
-												</div>
-												<hr>
-											</div>
-										<?php } ?>
-										<input name="transcorders[distcalc_device]" id="distcalc-device" type="hidden" value="drive" />
 
-										<?php
+											if($this->item->id) { ?>
+												<div class="row-fluid extended margin-top center">
+													<div data-toggle="buttons-radio" class="btn-group directions">
+														<button class="device btn btn-small btn-light xtooltip <?php echo $device == 'drive' ? 'active' : ''; ?>" type="button" data-val="drive" title="Drive">
+															<div class="mode-icon drive-icon"></div>
+														</button>
+														<button class="device btn btn-small btn-light xtooltip <?php echo $device == 'transit' ? 'active' : ''; ?>" type="button" data-val="transit" title="Transit">
+															<div class="mode-icon transit-icon"></div>
+														</button>
+														<button class="device btn btn-small btn-light xtooltip <?php echo $device == 'walk' ? 'active' : ''; ?>" type="button" data-val="walk" title="Walk">
+															<div class="mode-icon walk-icon"></div>
+														</button>
+														<button class="device btn btn-small btn-light xtooltip <?php echo $device == 'bicycle' ? 'active' : ''; ?>" type="button" data-val="bicycle" title="Bicycle">
+															<div class="mode-icon bicycle-icon"></div>
+														</button>
+														<button class="device btn btn-small btn-light xtooltip <?php echo $device == 'airplane' ? 'active' : ''; ?>" type="button" data-val="airplane" title="Airplane">
+															<div class="mode-icon airplane-icon"></div>
+														</button>
+													</div>
+													<hr>
+												</div>
+											<?php } ?>
+											<input name="transcorders[distcalc_device]" id="distcalc-device" type="hidden" value="drive" />
+
+											<?php
+
+											foreach($dispatcher->trigger( 'htmlBuildAction', array(&$this->item, &$this->params) ) as $actionButton)
+											{
+												echo '<span id="' . $actionButton['appKey'] . '_actionbutton">';
+												echo $actionButton['button'];
+												echo '</span>';
+											}
+
 											echo '<center>';
 												if(!empty($this->item->address_street) && !empty($this->item->address_houseno) && !empty($this->item->address_zip) && !empty($this->item->address_city) && !empty($this->item->address_country)) {
 													echo '<a class="xpopover link-control" href="http://google.com/maps/preview#!q=' . $this->item->address_street . '+' . $this->item->address_houseno . '+' . $this->item->address_zip . '+' . $this->item->address_city . '" target="_blank" data-placement="bottom" data-content="New Google Maps" title="Google Maps 2.0"><img src="http://www.zdnet.de/wp-content/uploads/2012/11/googlemaps-icon.png" style="height: 63px; margin-right: 5px;"></a>';
@@ -394,35 +417,27 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 												echo '<a class="btn btn-app btn-mini btn-light link-control"><i class="icon-print"></i> <span>Print</span></a>';
 												echo '<a class="btn btn-app btn-mini btn-purple link-control"><i class="icon-cloud-upload"></i> <span>DocUpload</span></a>';
 												echo '<a class="btn btn-app btn-mini btn-pink link-control"><i class="icon-share-alt"></i> <span>ShareIt</span></a>';
-
-												foreach($dispatcher->trigger( 'loadActionButton', array(&$this->item) ) as $inBaseWidget)
-												{
-													echo '<span id="' . $inBaseWidget['tab_key'] . '_button">';
-													echo $inBaseWidget['tabContent'];
-													echo '</span>';
-												}
-
 											echo '</center>';
 										echo '</div>';
 									echo '</div>';
 								echo '</div>';
 
-								foreach($dispatcher->trigger( 'loadInBasedataContainerFirst', array(&$this->item) ) as $inBaseWidget)
+								foreach( $dispatcher->trigger( 'htmlBuildWidgetTop', array(&$this->item, &$this->params) ) as $inWidget )
 								{
-									echo '<div id="' . $inBaseWidget['tab_key'] . '">';
-									echo $inBaseWidget['tabContent'];
+									echo '<div id="' . $inWidget['appKey'] . '_widget-top">';
+									echo $inWidget['html'];
 									echo '</div>';
 								}
-								foreach($dispatcher->trigger( 'loadInBasedataContainer', array(&$this->item) ) as $inBaseWidget)
+								foreach( $dispatcher->trigger( 'htmlBuildWidget', array(&$this->item, &$this->params) ) as $inWidget )
 								{
-									echo '<div id="' . $inBaseWidget['tab_key'] . '">';
-									echo $inBaseWidget['tabContent'];
+									echo '<div id="' . $inWidget['appKey'] . '_widget">';
+									echo $inWidget['html'];
 									echo '</div>';
 								}
-								foreach($dispatcher->trigger( 'loadInBasedataContainerLast', array(&$this->item) ) as $inBaseWidget)
+								foreach( $dispatcher->trigger( 'htmlBuildWidgetBottom', array(&$this->item, &$this->params) ) as $inWidget )
 								{
-									echo '<div id="' . $inBaseWidget['tab_key'] . '">';
-									echo $inBaseWidget['tabContent'];
+									echo '<div id="' . $inWidget['appKey'] . '"_widget-bottom>';
+									echo $inWidget['html'];
 									echo '</div>';
 								}
 							?>
@@ -434,22 +449,12 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 				</div>
 				<!-- ---------- ---------- ---------- ---------- ---------- END BASE-DATA_TAB_CORE ---------- ---------- ---------- ---------- ---------- -->
 
-
-				<!-- ---------- ---------- ---------- ---------- ---------- BEGIN DROPDOWN TAB PANE TEST ---------- ---------- ---------- ---------- ---------- -->
-				<div id="dropdown1" class="tab-pane">
-					<p>Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic lomo retro fanny pack lo-fi farm-to-table readymade.</p>
-				</div>
-				<div id="dropdown2" class="tab-pane">
-					<p>Trust fund seitan letterpress, keytar raw denim keffiyeh etsy art party before they sold out master cleanse gluten-free squid scenester freegan cosby sweater. Fanny pack portland seitan DIY, art party locavore wolf cliche high life echo park Austin.</p>
-				</div>
-				<!-- ---------- ---------- ---------- ---------- ---------- END DROPDOWN TAB PANE TEST ---------- ---------- ---------- ---------- ---------- -->
-
 				<!-- ---------- ---------- ---------- ---------- ---------- BEGIN TAB.PLUGINS_CONTENT ---------- ---------- ---------- ---------- ---------- -->
 				<?php
-					foreach($dispatcher->trigger( 'loadTabContainer', array(&$this->item) ) as $tabContainer)
+					foreach( $appContainer as $irmApp )
 					{
-						echo '<div id="' . $tabContainer['tab_key'] . '" class="tab-pane">';
-						echo $tabContainer['tabContent'];
+						echo '<div id="' . $irmApp->appKey . '_tabbody" class="tab-pane">';
+						echo $irmApp->tabBody;
 						echo '</div>';
 					}
 				?>
@@ -486,7 +491,6 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 						<div class="widget-body">
 							<div class="widget-main padding-6 no-padding-left no-padding-right">
 								<div class="row-fluid">
-									<?php NFWHtmlJavascript::setChosen('.chzn-select-poi-address', false, array('allow_single_deselect' => true, 'disable_search_threshold' => '10', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 									<div class="span8">
 										<div class="controls controls-row">
 											<div class="span6">
@@ -495,8 +499,8 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 														<label class="control-label"><i class="icon-chevron-sign-up"></i> <?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ADDRESS_FROM'); ?></label>
 														<div class="controls">
 															<span class="span12">
-																<select name="transcorders[multiform][1][f_poi_id]" class="chzn-select-poi-address" id="f_poi_id-1" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>">
-																	<option value=""><?php echo JText::_('COM_XIVEIRM_FORM_CONTACTLIST_PLEASE_SELECT'); ?></option>
+																<select name="transcorders[multiform][1][f_poi_id]" class="poi chzn-select" id="f_poi_id-1" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>">
+																	<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_POILIST_PLEASE_SELECT'); ?></option>
 																	<?php
 																		foreach ( $poiOptions as $key => $value ) {
 																			echo '<option value="' . $key . '">' . $value . '</option>';
@@ -505,24 +509,24 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 																</select>
 															</span>
 														</div>
-														<div id="f_address_block-1">
+														<div id="f_address_block-1" class="address_block">
 															<div class="controls">
-																<input type="text" id="f_address_name-1" name="transcorders[multiform][1][f_address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->f_address_name; ?>" onBlur="reCalc(1)" />
+																<input type="text" id="f_address_name-1" name="transcorders[multiform][1][f_address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->f_address_name; ?>" />
 															</div>
 															<div class="controls">
-																<input type="text" id="f_address_name_add-1" name="transcorders[multiform][1][f_address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->f_address_name_add; ?>" onBlur="reCalc(1)" />
+																<input type="text" id="f_address_name_add-1" name="transcorders[multiform][1][f_address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->f_address_name_add; ?>" />
 															</div>
 															<div class="controls controls-row">
-																<input type="text" id="f_address_street-1" name="transcorders[multiform][1][f_address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->f_address_street; ?>" onBlur="reCalc(1)" />
-																<input type="text" id="f_address_houseno-1" name="transcorders[multiform][1][f_address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->f_address_houseno; ?>" onBlur="reCalc(1)" />
+																<input type="text" id="f_address_street-1" name="transcorders[multiform][1][f_address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->f_address_street; ?>" />
+																<input type="text" id="f_address_houseno-1" name="transcorders[multiform][1][f_address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->f_address_houseno; ?>" />
 															</div>
 															<div class="controls controls-row">
-																<input type="text" id="f_address_zip-1" name="transcorders[multiform][1][f_address_zip]" class="input-control span4" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->f_address_zip; ?>" onBlur="reCalc(1)" />
-																<input type="text" id="f_address_city-1" name="transcorders[multiform][1][f_address_city]" class="input-control span8" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->f_address_city; ?>" onBlur="reCalc(1)" />
+																<input type="text" id="f_address_zip-1" name="transcorders[multiform][1][f_address_zip]" class="input-control span4" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->f_address_zip; ?>" />
+																<input type="text" id="f_address_city-1" name="transcorders[multiform][1][f_address_city]" class="input-control span8" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->f_address_city; ?>" />
 															</div>
 															<div class="controls controls-row">
-																<input type="text" id="f_address_region-1" name="transcorders[multiform][1][f_address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->f_address_region; ?>" onBlur="reCalc(1)" />
-																<input type="text" id="f_address_country-1" name="transcorders[multiform][1][f_address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->f_address_country; ?>" onBlur="reCalc(1)" />
+																<input type="text" id="f_address_region-1" name="transcorders[multiform][1][f_address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->f_address_region; ?>" />
+																<input type="text" id="f_address_country-1" name="transcorders[multiform][1][f_address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->f_address_country; ?>" />
 															</div>
 														</div>
 													</div>
@@ -534,8 +538,8 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 														<label class="control-label"><i class="icon-chevron-sign-down"></i> <?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ADDRESS_TO'); ?></label>
 														<div class="controls">
 															<span class="span12">
-																<select name="transcorders[multiform][1][t_poi_id]" class="chzn-select-poi-address" id="t_poi_id-1" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>">
-																	<option value=""><?php echo JText::_('COM_XIVEIRM_FORM_CONTACTLIST_PLEASE_SELECT'); ?></option>
+																<select name="transcorders[multiform][1][t_poi_id]" class="poi chzn-select" id="t_poi_id-1" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>">
+																	<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_POILIST_PLEASE_SELECT'); ?></option>
 																	<?php
 																		foreach ( $poiOptions as $key => $value ) {
 																			echo '<option value="' . $key . '">' . $value . '</option>';
@@ -544,24 +548,24 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 																</select>
 															</span>
 														</div>
-														<div id="f_address_block-1">
+														<div id="t_address_block-1" class="address_block">
 															<div class="controls">
-																<input type="text" id="t_address_name-1" name="transcorders[multiform][1][t_address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->t_address_name; ?>" onBlur="reCalc(1)" />
+																<input type="text" id="t_address_name-1" name="transcorders[multiform][1][t_address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->t_address_name; ?>" />
 															</div>
 															<div class="controls">
-																<input type="text" id="t_address_name_add-1" name="transcorders[multiform][1][t_address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->t_address_name_add; ?>" onBlur="reCalc(1)" />
+																<input type="text" id="t_address_name_add-1" name="transcorders[multiform][1][t_address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->t_address_name_add; ?>" />
 															</div>
 															<div class="controls controls-row">
-																<input type="text" id="t_address_street-1" name="transcorders[multiform][1][t_address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->t_address_street; ?>" onBlur="reCalc(1)" />
-																<input type="text" id="t_address_houseno-1" name="transcorders[multiform][1][t_address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->t_address_houseno; ?>" onBlur="reCalc(1)" />
+																<input type="text" id="t_address_street-1" name="transcorders[multiform][1][t_address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->t_address_street; ?>" />
+																<input type="text" id="t_address_houseno-1" name="transcorders[multiform][1][t_address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->t_address_houseno; ?>" />
 															</div>
 															<div class="controls controls-row">
-																<input type="text" id="t_address_zip-1" name="transcorders[multiform][1][t_address_zip]" class="input-control span4" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->t_address_zip; ?>" onBlur="reCalc(1)" />
-																<input type="text" id="t_address_city-1" name="transcorders[multiform][1][t_address_city]" class="input-control span8" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->t_address_city; ?>" onBlur="reCalc(1)" />
+																<input type="text" id="t_address_zip-1" name="transcorders[multiform][1][t_address_zip]" class="input-control span4" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->t_address_zip; ?>" />
+																<input type="text" id="t_address_city-1" name="transcorders[multiform][1][t_address_city]" class="input-control span8" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->t_address_city; ?>" />
 															</div>
 															<div class="controls controls-row">
-																<input type="text" id="t_address_region-1" name="transcorders[multiform][1][t_address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->t_address_region; ?>" onBlur="reCalc(1)" />
-																<input type="text" id="t_address_country-1" name="transcorders[multiform][1][t_address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->t_address_country; ?>" onBlur="reCalc(1)" />
+																<input type="text" id="t_address_region-1" name="transcorders[multiform][1][t_address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->t_address_region; ?>" />
+																<input type="text" id="t_address_country-1" name="transcorders[multiform][1][t_address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->t_address_country; ?>" />
 															</div>
 														</div>
 													</div>
@@ -581,15 +585,14 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 												<span id="transport-date-time-1" class="span12 center"></span>
 											</div>
 
-											<?php NFWHtmlJavascript::setChosen('.chzn-select-trans', false, array('width' => '100%', 'disable_search' => true)); ?>
 											<div class="control-group">
 												<label class="control-label">
 													<?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_TRANSPORT_DEVICE_AND_TYPE'); ?>
 												</label>
 												<div class="controls controls-row">
 													<div class="span6">
-														<select id="transport_device-1" name="transcorders[multiform][1][transport_device]" class="chzn-select-trans input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
-															<option value=""><?php echo JText::_('COM_XIVEIRM_FORM_OPTIONLIST_TRANSPORT_DEVICE_PLEASE_SELECT'); ?></option>
+														<select id="transport_device-1" name="transcorders[multiform][1][transport_device]" class="chzn-select input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
+															<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_TRANSPORT_DEVICE_PLEASE_SELECT'); ?></option>
 															<?php
 																foreach ( $transportDeviceOptions as $key => $value ) {
 																	echo '<option value="' . $key . '">' . $value . '</option>';
@@ -598,8 +601,8 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 														</select>
 													</div>
 														<div class="span6">
-														<select id="transport_type-1" name="transcorders[multiform][1][transport_type]" class="chzn-select-trans input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
-															<option value=""><?php echo JText::_('COM_XIVEIRM_FORM_OPTIONLIST_TRANSPORT_TYPE_PLEASE_SELECT'); ?></option>
+														<select id="transport_type-1" name="transcorders[multiform][1][transport_type]" class="chzn-select input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
+															<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_TRANSPORT_TYPE_PLEASE_SELECT'); ?></option>
 															<?php
 																foreach ( $transportTypeOptions as $key => $value ) {
 																	echo '<option value="' . $key . '">' . $value . '</option>';
@@ -615,10 +618,9 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 													<?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ORDER_TYPE'); ?>
 												</label>
 												<div class="controls controls-row">
-													<?php NFWHtmlJavascript::setChosen('.chzn-select-ordertype', false, array('width' => '100%', 'disable_search' => true)); ?>
 													<div class="span12">
-														<select id="order_type-1" name="transcorders[multiform][1][order_type]" class="chzn-select-ordertype input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
-															<option value=""><?php echo JText::_('COM_XIVEIRM_FORM_OPTIONLIST_ORDER_TYPE_PLEASE_SELECT'); ?></option>
+														<select id="order_type-1" name="transcorders[multiform][1][order_type]" class="chzn-select input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
+															<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_ORDER_TYPE_PLEASE_SELECT'); ?></option>
 															<?php
 																foreach ( $orderTypeOptions as $key => $value ) {
 																	echo '<option value="' . $key . '">' . $value . '</option>';
@@ -655,11 +657,10 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 					<input type="text" name="transcorders[multiform][1][estimated_distance]" id="estimated_distance-1" value="<?php echo $this->item->estimated_distance; ?>" />
 					<input type="text" name="transcorders[multiform][1][f_address_lat]" id="f_address_lat-1" value="<?php echo $this->item->t_address_lat; ?>" />
 					<input type="text" name="transcorders[multiform][1][f_address_lng]" id="f_address_lng-1" value="<?php echo $this->item->t_address_lng; ?>" />
-					<input type="text" name="transcorders[multiform][1][f_address_hash]" id="f_address_hash-1" value="<?php echo $this->item->t_address_hash; ?>" />
 					<input type="text" name="transcorders[multiform][1][t_address_lat]" id="t_address_lat-1" value="<?php echo $this->item->t_address_lat; ?>" />
 					<input type="text" name="transcorders[multiform][1][t_address_lng]" id="t_address_lng-1" value="<?php echo $this->item->t_address_lng; ?>" />
-					<input type="text" name="transcorders[multiform][1][t_address_hash]" id="t_address_hash-1" value="<?php echo $this->item->t_address_hash; ?>" />
 					<input type="text" name="transcorders[multiform][1][transport_timestamp]" id="transport_timestamp-1" value="<?php echo $this->item->transport_timestamp; ?>" required />
+					<input type="text" name="transcorders[multiform][1][id]" id="order_cid-1" value="<?php echo isset($this->item->id) ? $this->item->id : '0'; ?>" />
 
 				</div><!-- /.torder-1 -->
 				<!-- ########## ########## ########## ########## ##########   END FIRST TRANSPORT   ########## ########## ########## ########## ########## -->
@@ -668,9 +669,6 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 
 				<div id="tcopycontainer"><hr></div>
 
-
-
-				<input type="hidden" name="transcorders[id]" id="order_cid" value="<?php echo isset($this->item->id) ? $this->item->id : '0'; ?>" />
 
 				<?php echo IRMHtmlBuilder::getClientId($this->item->client_id, $options = array('name' => 'transcorders[client_id]')); ?>
 
@@ -944,12 +942,13 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 
 
 <script>
+// ############################################################ COPY / ADD / CLONE #################################################
 // jQuery(document).ready(function() {
 		var regex = /^(.*)(\d)+$/i;
 		var cloneIndex = $(this).length + 1;
 
 		/*
-		 * Method to add a new container with no prefilled values
+		 * Method to add a new container with empty fields
 		 *
 		 */
 		function trans_add() {
@@ -974,7 +973,28 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 
 			// Count index for next action
 			cloneIndex++;
+
+
+			// TODO: We have to trigger the change event again, after an element is added
+			$('.clonedTransport select.poi').change(function() {
+				var selVal = this;
+				var pts = $(this).parentsUntil('.clonedTransport');
+
+				// Get the id and first value key (direction letter) from the current transport item
+				var attrId = $(pts.context).attr('id');
+				var blockId = attrId.split('-').pop();
+				var dirLetter = attrId[0];
+
+				if (this.value != '' ) {
+					$('#' + dirLetter + '_address_block-' + blockId).hide();
+				} else {
+					$('#' + dirLetter + '_address_block-' + blockId).show();
+				}
+
+				console.log(this);
+			});
 		}
+
 
 		/*
 		 * Method to copy the selected container with all the prefilled values
@@ -1012,6 +1032,7 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 			cloneIndex++;
 		}
 
+
 		/*
 		 * Method to edit the selected container
 		 *
@@ -1028,10 +1049,30 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 			// Set chosen on the new select list element
 			jQuery('#torder-' + torderId + ' select').chosen({allow_single_deselect: true, disable_search_threshold: 10, no_results_text: "Oops, nothing found", width: "100%"});
 
+			// TODO: We have to trigger the change event again, after an element is added
+			$('.clonedTransport select.poi').change(function() {
+				var selVal = this;
+				var pts = $(this).parentsUntil('.clonedTransport');
+
+				// Get the id and first value key (direction letter) from the current transport item
+				var attrId = $(pts.context).attr('id');
+				var blockId = attrId.split('-').pop();
+				var dirLetter = attrId[0];
+
+				if (this.value != '' ) {
+					$('#' + dirLetter + '_address_block-' + blockId).hide();
+				} else {
+					$('#' + dirLetter + '_address_block-' + blockId).show();
+				}
+
+				console.log(this);
+			});
+
 			// Print out he Message what we've done
 			alertify.warning = alertify.extend('warning');
 			alertify.warning('<i class="icon-edit"></i> Edit <strong> Transport ' + torderId + '</strong>');
 		}
+
 
 		/*
 		 * Method to remove the selected container
@@ -1059,6 +1100,7 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 			});
 		}
 
+
 		/*
 		 * Method to get the values from given torderId
 		 * Using in seperate to determine what fields we want to have for the copy process
@@ -1080,7 +1122,6 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 				inputValues.f_address_country = jQuery('#f_address_country-' + torderId).val();
 				inputValues.f_address_lat = jQuery('#f_address_lat-' + torderId).val();
 				inputValues.f_address_lng = jQuery('#f_address_lng-' + torderId).val();
-				inputValues.f_address_hash = jQuery('#f_address_hash-' + torderId).val();
 			// catch to values
 				inputValues.t_address_name = jQuery('#t_address_name-' + torderId).val();
 				inputValues.t_address_name_add = jQuery('#t_address_name_add-' + torderId).val();
@@ -1092,10 +1133,10 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 				inputValues.t_address_country = jQuery('#t_address_country-' + torderId).val();
 				inputValues.t_address_lat = jQuery('#t_address_lat-' + torderId).val();
 				inputValues.t_address_lng = jQuery('#t_address_lng-' + torderId).val();
-				inputValues.t_address_hash = jQuery('#t_address_hash-' + torderId).val();
 
 			return inputValues;
 		}
+
 
 		/*
 		 * Method to set the shortInfoBar
@@ -1133,6 +1174,7 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 			return htmlValues;
 		}
 
+
 		/*
 		 * Method to switch the hidden values and the shortInfoBar
 		 *
@@ -1141,47 +1183,6 @@ $orderTypeOptions = IRMFormList::getOrderTypeOptions();
 			
 		}
 
-		/*
-		 * Method to permaRecalculate the values for hash, geocoding, etc...
-		 *
-		 */
-		function reCalc( torderId ) {
-			var inputValues = getValues( torderId );
-
-			// Update hash values for from, to
-			var hashValues = hashSHA256(inputValues);
-			jQuery('#f_address_hash-' + torderId).html(hashValues.from);
-			jQuery('#t_address_hash-' + torderId).html(hashValues.to);
-
-			
-		}
-
-		/*
-		 * Method to calculate the hash
-		 *
-		 */
-		function hashSHA256( inputValues ) {
-			var hashValues = new Object();
-
-			var hashFrom = '',
-			hashTo = '';
-alertify.log('in hash');
-			hashFrom = inputValues.f_address_name + inputValues.f_address_name_add + inputValues.f_address_street + inputValues.f_address_houseno + inputValues.f_address_zip + inputValues.f_address_city + inputValues.f_address_region + inputValues.f_address_country;
-			hashTo = inputValues.t_address_name + inputValues.t_address_name_add + inputValues.t_address_street + inputValues.t_address_houseno + inputValues.t_address_zip + inputValues.t_address_city + inputValues.t_address_region + inputValues.t_address_country;
-
-			hashValues.from = sha256(hashFrom);
-			hashValues.to = sha256(hashTo);
-			
-			return hashValues;
-		}
-
-		/*
-		 * Method to get an OrderId/EmergencyId based and related to the timestamp and may unique in database
-		 *
-		 */
-		function getOrderIdFromDB( torderId ) {
-			
-		}
 
 		/*
 		 * Method to build the container
@@ -1228,8 +1229,8 @@ alertify.log('in hash');
 													htmlOut += '<label class=\"control-label\"><i class=\"icon-chevron-sign-up\"></i> <?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ADDRESS_FROM'); ?></label>';
 													htmlOut += '<div class=\"controls\">';
 														htmlOut += '<span class=\"span12\">';
-															htmlOut += '<select name="transcorders[multiform][' + torderId + '][f_poi_id]" class="chzn-select-poi-address" id="f_poi_id-' + torderId + '" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>">';
-																htmlOut += '<option value=""><?php echo JText::_('COM_XIVEIRM_FORM_CONTACTLIST_PLEASE_SELECT'); ?></option>';
+															htmlOut += '<select name="transcorders[multiform][' + torderId + '][f_poi_id]" class="poi chzn-select" id="f_poi_id-' + torderId + '" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>">';
+																htmlOut += '<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_POILIST_PLEASE_SELECT'); ?></option>';
 																<?php
 																	foreach ( $poiOptions as $key => $value ) {
 																		echo 'htmlOut += \'<option value="' . $key . '">' . $value . '</option>\';';
@@ -1238,28 +1239,30 @@ alertify.log('in hash');
 															htmlOut += '</select>';
 														htmlOut += '</span>';
 													htmlOut += '</div>';
-													htmlOut += '<div class=\"controls\">';
-														htmlOut += '<span class=\"span12 alert\">';
-															htmlOut += '<input type="text" class="span12 f_address_helper-' + torderId + '" id="f_address_helper-' + torderId + '" data-placeholder="<?php echo JText::_('COM_XIVEIRM_ADDRESS_HELPER'); ?>">';
-														htmlOut += '</span>';
-													htmlOut += '</div>';
-													htmlOut += '<div class=\"controls\">';
-														htmlOut += '<input type=\"text\" id=\"f_address_name-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_name]\" class=\"input-control span12\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>\" maxlength=\"150\" value />';
-													htmlOut += '</div>';
-													htmlOut += '<div class=\"controls\">';
-														htmlOut += '<input type=\"text\" id=\"f_address_name_add-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_name_add]\" class=\"input-control span12\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>\" maxlength=\"100\" />';
-													htmlOut += '</div>';
-													htmlOut += '<div class=\"controls controls-row\">';
-														htmlOut += '<input type=\"text\" id=\"f_address_street-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_street]\" class=\"input-control span9\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>\" maxlength=\"100\" />';
-														htmlOut += '<input type=\"text\" id=\"f_address_houseno-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_houseno]\" class=\"input-control span3\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>\" maxlength=\"10\" />';
-													htmlOut += '</div>';
-													htmlOut += '<div class=\"controls controls-row\">';
-														htmlOut += '<input type=\"text\" id=\"f_address_zip-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_zip]\" class=\"input-control span4\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>\" maxlength=\"10\" />';
-														htmlOut += '<input type=\"text\" id=\"f_address_city-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_city]\" class=\"input-control span8\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>\" maxlength=\"100\" />';
-													htmlOut += '</div>';
-													htmlOut += '<div class=\"controls controls-row\">';
-														htmlOut += '<input type=\"text\" id=\"f_address_region-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_region]\" class=\"input-control span6\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>\" />';
-														htmlOut += '<input type=\"text\" id=\"f_address_country-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_country]\" class=\"input-control span6\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>\" />';
+													htmlOut += '<div id="f_address_block-' + torderId + '" class="address_block">';
+														htmlOut += '<div class=\"controls\">';
+															htmlOut += '<span class=\"span12 alert\">';
+																htmlOut += '<input type="text" class="span12 f_address_helper-' + torderId + '" id="f_address_helper-' + torderId + '" data-placeholder="<?php echo JText::_('COM_XIVEIRM_ADDRESS_HELPER'); ?>">';
+															htmlOut += '</span>';
+														htmlOut += '</div>';
+														htmlOut += '<div class=\"controls\">';
+															htmlOut += '<input type=\"text\" id=\"f_address_name-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_name]\" class=\"input-control span12\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>\" maxlength=\"150\" value />';
+														htmlOut += '</div>';
+														htmlOut += '<div class=\"controls\">';
+															htmlOut += '<input type=\"text\" id=\"f_address_name_add-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_name_add]\" class=\"input-control span12\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>\" maxlength=\"100\" />';
+														htmlOut += '</div>';
+														htmlOut += '<div class=\"controls controls-row\">';
+															htmlOut += '<input type=\"text\" id=\"f_address_street-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_street]\" class=\"input-control span9\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>\" maxlength=\"100\" />';
+															htmlOut += '<input type=\"text\" id=\"f_address_houseno-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_houseno]\" class=\"input-control span3\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>\" maxlength=\"10\" />';
+														htmlOut += '</div>';
+														htmlOut += '<div class=\"controls controls-row\">';
+															htmlOut += '<input type=\"text\" id=\"f_address_zip-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_zip]\" class=\"input-control span4\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>\" maxlength=\"10\" />';
+															htmlOut += '<input type=\"text\" id=\"f_address_city-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_city]\" class=\"input-control span8\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>\" maxlength=\"100\" />';
+														htmlOut += '</div>';
+														htmlOut += '<div class=\"controls controls-row\">';
+															htmlOut += '<input type=\"text\" id=\"f_address_region-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_region]\" class=\"input-control span6\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>\" />';
+															htmlOut += '<input type=\"text\" id=\"f_address_country-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_country]\" class=\"input-control span6\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>\" />';
+														htmlOut += '</div>';
 													htmlOut += '</div>';
 												htmlOut += '</div>';
 											htmlOut += '</div>';
@@ -1270,8 +1273,8 @@ alertify.log('in hash');
 													htmlOut += '<label class=\"control-label\"><i class=\"icon-chevron-sign-down\"></i> <?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ADDRESS_TO'); ?></label>';
 													htmlOut += '<div class=\"controls\">';
 														htmlOut += '<span class=\"span12\">';
-															htmlOut += '<select name="transcorders[multiform][' + torderId + '][t_poi_id]" class="chzn-select-poi-address" id="t_poi_id-' + torderId + '" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>">';
-																htmlOut += '<option value=""><?php echo JText::_('COM_XIVEIRM_FORM_CONTACTLIST_PLEASE_SELECT'); ?></option>';
+															htmlOut += '<select name="transcorders[multiform][' + torderId + '][t_poi_id]" class="poi chzn-select" id="t_poi_id-' + torderId + '" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>">';
+																htmlOut += '<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_POILIST_PLEASE_SELECT'); ?></option>';
 																<?php
 																	foreach ( $poiOptions as $key => $value ) {
 																		echo 'htmlOut += \'<option value="' . $key . '">' . $value . '</option>\';';
@@ -1280,28 +1283,30 @@ alertify.log('in hash');
 															htmlOut += '</select>';
 														htmlOut += '</span>';
 													htmlOut += '</div>';
-													htmlOut += '<div class=\"controls\">';
-														htmlOut += '<span class=\"span12 alert\">';
-															htmlOut += '<input type="text" class="span12 t_address_helper-' + torderId + '" id="t_address_helper-' + torderId + '" data-placeholder="<?php echo JText::_('COM_XIVEIRM_ADDRESS_HELPER'); ?>">';
-														htmlOut += '</span>';
-													htmlOut += '</div>';
-													htmlOut += '<div class=\"controls\">';
-														htmlOut += '<input type=\"text\" id=\"t_address_name-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_name]\" class=\"input-control span12\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_NAME'); ?>\" maxlength=\"150\" value />';
-													htmlOut += '</div>';
-													htmlOut += '<div class=\"controls\">';
-														htmlOut += '<input type=\"text\" id=\"t_address_name_add-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_name_add]\" class=\"input-control span12\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_NAME_ADD'); ?>\" maxlength=\"100\" />';
-													htmlOut += '</div>';
-													htmlOut += '<div class=\"controls controls-row\">';
-														htmlOut += '<input type=\"text\" id=\"t_address_street-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_street]\" class=\"input-control span9\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_STREET'); ?>\" maxlength=\"100\" />';
-														htmlOut += '<input type=\"text\" id=\"t_address_houseno-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_houseno]\" class=\"input-control span3\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_HOUSENO'); ?>\" maxlength=\"10\" />';
-													htmlOut += '</div>';
-													htmlOut += '<div class=\"controls controls-row\">';
-														htmlOut += '<input type=\"text\" id=\"t_address_zip-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_zip]\" class=\"input-control span4\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_ZIP'); ?>\" maxlength=\"10\" />';
-														htmlOut += '<input type=\"text\" id=\"t_address_city-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_city]\" class=\"input-control span8\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_CITY'); ?>\" maxlength=\"100\" />';
-													htmlOut += '</div>';
-													htmlOut += '<div class=\"controls controls-row\">';
-														htmlOut += '<input type=\"text\" id=\"t_address_region-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_region]\" class=\"input-control span6\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_REGION'); ?>\" />';
-														htmlOut += '<input type=\"text\" id=\"t_address_country-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_country]\" class=\"input-control span6\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_COUNTRY'); ?>\" />';
+													htmlOut += '<div id="t_address_block-' + torderId + '" class="address_block">';
+														htmlOut += '<div class=\"controls\">';
+															htmlOut += '<span class=\"span12 alert\">';
+																htmlOut += '<input type="text" class="span12 t_address_helper-' + torderId + '" id="t_address_helper-' + torderId + '" data-placeholder="<?php echo JText::_('COM_XIVEIRM_ADDRESS_HELPER'); ?>">';
+															htmlOut += '</span>';
+														htmlOut += '</div>';
+														htmlOut += '<div class=\"controls\">';
+															htmlOut += '<input type=\"text\" id=\"t_address_name-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_name]\" class=\"input-control span12\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_NAME'); ?>\" maxlength=\"150\" value />';
+														htmlOut += '</div>';
+														htmlOut += '<div class=\"controls\">';
+															htmlOut += '<input type=\"text\" id=\"t_address_name_add-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_name_add]\" class=\"input-control span12\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_NAME_ADD'); ?>\" maxlength=\"100\" />';
+														htmlOut += '</div>';
+														htmlOut += '<div class=\"controls controls-row\">';
+															htmlOut += '<input type=\"text\" id=\"t_address_street-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_street]\" class=\"input-control span9\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_STREET'); ?>\" maxlength=\"100\" />';
+															htmlOut += '<input type=\"text\" id=\"t_address_houseno-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_houseno]\" class=\"input-control span3\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_HOUSENO'); ?>\" maxlength=\"10\" />';
+														htmlOut += '</div>';
+														htmlOut += '<div class=\"controls controls-row\">';
+															htmlOut += '<input type=\"text\" id=\"t_address_zip-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_zip]\" class=\"input-control span4\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_ZIP'); ?>\" maxlength=\"10\" />';
+															htmlOut += '<input type=\"text\" id=\"t_address_city-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_city]\" class=\"input-control span8\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_CITY'); ?>\" maxlength=\"100\" />';
+														htmlOut += '</div>';
+														htmlOut += '<div class=\"controls controls-row\">';
+															htmlOut += '<input type=\"text\" id=\"t_address_region-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_region]\" class=\"input-control span6\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_REGION'); ?>\" />';
+															htmlOut += '<input type=\"text\" id=\"t_address_country-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_country]\" class=\"input-control span6\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_COUNTRY'); ?>\" />';
+														htmlOut += '</div>';
 													htmlOut += '</div>';
 												htmlOut += '</div>';
 											htmlOut += '</div>';
@@ -1325,10 +1330,24 @@ alertify.log('in hash');
 												htmlOut += '<label class=\"control-label\"><?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_TRANSPORT_DEVICE_AND_TYPE'); ?></label>';
 												htmlOut += '<div class=\"controls controls-row\">';
 													htmlOut += '<div class=\"span6\">';
-														htmlOut += '<?php //  id=\"transport_device-' + torderId + '\" [multiform][' + torderId + '] echo getTransDevice(); ?>';
+														htmlOut += '<select id="transport_device-' + torderId + '" name="transcorders[multiform][' + torderId + '][transport_device]" class="chzn-select input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>';
+															htmlOut += '<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_TRANSPORT_DEVICE_PLEASE_SELECT'); ?></option>';
+															<?php
+																foreach ( $transportDeviceOptions as $key => $value ) {
+																	echo 'htmlOut += \'<option value="' . $key . '">' . $value . '</option>\';';
+																}
+															?>
+														htmlOut += '</select>';
 													htmlOut += '</div>';
 													htmlOut += '<div class=\"span6\">';
-														htmlOut += '<?php // id=\"transport_type-' + torderId + '\" [multiform][' + torderId + '] echo getTransType(); ?>';
+														htmlOut += '<select id="transport_type-' + torderId + '" name="transcorders[multiform][' + torderId + '][transport_type]" class="chzn-select input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>';
+															htmlOut += '<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_TRANSPORT_TYPE_PLEASE_SELECT'); ?></option>';
+															<?php
+																foreach ( $transportTypeOptions as $key => $value ) {
+																	echo 'htmlOut += \'<option value="' . $key . '">' . $value . '</option>\';';
+																}
+															?>
+														htmlOut += '</select>';
 													htmlOut += '</div>';
 												htmlOut += '</div>';
 											htmlOut += '</div><!-- #end control group -->';
@@ -1337,7 +1356,14 @@ alertify.log('in hash');
 												htmlOut += '<label class=\"control-label\"><?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ORDER_TYPE'); ?></label>';
 												htmlOut += '<div class=\"controls controls-row\">';
 													htmlOut += '<div class=\"span12\">';
-														htmlOut += '<?php // id=\"order_type-' + torderId + '\" [multiform][' + torderId + '] echo getOrderType(); ?>';
+														htmlOut += '<select id="order_type-' + torderId + '" name="transcorders[multiform][' + torderId + '][order_type]" class="chzn-select input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>';
+															htmlOut += '<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_ORDER_TYPE_PLEASE_SELECT'); ?></option>';
+															<?php
+																foreach ( $orderTypeOptions as $key => $value ) {
+																	echo 'htmlOut += \'<option value="' . $key . '">' . $value . '</option>\';';
+																}
+															?>
+														htmlOut += '</select>';
 													htmlOut += '</div>';
 												htmlOut += '</div>';
 											htmlOut += '</div><!-- #end control group -->';
@@ -1370,20 +1396,33 @@ alertify.log('in hash');
 
 				htmlOut += '<input type=\"text\" id=\"f_address_lat-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_lat]\" />';
 				htmlOut += '<input type=\"text\" id=\"f_address_lng-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_lng]\" />';
-				htmlOut += '<input type=\"text\" id=\"f_address_hash-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_hash]\" />';
 				htmlOut += '<input type=\"text\" id=\"t_address_lat-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_lat]\" />';
 				htmlOut += '<input type=\"text\" id=\"t_address_lng-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_lng]\" />';
-				htmlOut += '<input type=\"text\" id=\"t_address_hash-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_hash]\" />';
 
 				htmlOut += '<input type=\"text\" id=\"order_id-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][order_id]\" value />';
 				htmlOut += '<input type=\"text\" id=\"estimated_time-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][estimated_time]\" value />';
 				htmlOut += '<input type=\"text\" id=\"estimated_distance-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][estimated_distance]\" value />';
 				htmlOut += '<input type=\"text\" id=\"transport_timestamp-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][transport_timestamp]\" value required />';
+				htmlOut += '<input type=\"text\" id=\"order_cid-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][id]\" value=\"0\" />';
 
 			htmlOut += '</div><!-- /.torder-' + torderId + ' -->';
 
 			return htmlOut;
 		}
+// ############################################################ COPY / ADD / CLONE #################################################
+
+
+// ############################################################ FUNCTIONS /PROCESSES ON SAVE #################################################
+
+
+		/*
+		 * Method to get an OrderId/EmergencyId based and related to the timestamp and may unique in database
+		 *
+		 */
+		function getOrderIdFromDB( torderId ) {
+			
+		}
+
 
 	console.log();
 
@@ -1428,8 +1467,34 @@ alertify.log('in hash');
 
 // });
 </script>
+
+<script>
+//				$('.clonedTransport select').on('inputchange', function() {
+//					console.log(this);
+//				});
+
+				$('.clonedTransport select.poi').on('change', function() {
+					var selVal = this;
+					var pts = $(this).parentsUntil('.clonedTransport');
+
+					// Get the id and first value key (direction letter) from the current transport item
+					var attrId = $(pts.context).attr('id');
+					var blockId = attrId.split('-').pop();
+					var dirLetter = attrId[0];
+
+					if (this.value != '' ) {
+						$('#' + dirLetter + '_address_block-' + blockId).hide();
+					} else {
+						$('#' + dirLetter + '_address_block-' + blockId).show();
+					}
+
+					console.log(this);
+				});
+</script>
+
+
 <?php
-NFWHtmlJavascript::detectChanges();
+
 //		#################################################### EXAMPLE #########################################################
 //				// Triggered on every change in the auto geocoder block (this.value determines the actual field)
 //				$('#torder-' + torderId).on('inputchange', function() {
@@ -1446,9 +1511,8 @@ NFWHtmlJavascript::detectChanges();
 <pre>
 <?php
 
-print_r($transportDeviceOptions);
-print_r($transportTypeOptions);
-print_r($orderTypeOptions);
+$test = '';
+print_r($test);
 
 ?>
 </pre>
