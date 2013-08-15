@@ -18,6 +18,29 @@ require_once JPATH_COMPONENT.'/controller.php';
 class XivetranscorderControllerApi extends XivetranscorderController
 {
 
+	public function test()
+	{
+		// Initialise variables.
+		$app	= JFactory::getApplication();
+		$model = $this->getModel('Api', 'XivetranscorderModel');
+
+		$data = new stdClass();
+
+		$data->id = $app->input->get('id', 0, 'int');
+		$data->term = $app->input->get('term', '', 'string');
+		$data->page_limit = $app->input->get('page_limit', 10, 'int');
+
+		// Attempt to save the data.
+		$return	= $model->getPoiList($data);
+
+		echo json_encode($return);
+
+		$app->close();
+	}
+
+
+
+
 	/**
 	 * Method to check out an item for editing and redirect to the edit form.
 	 *
