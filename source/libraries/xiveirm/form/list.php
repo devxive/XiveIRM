@@ -170,4 +170,135 @@ class IRMFormList
 
 		return $list;
 	}
+
+
+	/*
+	 * Method to build a contact options list based on category id
+	 * This will not produce an error message. If user dont want POI's the appripriate POI fields are hidden in form (example: com_xivetranscorder)
+	 * @param     int    $catid    The component name / component folder name (com_mycomponent)
+	 *
+	 * @return    object           Return the list values
+	 */
+	public function getContactOptions( $catid )
+	{
+		// If no category id is set, try to get the catid.
+		if ( !$catid ) {
+			$catid = IRMComponentHelper::getConfigValue('com_xivetranscorder', 'poi_category');
+		}
+
+		$listOptions = IRMContactHelper::getList($catid);
+
+		$contact = new stdClass;
+
+		foreach ($listOptions as $option) {
+			$title = IRMFormName::formatPoiName($option);
+			$key = $option->id;
+
+			$contact->$key = $title;
+		}
+
+		return $contact;
+	}
+
+
+	/*
+	 * Method to build a transport device options list based on category id. The category id is required! If not set, it raise an error!
+	 *
+	 * @param     int    $catid    The id of the appropriate category
+	 *
+	 * @return    object           Return the list values
+	 */
+	public function getTransportDeviceOptions( $catid = false )
+	{
+		// If no category id is set, try to get the catid, else raise error
+		if ( !$catid ) {
+			$catid = IRMComponentHelper::getConfigValue('com_xivetranscorder', 'transport_device_category');
+			if ( !$catid ) {
+				JError::raiseError(500, 'Transport Device Category is not set in administrator! Please set this option!');
+			}
+		}
+
+		$list = new stdClass();
+
+		// TODO ADD CLAUSE TO SET USERGROUP AND OR ACCESS LVLS
+		$conditions = array(
+			'catid' => $catid
+		);
+		$values = NFWDatabase::select('xiveirm_options', '*', $conditions);
+
+		foreach ( $values as $value ) {
+			$key = $value->opt_value;
+			$list->$key = JText::_($value->opt_name);
+		}
+
+		return $list;
+	}
+
+
+	/*
+	 * Method to build a transport type options list based on category id. The category id is required! If not set, it raise an error!
+	 *
+	 * @param     int    $catid    The id of the appropriate category
+	 *
+	 * @return    object           Return the list values
+	 */
+	public function getTransportTypeOptions( $catid = false )
+	{
+		// If no category id is set, try to get the catid, else raise error
+		if ( !$catid ) {
+			$catid = IRMComponentHelper::getConfigValue('com_xivetranscorder', 'transport_type_category');
+			if ( !$catid ) {
+				JError::raiseError(500, 'Transport Type Category is not set in administrator! Please set this option!');
+			}
+		}
+
+		$list = new stdClass();
+
+		// TODO ADD CLAUSE TO SET USERGROUP AND OR ACCESS LVLS
+		$conditions = array(
+			'catid' => $catid
+		);
+		$values = NFWDatabase::select('xiveirm_options', '*', $conditions);
+
+		foreach ( $values as $value ) {
+			$key = $value->opt_value;
+			$list->$key = JText::_($value->opt_name);
+		}
+
+		return $list;
+	}
+
+
+	/*
+	 * Method to build a order type options list based on category id. The category id is required! If not set, it raise an error!
+	 *
+	 * @param     int    $catid    The id of the appropriate category
+	 *
+	 * @return    object           Return the list values
+	 */
+	public function getOrderTypeOptions( $catid = false )
+	{
+		// If no category id is set, try to get the catid, else raise error
+		if ( !$catid ) {
+			$catid = IRMComponentHelper::getConfigValue('com_xivetranscorder', 'order_type_category');
+			if ( !$catid ) {
+				JError::raiseError(500, 'Order Type Category is not set in administrator! Please set this option!');
+			}
+		}
+
+		$list = new stdClass();
+
+		// TODO ADD CLAUSE TO SET USERGROUP AND OR ACCESS LVLS
+		$conditions = array(
+			'catid' => $catid
+		);
+		$values = NFWDatabase::select('xiveirm_options', '*', $conditions);
+
+		foreach ( $values as $value ) {
+			$key = $value->opt_value;
+			$list->$key = JText::_($value->opt_name);
+		}
+
+		return $list;
+	}
 }
