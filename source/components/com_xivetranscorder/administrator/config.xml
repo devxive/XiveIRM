@@ -15,6 +15,27 @@
 			filter="raw">
 				<option value="0">JOPTION_SELECT_CATEGORY</option>
 		</field>
+		<field name="transport_device_category" type="category"
+			label="COM_XIVEIRM_SYSTEM_CATEGORY_TRANSPORT_DEVICE_LBL"
+			description="COM_XIVEIRM_SYSTEM_CATEGORY_TRANSPORT_DEVICE_DESC"
+			extension="com_xiveirm"
+			filter="raw">
+				<option value="0">JOPTION_SELECT_CATEGORY</option>
+		</field>
+		<field name="transport_type_category" type="category"
+			label="COM_XIVEIRM_SYSTEM_CATEGORY_TRANSPORT_TYPE_LBL"
+			description="COM_XIVEIRM_SYSTEM_CATEGORY_TRANSPORT_TYPE_DESC"
+			extension="com_xiveirm"
+			filter="raw">
+				<option value="0">JOPTION_SELECT_CATEGORY</option>
+		</field>
+		<field name="order_type_category" type="category"
+			label="COM_XIVEIRM_SYSTEM_CATEGORY_ORDER_TYPE_LBL"
+			description="COM_XIVEIRM_SYSTEM_CATEGORY_ORDER_TYPE_DESC"
+			extension="com_xiveirm"
+			filter="raw">
+				<option value="0">JOPTION_SELECT_CATEGORY</option>
+		</field>
 	</fieldset>
 
 	<fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL">
