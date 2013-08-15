@@ -37,9 +37,9 @@ abstract class IRMHtmlBuilder
 	 *
 	 * @see                            NFWUserGroup::getParents()
 	 */
-	public function getClientId($value = '', $options = array())
+	public function getClientId( $value = '', $options = array() )
 	{
-		// GEt the usergroups
+		// Get the usergroups
 		$usergroups = NFWUserGroup::getParents();
 
 		// Get the options
