@@ -44,7 +44,7 @@ class IRMFormName
 
 		// Build the placeholder between
 		if ( $address_system_checked ) {
-			$opt_name .= '* ';
+			$opt_name .= '<i class="icon-ok-sign"></i> ';
 		}
 
 		if ( $address_name && $address_name_add ) {
