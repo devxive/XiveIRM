@@ -73,4 +73,44 @@ class IRMFormName
 
 		return $opt_name;
 	}
+
+
+	/*
+	 * Method to format names
+	 *
+	 * @param     array    $values    The name of the component as stored in components folder (com_mycomponent)
+	 *
+	 * @return    string
+	 */
+	public static function formatContactName( $values )
+	{
+		// Preformat in the IRMHtmlBuilder class similar to client id method
+		$id                     = isset($values->id)                     ? $values->id                     : false;
+		$company                = isset($values->company)                ? $values->company                : false;
+		$last_name              = isset($values->last_name)              ? $values->last_name              : false;
+		$first_name             = isset($values->first_name)             ? $values->first_name             : false;
+
+		$opt_name = '';
+
+		// Build the placeholder between
+		if ( $company && $last_name && $first_name ) {
+			$opt_name .= $company . ' (' . $first_name . ' ' . $last_name . ')';
+		} else if ( !$company && $last_name && $first_name ) {
+			$opt_name .= $first_name . ' ' . $last_name;
+		} else if ( $company && !$last_name && !$first_name ) {
+			$opt_name .= $company;
+		} else if ( $last_name ) {
+			$opt_name .= '(****) ' . $last_name;
+		} else if ( $first_name ) {
+			$opt_name .= $first_name . ' (****)';
+		} else {
+			$opt_name = false;
+		}
+
+		if ( !$opt_name ) {
+			$opt_name = '*** Undefined name for ID: ' . $id . ' ***';
+		}
+
+		return $opt_name;
+	}
 }
