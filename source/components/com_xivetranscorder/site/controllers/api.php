@@ -17,21 +17,28 @@ require_once JPATH_COMPONENT.'/controller.php';
  */
 class XivetranscorderControllerApi extends XivetranscorderController
 {
-
-	public function test()
+	/**
+	 * Method to get the poi list via ajax for select2 select fields in transcorderform
+	 *
+	 * @since	6.0
+	 */
+	public function poilist()
 	{
+		// Check for request forgeries.
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+
 		// Initialise variables.
 		$app	= JFactory::getApplication();
 		$model = $this->getModel('Api', 'XivetranscorderModel');
+		$data  = new stdClass();
 
-		$data = new stdClass();
-
-		$data->id = $app->input->get('id', 0, 'int');
-		$data->term = $app->input->get('term', '', 'string');
+		$data->id         = $app->input->get('id', false, 'int');
+		$data->term       = $app->input->get('term', false, 'string');
+		$data->contact_id = $app->input->get('contact_id', false, 'int');
 		$data->page_limit = $app->input->get('page_limit', 10, 'int');
 
 		// Attempt to save the data.
-		$return	= $model->getPoiList($data);
+		$return = $model->getPoiList($data);
 
 		echo json_encode($return);
 
