@@ -19,8 +19,125 @@ jimport('joomla.event.dispatcher');
 class XivetranscorderModelApi extends JModelForm
 {
     
-    var $_item = null;
-    
+	var $_item = null;
+
+
+	/**
+	 * Method to get a list of poi's as searched for in the select2 select search field.
+	 *
+	 * @param	array		The search input data.
+	 * @return	array		The search results
+	 * @since	1.6
+	 */
+	public function getPoiList($data)
+	{
+		$db = JFactory::getDbo();
+		$poiCat = IRMComponentHelper::getConfigValue('com_xivetranscorder', 'poi_category');
+
+		$contact = array();
+
+		$query = $db->getQuery(true);
+
+		if ( $data->contact_id && !$data->term ) {
+			$query
+				->select( array('a.id', 'a.last_name', 'a.first_name', 'a.company', 'a.address_name', 'a.address_name_add', 'a.address_street', 'a.address_houseno', 'a.address_zip', 'a.address_city', 'a.address_region', 'a.address_country', 'a.address_lat', 'a.address_lng', 'a.address_hash', 'b.title') )
+				->from( '#__xiveirm_contacts AS a' )
+				->join( 'INNER', '#__categories AS b ON (a.catid = b.id)' )
+				->where( 'a.id = ' . $data->contact_id . '' );
+
+			$db->setQuery($query);
+
+			$result = $db->loadObjectList();
+			$orderContact = $result[0];
+
+			// Build the contact array
+			$contactHelper['id'] = $orderContact->id;
+			$contactHelper['name'] = '<i class="icon-user"></i> ' . $orderContact->title . ' - ' . IRMFormName::formatPoiName($orderContact);
+
+			$contactHelper['address_name'] = $orderContact->address_name;
+			$contactHelper['address_name_add'] = $orderContact->address_name_add;
+			$contactHelper['address_street'] = $orderContact->address_street;
+			$contactHelper['address_houseno'] = $orderContact->address_houseno;
+			$contactHelper['address_zip'] = $orderContact->address_zip;
+			$contactHelper['address_city'] = $orderContact->address_city;
+			$contactHelper['address_region'] = $orderContact->address_region;
+			$contactHelper['address_country'] = $orderContact->address_country;
+			$contactHelper['address_lat'] = $orderContact->address_lat;
+			$contactHelper['address_lng'] = $orderContact->address_lng;
+			$contactHelper['address_hash'] = $orderContact->address_hash;
+
+			$contactHelper['system_checked'] = 0;
+			$contactHelper['client_checked'] = 0;
+
+			$contact[] = $contactHelper;
+		}
+
+		$query->clear();
+
+		if( $data->id && !$data->term ) {
+			$query
+				->select( array('a.id', 'a.last_name', 'a.first_name', 'a.company', 'a.address_name', 'a.address_name_add', 'a.address_street', 'a.address_houseno', 'a.address_zip', 'a.address_city', 'a.address_region', 'a.address_country', 'a.address_lat', 'a.address_lng', 'a.address_hash', 'b.system_checked', 'b.client_checked') )
+				->from( '#__xiveirm_contacts AS a' )
+				->join( 'INNER', '#__xiveirm_contacts_verified AS b ON (a.id = b.contacts_id)' )
+				->where( 'a.id = ' . $data->id . '' );
+
+			$db->setQuery($query);
+
+			$results = $db->loadObjectList();
+		} else if ( $data->term && !$data->id ) {
+			$query
+				->select( array('a.id', 'a.last_name', 'a.first_name', 'a.company', 'a.address_name', 'a.address_name_add', 'a.address_street', 'a.address_houseno', 'a.address_zip', 'a.address_city', 'a.address_region', 'a.address_country', 'a.address_lat', 'a.address_lng', 'a.address_hash', 'b.system_checked', 'b.client_checked') )
+				->from( '#__xiveirm_contacts AS a' )
+				->join( 'INNER', '#__xiveirm_contacts_verified AS b ON (a.id = b.contacts_id)' )
+				->where( 'a.last_name LIKE ' . $db->quote('%' . $data->term . '%') . ' OR a.first_name LIKE ' . $db->quote('%' . $data->term . '%') . ' OR a.company LIKE ' . $db->quote('%' . $data->term . '%') . ' OR a.address_name LIKE ' . $db->quote('%' . $data->term . '%') . ' OR a.address_name_add LIKE ' . $db->quote('%' . $data->term . '%') )
+				->where( 'a.catid = ' . $poiCat . '' );
+
+			$db->setQuery($query);
+
+			$results = $db->loadObjectList();
+		} else if ( !$data->term && !$data->id && $data->contact_id ) {
+			$contactHelper['id'] = '';
+			$contactHelper['name'] = utf8_encode('Start typing or use the contacts address....');
+
+			$contact[] = $contactHelper;
+		} else {
+			$contactHelper['id'] = 0;
+			$contactHelper['name'] = utf8_encode('Start Typing....');
+
+			$contact[] = $contactHelper;
+		}
+
+		if ( isset($results) ) {
+			foreach( $results as $option ) {
+				$contactHelper['id'] = $option->id;
+				$contactHelper['name'] = IRMFormName::formatPoiName($option);
+
+				$contactHelper['address_name'] = $option->address_name;
+				$contactHelper['address_name_add'] = $option->address_name_add;
+				$contactHelper['address_street'] = $option->address_street;
+				$contactHelper['address_houseno'] = $option->address_houseno;
+				$contactHelper['address_zip'] = $option->address_zip;
+				$contactHelper['address_city'] = $option->address_city;
+				$contactHelper['address_region'] = $option->address_region;
+				$contactHelper['address_country'] = $option->address_country;
+				$contactHelper['address_lat'] = $option->address_lat;
+				$contactHelper['address_lng'] = $option->address_lng;
+				$contactHelper['address_hash'] = $option->address_hash;
+
+				$contactHelper['system_checked'] = $option->system_checked;
+				$contactHelper['client_checked'] = $option->client_checked;
+
+				$contact[] = $contactHelper;
+			}
+		}
+
+		return array('results' => $contact);
+	}
+
+
+
+
+
 	/**
 	 * Method to auto-populate the model state.
 	 *
