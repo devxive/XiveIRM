@@ -17,14 +17,14 @@ JHtml::_('stylesheet', 'nawala/nawala.import.css', false, true, false, false);
 NFWHtmlJavascript::setToggle('extended', 'toggleExtend');
 NFWHtmlJavascript::setTooltip('.xtooltip');
 NFWHtmlJavascript::setPopover('.xpopover');
-NFWHtmlJavascript::setPreventFormSubmitByKey();
 NFWHtmlJavascript::loadGritter();
 NFWHtmlJavascript::loadAlertify();
+IRMHtmlSelect2::init('.select2');
+
 // NFWHtmlJavascript::setPreventFormLeaveIfChanged('#form-transcorder');
-NFWHtmlJavascript::setChosen('.chzn-select', false, array('allow_single_deselect' => true, 'disable_search_threshold' => '10', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%'));
-// NFWHtmlJavascript::setChosen('.chzn-select-trans', false, array('width' => '100%', 'disable_search' => true));
+NFWHtmlJavascript::setPreventFormSubmitByKey();
+
 NFWHtmlJavascript::loadMomentOnly();
-NFWPluginsSha256::loadSHA256('js.sha256');
 NFWHtmlJavascript::detectChanges();
 
 //Load admin language file
@@ -38,27 +38,30 @@ $session = IRMSessionHelper::getValues();
 // If it's a new order and we have set the catid in the prevoius link!
 if(!$this->item->catid) {
 	$this->item->catid = JFactory::getApplication()->getUserState('com_xivetranscorder.edit.transcorder.catid');
+
+	// We have a category id and use the category acl
+	$acl = NFWAccessHelper::getActions('com_xiveirm', 'category', $this->item->catid);
+} else {
+	// We have no category id and use the components acl
+	$acl = NFWAccessHelper::getActions('com_xiveirm');
 }
 
 // If it's a new order and we have set the contactid in the prevoius link!
 if(!$this->item->contact_id) {
 	$this->item->contact_id = JFactory::getApplication()->getUserState('com_xivetranscorder.edit.transcorder.contactid');
-}
-// Get the contact Object
-if($this->item->contact_id) {
+
+	// Get the contact Object
 	$contactObject = IRMItemHelper::getContactObject($this->item->contact_id);
+
+	// POI STUFF (selector, url, params) based on contact id (The contact data are set as first option in select2)
+	IRMHtmlSelect2::initAjaxPoi('.select2-poi', 'index.php?option=com_xivetranscorder&task=api.poilist&contact_id=' . $this->item->contact_id);
+} else {
+	// POI STUFF (selector, url, params)
+	IRMHtmlSelect2::initAjaxPoi('.select2-poi', 'index.php?option=com_xivetranscorder&task=api.poilist');
 }
+
 // used for Javascript processed messages
 $full_name = IRMFormName::formatContactName($contactObject->contact);
-
-// Get Permissions based on category
-if ( !$this->item->catid ) {
-	// We have no category id and use the components acl
-	$acl = NFWAccessHelper::getActions('com_xiveirm');
-} else {
-	// We have a category id and use the category acl
-	$acl = NFWAccessHelper::getActions('com_xiveirm', 'category', $this->item->catid);
-}
 
 // Import all TabApps based on the XiveIRM TabApp configs and the related catid!
 IRMAppHelper::importPlugins('com_xivetranscorder', $this->item->catid);
@@ -76,11 +79,11 @@ $checkoutParams = array(
 );
 $checkedOut = NFWHtmlJavascript::getCheckoutMessage($this->item->checked_out, $this->item->checked_out_time, '#checkout-message', $checkoutParams);
 
-// Get the POI Category from com_xivetranscorder config options and build the options list
-$poiCat = IRMComponentHelper::getConfigValue('com_xivetranscorder', 'poi_category');
-$poiOptions = IRMFormList::getContactOptions( $poiCat );
+// Get the POI Category from com_xivetranscorder config options and build the options list ( TODO: ONLY USED IF SELECT2 AJAX DIDNT WORK, may as fallback ) MAY deprecated because select list can have thousands of POI's in future
+// $poiCat = IRMComponentHelper::getConfigValue('com_xivetranscorder', 'poi_category');
+// $poiOptions = IRMFormList::getContactOptions( $poiCat );
 
-// Get transport device, transport type and order type options
+// Get available transport device, transport type and order type options
 $transportDeviceOptions = IRMFormList::getTransportDeviceOptions();
 $transportTypeOptions = IRMFormList::getTransportTypeOptions();
 $orderTypeOptions = IRMFormList::getOrderTypeOptions();
@@ -132,7 +135,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 	?>
 	<!-- ---------- ---------- ---------- ---------- ---------- END CHECK_OUT MESSAGE ---------- ---------- ---------- ---------- ---------- -->
 
-	<form id="form-transcorder" class="form-validate"  enctype="multipart/form-data">
+	<form id="form-transcorder-core" class="form-validate"  enctype="multipart/form-data">
 
 		<!-- ---------- ---------- ---------- ---------- ---------- BEGIN MASTER_TAP_PANE_PLUGINSTYLED ---------- ---------- ---------- ---------- ---------- -->
 		<div class="tabbable">
@@ -181,7 +184,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 											<input type="hidden" name="transcorders[catid]" value="<?php echo $this->item->catid; ?>">
 											<a class="btn btn-small btn-warning disabled" disabled="disabled"><i class="icon-double-angle-left"></i> <?php echo NFWItemHelper::getTitleById('category', $this->item->catid); ?></a>
 										<?php } else { ?>
-										<select name="transcorders[catid]" class="chzn-select input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
+										<select name="transcorders[catid]" class="select2 input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
 											<option value=""></option>
 											<?php
 												$options = IRMFormList::getCategoryOptions('com_xivetranscorder');
@@ -278,7 +281,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 											<input type="hidden" name="transcorders[contact_id]" value="<?php echo $this->item->contact_id; ?>" />
 										</div>
 										<?php } else { ?>
-										<select name="transcorders[contact_id]" class="chzn-select input-control" data-placeholder="<?php echo JText::_('COM_XIVETRANSCORDER_FORM_SELECT_CONTACT'); ?>" required>
+										<select name="transcorders[contact_id]" class="select2 input-control" data-placeholder="<?php echo JText::_('COM_XIVETRANSCORDER_FORM_SELECT_CONTACT'); ?>" required>
 											<?php
 												if(!$this->item->contact_id) {
 													echo '<option value="0" selected>' . JText::_('COM_XIVETRANSCORDER_FORM_SELECT_CONTACT') . '</option>';
@@ -499,7 +502,9 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 														<label class="control-label"><i class="icon-chevron-sign-up"></i> <?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ADDRESS_FROM'); ?></label>
 														<div class="controls">
 															<span class="span12">
-																<select name="transcorders[multiform][1][f_poi_id]" class="poi chzn-select" id="f_poi_id-1" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>">
+																<input name="transcorders[multiform][1][f_poi_id]" class="select2-poi" id="f_poi_id-1" data-direction="f" data-order="1" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>" />
+<!-- MAY DEPRECATED IN FUTURE, SEE DESCRIPTION AT THE TOP (SELECT2)
+																<select name="transcorders[multiform][1][f_poi_id]" class="poi select2" id="f_poi_id-1" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>">
 																	<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_POILIST_PLEASE_SELECT'); ?></option>
 																	<?php
 																		foreach ( $poiOptions as $key => $value ) {
@@ -507,8 +512,14 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 																		}
 																	?>
 																</select>
+-->
 															</span>
 														</div>
+
+														<div id="f_address_helper_id-1" class="controls">
+															<input type="text" class="red span12 f_address_helper-1 input-control" id="f_address_helper-1" placeholder="<?php echo JText::_('COM_XIVEIRM_ADDRESS_HELPER'); ?>" data-direction="f" data-order="1" style="border: 1px solid darkorange;" />
+														</div>
+
 														<div id="f_address_block-1" class="address_block">
 															<div class="controls">
 																<input type="text" id="f_address_name-1" name="transcorders[multiform][1][f_address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->f_address_name; ?>" />
@@ -538,7 +549,9 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 														<label class="control-label"><i class="icon-chevron-sign-down"></i> <?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ADDRESS_TO'); ?></label>
 														<div class="controls">
 															<span class="span12">
-																<select name="transcorders[multiform][1][t_poi_id]" class="poi chzn-select" id="t_poi_id-1" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>">
+																<input name="transcorders[multiform][1][t_poi_id]" class="select2-poi" id="t_poi_id-1" data-direction="t" data-order="1" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>" />
+<!-- MAY DEPRECATED IN FUTURE, SEE DESCRIPTION AT THE TOP (SELECT2)
+																<select name="transcorders[multiform][1][t_poi_id]" class="poi select2" id="t_poi_id-1" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>">
 																	<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_POILIST_PLEASE_SELECT'); ?></option>
 																	<?php
 																		foreach ( $poiOptions as $key => $value ) {
@@ -546,8 +559,14 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 																		}
 																	?>
 																</select>
+-->
 															</span>
 														</div>
+
+														<div id="t_address_helper_id-1" class="controls">
+															<input type="text" class="red span12 t_address_helper-1 input-control" id="t_address_helper-1" placeholder="<?php echo JText::_('COM_XIVEIRM_ADDRESS_HELPER'); ?>" data-direction="t" data-order="1" style="border: 1px solid darkorange;" />
+														</div>
+
 														<div id="t_address_block-1" class="address_block">
 															<div class="controls">
 																<input type="text" id="t_address_name-1" name="transcorders[multiform][1][t_address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->t_address_name; ?>" />
@@ -591,8 +610,8 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 												</label>
 												<div class="controls controls-row">
 													<div class="span6">
-														<select id="transport_device-1" name="transcorders[multiform][1][transport_device]" class="chzn-select input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
-															<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_TRANSPORT_DEVICE_PLEASE_SELECT'); ?></option>
+														<select id="transport_device-1" name="transcorders[multiform][1][transport_device]" class="select2 input-control" data-placeholder="<?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_TRANSPORT_DEVICE_PLEASE_SELECT'); ?>" required>
+															<option></option>
 															<?php
 																foreach ( $transportDeviceOptions as $key => $value ) {
 																	echo '<option value="' . $key . '">' . $value . '</option>';
@@ -601,8 +620,8 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 														</select>
 													</div>
 														<div class="span6">
-														<select id="transport_type-1" name="transcorders[multiform][1][transport_type]" class="chzn-select input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
-															<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_TRANSPORT_TYPE_PLEASE_SELECT'); ?></option>
+														<select id="transport_type-1" name="transcorders[multiform][1][transport_type]" class="select2 input-control" data-placeholder="<?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_TRANSPORT_TYPE_PLEASE_SELECT'); ?>" required>
+															<option></option>
 															<?php
 																foreach ( $transportTypeOptions as $key => $value ) {
 																	echo '<option value="' . $key . '">' . $value . '</option>';
@@ -619,8 +638,8 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 												</label>
 												<div class="controls controls-row">
 													<div class="span12">
-														<select id="order_type-1" name="transcorders[multiform][1][order_type]" class="chzn-select input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
-															<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_ORDER_TYPE_PLEASE_SELECT'); ?></option>
+														<select id="order_type-1" name="transcorders[multiform][1][order_type]" class="select2 input-control" data-placeholder="<?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_ORDER_TYPE_PLEASE_SELECT'); ?>" required>
+															<option></option>
 															<?php
 																foreach ( $orderTypeOptions as $key => $value ) {
 																	echo '<option value="' . $key . '">' . $value . '</option>';
@@ -652,15 +671,19 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 						</div><!-- /.widget-body -->
 					</div><!-- /.widget-box .transparent -->
 
+					<input type="text" name="transcorders[multiform][1][id]" id="order_cid-1" value="<?php echo isset($this->item->id) ? $this->item->id : '0'; ?>" />
 					<input type="text" name="transcorders[multiform][1][order_id]" value="<?php echo $this->item->order_id; ?>" />
+					<input type="text" name="transcorders[multiform][1][transport_timestamp]" id="transport_timestamp-1" value="<?php echo $this->item->transport_timestamp; ?>" required />
 					<input type="text" name="transcorders[multiform][1][estimated_time]" id="estimated_time-1" value="<?php echo $this->item->estimated_time; ?>" />
 					<input type="text" name="transcorders[multiform][1][estimated_distance]" id="estimated_distance-1" value="<?php echo $this->item->estimated_distance; ?>" />
-					<input type="text" name="transcorders[multiform][1][f_address_lat]" id="f_address_lat-1" value="<?php echo $this->item->t_address_lat; ?>" />
-					<input type="text" name="transcorders[multiform][1][f_address_lng]" id="f_address_lng-1" value="<?php echo $this->item->t_address_lng; ?>" />
+
+					<input type="text" name="transcorders[multiform][1][f_address_lat]" id="f_address_lat-1" value="<?php echo $this->item->f_address_lat; ?>" />
+					<input type="text" name="transcorders[multiform][1][f_address_lng]" id="f_address_lng-1" value="<?php echo $this->item->f_address_lng; ?>" />
+					<input type="hidden" name="transcorders[multiform][1][f_address_hash]" id="f_address_hash-1" value="<?php echo $this->item->f_address_hash; ?>" />
+
 					<input type="text" name="transcorders[multiform][1][t_address_lat]" id="t_address_lat-1" value="<?php echo $this->item->t_address_lat; ?>" />
 					<input type="text" name="transcorders[multiform][1][t_address_lng]" id="t_address_lng-1" value="<?php echo $this->item->t_address_lng; ?>" />
-					<input type="text" name="transcorders[multiform][1][transport_timestamp]" id="transport_timestamp-1" value="<?php echo $this->item->transport_timestamp; ?>" required />
-					<input type="text" name="transcorders[multiform][1][id]" id="order_cid-1" value="<?php echo isset($this->item->id) ? $this->item->id : '0'; ?>" />
+					<input type="hidden" name="transcorders[multiform][1][t_address_hash]" id="t_address_hash-1" value="<?php echo $this->item->t_address_hash; ?>" />
 
 				</div><!-- /.torder-1 -->
 				<!-- ########## ########## ########## ########## ##########   END FIRST TRANSPORT   ########## ########## ########## ########## ########## -->
@@ -969,7 +992,8 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 			jQuery(editButtonHelper).hide();
 
 			// Set chosen on the new select list element
-			jQuery('#torder-' + cloneIndex + ' select').chosen({allow_single_deselect: true, disable_search_threshold: 10, no_results_text: "Oops, nothing found", width: "100%"});
+//			jQuery('#torder-' + cloneIndex + ' select').chosen({allow_single_deselect: true, disable_search_threshold: 10, no_results_text: "Oops, nothing found", width: "100%"});
+			jQuery('#torder-' + cloneIndex + ' select').select2();
 
 			// Count index for next action
 			cloneIndex++;
@@ -1046,8 +1070,11 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 			jQuery(torderIdHelper3).hide();
 			jQuery(torderIdHelper1).slideToggle('fast', 'linear');
 
+			jQuery('.poi_container_id-' + torderId).hide();
+
 			// Set chosen on the new select list element
-			jQuery('#torder-' + torderId + ' select').chosen({allow_single_deselect: true, disable_search_threshold: 10, no_results_text: "Oops, nothing found", width: "100%"});
+//			jQuery('#torder-' + torderId + ' select').chosen({allow_single_deselect: true, disable_search_threshold: 10, no_results_text: "Oops, nothing found", width: "100%"});
+			jQuery('#torder-' + cloneIndex + ' select').select2();
 
 			// TODO: We have to trigger the change event again, after an element is added
 			$('.clonedTransport select.poi').change(function() {
@@ -1112,6 +1139,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 				inputValues.transport_type = jQuery('#transport_type-' + torderId).val();
 				inputValues.order_type = jQuery('#order_type-' + torderId).val();
 			// catch from values
+				inputValues.f_poi_id = jQuery('#f_poi_id-' + torderId).val();
 				inputValues.f_address_name = jQuery('#f_address_name-' + torderId).val();
 				inputValues.f_address_name_add = jQuery('#f_address_name_add-' + torderId).val();
 				inputValues.f_address_street = jQuery('#f_address_street-' + torderId).val();
@@ -1122,7 +1150,9 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 				inputValues.f_address_country = jQuery('#f_address_country-' + torderId).val();
 				inputValues.f_address_lat = jQuery('#f_address_lat-' + torderId).val();
 				inputValues.f_address_lng = jQuery('#f_address_lng-' + torderId).val();
+				inputValues.f_address_hash = jQuery('#f_address_hash-' + torderId).val();
 			// catch to values
+				inputValues.t_poi_id = jQuery('#t_poi_id-' + torderId).val();
 				inputValues.t_address_name = jQuery('#t_address_name-' + torderId).val();
 				inputValues.t_address_name_add = jQuery('#t_address_name_add-' + torderId).val();
 				inputValues.t_address_street = jQuery('#t_address_street-' + torderId).val();
@@ -1133,6 +1163,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 				inputValues.t_address_country = jQuery('#t_address_country-' + torderId).val();
 				inputValues.t_address_lat = jQuery('#t_address_lat-' + torderId).val();
 				inputValues.t_address_lng = jQuery('#t_address_lng-' + torderId).val();
+				inputValues.t_address_hash = jQuery('#t_address_hash-' + torderId).val();
 
 			return inputValues;
 		}
@@ -1148,8 +1179,10 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 			var orderFrom = '',
 			orderTo = '';
 
-			orderFrom += '<small>' + inputValues.f_address_name;
-			orderFrom += ' (' + inputValues.f_address_name_add + ')</small><br>';
+			if( inputValues.f_address_name && inputValues.f_address_name_add ) {
+				orderFrom += '<small>' + inputValues.f_address_name;
+				orderFrom += ' (' + inputValues.f_address_name_add + ')</small><br>';
+			}
 			orderFrom += inputValues.f_address_street;
 			orderFrom += ' ' + inputValues.f_address_houseno + ',';
 			orderFrom += ' ' + inputValues.f_address_zip;
@@ -1157,8 +1190,10 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 			orderFrom += ' ' + inputValues.f_address_region;
 			orderFrom += ' ' + inputValues.f_address_country;
 
-			orderTo += '<small>' + inputValues.t_address_name;
-			orderTo += ' (' + inputValues.t_address_name_add + ')</small><br>';
+			if( inputValues.t_address_name && inputValues.t_address_name_add ) {
+				orderTo += '<small>' + inputValues.t_address_name;
+				orderTo += ' (' + inputValues.t_address_name_add + ')</small><br>';
+			}
 			orderTo += inputValues.t_address_street;
 			orderTo += ' ' + inputValues.t_address_houseno + ',';
 			orderTo += ' ' + inputValues.t_address_zip;
@@ -1180,7 +1215,47 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 		 *
 		 */
 		function switchValues( torderId ) {
-			
+			// Get the values from the Container which is copied
+			var inputValues = getValues( torderId );
+			var switchedValuesHelper = new Object();
+			var switchedValues = new Object();
+
+			// Switch the values and store in new object
+			jQuery.each(inputValues, function(i, val) {
+				if( i[0] === 'f' ) {
+					var newKey = i.replace('f_', 'fb_');
+				} else if( i[0] === 't' ) {
+					var newKey = i.replace('t_', 'tb_');
+				} else {
+					var newKey = i;
+				}
+
+				switchedValuesHelper[newKey] = val;
+			});
+
+			// Use the new object (with switched values) to store back to the form fields
+			jQuery.each(switchedValuesHelper, function(i, val) {
+				if( i[0] === 'f' ) {
+					var newKey = i.replace('fb_', 't_');
+				} else if( i[0] === 't' ) {
+					var newKey = i.replace('tb_', 'f_');
+				} else {
+					var newKey = i;
+				}
+
+				switchedValues[newKey] = val;
+
+				jQuery('#' + newKey + '-' + torderId).val(val);
+			});
+
+
+			// Process and set the shortInfoBar
+			var htmlValues = setShortInfoBar( switchedValues );
+			jQuery('#torder-sum-left-' + torderId).html(htmlValues.from);
+			jQuery('#torder-sum-right-' + torderId).html(htmlValues.to);
+
+			// Print out he Message what we've done
+			alertify.log('<i class="icon-exchange"></i> Switched directions for <strong>Transport ' + torderId + '</strong>');
 		}
 
 
@@ -1216,7 +1291,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 								htmlOut += '<div class=\"span8\">';
 									htmlOut += '<div class=\"controls controls-row well center inverse-extended-' + torderId + '\">';
 										htmlOut += '<div class=\"span5\" id=\"torder-sum-left-' + torderId + '\">N/A</div>';
-										htmlOut += '<div class=\"span2\" id=\"torder-sum-change-' + torderId + '\" style=\"vertical-align: middle; font-size: 30px; line-height: 40px;\">';
+										htmlOut += '<div class=\"span2\" id=\"torder-sum-change-' + torderId + '\" onClick=\"switchValues(' + torderId + ')\" style=\"vertical-align: middle; font-size: 30px; line-height: 40px;\">';
 											htmlOut += '<span class=\"hidden-phone\"><i class=\"icon-exchange\"></i></span>';
 											htmlOut += '<span class=\"visible-phone\"><i class=\"icon-exchange icon-rotate-90\"></i></span>';
 										htmlOut += '</div>';
@@ -1227,24 +1302,10 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 											htmlOut += '<div class=\"well\">';
 												htmlOut += '<div class=\"control-group\">';
 													htmlOut += '<label class=\"control-label\"><i class=\"icon-chevron-sign-up\"></i> <?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ADDRESS_FROM'); ?></label>';
-													htmlOut += '<div class=\"controls\">';
-														htmlOut += '<span class=\"span12\">';
-															htmlOut += '<select name="transcorders[multiform][' + torderId + '][f_poi_id]" class="poi chzn-select" id="f_poi_id-' + torderId + '" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>">';
-																htmlOut += '<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_POILIST_PLEASE_SELECT'); ?></option>';
-																<?php
-																	foreach ( $poiOptions as $key => $value ) {
-																		echo 'htmlOut += \'<option value="' . $key . '">' . $value . '</option>\';';
-																	}
-																?>
-															htmlOut += '</select>';
-														htmlOut += '</span>';
+													htmlOut += '<div id=\"f_address_helper_container-' + torderId + '\" class=\"controls\">';
+														htmlOut += '<input type=\"text\" class=\"red span12 input-control\" id=\"f_address_helper-' + torderId + '\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_ADDRESS_HELPER'); ?>\" data-direction=\"f\" data-order=\"' + torderId + '\" style=\"border: 1px solid darkorange;\" />';
 													htmlOut += '</div>';
-													htmlOut += '<div id="f_address_block-' + torderId + '" class="address_block">';
-														htmlOut += '<div class=\"controls\">';
-															htmlOut += '<span class=\"span12 alert\">';
-																htmlOut += '<input type="text" class="span12 f_address_helper-' + torderId + '" id="f_address_helper-' + torderId + '" data-placeholder="<?php echo JText::_('COM_XIVEIRM_ADDRESS_HELPER'); ?>">';
-															htmlOut += '</span>';
-														htmlOut += '</div>';
+													htmlOut += '<div id=\"f_address_block-' + torderId + '\" class=\"address_block\">';
 														htmlOut += '<div class=\"controls\">';
 															htmlOut += '<input type=\"text\" id=\"f_address_name-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_name]\" class=\"input-control span12\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>\" maxlength=\"150\" value />';
 														htmlOut += '</div>';
@@ -1271,24 +1332,10 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 											htmlOut += '<div class=\"well\">';
 												htmlOut += '<div class=\"control-group\">';
 													htmlOut += '<label class=\"control-label\"><i class=\"icon-chevron-sign-down\"></i> <?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ADDRESS_TO'); ?></label>';
-													htmlOut += '<div class=\"controls\">';
-														htmlOut += '<span class=\"span12\">';
-															htmlOut += '<select name="transcorders[multiform][' + torderId + '][t_poi_id]" class="poi chzn-select" id="t_poi_id-' + torderId + '" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>">';
-																htmlOut += '<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_POILIST_PLEASE_SELECT'); ?></option>';
-																<?php
-																	foreach ( $poiOptions as $key => $value ) {
-																		echo 'htmlOut += \'<option value="' . $key . '">' . $value . '</option>\';';
-																	}
-																?>
-															htmlOut += '</select>';
-														htmlOut += '</span>';
+													htmlOut += '<div id=\"t_address_helper_container-' + torderId + '\" class=\"controls\">';
+														htmlOut += '<input type=\"text\" class=\"red span12 input-control\" id=\"t_address_helper-' + torderId + '\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_ADDRESS_HELPER'); ?>\" data-direction=\"t\" data-order=\"' + torderId + '\" style=\"border: 1px solid darkorange;\" />';
 													htmlOut += '</div>';
-													htmlOut += '<div id="t_address_block-' + torderId + '" class="address_block">';
-														htmlOut += '<div class=\"controls\">';
-															htmlOut += '<span class=\"span12 alert\">';
-																htmlOut += '<input type="text" class="span12 t_address_helper-' + torderId + '" id="t_address_helper-' + torderId + '" data-placeholder="<?php echo JText::_('COM_XIVEIRM_ADDRESS_HELPER'); ?>">';
-															htmlOut += '</span>';
-														htmlOut += '</div>';
+													htmlOut += '<div id=\"t_address_block-' + torderId + '\" class=\"address_block\">';
 														htmlOut += '<div class=\"controls\">';
 															htmlOut += '<input type=\"text\" id=\"t_address_name-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_name]\" class=\"input-control span12\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_NAME'); ?>\" maxlength=\"150\" value />';
 														htmlOut += '</div>';
@@ -1330,21 +1377,21 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 												htmlOut += '<label class=\"control-label\"><?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_TRANSPORT_DEVICE_AND_TYPE'); ?></label>';
 												htmlOut += '<div class=\"controls controls-row\">';
 													htmlOut += '<div class=\"span6\">';
-														htmlOut += '<select id="transport_device-' + torderId + '" name="transcorders[multiform][' + torderId + '][transport_device]" class="chzn-select input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>';
-															htmlOut += '<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_TRANSPORT_DEVICE_PLEASE_SELECT'); ?></option>';
+														htmlOut += '<select id=\"transport_device-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][transport_device]\" class=\"select2 input-control\" data-placeholder=\"<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>\" required>';
+															htmlOut += '<option value=\"\"><?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_TRANSPORT_DEVICE_PLEASE_SELECT'); ?></option>';
 															<?php
 																foreach ( $transportDeviceOptions as $key => $value ) {
-																	echo 'htmlOut += \'<option value="' . $key . '">' . $value . '</option>\';';
+																	echo 'htmlOut += \'<option value=\"' . $key . '\">' . $value . '</option>\';';
 																}
 															?>
 														htmlOut += '</select>';
 													htmlOut += '</div>';
 													htmlOut += '<div class=\"span6\">';
-														htmlOut += '<select id="transport_type-' + torderId + '" name="transcorders[multiform][' + torderId + '][transport_type]" class="chzn-select input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>';
-															htmlOut += '<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_TRANSPORT_TYPE_PLEASE_SELECT'); ?></option>';
+														htmlOut += '<select id=\"transport_type-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][transport_type]\" class=\"select2 input-control\" data-placeholder=\"<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>\" required>';
+															htmlOut += '<option value=\"\"><?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_TRANSPORT_TYPE_PLEASE_SELECT'); ?></option>';
 															<?php
 																foreach ( $transportTypeOptions as $key => $value ) {
-																	echo 'htmlOut += \'<option value="' . $key . '">' . $value . '</option>\';';
+																	echo 'htmlOut += \'<option value=\"' . $key . '\">' . $value . '</option>\';';
 																}
 															?>
 														htmlOut += '</select>';
@@ -1356,11 +1403,11 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 												htmlOut += '<label class=\"control-label\"><?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_ORDER_TYPE'); ?></label>';
 												htmlOut += '<div class=\"controls controls-row\">';
 													htmlOut += '<div class=\"span12\">';
-														htmlOut += '<select id="order_type-' + torderId + '" name="transcorders[multiform][' + torderId + '][order_type]" class="chzn-select input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>';
-															htmlOut += '<option value=""><?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_ORDER_TYPE_PLEASE_SELECT'); ?></option>';
+														htmlOut += '<select id=\"order_type-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][order_type]\" class=\"select2 input-control\" data-placeholder=\"<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>\" required>';
+															htmlOut += '<option value=\"\"><?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_ORDER_TYPE_PLEASE_SELECT'); ?></option>';
 															<?php
 																foreach ( $orderTypeOptions as $key => $value ) {
-																	echo 'htmlOut += \'<option value="' . $key . '">' . $value . '</option>\';';
+																	echo 'htmlOut += \'<option value=\"' . $key . '\">' . $value . '</option>\';';
 																}
 															?>
 														htmlOut += '</select>';
@@ -1394,16 +1441,21 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 					htmlOut += '</div><!-- /.widget-body -->';
 				htmlOut += '</div><!-- /.widget-box .transparent -->';
 
-				htmlOut += '<input type=\"text\" id=\"f_address_lat-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_lat]\" />';
-				htmlOut += '<input type=\"text\" id=\"f_address_lng-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][f_address_lng]\" />';
-				htmlOut += '<input type=\"text\" id=\"t_address_lat-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_lat]\" />';
-				htmlOut += '<input type=\"text\" id=\"t_address_lng-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][t_address_lng]\" />';
+				htmlOut += '<input type=\"text\" name=\"transcorders[multiform][' + torderId + '][id]\" id=\"order_cid-' + torderId + '\" value=\"0\" />';
+				htmlOut += '<input type=\"text\" name=\"transcorders[multiform][' + torderId + '][order_id]\" id=\"order_id-' + torderId + '\" value />';
+				htmlOut += '<input type=\"text\" name=\"transcorders[multiform][' + torderId + '][transport_timestamp]\" id=\"transport_timestamp-' + torderId + '\" value required />';
+				htmlOut += '<input type=\"text\" name=\"transcorders[multiform][' + torderId + '][estimated_time]\" id=\"estimated_time-' + torderId + '\" value />';
+				htmlOut += '<input type=\"text\" name=\"transcorders[multiform][' + torderId + '][estimated_distance]\" id=\"estimated_distance-' + torderId + '\" value />';
 
-				htmlOut += '<input type=\"text\" id=\"order_id-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][order_id]\" value />';
-				htmlOut += '<input type=\"text\" id=\"estimated_time-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][estimated_time]\" value />';
-				htmlOut += '<input type=\"text\" id=\"estimated_distance-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][estimated_distance]\" value />';
-				htmlOut += '<input type=\"text\" id=\"transport_timestamp-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][transport_timestamp]\" value required />';
-				htmlOut += '<input type=\"text\" id=\"order_cid-' + torderId + '\" name=\"transcorders[multiform][' + torderId + '][id]\" value=\"0\" />';
+				htmlOut += '<input type=\"text\" name=\"transcorders[multiform][' + torderId + '][f_poi_id]\" id=\"f_poi_id-' + torderId + '\" />';
+				htmlOut += '<input type=\"text\" name=\"transcorders[multiform][' + torderId + '][f_address_lat]\" id=\"f_address_lat-' + torderId + '\" />';
+				htmlOut += '<input type=\"text\" name=\"transcorders[multiform][' + torderId + '][f_address_lng]\" id=\"f_address_lng-' + torderId + '\" />';
+				htmlOut += '<input type=\"hidden\" name=\"transcorders[multiform][' + torderId + '][f_address_hash]\" id=\"f_address_hash-' + torderId + '\" />';
+
+				htmlOut += '<input type=\"text\" name=\"transcorders[multiform][' + torderId + '][t_poi_id]\" id=\"t_poi_id-' + torderId + '\" />';
+				htmlOut += '<input type=\"text\" name=\"transcorders[multiform][' + torderId + '][t_address_lat]\" id=\"t_address_lat-' + torderId + '\" />';
+				htmlOut += '<input type=\"text\" name=\"transcorders[multiform][' + torderId + '][t_address_lng]\" id=\"t_address_lng-' + torderId + '\" />';
+				htmlOut += '<input type=\"hidden\" name=\"transcorders[multiform][' + torderId + '][t_address_hash]\" id=\"t_address_hash-' + torderId + '\" />';
 
 			htmlOut += '</div><!-- /.torder-' + torderId + ' -->';
 
@@ -1469,27 +1521,9 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 </script>
 
 <script>
-//				$('.clonedTransport select').on('inputchange', function() {
+//				$('.clonedTransport').on('inputchange', function() {
 //					console.log(this);
 //				});
-
-				$('.clonedTransport select.poi').on('change', function() {
-					var selVal = this;
-					var pts = $(this).parentsUntil('.clonedTransport');
-
-					// Get the id and first value key (direction letter) from the current transport item
-					var attrId = $(pts.context).attr('id');
-					var blockId = attrId.split('-').pop();
-					var dirLetter = attrId[0];
-
-					if (this.value != '' ) {
-						$('#' + dirLetter + '_address_block-' + blockId).hide();
-					} else {
-						$('#' + dirLetter + '_address_block-' + blockId).show();
-					}
-
-					console.log(this);
-				});
 </script>
 
 
@@ -1506,9 +1540,11 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 //					$('#location').val(this.value);
 //				});
 //		#################################################### EXAMPLE #########################################################
+
 ?>
 
 <pre>
+
 <?php
 
 $test = '';
