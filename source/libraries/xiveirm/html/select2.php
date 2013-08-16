@@ -95,7 +95,11 @@ abstract class IRMHtmlSelect2
 		// Build the scriptDeclaration
 		$srciptDec = 
 			"jQuery(document).ready(function() {
-				$('" . $selector . "').select2(" . $options . ");
+				$('" . $selector . "').select2({
+					width: '100%',
+					minimumResultsForSearch: 10,
+					placeholder: 'Please select'
+				});
 			});\n";
 
 		// Attach the function to the document
@@ -108,7 +112,7 @@ abstract class IRMHtmlSelect2
 
 
 	/**
-	 * Add javascript support for select2 lists
+	 * Add javascript support for select2 lists with a complete address block !
 	 *
 	 * @param   string  $selector  Selector for the tooltip
 	 * @param   string  $trigger   ID of the form field for updating chosen dynamically (without the id selector: #). If you dont want it, set trigger to false.
@@ -139,10 +143,12 @@ abstract class IRMHtmlSelect2
 	 * @return  void
 	 *
 	 * @see http://ivaynberg.github.com/select2/ for more informations and options
+	 * @example http://stackoverflow.com/questions/14819865/select2-ajax-method-not-selecting
+	 * @example https://github.com/ivaynberg/select2/wiki/PHP-Example
 	 *
 	 * @since   6.0
 	 */
-	public function initAjaxPoi($selector, $url)
+	public function initAjaxPoi( $selector, $url, $params = array() )
 	{
 		$sig = md5( serialize( array($selector, $url) ) );
 
@@ -157,57 +163,48 @@ abstract class IRMHtmlSelect2
 
 		// Include dependencies
 		self::dependencies('jquery.select2');
+		NFWHtmlJavascript::loadAlertify();
+
+		$options = NFWHtml::getJSObject($params);
+
+		$token = NFWSession::getToken();
 
 		// Build the scriptDeclaration
 		$srciptDec = 
 			"jQuery(document).ready(function() {
-
 				var formatSelection = function(data) {
-					var dataSet = this.element[0].dataset,
-					dirLetter = dataSet.direction,
-					blockId = dataSet.order;
-
-					var dataSetDirection = this.element[0].dataset.direction;
-
-					console.log(dirLetter);
-					console.log(blockId);
-					
-					$('#' + dirLetter + '_address_name-' + blockId).val(data.address_name);
-					$('#' + dirLetter + '_address_name_add-' + blockId).val(data.address_name_add);
-					$('#' + dirLetter + '_address_street-' + blockId).val(data.address_street);
-					$('#' + dirLetter + '_address_houseno-' + blockId).val(data.address_houseno);
-					$('#' + dirLetter + '_address_zip-' + blockId).val(data.address_zip);
-					$('#' + dirLetter + '_address_city-' + blockId).val(data.address_city);
-					$('#' + dirLetter + '_address_region-' + blockId).val(data.address_region);
-					$('#' + dirLetter + '_address_country-' + blockId).val(data.address_country);
-					$('#' + dirLetter + '_address_lat-' + blockId).val(data.address_lat);
-					$('#' + dirLetter + '_address_lng-' + blockId).val(data.address_lng);
-					$('#' + dirLetter + '_address_hash-' + blockId).val(data.address_hash);
-
+					// console.log( data );
 					return data.name;
 				}
 
 				var formatResult = function(data) {
-//					console.log(data);
+					// console.log(data);
 					return '<div class=\"select2-user-result\">' + data.name + '</div>';
 				}
 
 				var initSelection = function(element, callback) {
-					console.log( element.val() );
-					return element.val();
+					return $.getJSON('" . $url . "&id=' + ( element.val() ), null, function(data) {
+						// console.log(data);
+						return callback(data);
+					});
 				}
 
-
+				// Set the select2 function
 				$('" . $selector . "').select2({
-					placeholder: 'Search for a category',
+					width: '100%',
+					placeholder: 'Search for a POI',
+//					minimumInputLength: 2,
+					allowClear: true,
 					ajax: {
+						type: 'POST',
 						url: '" . $url . "',
 						dataType: 'json',
-						quietMillis: 100,
+						quietMillis: 300,
 						data: function (term, page) {
 							return {
-								term: term, //search term
-								page_limit: 10 // page size
+								term: term, // search term
+								'" . $token . "': 1 // token
+// ,								page_limit: 10 // page size
 							};
 						},
 						results: function (data, page) {
@@ -217,6 +214,49 @@ abstract class IRMHtmlSelect2
 					formatResult: formatResult,
 					formatSelection: formatSelection,
 					initSelection: initSelection
+				});
+
+
+				// EVENT: if changing selection ( even from init to change ) // Removed -select2-removed- event because we handle it via the change event
+				$('" . $selector . "').on('change', function(e) {
+					var dataDirection = e.currentTarget.dataset.direction,
+					dataOrder = e.currentTarget.dataset.order,
+					data = e.added;
+
+					if( data ) {
+						$.each(data, function ( key, value ) {
+							// console.log(key + ' - ' + value);
+							$('#' + dataDirection + '_' + key + '-' + dataOrder).val(value);
+						});
+
+						if(data.system_checked == '1' || data.client_checked == '1') {
+							$('#' + dataDirection + '_address_block-' + dataOrder + ' .input-control').attr('readonly', true);
+							$('#' + dataDirection + '_address_helper_id-' + dataOrder).hide();
+
+								if( data.system_checked == '1' ) {
+									alertify.success('<i class=\"icon-ok-sign\"></i> You\'ve selected a <strong>verified</strong> address');
+								} else {
+									alertify.log('<strong>*</strong> You\'ve selected a <strong>self-signed</strong> address');
+								}
+						} else {
+							alertify.warning = alertify.extend('warning');
+							alertify.warning('<i class=\"icon-warning-sign\"></i> This address is <strong> not verified</strong>');
+						}
+					} else {
+						// Remove readonly from address block
+						$('#' + dataDirection + '_address_block-' + dataOrder + ' .input-control').attr('readonly', false);
+
+						// Clear the input fields
+						$('#' + dataDirection + '_address_block-' + dataOrder + ' input').val('');
+						$('#' + dataDirection + '_address_lat-' + dataOrder).val('');
+						$('#' + dataDirection + '_address_lng-' + dataOrder).val('');
+						$('#' + dataDirection + '_address_hash-' + dataOrder).val('');
+
+						// Fade in the address helper field
+						$('#' + dataDirection + '_address_helper_id-' + dataOrder).fadeIn('slow');
+					}
+
+//					console.log( e );
 				});
 			});\n";
 
