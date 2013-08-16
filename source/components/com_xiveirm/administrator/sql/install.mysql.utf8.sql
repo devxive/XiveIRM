@@ -41,7 +41,7 @@ PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts_appvalues` (
-`contacts_id` INT(11)  NOT NULL COMMENT '#__contacts id',
+`contacts_id` INT(11) NOT NULL COMMENT '#__contacts id',
 `app_key` VARCHAR(100) NOT NULL COMMENT '#__extensions plugin element',
 `app_value` MEDIUMTEXT NOT NULL,
 UNIQUE KEY `idx_contacts_id_app_key` (`contacts_id`,`app_key`)
@@ -76,3 +76,10 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_flags` (
 `flag` tinyint(1) NOT NULL DEFAULT '1',
 UNIQUE KEY `idx_item` (`item`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Simple flag table';
+
+CREATE TABLE IF NOT EXISTS `#__xiveirm_verified` (
+`contacts_id` INT(11)  NOT NULL COMMENT '#__contacts id',
+`system_checked` tinyint(1) NOT NULL DEFAULT '0',
+`client_checked` tinyint(1) NOT NULL DEFAULT '0',
+UNIQUE KEY `idx_contacts_id` (`contacts_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Table to determine checked contacts';
