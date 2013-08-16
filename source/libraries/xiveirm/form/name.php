@@ -25,26 +25,30 @@ class IRMFormName
 	/*
 	 * Method to format names
 	 *
-	 * @param     array    $values    The name of the component as stored in components folder (com_mycomponent)
+	 * @param     array      $values       The name of the component as stored in components folder (com_mycomponent)
+	 * @param     boolean    $checkmark    Show (true) or hide (false) checkmarks in the name string
 	 *
 	 * @return    string
 	 */
-	public static function formatPoiName( $values )
+	public static function formatPoiName( $values, $checkmark = true )
 	{
 		// Preformat in the IRMHtmlBuilder class similar to client id method
-		$id                     = isset($values->id)                     ? $values->id                     : false;
-		$address_name           = isset($values->address_name)           ? $values->address_name           : false;
-		$address_name_add       = isset($values->address_name_add)       ? $values->address_name_add       : false;
-		$company                = isset($values->company)                ? $values->company                : false;
-		$last_name              = isset($values->last_name)              ? $values->last_name              : false;
-		$first_name             = isset($values->first_name)             ? $values->first_name             : false;
-		$address_system_checked = isset($values->address_system_checked) ? $values->address_system_checked : false;
+		$id                  = isset($values->id)                  ? $values->id                  : false;
+		$address_name        = isset($values->address_name)        ? $values->address_name        : false;
+		$address_name_add    = isset($values->address_name_add)    ? $values->address_name_add    : false;
+		$company             = isset($values->company)             ? $values->company             : false;
+		$last_name           = isset($values->last_name)           ? $values->last_name           : false;
+		$first_name          = isset($values->first_name)          ? $values->first_name          : false;
+		$system_checked      = isset($values->system_checked)      ? $values->system_checked      : false;
+		$client_checked      = isset($values->client_checked)      ? $values->client_checked      : false;
 
 		$opt_name = '';
 
 		// Build the placeholder between
-		if ( $address_system_checked ) {
+		if ( $system_checked ) {
 			$opt_name .= '<i class="icon-ok-sign"></i> ';
+		} else if ( $client_checked ) {
+			$opt_name .= '* ';
 		}
 
 		if ( $address_name && $address_name_add ) {
