@@ -528,7 +528,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 																</div>
 																<input type="text" name="transcorders[f_address_lat]" id="f_address_lat-1" value="<?php echo $this->item->f_address_lat; ?>" />
 																<input type="text" name="transcorders[f_address_lng]" id="f_address_lng-1" value="<?php echo $this->item->f_address_lng; ?>" />
-																<input type="text" name="transcorders[f_address_hash]" id="f_address_hash-1" value="<?php echo $this->item->f_address_hash; ?>" />
+																<input type="hidden" name="transcorders[f_address_hash]" id="f_address_hash-1" value="<?php echo $this->item->f_address_hash; ?>" />
 															</div>
 														</div>
 													</div>
@@ -568,7 +568,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 																</div>
 																<input type="text" name="transcorders[t_address_lat]" id="t_address_lat-1" value="<?php echo $this->item->t_address_lat; ?>" />
 																<input type="text" name="transcorders[t_address_lng]" id="t_address_lng-1" value="<?php echo $this->item->t_address_lng; ?>" />
-																<input type="text" name="transcorders[t_address_hash]" id="t_address_hash-1" value="<?php echo $this->item->t_address_hash; ?>" />
+																<input type="hidden" name="transcorders[t_address_hash]" id="t_address_hash-1" value="<?php echo $this->item->t_address_hash; ?>" />
 															</div>
 														</div>
 													</div>
@@ -635,7 +635,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 
 												<?php if(!$this->item->id) { ?>
 												<div class="control-group">
-													<div class="controls controls-row center">
+													<div id="toca_actionblock-1" class="controls controls-row center">
 														<div class="btn-group">
 															<a class="btn btn-success" onClick="trans_add(1)">
 																<i class="icon-plus icon-only"></i> <?php echo JText::_('COM_XIVETRANSCORDER_ADD_EMPTY_ITEM'); ?>
@@ -643,6 +643,11 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 															<a class="btn btn-primary" onClick="trans_copy(1)">
 																<i class="icon-copy icon-only"></i> <?php echo JText::_('COM_XIVETRANSCORDER_COPY_THIS_ITEM'); ?>
 															</a>
+														</div>
+													</div>
+													<div id="toca_loaderblock-1" class="controls controls-row margin-top" style="display: none;">
+														<div class="alert center">
+															<img src="/media/nawala/images/loader.gif">
 														</div>
 													</div>
 												</div><!-- #end control group -->
@@ -684,7 +689,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 
 				<div class="form-actions">
 					<span id="form-buttons" class="<?php echo empty($this->item->id) ? '' : 'hidden'; ?>">
-						<button id="loading-btn-save" data-loading-text="<?php echo JText::_('COM_XIVEIRM_API_PLEASE_WAIT_BUTTON'); ?>" data-complete-text="<?php echo JText::_('COM_XIVEIRM_API_SAVED_BUTTON'); ?>" data-error-text="<?php echo JText::_('COM_XIVEIRM_API_ERROR_TRY_AGAIN_BUTTON'); ?>" class="validate btn btn-info" type="submit"><i class="icon-ok"></i> <?php echo isset($this->item->id) ? JText::_('COM_XIVEIRM_UPDATE_ITEM') : JText::_('COM_XIVEIRM_SAVE_ITEM'); ?></button>
+						<button id="coreSave" class="validate btn btn-info" type="submit"><i class="icon-ok"></i> <?php echo JText::_('COM_XIVEIRM_SAVE_ITEM'); ?></button>
 						&nbsp; &nbsp; &nbsp;
 						<button class="btn" type="reset" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_RESET_TIP'); ?>"><i class="icon-undo"></i> <?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_RESET'); ?></button>
 						&nbsp; &nbsp; &nbsp;
@@ -706,178 +711,39 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 		<?php echo JHtml::_('form.token'); ?>
 	</form>
 </div>
-
-
-
-
-
-
-
 <script>
-<?php
-	// PHP OUT COMMENTS TO PREVENT SHOWING INFOS IN SOURCE CODE WHILE IN ALPHA/BETA
-	/**
-	 * Returns from API in json format
-	 * example {"apiReturnCode":"SAVED","apiReturnRowId":"173","apiReturnMessage":"Successfully saved"}
-	 * 
-	 * apiReturnCode could be: SAVED, UPDATED or an Error Number ie. 666
-	 * apiReturnMessage: returns a informal message, should be used for debugging and not in production use. returns the database or php errors
-	 **/
-?>
 	jQuery(function(){
-		$("#form-transcorder").submit(function(e){
+		$("#coreSave").click(function(e){
 			e.preventDefault();
 
-			$("#loading-btn-save").addClass("btn-warning");
-			$("#loading-btn-save").button("loading");
+			$.each(orderIdArray, function (key, vid) {
+				// TODO: ADDING FORM CHECKS BEFORE TO TRY TO SAVE THE FORMS!!!
+				$('#toca_actionblock-' + key).hide();
+				$('#toca_loaderblock-' + key).fadeIn();
+				$.post('index.php?option=com_xiveirm&task=api.ajaxsave', $('#form-transcorder-core, #form-transcorder-' + key).serialize(), function(data){
+					console.log(data);
+					switch ( data.status ) {
+						case true:
+							// Remove the Id from the orderIdArray to prevent duplicates
+							delete orderIdArray[key];
 
-			$.post('index.php?option=com_xiveirm&task=api.ajaxsave', $("#form-transcorder").serialize(),
-			function(data){
-				if(data.apiReturnCode === 'SAVED'){
-					$.gritter.add({
-						title: 'Successfully saved',
-						text: 'You have successfully saved all items for this order',
-						icon: 'icon-check',
-						class_name: 'alert-success'
-					});
-					$("#order_cid").val(data.apiReturnId);
+							$('#toca_loaderblock-' + key).html('<div class="alert alert-success">Successfully saved!</div>');
 
-					$("#loading-btn-save").removeClass("btn-warning");
-					$("#loading-btn-save").button("complete");
-					$("#loading-btn-save").button("reset");
-
-					<?php if(!$this->item->catid) { ?>
-						var cId = $("#order_cid").val();
-						window.location.href = "<?php echo JRoute::_('index.php?task=transcorderform.edit&id='); ?>" + cId;
-					<?php } ?>
-
-				} else if(data.apiReturnCode === 'UPDATED') {
-					$.gritter.add({
-						title: 'Successfully updated',
-						text: 'You have successfully saved all items for this order',
-						icon: 'icon-globe',
-						class_name: 'alert-info'
-					});
-					$("#loading-btn-save").removeClass("btn-warning");
-					$("#loading-btn-save").button("complete");
-					$("#loading-btn-save").button("reset");
-
-					$("#loading-btn-edit").removeClass("hidden");
-					$("#loading-btn-edit").button("complete");
-					$("#loading-btn-edit").button("reset");
-
-					$("#form-transcorder .input-control").attr("disabled", true).trigger("liszt:updated");
-					$("#form-buttons").addClass("hidden");
-					$(".widget-box-tabapps .btn").attr("disabled", false);
-
-				} else if(data.apiReturnCode === 'NOTICE') {
-					$.gritter.add({
-						title: 'Successfully updated',
-						text: 'You have successfully saved all core items for this order.<br><br>' + data.apiReturnMessage,
-						icon: 'icon-info',
-						sticky: true,
-						class_name: 'alert-warning'
-					});
-					$("#loading-btn-save").removeClass("btn-warning");
-					$("#loading-btn-save").button("complete");
-					$("#loading-btn-save").button("reset");
-
-					$("#loading-btn-edit").removeClass("hidden");
-					$("#loading-btn-edit").button("complete");
-					$("#loading-btn-edit").button("reset");
-
-					$("#form-transcorder .input-control").attr("disabled", true);
-					$("#form-buttons").addClass("hidden");
-					$(".widget-box-tabapps .btn").attr("disabled", false);
-
-				} else {
-					$.gritter.add({
-						title: 'An error occured',
-						text: 'An error occured while trying to save or update. <br><br>Error code: ' + data.apiReturnCode + '<br><br>error message: ' + data.apiReturnMessage + '<br><br>If this error is persistant, please contact the support immediately with the given error!',
-						icon: 'icon-warning-sign',
-						sticky: true,
-						class_name: 'alert-error'
-					});
-					$("#loading-btn-save").removeClass("btn-warning");
-					$("#loading-btn-save").button("error");
-					$("#loading-btn-save").addClass("btn-danger");
-				}
-			}, "json");
+							break;
+						default:
+							$('#toca_loaderblock-' + key).html('<div class="alert alert-error">An Error occured, please try again!</div>');
+					}
+				}, "json");
+			});
 		});
 	});
 
 	<?php if($this->item->id): ?>
-	/*
-	 *
-	 *
-	 * Item exist and we set now all input fields to readonly. Hit the edit button to remove all and check out the item!
-	 * Note:	that we have added the disabled attribute to all .btn classes in widget boxes. May we do not need them anymore,
-	 * 		because we have a function that prevent to leave the form if anything has changed!
-	 *
-	 */
-	jQuery("#form-transcorder .input-control").attr("disabled", true);
-
-	<?php // Check if a link is disabled and prevent default action !! ?>
-	jQuery('a').click(function(e) {
-		linkvar = $(this).attr('disabled');
-		if (linkvar === 'disabled') {
-			e.preventDefault();
-		}
-	});
-
-	<?php // XAP-TODO: Have to set more functions to the edit form, such as a DB-checkout on activate and checkin on save or check in on deactivate !!!! ?>
-	function cancelEdit() {
-	}
-
 	// Function to toggle radio buttons for directions block
 	jQuery("div.btn-group button.device").click(function() {
 		var distcalc_value = $(this).attr("data-val");
 		$("#distcalc-device").val(distcalc_value);
 	});
-
-	function enableEdit() {
-		var inp = $('.input-control').get(0);
-
-		$("#loading-btn-edit").addClass("btn-warning");
-		$("#loading-btn-edit").button("loading");
-
-		jQuery.post('index.php?option=com_xiveirm&task=api.ajaxcheckout', $("#form-transcorder-cica").serialize(),
-			function(data){
-				if(data.apiReturnCode === 'TRUE'){
-					$.gritter.add({
-						title: '<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_INFO_TITLE'); ?>',
-						text: '<?php echo JText::sprintf('COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_INFO_BODY', $full_name); ?>',
-						icon: 'icon-signout',
-						class_name: 'alert-warning'
-					});
-
-					<?php // Remove all disabled fields if we got a "TRUE" response from the api and set the id="ckeckeditform" to 1 for form checks on leaving site ?>
-					if(inp.hasAttribute('disabled')) {
-						// Remove disabled and fire trigger at same time
-						$("#form-transcorder .input-control").attr("disabled", false).trigger("liszt:updated");
-
-						$("#loading-btn-edit").addClass("hidden");
-						$("#form-buttons").removeClass("hidden");
-						$(".widget-box-tabapps .link-control").attr("disabled", true);
-
-						$("#checkEditForm").val("1");
-					}
-				} else {
-					$.gritter.add({
-						title: 'An error occured',
-						text: 'An error occured while trying to check out for editing. <br><br>Error code: ' + data.apiReturnCode + '<br><br>Error message: ' + data.apiReturnMessage + '<br><br>If this error is persistant, please contact the support immediately with the given error!',
-						icon: 'icon-warning-sign',
-						sticky: true,
-						class_name: 'alert-error'
-					});
-
-					$("#loading-btn-edit").removeClass("btn-warning");
-					$("#loading-btn-edit").button("error");
-					$("#loading-btn-edit").addClass("btn-danger");
-				}
-			},
-		"json");
-	}
 	<?php else: ?>
 		jQuery(".widget-box-tabapps .btn").attr("disabled", true);
 	<?php endif; ?>
@@ -1044,24 +910,9 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 			jQuery(torderIdHelper3).hide();
 			jQuery(torderIdHelper1).slideToggle('fast', 'linear');
 
-			// TODO: We have to trigger the change event again, after an element is added
-			$('.clonedTransport select.poi').change(function() {
-				var selVal = this;
-				var pts = $(this).parentsUntil('.clonedTransport');
-
-				// Get the id and first value key (direction letter) from the current transport item
-				var attrId = $(pts.context).attr('id');
-				var blockId = attrId.split('-').pop();
-				var dirLetter = attrId[0];
-
-				if (this.value != '' ) {
-					$('#' + dirLetter + '_address_block-' + blockId).hide();
-				} else {
-					$('#' + dirLetter + '_address_block-' + blockId).show();
-				}
-
-				console.log(this);
-			});
+			// Remove the hash values from foth form fields because user want to edit the values and this may not valid related to the origins
+			jQuery('#f_address_hash-' + torderId).val('');
+			jQuery('#t_address_hash-' + torderId).val('');
 
 			// Print out he Message what we've done
 			alertify.warning = alertify.extend('warning');
@@ -1081,7 +932,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 			alertify.confirm('<div class="modal-header"><h3>Confirm the deletion of Transport ' + torderId + '</h3></div><div class="modal-body">Do you really want to remove <strong>Transport ' + torderId + '</strong>?</div>', function (e) {
 				if (e) {
 					// user klicked ok
-					torderIdHelper = '#torder-' + torderId;
+					torderIdHelper = '#form-transcorder-' + torderId;
 					jQuery(torderIdHelper).fadeOut('slow', function() {
 						jQuery(torderIdHelper).remove();
 					});
@@ -1298,10 +1149,10 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 															htmlOut += '<input type=\"text\" id=\"f_address_region-' + torderId + '\" name=\"transcorders[f_address_region]\" class=\"input-control span6\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>\" />';
 															htmlOut += '<input type=\"text\" id=\"f_address_country-' + torderId + '\" name=\"transcorders[f_address_country]\" class=\"input-control span6\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>\" />';
 														htmlOut += '</div>';
-														htmlOut += '<input type=\"text\" name=\"transcorders[f_poi_id]\" id=\"f_poi_id-' + torderId + '\" />';
+														htmlOut += '<input type=\"hidden\" name=\"transcorders[f_poi_id]\" id=\"f_poi_id-' + torderId + '\" />';
 														htmlOut += '<input type=\"text\" name=\"transcorders[f_address_lat]\" id=\"f_address_lat-' + torderId + '\" />';
 														htmlOut += '<input type=\"text\" name=\"transcorders[f_address_lng]\" id=\"f_address_lng-' + torderId + '\" />';
-														htmlOut += '<input type=\"text\" name=\"transcorders[f_address_hash]\" id=\"f_address_hash-' + torderId + '\" />';
+														htmlOut += '<input type=\"hidden\" name=\"transcorders[f_address_hash]\" id=\"f_address_hash-' + torderId + '\" />';
 													htmlOut += '</div>';
 												htmlOut += '</div>';
 											htmlOut += '</div>';
@@ -1332,10 +1183,10 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 															htmlOut += '<input type=\"text\" id=\"t_address_region-' + torderId + '\" name=\"transcorders[t_address_region]\" class=\"input-control span6\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_REGION'); ?>\" />';
 															htmlOut += '<input type=\"text\" id=\"t_address_country-' + torderId + '\" name=\"transcorders[t_address_country]\" class=\"input-control span6\" placeholder=\"<?php echo JText::_('COM_XIVEIRM_CONTACT_TO_ADDRESS_COUNTRY'); ?>\" />';
 														htmlOut += '</div>';
-														htmlOut += '<input type=\"text\" name=\"transcorders[t_poi_id]\" id=\"t_poi_id-' + torderId + '\" />';
+														htmlOut += '<input type=\"hidden\" name=\"transcorders[t_poi_id]\" id=\"t_poi_id-' + torderId + '\" />';
 														htmlOut += '<input type=\"text\" name=\"transcorders[t_address_lat]\" id=\"t_address_lat-' + torderId + '\" />';
 														htmlOut += '<input type=\"text\" name=\"transcorders[t_address_lng]\" id=\"t_address_lng-' + torderId + '\" />';
-														htmlOut += '<input type=\"text\" name=\"transcorders[t_address_hash]\" id=\"t_address_hash-' + torderId + '\" />';
+														htmlOut += '<input type=\"hidden\" name=\"transcorders[t_address_hash]\" id=\"t_address_hash-' + torderId + '\" />';
 													htmlOut += '</div>';
 												htmlOut += '</div>';
 											htmlOut += '</div>';
@@ -1399,7 +1250,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 										htmlOut += '</div><!-- /.extended- -->';
 
 										htmlOut += '<div class=\"control-group\">';
-											htmlOut += '<div class=\"controls controls-row center\">';
+											htmlOut += '<div id=\"toca_actionblock-' + torderId + '\" class=\"controls controls-row center\">';
 												htmlOut += '<div class=\"btn-group\">';
 													htmlOut += '<a id=\"toggleEdit-' + torderId + '\" class=\"btn btn-warning\" onClick=\"trans_edit(' + torderId + ')\">';
 														htmlOut += '<i class=\"icon-edit\"></i> <?php echo JText::_('COM_XIVETRANSCORDER_EDIT_ITEM'); ?>';
@@ -1413,6 +1264,11 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 													htmlOut += '<a class=\"btn btn-danger trans-remove\" onClick=\"trans_remove(' + torderId + ')\">';
 														htmlOut += '<i class=\"icon-remove\"></i> <?php echo JText::_('COM_XIVETRANSCORDER_DELETE_ITEM'); ?>';
 													htmlOut += '</a>';
+												htmlOut += '</div>';
+											htmlOut += '</div>';
+											htmlOut += '<div id=\"toca_loaderblock-' + torderId + '\" class=\"controls controls-row margin-top\" style=\"display: none;\">';
+												htmlOut += '<div class=\"alert center\">';
+													htmlOut += '<img src=\"/media/nawala/images/loader.gif\">';
 												htmlOut += '</div>';
 											htmlOut += '</div>';
 										htmlOut += '</div><!-- #end control group -->';
