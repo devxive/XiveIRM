@@ -579,10 +579,10 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 											<div class="well">
 												<div class="row-fluid">
 													<span class="span6">
-														<input id="timepicker-1" type="time" class="span12 center" onKeyUp="setTimestamp(1,0)" onClick="setTimestamp(1,0)" onBlur="setTimestamp(1,0)" onChange="setTimestamp(1,0)" style="font-size: 23px; height: 40px;" <?php echo $this->item->transport_timestamp ? 'value="' . date('H:i', $this->item->transport_timestamp . '"') : ''; ?>" maxlength="5" required />
+														<input id="datepicker-1" type="date" class="span12 center" style="font-size: 23px; height: 40px;" <?php echo $this->item->transport_timestamp ? 'value="' . date('Y-m-d', $this->item->transport_timestamp) . '"' : ''; ?> maxlength="10" required />
 													</span>
 													<span class="span6">
-														<input id="datepicker-1" type="date" class="span12 center" onKeyUp="setTimestamp(1,0)" onClick="setTimestamp(1,0)" onBlur="setTimestamp(1,0)" onChange="setTimestamp(1,0)" style="font-size: 23px; height: 40px;" <?php echo $this->item->transport_timestamp ? 'value="' . date('Y-m-d', $this->item->transport_timestamp) . '"' : ''; ?> maxlength="10" required />
+														<input id="timepicker-1" type="time" class="span12 center" style="font-size: 23px; height: 40px;" <?php echo $this->item->transport_timestamp ? 'value="' . date('H:i', $this->item->transport_timestamp . '"') : ''; ?>" maxlength="5" required />
 													</span>
 													<span id="transport-date-time-1" class="span12 center"></span>
 												</div>
@@ -716,39 +716,8 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 		$("#coreSave").click(function(e){
 			e.preventDefault();
 
-			// Scroll to top and init the where i am show
-			var movingFormsInitial = Object.keys(orderIdArray).length;
-
-			$('#siteready-overlay').show();
-			$('#siteready-overlay').html('<div style="width: 300px; margin: 50px auto; color: whitesmoke;" class="center"><img src="/media/nawala/images/loader.gif"><br><br><br><br><span id="spaceCounter" style="font-size: 75px; font-weight: bold;">' + movingFormsInitial + ' / ' + movingFormsInitial + '</span></div>');
-			jQuery('html,body').animate({
-				scrollTop: 0
-			}, 750);
-
-				$.ajax({
-					type: 'POST',
-					dataType: 'json',
-					url: 'index.php?option=com_xiveirm&task=api.ajaxsave',
-					data: $('#form-transcorder-core, #form-transcorder-' + key).serialize(),
-					async: false,
-				});
-
-			function checkSaveResults(key) {
-				var movingForms = Object.keys(orderIdArray).length;
-
-			$('#siteready-overlay').show();
-			$('#siteready-overlay').html('<div style="width: 300px; margin: 50px auto; color: whitesmoke;" class="center"><img src="/media/nawala/images/loader.gif"><br><br><br><br><span id="spaceCounter" style="font-size: 75px; font-weight: bold;">' + movingFormsInitial + ' / ' + movingFormsInitial + '</span></div>');
-			jQuery('html,body').animate({
-				scrollTop: 0
-			}, 750);
-
-				// Updates for the where i am show
-				$('#spaceCounter').html(movingForms + ' / ' + movingFormsInitial);
-
-				if( movingForms == '0' ) {
-					$('#siteready-overlay').hide();
-				}
-			}
+			// onClick="prepareSave()"
+			prepareSave();
 
 		});
 	});
@@ -772,52 +741,54 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 
 <script>
 // ############################################################ COPY / ADD / CLONE #################################################
-// jQuery(document).ready(function() {
-		var regex = /^(.*)(\d)+$/i;
-		var cloneIndex = $(this).length + 1;
+	var regex = /^(.*)(\d)+$/i;
+	var cloneIndex = $(this).length + 1;
 
-		// Set the orderIdArray and add the first transport
-		var tocaOrderArray = new Array();
-		tocaOrderArray.push(1);
+	// Set the orderIdArray and add the first transport
+	var tocaOrderArray = new Array();
+	tocaOrderArray.push(1);
 
-		/*
-		 * Method to add a new container with empty fields
-		 *
-		 */
-		function trans_add() {
-			divContainer = buildContainer( cloneIndex );
-			jQuery(divContainer).appendTo("#tcopycontainer");
+	/*
+	 * Method to add a new container with empty fields
+	 *
+	 */
+	function trans_add() {
+		divContainer = buildContainer( cloneIndex );
+		jQuery(divContainer).appendTo("#tcopycontainer");
 
-			torderIdHelper = '#torder-' + cloneIndex;
-			jQuery(torderIdHelper).fadeIn('slow');
+		torderIdHelper = '#torder-' + cloneIndex;
+		jQuery(torderIdHelper).fadeIn('slow');
 
-			torderIdHelper = '.inverse-extended-' + cloneIndex;
-			jQuery(torderIdHelper).hide();
+		torderIdHelper = '.inverse-extended-' + cloneIndex;
+		jQuery(torderIdHelper).hide();
 
-			// Print out he Message what we've done
-			alertify.success('<i class="icon-plus"></i> Created new <strong>Transport ' + cloneIndex + '</strong>');
+		// Print out he Message what we've done
+		alertify.success('<i class="icon-plus"></i> Created new <strong>Transport ' + cloneIndex + '</strong>');
 
-			// Remove the edit because we add an empty order
-			var editButtonHelper = '#toggleEdit-' + cloneIndex;
-			jQuery(editButtonHelper).hide();
+		// Remove the edit because we add an empty order
+		var editButtonHelper = '#toggleEdit-' + cloneIndex;
+		jQuery(editButtonHelper).hide();
 
-			// Reinit select2 on the new created html element
-			jQuery('#torder-' + cloneIndex + ' select').select2({width: '100%', minimumResultsForSearch: 10, placeholder: 'Please select'});
+		// Reinit select2 on the new created html element
+		jQuery('#torder-' + cloneIndex + ' select').select2({width: '100%', minimumResultsForSearch: 10, placeholder: 'Please select'});
 
-			// Add the Id to the tocaOrderArray
-			tocaOrderArray.push(cloneIndex);
-			console.log( tocaOrderArray );
+		// Add the Id to the tocaOrderArray
+		tocaOrderArray.push(cloneIndex);
+	//	console.log( tocaOrderArray );
 
-			// Count index for next action
-			cloneIndex++;
-		}
+		// Count index for next action
+		cloneIndex++;
+	}
 
 
-		/*
-		 * Method to copy the selected container with all the prefilled values
-		 *
-		 */
-		function trans_copy( torderId ) {
+	/*
+	 * Method to copy the selected container with all the prefilled values
+	 *
+	 */
+	function trans_copy( torderId ) {
+		// Perform init check to prevent copy from invalid transports
+		var copyCheck = singleCheck( torderId );
+		if( copyCheck !== false ) {
 			divContainer = buildContainer( cloneIndex );
 			jQuery(divContainer).appendTo("#tcopycontainer");
 
@@ -849,196 +820,199 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 
 			// Add the Id to the tocaOrderArray
 			tocaOrderArray.push(cloneIndex);
-			console.log( tocaOrderArray );
+		//	console.log( tocaOrderArray );
 
 			// Count index for next action
 			cloneIndex++;
+		} else {
+			return false;
 		}
+	}
 
 
-		/*
-		 * Method to edit the selected container
-		 *
-		 */
-		function trans_edit( torderId ) {
-			torderIdHelper1 = '.extended-' + torderId;
-			torderIdHelper2 = '.inverse-extended-' + torderId;
-			torderIdHelper3 = '#toggleEdit-' + torderId;
+	/*
+	 * Method to edit the selected container
+	 *
+	 */
+	function trans_edit( torderId ) {
+		torderIdHelper1 = '.extended-' + torderId;
+		torderIdHelper2 = '.inverse-extended-' + torderId;
+		torderIdHelper3 = '#toggleEdit-' + torderId;
 
-			jQuery(torderIdHelper2).hide();
-			jQuery(torderIdHelper3).hide();
-			jQuery(torderIdHelper1).slideToggle('fast', 'linear');
+		jQuery(torderIdHelper2).hide();
+		jQuery(torderIdHelper3).hide();
+		jQuery(torderIdHelper1).slideToggle('fast', 'linear');
 
-			// Remove the hash values from foth form fields because user want to edit the values and this may not valid related to the origins
-			jQuery('#f_address_hash-' + torderId).val('');
-			jQuery('#t_address_hash-' + torderId).val('');
+		// Remove the hash values from foth form fields because user want to edit the values and this may not valid related to the origins
+		jQuery('#f_address_hash-' + torderId).val('');
+		jQuery('#t_address_hash-' + torderId).val('');
 
-			// Print out he Message what we've done
-			alertify.warning = alertify.extend('warning');
-			alertify.warning('<i class="icon-edit"></i> Edit <strong> Transport ' + torderId + '</strong>');
-		}
-
-
-		/*
-		 * Method to remove the selected container
-		 *
-		 */
-		function trans_remove( torderId ) {
-			// extend confirm function with modal (bootstrap or alertify)
-			alertify.set({
-				buttonFocus : 'none'
-			});
-			alertify.confirm('<div class="modal-header"><h3>Confirm the deletion of Transport ' + torderId + '</h3></div><div class="modal-body">Do you really want to remove <strong>Transport ' + torderId + '</strong>?</div>', function (e) {
-				if (e) {
-					// user klicked ok
-					torderIdHelper = '#form-transcorder-' + torderId;
-					jQuery(torderIdHelper).fadeOut('slow', function() {
-						jQuery(torderIdHelper).remove();
-					});
-
-					// Remove the Id from the tocaOrderArray
-					tocaOrderArray.splice( tocaOrderArray.indexOf(torderId), 1 );
-					console.log( tocaOrderArray );
-
-					// Print out he Message what we've done
-					alertify.error('<i class="icon-remove"></i> <strong>Transport ' + torderId + '</strong> successfully removed');
-				} else {
-					// user clicked cancel
-					alertify.success('<i class="icon-lightbulb"></i> <strong>Abort action for Transport ' + torderId + '</strong>');
-				}
-			});
-		}
+		// Print out he Message what we've done
+		alertify.warning = alertify.extend('warning');
+		alertify.warning('<i class="icon-edit"></i> Edit <strong> Transport ' + torderId + '</strong>');
+	}
 
 
-		/*
-		 * Method to get the values from given torderId
-		 * Using in seperate to determine what fields we want to have for the copy process
-		 */
-		function getValues( torderId ) {
-			inputValues = new Object();
-			// catch base values
-				inputValues.transport_device = jQuery('#transport_device-' + torderId).val();
-				inputValues.transport_type = jQuery('#transport_type-' + torderId).val();
-				inputValues.order_type = jQuery('#order_type-' + torderId).val();
-			// catch from values
-				inputValues.f_poi_id = jQuery('#f_poi_id-' + torderId).val();
-				inputValues.f_address_name = jQuery('#f_address_name-' + torderId).val();
-				inputValues.f_address_name_add = jQuery('#f_address_name_add-' + torderId).val();
-				inputValues.f_address_street = jQuery('#f_address_street-' + torderId).val();
-				inputValues.f_address_houseno = jQuery('#f_address_houseno-' + torderId).val();
-				inputValues.f_address_zip = jQuery('#f_address_zip-' + torderId).val();
-				inputValues.f_address_city = jQuery('#f_address_city-' + torderId).val();
-				inputValues.f_address_region = jQuery('#f_address_region-' + torderId).val();
-				inputValues.f_address_country = jQuery('#f_address_country-' + torderId).val();
-				inputValues.f_address_lat = jQuery('#f_address_lat-' + torderId).val();
-				inputValues.f_address_lng = jQuery('#f_address_lng-' + torderId).val();
-				inputValues.f_address_hash = jQuery('#f_address_hash-' + torderId).val();
-			// catch to values
-				inputValues.t_poi_id = jQuery('#t_poi_id-' + torderId).val();
-				inputValues.t_address_name = jQuery('#t_address_name-' + torderId).val();
-				inputValues.t_address_name_add = jQuery('#t_address_name_add-' + torderId).val();
-				inputValues.t_address_street = jQuery('#t_address_street-' + torderId).val();
-				inputValues.t_address_houseno = jQuery('#t_address_houseno-' + torderId).val();
-				inputValues.t_address_zip = jQuery('#t_address_zip-' + torderId).val();
-				inputValues.t_address_city = jQuery('#t_address_city-' + torderId).val();
-				inputValues.t_address_region = jQuery('#t_address_region-' + torderId).val();
-				inputValues.t_address_country = jQuery('#t_address_country-' + torderId).val();
-				inputValues.t_address_lat = jQuery('#t_address_lat-' + torderId).val();
-				inputValues.t_address_lng = jQuery('#t_address_lng-' + torderId).val();
-				inputValues.t_address_hash = jQuery('#t_address_hash-' + torderId).val();
+	/*
+	 * Method to remove the selected container
+	 *
+	 */
+	function trans_remove( torderId ) {
+		// extend confirm function with modal (bootstrap or alertify)
+		alertify.set({
+			buttonFocus : 'none'
+		});
+		alertify.confirm('<div class="modal-header"><h3>Confirm the deletion of Transport ' + torderId + '</h3></div><div class="modal-body">Do you really want to remove <strong>Transport ' + torderId + '</strong>?</div>', function (e) {
+			if (e) {
+				// user klicked ok
+				torderIdHelper = '#form-transcorder-' + torderId;
+				jQuery(torderIdHelper).fadeOut('slow', function() {
+					jQuery(torderIdHelper).remove();
+				});
 
-			return inputValues;
-		}
+				// Remove the Id from the tocaOrderArray
+				tocaOrderArray.splice( tocaOrderArray.indexOf(torderId), 1 );
+				console.log( tocaOrderArray );
 
-
-		/*
-		 * Method to set the shortInfoBar
-		 *
-		 */
-		function setShortInfoBar( inputValues ) {
-			var htmlValues = new Object();
-
-			var orderFrom = '',
-			orderTo = '';
-
-			if( inputValues.f_address_name && inputValues.f_address_name_add ) {
-				orderFrom += '<small>' + inputValues.f_address_name;
-				orderFrom += ' (' + inputValues.f_address_name_add + ')</small><br>';
+				// Print out he Message what we've done
+				alertify.error('<i class="icon-remove"></i> <strong>Transport ' + torderId + '</strong> successfully removed');
+			} else {
+				// user clicked cancel
+				alertify.success('<i class="icon-lightbulb"></i> <strong>Abort action for Transport ' + torderId + '</strong>');
 			}
-			orderFrom += inputValues.f_address_street;
-			orderFrom += ' ' + inputValues.f_address_houseno + ',';
-			orderFrom += ' ' + inputValues.f_address_zip;
-			orderFrom += ' ' + inputValues.f_address_city + ',';
-			orderFrom += ' ' + inputValues.f_address_region;
-			orderFrom += ' ' + inputValues.f_address_country;
+		});
+	}
 
-			if( inputValues.t_address_name && inputValues.t_address_name_add ) {
-				orderTo += '<small>' + inputValues.t_address_name;
-				orderTo += ' (' + inputValues.t_address_name_add + ')</small><br>';
+
+	/*
+	 * Method to get the values from given torderId
+	 * Using in seperate to determine what fields we want to have for the copy process
+	 */
+	function getValues( torderId ) {
+		inputValues = new Object();
+		// catch base values
+			inputValues.transport_device = jQuery('#transport_device-' + torderId).val();
+			inputValues.transport_type = jQuery('#transport_type-' + torderId).val();
+			inputValues.order_type = jQuery('#order_type-' + torderId).val();
+		// catch from values
+			inputValues.f_poi_id = jQuery('#f_poi_id-' + torderId).val();
+			inputValues.f_address_name = jQuery('#f_address_name-' + torderId).val();
+			inputValues.f_address_name_add = jQuery('#f_address_name_add-' + torderId).val();
+			inputValues.f_address_street = jQuery('#f_address_street-' + torderId).val();
+			inputValues.f_address_houseno = jQuery('#f_address_houseno-' + torderId).val();
+			inputValues.f_address_zip = jQuery('#f_address_zip-' + torderId).val();
+			inputValues.f_address_city = jQuery('#f_address_city-' + torderId).val();
+			inputValues.f_address_region = jQuery('#f_address_region-' + torderId).val();
+			inputValues.f_address_country = jQuery('#f_address_country-' + torderId).val();
+			inputValues.f_address_lat = jQuery('#f_address_lat-' + torderId).val();
+			inputValues.f_address_lng = jQuery('#f_address_lng-' + torderId).val();
+			inputValues.f_address_hash = jQuery('#f_address_hash-' + torderId).val();
+		// catch to values
+			inputValues.t_poi_id = jQuery('#t_poi_id-' + torderId).val();
+			inputValues.t_address_name = jQuery('#t_address_name-' + torderId).val();
+			inputValues.t_address_name_add = jQuery('#t_address_name_add-' + torderId).val();
+			inputValues.t_address_street = jQuery('#t_address_street-' + torderId).val();
+			inputValues.t_address_houseno = jQuery('#t_address_houseno-' + torderId).val();
+			inputValues.t_address_zip = jQuery('#t_address_zip-' + torderId).val();
+			inputValues.t_address_city = jQuery('#t_address_city-' + torderId).val();
+			inputValues.t_address_region = jQuery('#t_address_region-' + torderId).val();
+			inputValues.t_address_country = jQuery('#t_address_country-' + torderId).val();
+			inputValues.t_address_lat = jQuery('#t_address_lat-' + torderId).val();
+			inputValues.t_address_lng = jQuery('#t_address_lng-' + torderId).val();
+			inputValues.t_address_hash = jQuery('#t_address_hash-' + torderId).val();
+
+		return inputValues;
+	}
+
+
+	/*
+	 * Method to set the shortInfoBar
+	 *
+	 */
+	function setShortInfoBar( inputValues ) {
+		var htmlValues = new Object();
+
+		var orderFrom = '',
+		orderTo = '';
+
+		if( inputValues.f_address_name && inputValues.f_address_name_add ) {
+			orderFrom += '<small>' + inputValues.f_address_name;
+			orderFrom += ' (' + inputValues.f_address_name_add + ')</small><br>';
+		}
+		orderFrom += inputValues.f_address_street;
+		orderFrom += ' ' + inputValues.f_address_houseno + ',';
+		orderFrom += ' ' + inputValues.f_address_zip;
+		orderFrom += ' ' + inputValues.f_address_city + ',';
+		orderFrom += ' ' + inputValues.f_address_region;
+		orderFrom += ' ' + inputValues.f_address_country;
+
+		if( inputValues.t_address_name && inputValues.t_address_name_add ) {
+			orderTo += '<small>' + inputValues.t_address_name;
+			orderTo += ' (' + inputValues.t_address_name_add + ')</small><br>';
+		}
+		orderTo += inputValues.t_address_street;
+		orderTo += ' ' + inputValues.t_address_houseno + ',';
+		orderTo += ' ' + inputValues.t_address_zip;
+		orderTo += ' ' + inputValues.t_address_city + ',';
+		orderTo += ' ' + inputValues.t_address_region;
+		orderTo += ' ' + inputValues.t_address_country;
+
+		htmlValues.from = orderFrom;
+		htmlValues.to = orderTo;
+
+		// console.log( htmlValues );
+
+		return htmlValues;
+	}
+
+
+	/*
+	 * Method to switch the hidden values and the shortInfoBar
+	 *
+	 */
+	function switchValues( torderId ) {
+		// Get the values from the Container which is copied
+		var inputValues = getValues( torderId );
+		var switchedValuesHelper = new Object();
+		var switchedValues = new Object();
+
+		// Switch the values and store in new object
+		jQuery.each(inputValues, function(i, val) {
+			if( i[0] === 'f' ) {
+				var newKey = i.replace('f_', 'fb_');
+			} else if( i[0] === 't' ) {
+				var newKey = i.replace('t_', 'tb_');
+			} else {
+				var newKey = i;
 			}
-			orderTo += inputValues.t_address_street;
-			orderTo += ' ' + inputValues.t_address_houseno + ',';
-			orderTo += ' ' + inputValues.t_address_zip;
-			orderTo += ' ' + inputValues.t_address_city + ',';
-			orderTo += ' ' + inputValues.t_address_region;
-			orderTo += ' ' + inputValues.t_address_country;
 
-			htmlValues.from = orderFrom;
-			htmlValues.to = orderTo;
+			switchedValuesHelper[newKey] = val;
+		});
 
-			// console.log( htmlValues );
+		// Use the new object (with switched values) to store back to the form fields
+		jQuery.each(switchedValuesHelper, function(i, val) {
+			if( i[0] === 'f' ) {
+				var newKey = i.replace('fb_', 't_');
+			} else if( i[0] === 't' ) {
+				var newKey = i.replace('tb_', 'f_');
+			} else {
+				var newKey = i;
+			}
 
-			return htmlValues;
-		}
+			switchedValues[newKey] = val;
 
-
-		/*
-		 * Method to switch the hidden values and the shortInfoBar
-		 *
-		 */
-		function switchValues( torderId ) {
-			// Get the values from the Container which is copied
-			var inputValues = getValues( torderId );
-			var switchedValuesHelper = new Object();
-			var switchedValues = new Object();
-
-			// Switch the values and store in new object
-			jQuery.each(inputValues, function(i, val) {
-				if( i[0] === 'f' ) {
-					var newKey = i.replace('f_', 'fb_');
-				} else if( i[0] === 't' ) {
-					var newKey = i.replace('t_', 'tb_');
-				} else {
-					var newKey = i;
-				}
-
-				switchedValuesHelper[newKey] = val;
-			});
-
-			// Use the new object (with switched values) to store back to the form fields
-			jQuery.each(switchedValuesHelper, function(i, val) {
-				if( i[0] === 'f' ) {
-					var newKey = i.replace('fb_', 't_');
-				} else if( i[0] === 't' ) {
-					var newKey = i.replace('tb_', 'f_');
-				} else {
-					var newKey = i;
-				}
-
-				switchedValues[newKey] = val;
-
-				jQuery('#' + newKey + '-' + torderId).val(val);
-			});
+			jQuery('#' + newKey + '-' + torderId).val(val);
+		});
 
 
-			// Process and set the shortInfoBar
-			var htmlValues = setShortInfoBar( switchedValues );
-			jQuery('#torder-sum-left-' + torderId).html(htmlValues.from);
-			jQuery('#torder-sum-right-' + torderId).html(htmlValues.to);
+		// Process and set the shortInfoBar
+		var htmlValues = setShortInfoBar( switchedValues );
+		jQuery('#torder-sum-left-' + torderId).html(htmlValues.from);
+		jQuery('#torder-sum-right-' + torderId).html(htmlValues.to);
 
-			// Print out he Message what we've done
-			alertify.log('<i class="icon-exchange"></i> Switched directions for <strong>Transport ' + torderId + '</strong>');
-		}
+		// Print out he Message what we've done
+		alertify.log('<i class="icon-exchange"></i> Switched directions for <strong>Transport ' + torderId + '</strong>');
+	}
 
 
 		/*
@@ -1157,11 +1131,12 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 									htmlOut += '<div class=\"well\">';
 										htmlOut += '<div class=\"controls controls-row\">';
 											htmlOut += '<span id=\"torder-input-time-' + torderId + '\" class=\"span6\">';
-												htmlOut += '<input id=\"timepicker-' + torderId + '\" type=\"time\" class=\"span12 center\" onKeyUp=\"setTimestamp(' + torderId + ', 0)\" style=\"font-size: 23px; height: 40px;\" required />';
+												htmlOut += '<input id=\"datepicker-' + torderId + '\" type=\"date\" class=\"span12 center\" style=\"font-size: 23px; height: 40px;\" required />';
 											htmlOut += '</span>';
 											htmlOut += '<span id=\"torder-input-date-' + torderId + '\" class=\"span6\">';
-												htmlOut += '<input id=\"datepicker-' + torderId + '\" type=\"date\" class=\"span12 center\" onKeyUp=\"setTimestamp(' + torderId + ', 0)\" style=\"font-size: 23px; height: 40px;\" required />';
+												htmlOut += '<input id=\"timepicker-' + torderId + '\" type=\"time\" class=\"span12 center\" style=\"font-size: 23px; height: 40px;\" required />';
 											htmlOut += '</span>';
+											htmlOut += '<span id=\"transport-date-time-' + torderId + '\" class=\"span12 center\"></span>';
 										htmlOut += '</div>';
 
 										htmlOut += '<div class=\"extended-' + torderId + '\">';
@@ -1275,6 +1250,9 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 		dateField = jQuery('#datepicker-' + torderId).val();
 
 		if(!timeField && !dateField) {
+
+console.log( moment().format('mm') );
+
 			jQuery('#timepicker-' + torderId).val(moment().format('HH:mm'));
 			jQuery('#datepicker-' + torderId).val(moment().format('YYYY-MM-DD'));
 		} else {
@@ -1302,60 +1280,42 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 //		var numChars = "2013".match(/[a-zA-Z0-9]/g).length;
 //		console.log(numChars);
 	}
-	setTimestamp ( 1, 0 );
+//	setTimestamp ( 1, 0 );
 
 
-// });
+
+	function checkFormatTime( orderKey ) {
+		// Get the current values
+		var timeField = jQuery('#timepicker-' + orderKey).val(),
+		dateField = jQuery('#datepicker-' + orderKey).val();
+
+		if( !timeField && !dateField ) {
+			return '<li>Please check the date and time field</li>';
+		} else if ( !timeField ) {
+			return '<li>Please check the time field</li>';
+		} else if ( !timeField ) {
+			return '<li>Please check the date field</li>';
+		}
+
+		// Build the date/time string
+		var stringDateTime = dateField + ' ' + timeField + ':00';
+
+		// Check if it is valid and push in appropriate fields
+		if( moment(stringDateTime).isValid() === true ) {
+			jQuery('#transport-date-time-' + orderKey).html(moment(stringDateTime).format('dddd, DD.MM.YYYY HH:mm') + ' <i class="icon-ok-circle"></a>');
+
+			// Format the unix timestamp
+			var unixTimestamp = moment( stringDateTime ).format('X');
+			jQuery('#transport_timestamp-' + orderKey).val(unixTimestamp);
+		} else {
+			alertify.error("Invalid Date/Timeobject");
+
+			return '<li>Invalid Date/Timeobject</li>';
+		}
+
+		return true;
+	}
 </script>
-
-<script>
-//				$('.clonedTransport').on('inputchange', function() {
-//					console.log(this);
-//				});
-
-
-</script>
-
-<i class="icon-road icon-large" onClick="prepareSave()"></i>
-
-<?php
-
-//		#################################################### EXAMPLE #########################################################
-//				// Triggered on every change in the auto geocoder block (this.value determines the actual field)
-//				$('#torder-' + torderId).on('inputchange', function() {
-//					// Detect Parent first! Then go step by step down to find and determine the fields!!!!!!!!
-//					------------------------------------------------------------------------------------------
-//					------------------------------------------------------------------------------------------
-//					------------------------------------------------------------------------------------------
-//					// Get and set the address vars to auto-geocoder and trigger onKeyUp
-//					$('#location').val(this.value);
-//				});
-//		#################################################### EXAMPLE #########################################################
-
-?>
-
-<pre>
-
-<?php
-
-$test = '';
-print_r($test);
-
-?>
-</pre>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1374,67 +1334,95 @@ print_r($test);
 	// Register the tocaErrorKey. All transports with errors are registered here for later manual save process
 	var tocaErrorKey = new Array();
 
-	function initCheck() {
-		// Add check functions here ( return false, will stop this )
-		// entryCheck(); // define separate function where all required field attribs where checked!
 
-		// Iterate through the tocaOrderArray to check first if all transport forms are valid!
-		jQuery.each(tocaOrderArray, function(eKey, eVal) {
-			if( !$('#form-transcorder-' + eVal)[0].checkValidity() ) {
-				var prepMsg = '';
+	/*
+	 * If click on copy or on other single performing buttons
+	 */
+	function singleCheck( eVal ) {
+		var prepMsg = '';
 
-				// Find all required input fields and mark red
-				$('#form-transcorder-' + eVal + ' input').each(function() {
-					if ( $(this).attr("required") && $(this).val() === '' ) {
-						var idAttr = $(this).attr('data-placeholder');
-						if ( !idAttr ) {
-							var idAttr = $(this).attr('placeholder');
-						}
-						if ( idAttr ) {
-							// Add message
-							prepMsg += '<li>' + idAttr + '</li>';
-						} else {
-							prepMsg += '<li>Please check the date/time fields</li>';
-						}
+		// Check date/time -> timestamp construct first
+		timeReturnMsg = checkFormatTime( eVal );
+		if ( timeReturnMsg !== true ) {
+			prepMsg += timeReturnMsg;
+		}
+
+		if( !$('#form-transcorder-' + eVal)[0].checkValidity() ) {
+			// Find all required input fields and set to prepMsg var as list
+			$('#form-transcorder-' + eVal + ' input').each(function() {
+				if ( $(this).attr("required") && $(this).val() === '' ) {
+					var idAttr = $(this).attr('data-placeholder');
+					if ( !idAttr ) {
+						var idAttr = $(this).attr('placeholder');
 					}
-				});
-
-				$('#form-transcorder-' + eVal + ' select').each(function() {
-					if ( $(this).attr("required") && $(this).val() === '' ) {
-						var idAttr = $(this).attr('data-placeholder');
-						if ( !idAttr ) {
-							var idAttr = $(this).attr('placeholder');
-						}
+					if ( idAttr ) {
 						// Add message
 						prepMsg += '<li>' + idAttr + '</li>';
 					}
-				});
+				}
+			});
 
-				// Scroll to appropriate transport order and print the error message
-				var formTag = $('#form-transcorder-' + eVal),
-				formTagOffset = formTag.offset().top + -50;
-				$('html,body').animate({scrollTop: formTagOffset}, 250, function() {
-					alertify.alert('<div class="modal-header"><h3>Logical Check for Transport ' + eVal + ' failed!</h3></div><div class="modal-body">Sorry, we can\'t verify the form! Please try the following:<br><br><ul><strong>' + prepMsg + '</strong></ul></div>');
-				});
+			// Find all required select fields and set to prepMsg var as list
+			$('#form-transcorder-' + eVal + ' select').each(function() {
+				if ( $(this).attr("required") && $(this).val() === '' ) {
+					var idAttr = $(this).attr('data-placeholder');
+					if ( !idAttr ) {
+						var idAttr = $(this).attr('placeholder');
+					}
+					// Add message
+					prepMsg += '<li>' + idAttr + '</li>';
+				}
+			});
 
-				return false;
-			} else {
-				$('*').popover('hide');
-			}
-		});
+			// Scroll to appropriate transport order and print the error message
+			var formTag = $('#form-transcorder-' + eVal),
+			formTagOffset = formTag.offset().top + -50;
+			$('html,body').animate({scrollTop: formTagOffset}, 250);
+			alertify.alert('<div class="modal-header"><h3>Logical Check for Transport ' + eVal + ' failed!</h3></div><div class="modal-body">Sorry, we can\'t verify the form! Please try the following:<br><br><ul><strong>' + prepMsg + '</strong></ul></div>');
+
+			return false;
+		} else {
+			return true;
+		}
 	}
 
+
+	/*
+	 * Called in the prepareSave method (If someone hit on save, check all forms)
+	 */
+	function initCheck() {
+		// Iterate through the tocaOrderArray to check first if all transport forms are valid!
+		var icLength = tocaOrderArray.length;
+		for (var i = 0; i < icLength; i++) {
+			var initCheckResult = singleCheck( tocaOrderArray[i] );
+
+			if  ( !initCheckResult ) {
+				return false;
+			}
+		}
+	}
+
+
+	/*
+	 * Initial count from all
+	 */
 	function prepareSave() {
 		// Count all registered forms
 		totalForms = tocaOrderArray.length;
 
-		if ( initCheck() ) {
+		var prepareSaveCheck = initCheck();
+		if ( prepareSaveCheck !== false ) {
+			console.log('Initiate submit by positive initCheck');
 			saveTocaForm();
 		} else {
-			console.log('Prevent submit by initCheck');
+			console.log('Prevent submit by negative initCheck');
 		}
 	}
 
+
+	/*
+	 * Prepared method if we want to use a separate list to catch all orderIds where an error occured
+	 */
 	function prepareErrorSave() {
 		if ( tocaOrderArray.length === 0 && tocaErrorKey.length >= 1 ) {
 			tocaOrderArray = tocaErrorKey;
@@ -1443,6 +1431,10 @@ print_r($test);
 		saveTocaForm();
 	}
 
+
+	/*
+	 * Ajax save method
+	 */
 	function saveTocaForm() {
 		// Get the last array element as registered in the tocaOrderArray to work with
 		var orderKey = tocaOrderArray.pop();
@@ -1465,6 +1457,18 @@ print_r($test);
 			beforeSend: function ( dataCallBackBeforeSend ) {
 					// NOTE: Checks are done before, because we could have more than one form!
 					// console.log( dataCallBackBeforeSend );
+
+					// Runs only once
+					if ( (tocaOrderArray.length + 1) === totalForms ) {
+						jQuery('#siteready-overlay').html('<div style="width: 375px; margin: 50px auto; color: whitesmoke;" class="center"><img src="/media/nawala/images/loader.gif"><br><br><br><br><span id="spaceCounter" style="font-size: 75px; font-weight: bold;">' + totalForms + ' / ' + totalForms + '</span></div>');
+
+						jQuery('#siteready-overlay').show();
+
+						// Scroll to top and show the siteready-overlay and override the standard spinner
+						jQuery('html,body').animate({
+							scrollTop: 0
+						}, 250);
+					}
 
 					// Do some visual magic
 					jQuery('#toca_actionblock-' + orderKey).hide();
@@ -1500,38 +1504,78 @@ print_r($test);
 					}
 				},
 			error: function( dataCallBackError ) {
-				console.log( dataCallBackError );
+					console.log( dataCallBackError );
 
-				// An error occured, push the popped key back to the array
-				orderKey.push(orderKey);
+					// An error occured, push the popped key back to the array
+					orderKey.push(orderKey);
 
-				// Do some visual magic
-				jQuery('#toca_actionblock-' + orderKey).fadeIn();
+					// Do some visual magic
+					jQuery('#toca_actionblock-' + orderKey).fadeIn();
 
-				// Override the loader with the error message
-				jQuery('#toca_loaderblock-' + orderKey).html('<div class="alert alert-error"><strong><em>Code: ' + dataCallBackError.code + '</em></strong><br>' + dataCallBackError.message + '</div>');
-			}
+					// Override the loader with the error message
+					jQuery('#toca_loaderblock-' + orderKey).html('<div class="alert alert-error"><strong><em>Code: ' + dataCallBackError.code + '</em></strong><br>' + dataCallBackError.message + '</div>');
+				},
+			complete: function( dataCallBackError ) {
+					if ( tocaOrderArray.length !== 0 ) {
+						saveTocaForm();
+					} else {
+						jQuery('#siteready-overlay').hide();
+					}
+				}
 		});
 	}
 
-	// Bind global events to the document handler
-	jQuery(document).bind("ajaxStart", function() {
-		// Runs only once
-		jQuery('#siteready-overlay').show();
-
-		// Scroll to top and show the siteready-overlay and override the standard spinner
-		jQuery('html,body').animate({
-			scrollTop: 0
-		}, 250);
-
-		if ( (tocaOrderArray.length + 1) === totalForms ) {
-			jQuery('#siteready-overlay').html('<div style="width: 375px; margin: 50px auto; color: whitesmoke;" class="center"><img src="/media/nawala/images/loader.gif"><br><br><br><br><span id="spaceCounter" style="font-size: 75px; font-weight: bold;">' + totalForms + ' / ' + totalForms + '</span></div>');
-		}
-	}).bind("ajaxStop", function() {
-		if ( tocaOrderArray.length !== 0 ) {
-			saveTocaForm();
-		} else {
-			jQuery('#siteready-overlay').hide();
-		}
-	});
+//	// Bind global events to the document handler
+//	jQuery(document).bind("ajaxStart", function() {
+//		jQuery('#siteready-overlay').show();
+//
+//		// Scroll to top and show the siteready-overlay and override the standard spinner
+//		jQuery('html,body').animate({
+//			scrollTop: 0
+//		}, 250);
+//
+//		// Runs only once
+//		if ( (tocaOrderArray.length + 1) === totalForms ) {
+//			jQuery('#siteready-overlay').html('<div style="width: 375px; margin: 50px auto; color: whitesmoke;" class="center"><img src="/media/nawala/images/loader.gif"><br><br><br><br><span id="spaceCounter" style="font-size: 75px; font-weight: bold;">' + totalForms + ' / ' + totalForms + '</span></div>');
+//		}
+//	}).bind("ajaxStop", function() {
+//		if ( tocaOrderArray.length !== 0 ) {
+//			saveTocaForm();
+//		} else {
+//			jQuery('#siteready-overlay').hide();
+//		}
+//	});
 </script>
+
+
+
+
+
+
+
+<?php
+
+//		#################################################### EXAMPLE #########################################################
+//				// Triggered on every change in the auto geocoder block (this.value determines the actual field)
+//				$('#torder-' + torderId).on('inputchange', function() {
+//					// Detect Parent first! Then go step by step down to find and determine the fields!!!!!!!!
+//					------------------------------------------------------------------------------------------
+//					------------------------------------------------------------------------------------------
+//					------------------------------------------------------------------------------------------
+//					// Get and set the address vars to auto-geocoder and trigger onKeyUp
+//					$('#location').val(this.value);
+//				});
+//		#################################################### EXAMPLE #########################################################
+
+?>
+
+<pre>
+
+<?php
+
+$test = '';
+print_r($test);
+
+?>
+</pre>
+
