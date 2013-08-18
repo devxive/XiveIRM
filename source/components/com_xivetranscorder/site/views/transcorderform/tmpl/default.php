@@ -689,7 +689,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 
 				<div class="form-actions">
 					<span id="form-buttons" class="<?php echo empty($this->item->id) ? '' : 'hidden'; ?>">
-						<button id="coreSave" class="validate btn btn-info" type="submit"><i class="icon-ok"></i> <?php echo JText::_('COM_XIVEIRM_SAVE_ITEM'); ?></button>
+						<button id="coreSave" class="validate btn btn-info prepareSave" type="submit"><i class="icon-ok"></i> <?php echo JText::_('COM_XIVEIRM_SAVE_ITEM'); ?></button>
 						&nbsp; &nbsp; &nbsp;
 						<button class="btn" type="reset" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_RESET_TIP'); ?>"><i class="icon-undo"></i> <?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_RESET'); ?></button>
 						&nbsp; &nbsp; &nbsp;
@@ -716,43 +716,31 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 		$("#coreSave").click(function(e){
 			e.preventDefault();
 
-
 			// Scroll to top and init the where i am show
 			var movingFormsInitial = Object.keys(orderIdArray).length;
+
 			$('#siteready-overlay').show();
 			$('#siteready-overlay').html('<div style="width: 300px; margin: 50px auto; color: whitesmoke;" class="center"><img src="/media/nawala/images/loader.gif"><br><br><br><br><span id="spaceCounter" style="font-size: 75px; font-weight: bold;">' + movingFormsInitial + ' / ' + movingFormsInitial + '</span></div>');
 			jQuery('html,body').animate({
 				scrollTop: 0
 			}, 750);
 
-			$.each(orderIdArray, function (key, vid) {
-				// TODO: ADDING FORM CHECKS BEFORE TO TRY TO SAVE THE FORMS!!!
-				$('#toca_actionblock-' + key).hide();
-				$('#toca_loaderblock-' + key).fadeIn();
-				$.post('index.php?option=com_xiveirm&task=api.ajaxsave', $('#form-transcorder-core, #form-transcorder-' + key).serialize(), function(data){
-					console.log(data);
-					switch ( data.status ) {
-						case true:
-							// Remove the Id from the orderIdArray to prevent duplicates
-							delete orderIdArray[key];
-							checkSaveResults(key);
-
-							// Pull back the database id in the form
-							$('#order_cid-' + key).val(data.id);
-
-							// Set visuals
-							$('#toca_loaderblock-' + key).html('<div class="alert alert-success">Successfully saved!</div>');
-
-							break;
-						default:
-							// Set visuals
-							$('#toca_loaderblock-' + key).html('<div class="alert alert-error"><strong><em>Code: ' + data.code + '</em></strong><br>' + data.message + '</div>');
-					}
-				}, "json");
-			});
+				$.ajax({
+					type: 'POST',
+					dataType: 'json',
+					url: 'index.php?option=com_xiveirm&task=api.ajaxsave',
+					data: $('#form-transcorder-core, #form-transcorder-' + key).serialize(),
+					async: false,
+				});
 
 			function checkSaveResults(key) {
 				var movingForms = Object.keys(orderIdArray).length;
+
+			$('#siteready-overlay').show();
+			$('#siteready-overlay').html('<div style="width: 300px; margin: 50px auto; color: whitesmoke;" class="center"><img src="/media/nawala/images/loader.gif"><br><br><br><br><span id="spaceCounter" style="font-size: 75px; font-weight: bold;">' + movingFormsInitial + ' / ' + movingFormsInitial + '</span></div>');
+			jQuery('html,body').animate({
+				scrollTop: 0
+			}, 750);
 
 				// Updates for the where i am show
 				$('#spaceCounter').html(movingForms + ' / ' + movingFormsInitial);
@@ -780,61 +768,6 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 
 
 
-<?php
-// ########################################### T E S T A R E A ######################################################################
-
-	// TRANSPORT COPY SCRIPT ************************************************************************
-//	jQuery(document).ready(function() {
-//		var regex = /^(.*)(\d)+$/i;
-//		var cloneIndex = $(".clonedTransport").length;
-
-//		$(".trans-copy_XXXXX_ALT").click(function() {
-//			$(this).parents(".clonedTransport").clone()
-//				.appendTo("#tcopycontainer")
-//				.attr("id", "torder-" + cloneIndex)
-//				.find("*").each(function() {
-//					var id = this.id || "";
-//					var match = id.match(regex) || [];
-//					if (match.length == 3) {
-//						this.id = match[1] + (cloneIndex);
-//					}
-//					$("#transport-header").html("Transport: " + cloneIndex);
-//				});
-//			cloneIndex++;
-//
-//			console.log(cloneIndex);
-//
-//		});
-//
-//		$(".trans-remove_XXXXX_ALT").click(function() {
-//			confirm('wirklich löschen?');
-//			$(this).parents(".clonedTransport").remove();
-//		});
-//	});
-
-// ----------------------------------------
-
-//		var torderId = 2;
-
-//		var regex = /^(.*)(\d)+$/i;
-//		var cloneIndex = $(".clonedTransport").length + 1;
-//
-//		$(".trans-copy").click(function() {
-//			var divContainer = buildContainer( cloneIndex );
-//			$(divContainer).appendTo("#tcopycontainer");
-//
-//			cloneIndex++;
-//
-//			console.log(cloneIndex);
-//		});
-
-// ########################################### T E S T A R E A ######################################################################
-?>
-
-
-
-
-
 
 
 <script>
@@ -844,9 +777,8 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 		var cloneIndex = $(this).length + 1;
 
 		// Set the orderIdArray and add the first transport
-		var orderIdArray = new Object();
-		orderIdArray[1] = 1;
-
+		var tocaOrderArray = new Array();
+		tocaOrderArray.push(1);
 
 		/*
 		 * Method to add a new container with empty fields
@@ -872,9 +804,9 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 			// Reinit select2 on the new created html element
 			jQuery('#torder-' + cloneIndex + ' select').select2({width: '100%', minimumResultsForSearch: 10, placeholder: 'Please select'});
 
-			// Add the Id to the orderIdArray
-			orderIdArray[cloneIndex] = cloneIndex;
-			console.log(orderIdArray);
+			// Add the Id to the tocaOrderArray
+			tocaOrderArray.push(cloneIndex);
+			console.log( tocaOrderArray );
 
 			// Count index for next action
 			cloneIndex++;
@@ -915,9 +847,9 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 			// Print out he Message what we've done
 			alertify.log('<i class="icon-copy"></i> <strong>Transport ' + torderId + '</strong> copied to <strong>Transport ' + cloneIndex + '</strong>');
 
-			// Add the Id to the orderIdArray
-			orderIdArray[cloneIndex] = cloneIndex;
-			console.log(orderIdArray);
+			// Add the Id to the tocaOrderArray
+			tocaOrderArray.push(cloneIndex);
+			console.log( tocaOrderArray );
 
 			// Count index for next action
 			cloneIndex++;
@@ -964,9 +896,9 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 						jQuery(torderIdHelper).remove();
 					});
 
-					// Remove the Id from the orderIdArray
-					delete orderIdArray[torderId];
-					console.log(orderIdArray);
+					// Remove the Id from the tocaOrderArray
+					tocaOrderArray.splice( tocaOrderArray.indexOf(torderId), 1 );
+					console.log( tocaOrderArray );
 
 					// Print out he Message what we've done
 					alertify.error('<i class="icon-remove"></i> <strong>Transport ' + torderId + '</strong> successfully removed');
@@ -1382,23 +1314,9 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 //				});
 
 
-
-
-//				$('form').each(function (e) {
-//					console.log(e);
-//				});
-
-
-		function saveTocaForm() {
-			jQuery('html,body').animate({
-				scrollTop: 0
-			}, 500);
-		}
-
-
 </script>
 
-<i class="icon-road" onClick="saveTocaForm()"></i>
+<i class="icon-road icon-large" onClick="prepareSave()"></i>
 
 <?php
 
@@ -1425,3 +1343,195 @@ print_r($test);
 
 ?>
 </pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+<script>
+// ############################################################# SCRIPT AREA ##################################################################
+	// Register the tocaErrorKey. All transports with errors are registered here for later manual save process
+	var tocaErrorKey = new Array();
+
+	function initCheck() {
+		// Add check functions here ( return false, will stop this )
+		// entryCheck(); // define separate function where all required field attribs where checked!
+
+		// Iterate through the tocaOrderArray to check first if all transport forms are valid!
+		jQuery.each(tocaOrderArray, function(eKey, eVal) {
+			if( !$('#form-transcorder-' + eVal)[0].checkValidity() ) {
+				var prepMsg = '';
+
+				// Find all required input fields and mark red
+				$('#form-transcorder-' + eVal + ' input').each(function() {
+					if ( $(this).attr("required") && $(this).val() === '' ) {
+						var idAttr = $(this).attr('data-placeholder');
+						if ( !idAttr ) {
+							var idAttr = $(this).attr('placeholder');
+						}
+						if ( idAttr ) {
+							// Add message
+							prepMsg += '<li>' + idAttr + '</li>';
+						} else {
+							prepMsg += '<li>Please check the date/time fields</li>';
+						}
+					}
+				});
+
+				$('#form-transcorder-' + eVal + ' select').each(function() {
+					if ( $(this).attr("required") && $(this).val() === '' ) {
+						var idAttr = $(this).attr('data-placeholder');
+						if ( !idAttr ) {
+							var idAttr = $(this).attr('placeholder');
+						}
+						// Add message
+						prepMsg += '<li>' + idAttr + '</li>';
+					}
+				});
+
+				// Scroll to appropriate transport order and print the error message
+				var formTag = $('#form-transcorder-' + eVal),
+				formTagOffset = formTag.offset().top + -50;
+				$('html,body').animate({scrollTop: formTagOffset}, 250, function() {
+					alertify.alert('<div class="modal-header"><h3>Logical Check for Transport ' + eVal + ' failed!</h3></div><div class="modal-body">Sorry, we can\'t verify the form! Please try the following:<br><br><ul><strong>' + prepMsg + '</strong></ul></div>');
+				});
+
+				return false;
+			} else {
+				$('*').popover('hide');
+			}
+		});
+	}
+
+	function prepareSave() {
+		// Count all registered forms
+		totalForms = tocaOrderArray.length;
+
+		if ( initCheck() ) {
+			saveTocaForm();
+		} else {
+			console.log('Prevent submit by initCheck');
+		}
+	}
+
+	function prepareErrorSave() {
+		if ( tocaOrderArray.length === 0 && tocaErrorKey.length >= 1 ) {
+			tocaOrderArray = tocaErrorKey;
+		}
+
+		saveTocaForm();
+	}
+
+	function saveTocaForm() {
+		// Get the last array element as registered in the tocaOrderArray to work with
+		var orderKey = tocaOrderArray.pop();
+
+		// Normally the first is already substracted from pop function before
+		var formCounter = tocaOrderArray.length;
+
+		if( !orderKey ) {
+			alertify.error('FINISED COUNTER');
+			console.log('im counter check');
+			return false;
+		}
+
+		jQuery.ajax({
+			type: 'POST',
+			dataType: 'json',
+			url: 'index.php?option=com_xiveirm&task=api.ajaxsave',
+			data: $('#form-transcorder-core, #form-transcorder-' + orderKey).serialize(),
+		//	async: false,
+			beforeSend: function ( dataCallBackBeforeSend ) {
+					// NOTE: Checks are done before, because we could have more than one form!
+					// console.log( dataCallBackBeforeSend );
+
+					// Do some visual magic
+					jQuery('#toca_actionblock-' + orderKey).hide();
+					jQuery('#toca_loaderblock-' + orderKey).fadeIn();
+				},
+			success: function ( dataCallBackSuccess ) {
+					// console.log( dataCallBackSuccess );
+					console.log(orderKey);
+
+					// Set the counter in the overlay
+					jQuery('#spaceCounter').html(formCounter + ' / ' + totalForms);
+
+					// Check the request and pull back the database id in the form
+					if ( dataCallBackSuccess.status === true ) {
+						jQuery('#order_cid-' + orderKey).val( dataCallBackSuccess.id );
+
+						// Scroll to appropriate transport order
+					//	var formTag = jQuery('#form-transcorder-' + orderKey),
+					//	formTagOffset = formTag.offset().top + -50;
+					//	jQuery('html,body').animate({scrollTop: formTagOffset}, 250);
+
+						// Set visuals
+						jQuery('#toca_loaderblock-' + orderKey).html('<div class="alert alert-success">Successfully saved!</div>');
+					} else {
+						// An error occured, push the popped key to the tocaErrorKey array for later manual processes
+						tocaErrorKey.push(orderKey);
+
+						// Do some visual magic
+						jQuery('#toca_actionblock-' + orderKey).fadeIn();
+
+						// Override the loader with the error message
+						jQuery('#toca_loaderblock-' + orderKey).html('<div class="alert alert-error"><strong><em>Code: ' + dataCallBackError.code + '</em></strong><br>' + dataCallBackError.message + '</div>');
+					}
+				},
+			error: function( dataCallBackError ) {
+				console.log( dataCallBackError );
+
+				// An error occured, push the popped key back to the array
+				orderKey.push(orderKey);
+
+				// Do some visual magic
+				jQuery('#toca_actionblock-' + orderKey).fadeIn();
+
+				// Override the loader with the error message
+				jQuery('#toca_loaderblock-' + orderKey).html('<div class="alert alert-error"><strong><em>Code: ' + dataCallBackError.code + '</em></strong><br>' + dataCallBackError.message + '</div>');
+			}
+		});
+	}
+
+	// Bind global events to the document handler
+	jQuery(document).bind("ajaxStart", function() {
+		// Runs only once
+		jQuery('#siteready-overlay').show();
+
+		// Scroll to top and show the siteready-overlay and override the standard spinner
+		jQuery('html,body').animate({
+			scrollTop: 0
+		}, 250);
+
+		if ( (tocaOrderArray.length + 1) === totalForms ) {
+			jQuery('#siteready-overlay').html('<div style="width: 375px; margin: 50px auto; color: whitesmoke;" class="center"><img src="/media/nawala/images/loader.gif"><br><br><br><br><span id="spaceCounter" style="font-size: 75px; font-weight: bold;">' + totalForms + ' / ' + totalForms + '</span></div>');
+		}
+	}).bind("ajaxStop", function() {
+		if ( tocaOrderArray.length !== 0 ) {
+			saveTocaForm();
+		} else {
+			jQuery('#siteready-overlay').hide();
+		}
+	});
+</script>
