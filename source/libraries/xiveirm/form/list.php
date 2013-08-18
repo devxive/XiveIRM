@@ -224,10 +224,10 @@ class IRMFormList
 		$conditions = array(
 			'catid' => $catid
 		);
-		$values = NFWDatabase::select('xiveirm_options', '*', $conditions);
+		$values = NFWDatabase::select('xiveirm_options', '*', $conditions, 'ARRAY', 'ordering ASC');
 
 		foreach ( $values as $value ) {
-			$key = $value->opt_value;
+			$key = $value->id;
 			$list->$key = JText::_($value->opt_name);
 		}
 
@@ -258,10 +258,10 @@ class IRMFormList
 		$conditions = array(
 			'catid' => $catid
 		);
-		$values = NFWDatabase::select('xiveirm_options', '*', $conditions);
+		$values = NFWDatabase::select('xiveirm_options', '*', $conditions, 'ARRAY', 'ordering ASC');
 
 		foreach ( $values as $value ) {
-			$key = $value->opt_value;
+			$key = $value->id;
 			$list->$key = JText::_($value->opt_name);
 		}
 
@@ -292,10 +292,10 @@ class IRMFormList
 		$conditions = array(
 			'catid' => $catid
 		);
-		$values = NFWDatabase::select('xiveirm_options', '*', $conditions);
+		$values = NFWDatabase::select('xiveirm_options', '*', $conditions, 'ARRAY', 'ordering ASC');
 
 		foreach ( $values as $value ) {
-			$key = $value->opt_value;
+			$key = $value->id;
 			$list->$key = JText::_($value->opt_name);
 		}
 
