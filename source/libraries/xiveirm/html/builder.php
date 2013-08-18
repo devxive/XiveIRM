@@ -84,7 +84,7 @@ abstract class IRMHtmlBuilder
 
 
 	/**
-	 * Add javascript function to copy the value of form fields pused via tabApp into the main form
+	 * Add javascript function to copy the value of form fields pushed via tabApp into the main form
 	 *
 	 * @param	array		$formFields     Common id to identify the input fields
 	 *
