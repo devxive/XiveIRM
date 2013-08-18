@@ -40,14 +40,16 @@ class XivetranscorderModelApi extends JModelForm
 
 		if ( $data->contact_id && !$data->term ) {
 			$query
-				->select( array('a.id', 'a.last_name', 'a.first_name', 'a.company', 'a.address_name', 'a.address_name_add', 'a.address_street', 'a.address_houseno', 'a.address_zip', 'a.address_city', 'a.address_region', 'a.address_country', 'a.address_lat', 'a.address_lng', 'a.address_hash', 'b.title') )
+				->select( array('a.id', 'a.last_name', 'a.first_name', 'a.company', 'a.address_name', 'a.address_name_add', 'a.address_street', 'a.address_houseno', 'a.address_zip', 'a.address_city', 'a.address_region', 'a.address_country', 'a.address_lat', 'a.address_lng', 'a.address_hash', 'b.title', 'c.system_checked', 'c.client_checked') )
 				->from( '#__xiveirm_contacts AS a' )
 				->join( 'INNER', '#__categories AS b ON (a.catid = b.id)' )
+				->join( 'LEFT', '#__xiveirm_contacts_verified AS c ON (c.contacts_id = a.id)' )
 				->where( 'a.id = ' . $data->contact_id . '' );
 
 			$db->setQuery($query);
 
 			$result = $db->loadObjectList();
+
 			$orderContact = $result[0];
 
 			// Build the contact array
@@ -66,8 +68,8 @@ class XivetranscorderModelApi extends JModelForm
 			$contactHelper['address_lng'] = $orderContact->address_lng;
 			$contactHelper['address_hash'] = $orderContact->address_hash;
 
-			$contactHelper['system_checked'] = 0;
-			$contactHelper['client_checked'] = 0;
+			$contactHelper['system_checked'] = $orderContact->system_checked;
+			$contactHelper['client_checked'] = $orderContact->client_checked;
 
 			$contact[] = $contactHelper;
 		}
