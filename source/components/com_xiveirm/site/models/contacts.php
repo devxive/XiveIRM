@@ -118,6 +118,10 @@ class XiveirmModelContacts extends JModelList {
 	$query->select('flags.flag AS flagged');
 	$query->join('LEFT', '#__xiveirm_flags AS flags ON flags.item = CONCAT(\'contacts.\', a.id)');
 
+	// Join over the verified contacts
+	$query->select( array('verified.system_checked AS system_checked', 'verified.client_checked AS client_checked') );
+	$query->join('LEFT', '#__xiveirm_contacts_verified AS verified ON verified.contacts_id = a.id');
+
 	// Set the client_id (usergroup)
 	if ($filter_client_id = $this->state->get("filter.client_id")) {
 		$query->where('a.client_id = ' . $filter_client_id . '');
