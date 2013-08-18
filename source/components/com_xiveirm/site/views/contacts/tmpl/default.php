@@ -277,18 +277,7 @@ jQuery(function() {
 				</td>
 				<td>
 					<a href="<?php echo JRoute::_('index.php?task=contactform.edit&id='.$item->id); ?>">
-						<?php 
-							if(!empty($item->company)) {
-								echo $item->company . '<br>';
-							} else {
-							}
-							if(!empty($item->last_name) && !empty($item->first_name)) {
-								echo $item->last_name . ', ' . $item->first_name;
-							} else {
-								echo !empty($item->last_name) ? $item->last_name : '';
-								echo !empty($item->first_name) ? $item->first_name : '';
-							}
-						?>
+						<?php echo IRMFormName::formatListName($item); ?>
 					</a>
 				</td>
 				<td class="hidden-phone">
