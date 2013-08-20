@@ -689,7 +689,16 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 
 				<div class="form-actions">
 					<span id="form-buttons" class="<?php echo empty($this->item->id) ? '' : 'hidden'; ?>">
-						<button id="coreSave" class="validate btn btn-info prepareSave" type="submit"><i class="icon-ok"></i> <?php echo JText::_('COM_XIVEIRM_SAVE_ITEM'); ?></button>
+						<div class="btn-group>
+							<button id="coreSave" class="validate btn btn-info prepareSave" type="submit"><i class="icon-ok"></i> <?php echo JText::_('COM_XIVEIRM_SAVE_ITEM'); ?></button>
+							<button class="btn dropdown-toggle" data-toggle="dropdown">
+								<span class="caret"></span>
+							<button>
+							<ul class="dropdown-menu">
+								<li class="">Sace and Close</li>
+								<li class="">Sace and New</li>
+							</ul>
+						</div>
 						&nbsp; &nbsp; &nbsp;
 						<button class="btn" type="reset" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_RESET_TIP'); ?>"><i class="icon-undo"></i> <?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_RESET'); ?></button>
 						&nbsp; &nbsp; &nbsp;
@@ -1524,27 +1533,6 @@ console.log( moment().format('mm') );
 				}
 		});
 	}
-
-//	// Bind global events to the document handler
-//	jQuery(document).bind("ajaxStart", function() {
-//		jQuery('#siteready-overlay').show();
-//
-//		// Scroll to top and show the siteready-overlay and override the standard spinner
-//		jQuery('html,body').animate({
-//			scrollTop: 0
-//		}, 250);
-//
-//		// Runs only once
-//		if ( (tocaOrderArray.length + 1) === totalForms ) {
-//			jQuery('#siteready-overlay').html('<div style="width: 375px; margin: 50px auto; color: whitesmoke;" class="center"><img src="/media/nawala/images/loader.gif"><br><br><br><br><span id="spaceCounter" style="font-size: 75px; font-weight: bold;">' + totalForms + ' / ' + totalForms + '</span></div>');
-//		}
-//	}).bind("ajaxStop", function() {
-//		if ( tocaOrderArray.length !== 0 ) {
-//			saveTocaForm();
-//		} else {
-//			jQuery('#siteready-overlay').hide();
-//		}
-//	});
 </script>
 
 
