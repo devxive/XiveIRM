@@ -39,7 +39,7 @@ $session = IRMSessionHelper::getValues();
 if(!$this->item->catid) {
 	$this->item->catid = JFactory::getApplication()->getUserState('com_xivetranscorder.edit.transcorder.catid');
 
-	// We have a category id and use the category acl
+	// Get the category acl
 	$acl = NFWAccessHelper::getActions('com_xiveirm', 'category', $this->item->catid);
 } else {
 	// We have no category id and use the components acl
@@ -689,14 +689,21 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 
 				<div class="form-actions">
 					<span id="form-buttons" class="<?php echo empty($this->item->id) ? '' : 'hidden'; ?>">
-						<div class="btn-group>
+						<div class="btn-group">
 							<button id="coreSave" class="validate btn btn-info prepareSave" type="submit"><i class="icon-ok"></i> <?php echo JText::_('COM_XIVEIRM_SAVE_ITEM'); ?></button>
-							<button class="btn dropdown-toggle" data-toggle="dropdown">
+							<button class="btn btn-info dropdown-toggle" data-toggle="dropdown">
 								<span class="caret"></span>
-							<button>
+							</button>
 							<ul class="dropdown-menu">
-								<li class="">Sace and Close</li>
-								<li class="">Sace and New</li>
+								<li class="">
+									<a href="#">Save & Close</a>
+								</li>
+								<li class="">
+									<a href="">Save & go to List</a>
+								</li>
+								<li class="">
+									<a href="">Save as Copy</a>
+								</li>
 							</ul>
 						</div>
 						&nbsp; &nbsp; &nbsp;
@@ -1566,4 +1573,3 @@ print_r($test);
 
 ?>
 </pre>
-
