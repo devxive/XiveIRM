@@ -15,12 +15,10 @@ NFWHtmlJavascript::setTextAutosize('.autosize');
 NFWHtmlJavascript::setTooltip( '.xtooltip' );
 NFWHtmlJavascript::setPopover( '.xpopover', array('html' => true) );
 NFWHtmlJavascript::setPreventFormSubmitByKey();
-NFWHtmlJavascript::loadGritter();
 NFWHtmlJavascript::loadAlertify();
 NFWHtmlJavascript::setPreventFormLeaveIfChanged('#form-contact');
-NFWHtmlJavascript::loadEasyPie('.ep-chart', false, false);
 NFWHtmlJavascript::loadBootbox('.bootbox');
-NFWPluginsSha256::loadSHA256('js.sha256');
+IRMHtmlSelect2::init('.select2');
 
 //Load admin language file
 $lang = JFactory::getLanguage();
@@ -46,6 +44,9 @@ if ( !$this->item->catid ) {
 // Import all TabApps based on the XiveIRM TabApp configs and the related catid!
 IRMAppHelper::importPlugins('com_xiveirm', $this->item->catid);
 $dispatcher = JDispatcher::getInstance();
+
+// Import all PluginApps with onBeforeContent
+$dispatcher->trigger( 'onBeforeContent', array(&$this->item, &$this->params) );
 
 // Check for checked out item
 $checkoutParams = array(
@@ -91,7 +92,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 			<span class="span5">
 				<div class="btn-group pull-right inline">
 					<?php if( ($this->item->id && $checkedOut['by'] != 'other') && ($acl->get('core.edit') || $acl->get('core.edit.own')) ): ?>
-						<a onClick="enableEdit()" id="loading-btn-edit" data-loading-text="<?php echo JText::_('COM_XIVEIRM_API_PLEASE_WAIT_BUTTON'); ?>" data-error-text="<?php echo JText::_('COM_XIVEIRM_API_ERROR_TRY_AGAIN_BUTTON'); ?>" class="btn btn-warning btn-mini edit-form-button"><i class="icon-edit"></i> <?php echo JText::_('COM_XIVEIRM_EDIT_ITEM'); ?></a>
+						<a id="loading-btn-edit" data-loading-text="<?php echo JText::_('COM_XIVEIRM_API_PLEASE_WAIT_BUTTON'); ?>" data-error-text="<?php echo JText::_('COM_XIVEIRM_API_ERROR_TRY_AGAIN_BUTTON'); ?>" class="btn btn-warning btn-mini edit-form-button"><i class="icon-edit"></i> <?php echo JText::_('COM_XIVEIRM_EDIT_ITEM'); ?></a>
 					<?php endif; ?>
 					<?php if($checkedOut['by'] == 'other'): ?>
 						<a class="btn btn-danger btn-mini" href="<?php echo JRoute::_('index.php?option=com_xiveirm'); ?>"><i class="icon-reply"></i> <?php echo JText::_('COM_XIVEIRM_CANCEL_ITEM'); ?></a>
@@ -153,14 +154,13 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 							<div class="control-group">
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_FORM_LBL_CONTACT_CATEGORY'); ?></label>
 								<div class="controls controls-row">
-									<?php NFWHtmlJavascript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 									<div class="span6">
 										<?php if ( ($this->item->catid && !$this->item->id) || ($this->item->catid && $appCount > 0) ) { ?>
 											<input type="hidden" name="contacts[catid]" value="<?php echo $this->item->catid; ?>">
 											<a class="btn btn-small btn-warning disabled" disabled="disabled"><i class="icon-double-angle-left"></i> <?php echo NFWItemHelper::getTitleById('category', $this->item->catid); ?></a>
 										<?php } else { ?>
-										<select name="contacts[catid]" class="chzn-select-category input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
-											<option value=""></option>
+										<select name="contacts[catid]" class="select2 input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" required>
+											<option></option>
 											<?php
 												$options = IRMFormList::getCategoryOptions('com_xiveirm');
 												if($options) {
@@ -185,11 +185,10 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID_LABEL'); ?></label>
 								<div class="controls controls-row">
 									<input type="text" name="contacts[customer_id]" class="input-control span6" id="prependedInput" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CUSTOMER_ID'); ?>" value="<?php echo $this->item->customer_id; ?>">
-									<?php NFWHtmlJavascript::setChosen('.chzn-select-parent', false, array('allow_single_deselect' => true, 'disable_search_threshold' => '10', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 									<div class="span6">
-										<select name="contacts[parent_id]" class="chzn-select-parent input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_PARENT'); ?>">
+										<select name="contacts[parent_id]" class="select2 input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_PARENT'); ?>">
 											<?php
-												echo '<option value="" selected>' . JText::_('COM_XIVEIRM_SELECT_NO_PARENT') . '</option>';
+												echo '<option></option>';
 
 												$options = IRMFormList::getParentContactOptions();
 												foreach($options as $key => $val) {
@@ -222,10 +221,9 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 									<span class="help-button xpopover" data-trigger="hover" data-placement="top" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_DESC'); ?>" data-original-title="The Gender take over effects!">?</span>
 								</label>
 								<div class="controls controls-row">
-									<?php NFWHtmlJavascript::setChosen('.chzn-select-gender', false, array('width' => '100%', 'disable_search' => true)); ?>
 									<div class="span6">
-										<select name="contacts[gender]" class="chzn-select-gender input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" style="" required>
-											<option value=""><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_SELECT'); ?></option>
+										<select name="contacts[gender]" class="select2 input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_SELECT'); ?>" required>
+											<option></option>
 											<?php
 												$options = IRMFormList::getGenderOptions();
 												foreach ($options as $key => $val) {
@@ -242,30 +240,21 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 								</div>
 							</div>
 							
-							<div id="address-block" class="control-group">
+							<div id="address-block-0" class="control-group address-block" data-direction="b" data-order="0">
 								<label class="control-label">
 									<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_LABEL'); ?>
-									<span class="help-button xpopover btn-danger" data-trigger="hover" data-placement="top" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CLEAN_ADDRESS_DESC'); ?>" data-original-title="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CLEAN_ADDRESS_TITLE'); ?>" onClick="clearAddress()">!</span>
-									<div id="geocode-progress" class="ep-chart" data-percent="100" data-size="23" data-line-width="4" data-animate="1500" data-color="#EBA450" style="display: inline-block; vertical-align: middle;"></div>
-								</label>
-								<div class="controls">
-									<div class="alert center" style="padding: 8px !important;">
-										<input type="text" id="address_auto_geocoder" class="input-control span12 red" placeholder="Type in: Street HouseNo, City, State, Country" onFocus="geocodeInputHelper()" onBlur="geocodeInputHelper()" style="margin-bottom: 0 !important;;">
-										<p id="geocode-input-helper" style="margin-top: 10px; display: none;">
-											<small>
-												This is a helper input field. Type in here the address and let the Geocoder find the right one for you!<br>
-												<em><strong>Please note that this field will not save its value!</strong></em>
-											</small>
-										</p>
+									<div id="address-specific-options">
+										<span id="clear-address-icon-helper" class="help-button xpopover btn-danger pull-right" data-placement="top" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CLEAN_ADDRESS_DESC'); ?>" data-original-title="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CLEAN_ADDRESS_TITLE'); ?>" onClick="clearAddress()"<?php echo empty($this->item->id) ? '' : ' style="display:none;"'; ?>>!</span>
+										<span class="help-button btn-warning xpopover pull-right gverifier" data-trigger="hover" data-placement="top" data-content="Click here if you wish to check the address already filled out below" data-original-title="Geo Verification!"<?php echo empty($this->item->id) ? '' : ' style="display:none;"'; ?>>G</span>
 									</div>
-								</div>
-								<div class="controls extended">
-									<input type="text" id="address_name" name="contacts[address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->address_name; ?>">
-								</div>
-								<div class="controls extended">
-									<input type="text" id="address_name_add" name="contacts[address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->address_name_add; ?>">
-								</div>
+								</label>
 								<div id="inner-address-block">
+									<div class="controls extended">
+										<input type="text" id="address_name" name="contacts[address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->address_name; ?>">
+									</div>
+									<div class="controls extended">
+										<input type="text" id="address_name_add" name="contacts[address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->address_name_add; ?>">
+									</div>
 									<div class="controls controls-row">
 										<input type="text" id="address_street" name="contacts[address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->address_street; ?>">
 										<input type="text" id="address_houseno" name="contacts[address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->address_houseno; ?>">
@@ -278,9 +267,11 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 										<input type="text" id="address_region" name="contacts[address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->address_region; ?>">
 										<input type="text" id="address_country" name="contacts[address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->address_country; ?>">
 									</div>
-									<input type="hidden" placeholder="lat" class="purple span4" id="address_lat" name="contacts[address_lat]" value="<?php echo $this->item->address_lat; ?>" />
-									<input type="hidden" placeholder="lng" class="purple span4" id="address_lng" name="contacts[address_lng]" value="<?php echo $this->item->address_lng; ?>" />
-									<input type="hidden" placeholder="hash" class="purple span4" id="address_hash" name="contacts[address_hash]" value="<?php echo $this->item->address_hash; ?>" />
+									<div id="geo-coords">
+										<input type="hidden" id="address_lat" name="contacts[address_lat]" value="<?php echo $this->item->address_lat; ?>" />
+										<input type="hidden" id="address_lng" name="contacts[address_lng]" value="<?php echo $this->item->address_lng; ?>" />
+									</div>
+									<input type="hidden" id="address_hash" name="contacts[address_hash]" value="<?php echo $this->item->address_hash; ?>" />
 								</div>
 							</div>
 							
@@ -412,8 +403,8 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 				<?php echo JHtml::_('form.token'); ?>
 
 				<div class="form-actions">
-					<span id="form-buttons" class="<?php echo empty($this->item->id) ? '' : 'hidden'; ?>">
-						<button id="loading-btn-save" data-loading-text="<?php echo JText::_('COM_XIVEIRM_API_PLEASE_WAIT_BUTTON'); ?>" data-complete-text="<?php echo JText::_('COM_XIVEIRM_API_SAVED_BUTTON'); ?>" data-error-text="<?php echo JText::_('COM_XIVEIRM_API_ERROR_TRY_AGAIN_BUTTON'); ?>" class="validate btn btn-info" type="submit"><i class="icon-ok"></i> <?php echo isset($this->item->id) ? JText::_('COM_XIVEIRM_UPDATE_ITEM') : JText::_('COM_XIVEIRM_SAVE_ITEM'); ?></button>
+					<span id="form-buttons"<?php echo empty($this->item->id) ? '' : ' style="display:none;"'; ?>>
+						<button id="loading-btn-save" data-loading-text="<?php echo JText::_('COM_XIVEIRM_API_PLEASE_WAIT_BUTTON'); ?>" data-complete-text="<?php echo isset($this->item->id) ? JText::_('COM_XIVEIRM_UPDATE_ITEM') : JText::_('COM_XIVEIRM_SAVE_ITEM'); ?>" data-error-text="<?php echo JText::_('COM_XIVEIRM_API_ERROR_TRY_AGAIN_BUTTON'); ?>" class="validate btn btn-info" type="submit"><i class="icon-ok"></i> <?php echo isset($this->item->id) ? JText::_('COM_XIVEIRM_UPDATE_ITEM') : JText::_('COM_XIVEIRM_SAVE_ITEM'); ?></button>
 						&nbsp; &nbsp; &nbsp;
 						<button class="btn" type="reset" data-rel="tooltip" data-original-title="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_RESET_TIP'); ?>"><i class="icon-undo"></i> <?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_RESET'); ?></button>
 						&nbsp; &nbsp; &nbsp;
@@ -430,11 +421,6 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 		<!-- ---------- ---------- ---------- ---------- ---------- END MASTER_TAP_PANE_PLUGINSTYLED ---------- ---------- ---------- ---------- ---------- -->
 
 	</form>
-	<form id="form-contact-cica">
-		<input type="hidden" name="irmapi[id]" value="<?php echo isset($this->item->id) ? $this->item->id : '0'; ?>" />
-		<input type="hidden" name="irmapi[coreapp]" value="contacts" />
-		<?php echo JHtml::_('form.token'); ?>
-	</form>
 
 	<!-- ---------- ---------- ---------- ---------- ---------- BEGIN EXTERN FORMS ---------- ---------- ---------- ---------- ---------- -->
 	<?php
@@ -450,100 +436,11 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 </div>
 
 <script>
-
-function clearAddress() {
-	if(jQuery("#address_name").attr('disabled') != 'disabled') {
-		jQuery('#address_name').val('');
-		jQuery('#address_name_add').val('');
-		jQuery('#address_street').val('');
-		jQuery('#address_houseno').val('');
-		jQuery('#address_zip').val('');
-		jQuery('#address_city').val('');
-		jQuery('#address_region').val('');
-		jQuery('#address_country').val('');
-		jQuery('#address_lat').val('');
-		jQuery('#address_lng').val('');
-		jQuery('#address_hash').val('');
+	function clearAddress() {
+		jQuery('#inner-address-block input').val('');
 	}
-}
 
-function geocodeInputHelper() {
-	jQuery("#geocode-input-helper").fadeToggle('slow');
-}
-
-<?php
-	// PHP OUT COMMENTS TO PREVENT SHOWING INFOS IN SOURCE CODE WHILE IN ALPHA/BETA
-	/*
-	 * Returns from API in json format
-	 * example {"apiReturnCode":"SAVED","apiReturnRowId":"173","apiReturnMessage":"Successfully saved"}
-	 * 
-	 * apiReturnCode could be: SAVED, UPDATED or an Error Number ie. 666
-	 * apiReturnMessage: returns a informal message, should be used for debugging and not in production use. returns the database or php errors
-	 */
-?>
-	jQuery(function(){
-		$("#form-contact").submit(function(e){
-			e.preventDefault();
-
-			$("#loading-btn-save").addClass("btn-warning");
-			$("#loading-btn-save").button("loading");
-
-			$.post('index.php?option=com_xiveirm&task=api.ajaxsave', $("#form-contact").serialize(),
-			function(data){
-				if(data.status === true){
-					$.gritter.add({
-						title: 'Successfully saved',
-						text: 'You have successfully saved all items for the customer <?php echo $this->item->first_name . ' ' . $this->item->last_name; ?>',
-						icon: 'icon-check',
-						class_name: 'alert-success'
-					});
-					$("#customer_cid").val(data.id);
-
-					$("#loading-btn-save").removeClass("btn-warning");
-					$("#loading-btn-save").button("complete");
-					$("#loading-btn-save").button("reset");
-
-					$("#loading-btn-edit").removeClass("hidden");
-					$("#loading-btn-edit").button("complete");
-					$("#loading-btn-edit").button("reset");
-
-					$("#form-contact .input-control").attr("disabled", true).trigger("liszt:updated");
-					$("#form-buttons").addClass("hidden");
-					$(".widget-box .btn").attr("disabled", false);
-
-					<?php if(!$this->item->catid) { ?>
-						var cId = $("#customer_cid").val();
-						window.location.href = "<?php echo JRoute::_('index.php?task=contact.edit&id='); ?>" + cId;
-					<?php } ?>
-
-				} else {
-					$.gritter.add({
-						title: 'An error occured',
-						text: 'Error code: ' + data.code + '<br><br>error message: ' + data.message + '<br><br>If this error persists, please contact the support immediately with the given error!',
-						icon: 'icon-warning-sign',
-						sticky: true,
-						class_name: 'alert-error'
-					});
-					$("#loading-btn-save").removeClass("btn-warning");
-					$("#loading-btn-save").button("error");
-					$("#loading-btn-save").addClass("btn-danger");
-				}
-			}, "json");
-		});
-	});
-
-	<?php if($this->item->id): ?>
-	/*
-	 *
-	 *
-	 * Item exist and we set now all input fields to readonly. Hit the edit button to remove all and check out the item!
-	 * Note:	that we have added the disabled attribute to all .btn classes in widget boxes. May we do not need them anymore,
-	 * 		because we have a function that prevent to leave the form if anything has changed!
-	 *
-	 */
-	jQuery("#form-contact .input-control").attr("disabled", true);
-
-	<?php // Check if a link is disabled and prevent default action !! ?>
+	// Check if a link is disabled and prevent default action!!
 	jQuery('a').click(function(e) {
 		linkvar = $(this).attr('disabled');
 		if (linkvar === 'disabled') {
@@ -551,54 +448,82 @@ function geocodeInputHelper() {
 		}
 	});
 
-	<?php // XAP-TODO: Have to set more functions to the edit form, such as a DB-checkout on activate and checkin on save or check in on deactivate !!!! ?>
-	function cancelEdit() {
-	}
+	jQuery(function(){
+		$("#form-contact").submit(function(e){
+			e.preventDefault();
 
-	function enableEdit() {
-		var inp = $('.input-control').get(0);
+			// Add the button loading style to prevent clicks on save
+			$("#loading-btn-save").addClass("btn-warning").button("loading");
 
-		$("#loading-btn-edit").addClass("btn-warning");
-		$("#loading-btn-edit").button("loading");
-
-		jQuery.post('index.php?option=com_xiveirm&task=api.ajaxcheckout', $("#form-contact-cica").serialize(),
+			$.post('index.php?option=com_xiveirm&task=api.ajaxsave', $("#form-contact").serialize(),
 			function(data){
+				console.log(data);
 				if(data.status === true){
-					$.gritter.add({
-						title: '<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_INFO_TITLE'); ?>',
-						text: '<?php echo JText::sprintf('COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_INFO_BODY', $full_name); ?>',
-						icon: 'icon-signout',
-						class_name: 'alert-warning'
-					});
+					// Throw out the message
+					alertify.success('<i class="icon-check"></i> <?php echo isset($this->item->id) ? JText::_('Successfully updated') : JText::_('Successfully saved'); ?>');
 
-					<?php // Remove all disabled fields if we got a "TRUE" response from the api and set the id="ckeckeditform" to 1 for form checks on leaving site ?>
-					if(inp.hasAttribute('disabled')) {
-						// Remove disabled and fire trigger at same time
-						$("#form-contact .input-control").attr("disabled", false).trigger("liszt:updated");
+					// Set the id for the customer to work with further
+					$("#customer_cid").val(data.id);
 
-						$("#loading-btn-edit").addClass("hidden");
-						$("#form-buttons").removeClass("hidden");
-						$(".widget-box .link-control").attr("disabled", true);
+					// Activate the edit button, activate the .link-control, disable all input fields, disable save form buttons and icon address helper
+					$("#loading-btn-edit").fadeIn().button("complete").button("reset");
+					$(".link-control").attr("disabled", false);
+					$("#form-contact .input-control").attr("disabled", true).trigger("liszt:updated");
+					$("#form-buttons, #clear-address-icon-helper").hide();
 
-						$("#checkEditForm").val("1");
-					}
+					// Reset the save button for edit again
+					$("#loading-btn-save").removeClass("btn-warning").button("complete").button("reset");
+
+					<?php if(!$this->item->catid) { ?>
+						window.location.href = "<?php echo JRoute::_('index.php?task=contactform.edit&id='); ?>" + data.id;
+					<?php } ?>
+
 				} else {
-					$.gritter.add({
-						title: 'An error occured',
-						text: 'Error code: ' + data.code + '<br><br>error message: ' + data.message + '<br><br>If this error persists, please contact the support immediately with the given error!',
-						icon: 'icon-warning-sign',
-						sticky: true,
-						class_name: 'alert-error'
-					});
+					alertify.error('<i class="icon-warning-sign"></i> Error code: ' + data.code + '<br><br>error message: ' + data.message + '<br><br>If this error persists, please contact the support immediately with the given error!');
+					// Remove the warning and add the error style button
+					$("#loading-btn-save").removeClass("btn-warning").button("error").addClass("btn-danger");
+				}
+			}, "json");
+		});
+	});
 
-					$("#loading-btn-edit").removeClass("btn-warning");
-					$("#loading-btn-edit").button("error");
-					$("#loading-btn-edit").addClass("btn-danger");
+	$("#loading-btn-edit").click(function() {
+		var editButton = this;
+
+		$(editButton).addClass("btn-warning").button("loading");
+
+		jQuery.post('index.php?option=com_xiveirm&task=api.ajaxcheckout', {'irmapi[id]': $("#customer_cid").val(), 'irmapi[coreapp]': "contacts", <?php echo NFWSession::getToken(); ?>: 1},
+			function(data){
+				// console.log(data);
+				if(data.status === true){
+					alertify.warning = alertify.extend('warning');
+					alertify.warning('<i class="icon-signout"></i> <?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_INFO_TITLE'); ?> <br> <?php echo JText::sprintf('COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_INFO_BODY', $full_name); ?>');
+
+					// Hide the edit button
+					$(editButton).fadeOut();
+
+					// Set a checkeditform value to get the prevent leave message even if nothing has changed, but user is now in edit screen
+					$("#checkEditForm").val("1");
+
+					// Show the form buttons, disable .link-control
+					$("#form-buttons, #clear-address-icon-helper").fadeIn();
+					$(".link-control").attr("disabled", true);
+
+					// Remove all disabled from fields with .input-control
+					$(".input-control").attr("disabled", false).trigger("liszt:updated");
+				} else {
+					alertify.error('<i class="icon-warning-sign"></i> An error occured: <br> Error code: ' + data.code + '<br><br>error message: ' + data.message + '<br><br>If this error persists, please contact the support immediately with the given error!');
+
+					$("#loading-btn-edit").removeClass("btn-warning").button("error").addClass("btn-danger");
 				}
 			},
 		"json");
-	}
+	});
+
+	<?php if($this->item->id): ?>
+		jQuery("#form-contact .input-control").attr("disabled", true);
 	<?php else: ?>
+		// We're in new contact, therefore disable the btn class objects. Should be removed in edit function.
 		jQuery(".widget-box .btn").attr("disabled", true);
 	<?php endif; ?>
 </script>
