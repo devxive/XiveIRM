@@ -20,12 +20,22 @@ class PlgIrmAppAutogeocoder extends JPlugin
 	 */
 	var $appKey;
 
+	/**
+	 * Stores the app ACL
+	 * @var	acl
+	 * @since	6.0
+	 */
+	var $acl;
+
 
 	/**
 	 * INITIATE THE CONSTRUCTOR
 	 */
 	public function __construct(& $subject, $config)
 	{
+		// TODO: Check first if we have an internet connection, else return false or throw message htat there is no connection and that this geocoder doesn't work
+		// NFWConnectionHelper::checkOnline(); or something else
+
 		$this->appKey = 'autogeocoder';
 		$this->loadLanguage();
 
@@ -40,34 +50,142 @@ class PlgIrmAppAutogeocoder extends JPlugin
 	 *
 	 * @since   3.0
 	 */
+	public function onBeforeContent( &$item = null, &$params = null )
+	{
+		// Init google maps and jquery gmap3 plugin
+		NFWGeoGmap3::initMap();
+		JHtml::_('script', 'plugins/irmapp/autogeocoder/assets/js/geo-helper.js', false, false, false, false);
+
+		NFWHtmlJavascript::detectChanges();
+		NFWHtmlJavascript::loadEasyPie('.ep-chart', false, false);
+
+
+		// Set the script
+		$script = "
+			function geocodeInputHelper() {
+				jQuery('#geocode-input-helper').fadeToggle('slow');
+			}
+
+			/*
+			 * Function to get the item cid (db id of the core item we are in. Should always ends --regex selector $-- with _cid)
+			 */
+			function getItemId() {
+				var itemId = jQuery('input[id$=_cid]').val();
+				if( itemId && itemId > 0 ) {
+					return itemId;
+				} else {
+					return false;
+				}
+			}
+
+
+			/*
+			 * Global ready function
+			 */
+			jQuery(document).ready(function() {
+				/*
+				 * Initals to build before any user event is triggered
+				 */
+				// Build and insert the geoIcon right after the #address-hash-verified icon
+				var geoIcon = '<span id=\"address-geo-verified\" class=\"small-margin-left\" style=\"vertical-align: middle;\"><i class=\"icon-globe\" style=\"font-size: 18px;\"></i></span>';
+				$(geoIcon).insertAfter('#address-hash-verified');
+
+				// Build and insert the auto geoInputHelper field before the #inner-address-block
+				var geoInputHelper = '<div id=\"address_auto_geocoder\" class=\"controls controls-row\">';
+					geoInputHelper += '<div class=\"alert\" style=\"padding: 8px !important; margin-bottom: 10px;\">';
+						geoInputHelper += '<input type=\"text\" class=\"input-control span12 red\" placeholder=\"Type in: Street HouseNo, City, State, Country\" onFocus=\"geocodeInputHelper()\" onBlur=\"geocodeInputHelper()\" style=\"margin: 0 !important; float: none;\"/>';
+						geoInputHelper += '<div id=\"geocode-input-helper\" class=\"center\" style=\"margin-top: 10px; display: none;\">';
+							geoInputHelper += '<small>';
+								geoInputHelper += 'Type in here the address the geocoder should find and validate. This can take up to 5 seconds!<br>';
+								geoInputHelper += '<em><strong>Please note that this field will not save its values!</strong></em>';
+							geoInputHelper += '</small>';
+						geoInputHelper += '</div>';
+					geoInputHelper += '</div>';
+				geoInputHelper += '</div>';
+				$(geoInputHelper).insertBefore('#inner-address-block');
+
+				// Append after #address-specific-options
+				var addressOptions = '<span id=\"geocode-progress\" class=\"icon-custom ep-chart xpopover pull-right\" data-original-title=\"Click here if you wish to check the address already filled out below\" data-percent=\"100\" data-size=\"22\" data-line-width=\"3\" data-animate=\"1500\" data-color=\"#EBA450\" style=\"top: 2px;\"></span>';
+				$('#address-specific-options').append(addressOptions);
+
+				/*
+				 * Checking section if we should or should not display any further options
+				 */
+				// If its an existing contact we have to hide the geocoder fields
+				if( getItemId() ) {
+					$('#geocode-progress, #address_auto_geocoder, .gverifier').hide();
+
+					// Check for lat lng values and set the icon color
+					var iconLatLng = getAddress(null, 0);
+					if( iconLatLng.address_lat && iconLatLng.address_lng ) {
+						$('#address-geo-verified').addClass('green').removeClass('red');
+					} else {
+						$('#address-geo-verified').addClass('red').removeClass('green');
+					}
+				}
+
+				// If user click edit button, we have to show the input field and graphical stuff
+				$('#loading-btn-edit').click(function() {
+					$(document).ajaxSuccess(function() {
+						$('#geocode-progress, #address_auto_geocoder').fadeIn('slow', function() {
+							$('#geocode-progress.ep-chart').data('easyPieChart').update(100);
+						});
+					});
+				});
+
+				// If user click update/save button, we have to hide the input field and graphical stuff
+				$('#loading-btn-save').click(function() {
+					$(document).ajaxSuccess(function() {
+						$('#geocode-progress, #address_auto_geocoder').hide();
+					});
+				});
+
+
+				// Adding geoVerifier click funtion
+				$('.gverifier').click(function() {
+					// Get the direction and order position
+					var ownDirection = $(this).parents('.address-block').data('direction');
+					var ownOrder = $(this).parents('.address-block').data('order');
+
+					// Get the address values from appropriate dir and order, returned as string
+					var address = getAddress(ownDirection, ownOrder, true);
+
+					console.log('Direction: ' + ownDirection + ', Order: ' + ownOrder + ', Address: ' + address);
+
+					// Overgive the function the address values to do all the magic
+					geoFormatting(address);
+				});
+
+			});
+		";
+		JFactory::getDocument()->addScriptDeclaration($script);
+
+	}
+
+
+
+	/**
+	 * @param   object	&$item		The item referenced object which includes the system id of this transport
+	 *
+	 * @return  array			appKey = The tab identification, tabContent = Content of the Container
+	 *
+	 * @since   3.0
+	 */
 	public function htmlBuildWidgetTop( &$item = null, &$params = null )
 	{
 		// Get Permissions based on category
 		if ( !$item->catid ) {
 			// We have no category id and use the components acl
-			$acl = NFWAccessHelper::getActions('com_xiveirm');
+			$this->acl = NFWAccessHelper::getActions('com_xiveirm');
 		} else {
 			// We have a category id and use the category acl
-			$acl = NFWAccessHelper::getActions('com_xiveirm', 'category', $item->catid);
-		}
-
-		// Check if we have geo coordinates in db to manipulate the script Declaration or the icon-globe class
-		if($item->address_lat && $item->address_lng) {
-			$address_geo_verified = true;
-		} else {
-			$address_geo_verified = false;
-		}
-
-		if($item->address_hash) {
-			$address_hash_verified = true;
-		} else {
-			$address_hash_verified = false;
+			$this->acl = NFWAccessHelper::getActions('com_xiveirm', 'category', $item->catid);
 		}
 
 		// Build the input value address
 		$initAddress = '';
 		if(!empty($item->address_name)) {
-			$initAddress .= ' ' . $item->address_name;
+			$initAddress .= $item->address_name;
 		}
 		if(!empty($item->address_name_add)) {
 			$initAddress .= ' ' . $item->address_name_add;
@@ -91,15 +209,26 @@ class PlgIrmAppAutogeocoder extends JPlugin
 			$initAddress .= ' ' . $item->address_country;
 		}
 
-		NFWHtmlJavascript::detectChanges();
-		NFWHtmlJavaScript::loadAutoGeocoder('#location', false, 'components/com_xiveirm/assets/js/');
+		// Check if we have geo coordinates in db to manipulate the script Declaration or the icon-globe class
+		if($item->address_lat && $item->address_lng) {
+			$address_geo_verified = true;
+		} else {
+			$address_geo_verified = false;
+		}
+
+
+
 		$script = "
+			/*
+			 * Global ready function
+			 */
 			jQuery(document).ready(function() {
-				// Initial
-				$('#geocode-progress.ep-chart').hide();
+
+
+			// ##################### have to add a timeout function to prevent realtime requests!
 
 				// Triggered on every change in the auto geocoder block (this.value determines the actual field)
-				$('#address_auto_geocoder').on('inputchange', function() {
+				$('#address_auto_geocoder input').on('inputchange', function() {
 					// Get and set the address vars to auto-geocoder and trigger onKeyUp
 					$('#location').val(this.value);
 					$('#location').trigger('auto-geocoder.onKeyUp');
@@ -114,38 +243,42 @@ class PlgIrmAppAutogeocoder extends JPlugin
 				// Triggered on every change in the inner-address-block (this.value determines the actual field)
 				$('#inner-address-block input').on('inputchange', function() {
 					// Get the live var on every change
-					var address_name     = ( $('#address_name').val() )     ? $('#address_name').val() + ' '     : '';
-					var address_name_add = ( $('#address_name_add').val() ) ? $('#address_name_add').val() + ' ' : '';
-					var address_street   = ( $('#address_street').val() )   ? $('#address_street').val() + ' '   : '';
-					var address_houseno  = ( $('#address_houseno').val() )  ? $('#address_houseno').val() + ', ' : '';
-					var address_zip      = ( $('#address_zip').val() )      ? $('#address_zip').val() + ' '      : '';
-					var address_city     = ( $('#address_city').val() )     ? $('#address_city').val() + ', '    : '';
-					var address_region   = ( $('#address_region').val() )   ? $('#address_region').val() + ' '   : '';
-					var address_country  = ( $('#address_country').val() )  ? $('#address_country').val() + ' '  : '';
-					var address_lat      = ( $('#address_lat').val() )      ? $('#address_lat').val()            : '';
-					var address_lng      = ( $('#address_lng').val() )      ? $('#address_lng').val()            : '';
+					var address_name = ( $('#address_name').val() )     ? $('#address_name').val() + ' '     : '',
+					address_name_add = ( $('#address_name_add').val() ) ? $('#address_name_add').val() + ' ' : '',
+					address_street   = ( $('#address_street').val() )   ? $('#address_street').val() + ' '   : '',
+					address_houseno  = ( $('#address_houseno').val() )  ? $('#address_houseno').val() + ', ' : '',
+					address_zip      = ( $('#address_zip').val() )      ? $('#address_zip').val() + ' '      : '',
+					address_city     = ( $('#address_city').val() )     ? $('#address_city').val() + ', '    : '',
+					address_region   = ( $('#address_region').val() )   ? $('#address_region').val() + ' '   : '',
+					address_country  = ( $('#address_country').val() )  ? $('#address_country').val() + ' '  : '',
+					address_lat      = ( $('#address_lat').val() )      ? $('#address_lat').val()            : '',
+					address_lng      = ( $('#address_lng').val() )      ? $('#address_lng').val()            : '';
 
 					var address_full = address_name + address_name_add + address_street + address_houseno + address_zip + address_city + address_region + address_country;
 
 					$('#location').val(address_full);
 					$('#location').trigger('auto-geocoder.onKeyUp');
 
-					// Hashing the values
-					var address_hashEmpty = sha256_digest('');
-					var address_hash = sha256_digest(address_full);
-					$('#address_hash').val(address_hash);
-
-					// Check and set the hash ancor icon
-					if( address_hash != '' && address_hash != address_hashEmpty ) {
-						$('#address-hash-verified').removeClass('red').addClass('green');
-					} else {
-						$('#address-hash-verified').removeClass('green').addClass('red');
-					}
-
 					// If anything in this field has changed play with the animation
 					$('#geocode-progress.ep-chart').fadeIn('slow');
 					$('#geocode-progress.ep-chart').data('easyPieChart').update(100);
 					$('#geocode-progress.ep-chart').data('easyPieChart').update(0);
+				});
+
+
+				// Triggered on every change in lat lng vars
+				$('.address-block #geo-coords input').on('inputchange', function() {
+					// Check for values and set the icon color
+					var iconLatLng = getAddress(null, 0);
+					if( iconLatLng.address_lat && iconLatLng.address_lng ) {
+						$('#address-geo-verified').addClass('green').removeClass('red');
+					} else {
+						$('#address-geo-verified').addClass('red').removeClass('green');
+					}
+
+					// Get and set the address vars to auto-geocoder and trigger onKeyUp
+					$('#location').val(this.value);
+					$('#location').trigger('auto-geocoder.onKeyUp');
 				});
 			});
 		";
@@ -155,59 +288,12 @@ class PlgIrmAppAutogeocoder extends JPlugin
 		?>
 		<!---------- Begin output buffering: <?php echo $this->appKey; ?> ---------->
 
-		<div class="widget-box light-border small-margin-top">
-			<div class="widget-header header-color-dark">
-				<h5 class="smaller">Core Widget</h5>
- 				<div class="widget-toolbar">
-					<?php if(!$item->address_system_checked) { ?>
-						<span id="address-geo-verified" class="small-margin-right <?php echo $address_geo_verified? 'green' : 'red'; ?>" style="vertical-align: middle;">
-							<i class="icon-globe" style="font-size: 18px;"></i> 
-						</span>
-						<span id="address-hash-verified" class="<?php echo $address_hash_verified? 'green' : 'red'; ?>" style="vertical-align: middle;">
-							<i class="icon-anchor" style="font-size: 17px;"></i> 
-						</span>
-					<?php } else { ?>
-						<span class="" style="vertical-align: middle;">
-							<i class="icon-ok-sign" style="font-size: 18px;"></i>
-						</span>
-					<?php } ?>
-	 			</div>
-			</div>
-			<div class="widget-body">
-				<div class="widget-main padding-5">
-					<div class="alert alert-warning center extended">
-						<small>
-							<?php
-								if($item->created && $item->created != '0000-00-00 00:00:00') {
-									echo JText::_('PLG_IRMAPP_AUTOGEOCODER_CREATED') . ': ' . date(JText::_('DATE_FORMAT_LC2'), strtotime($item->created)) . '<br>';
-								}
-								if($item->modified && $item->modified != '0000-00-00 00:00:00') {
-									echo JText::_('PLG_IRMAPP_AUTOGEOCODER_LAST_MODIFIED') . ': ' . date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified));
-								} else {
-									echo JText::_('PLG_IRMAPP_AUTOGEOCODER_NOT_MODIFIED');
-								}
-							?>
-						</small>
-					</div>
-					<div class="">
-						<input type="hidden" id="location" value="<?php echo $initAddress; ?>" />
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="extended small-margin-top">
-			<center>
-				<span class="xpopover margin-right" data-original-title="Geocoder Verification" data-content="<i class='icon-globe red'></i> No verified Geo-Coordinates<br><i class='icon-globe green'></i> Verified Geo-Coordinates" data-placement="top">
-					<i class="icon-globe"></i> 
-				</span>
-				<span class="xpopover margin-right" data-original-title="Hash Verification" data-content="<i class='icon-anchor red'></i> Not Hashed Geolocation<br><i class='icon-anchor green'></i> Hashed Geolocation" data-placement="top">
-					<i class="icon-anchor"></i> 
-				</span>
-				<span class="xpopover" data-original-title="Verified Address" data-content="This address is verified by the System. You can not edit this item because all of its values are proofed! If you wish do fit values to your own, you have to copy it!" data-placement="top">
-					<i class="icon-ok-sign"></i>
-				</span>
-			</center>
-		</div>
+		<pre>
+		<?php
+			$test='';
+			print_r($test);
+		?>
+		</pre>
 
 		<!---------- End output buffering: <?php echo $this->appKey; ?> ---------->
 		<?php
@@ -217,48 +303,6 @@ class PlgIrmAppAutogeocoder extends JPlugin
 		$inMasterContainer = array(
 			'appKey' => $this->appKey,
 			'html' => $html
-		);
-
-		return $inMasterContainer;
-	}
-
-	/**
-	 * @param   object	&$item		The item referenced object which includes the system id of this transport
-	 *
-	 * @return  array			appKey = The tab identification, tabContent = Content of the Container
-	 *
-	 * @since   3.0
-	 */
-	public function inBaseWidgetBottom_OUTDATED( &$item = null, &$params = null )
-	{
-//		$plzUrl = 'http://www.postdirekt.de/plzserver/PlzSearchServlet?app=miniapp&amp;w=350&amp;h=315&amp;fr=0&amp;frc=000000&amp;bg=FFFFFF&amp;hl2=A5A5A5&amp;fc=000000&amp;lc=000000&amp;ff=Arial&amp;fs=10&amp;lnc=000000&amp;hdc=000000&amp;app=miniapp&amp;loc=http%3A//plzkarte.com/plz-suche/';
-		$plzUrl = 'http://www.postdirekt.de/plzserver/PlzSearchServlet?app=miniapp&fr=0&bg=FFF&hl2=FC0&fc=000&lc=000000&ff=Verdana&fs=10&lnc=000000&hdc=000000';
-
-		ob_start();
-		?>
-		<!---------- Begin output buffering: <?php echo $this->appKey; ?> ---------->
-
-		<div class="widget-box small-margin-top extended">
-			<div class="widget-header" style="background: url(/images/system/widgets/logo_deutschepost.png) 95% 40% no-repeat #FC0; height: 31px;">
-				<h5 onClick="hanna()">Postleitzahlsuche</h5>
-			</div>
-			<div class="widget-body">
-				<div class="widget-body-inner" style="">
-					<div class="widget-main">
-						<iframe id="plzsifr" name="plzsifr" src="<?php echo $plzUrl; ?>" style="width:100%; height:315px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" vspace="0"></iframe>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!---------- End output buffering: <?php echo $this->appKey; ?> ---------->
-		<?php
-
-		$tabContent = ob_get_clean();
-
-		$inMasterContainer = array(
-			'appKey' => $this->appKey,
-			'tabContent' => $tabContent
 		);
 
 		return $inMasterContainer;
