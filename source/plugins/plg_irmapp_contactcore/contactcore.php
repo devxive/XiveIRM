@@ -32,8 +32,10 @@ class PlgIrmAppContactcore extends JPlugin
 	public function __construct(& $subject, $config)
 	{
 		parent::__construct($subject, $config);
+
 		$this->appKey = 'contactcore';
 		$this->loadLanguage();
+
 	}
 
 
@@ -56,15 +58,19 @@ class PlgIrmAppContactcore extends JPlugin
 		}
 
 		// Check if we have hash values in db to manipulate the script Declaration or the icon-globe class
-		if($item->address_hash) {
+		if( $item->address_hash && $item->address_hash != hash('sha256', '') ) {
 			$address_hash_verified = true;
 		} else {
 			$address_hash_verified = false;
 		}
 
+		NFWPluginsSha256::loadSHA256();
 		NFWHtmlJavascript::detectChanges();
 		$script = "
 			jQuery(document).ready(function() {
+				var hashInitial = $('#address_hash').val(),
+				cId = $('#customer_cid').val();
+
 				// Triggered on every change in the inner-address-block (this.value determines the actual field)
 				$('#inner-address-block input').on('inputchange', function() {
 					// Get the live var on every change
@@ -86,7 +92,11 @@ class PlgIrmAppContactcore extends JPlugin
 
 					// Check and set the hash ancor icon
 					if( address_hash != '' && address_hash != address_hashEmpty ) {
-						$('#address-hash-verified').removeClass('red').addClass('green');
+						if( cId > 0 && hashInitial != address_hash ) {
+							$('#address-hash-verified').removeClass('green').addClass('red');
+						} else {
+							$('#address-hash-verified').removeClass('red').addClass('green');
+						}
 					} else {
 						$('#address-hash-verified').removeClass('green').addClass('red');
 					}
@@ -94,9 +104,6 @@ class PlgIrmAppContactcore extends JPlugin
 			});
 		";
 		JFactory::getDocument()->addScriptDeclaration($script);
-
-//		$plzUrl = 'http://www.postdirekt.de/plzserver/PlzSearchServlet?app=miniapp&amp;w=350&amp;h=315&amp;fr=0&amp;frc=000000&amp;bg=FFFFFF&amp;hl2=A5A5A5&amp;fc=000000&amp;lc=000000&amp;ff=Arial&amp;fs=10&amp;lnc=000000&amp;hdc=000000&amp;app=miniapp&amp;loc=http%3A//plzkarte.com/plz-suche/';
-		$plzUrl = 'http://www.postdirekt.de/plzserver/PlzSearchServlet?app=miniapp&fr=0&bg=FFF&hl2=FC0&fc=000&lc=000000&ff=Verdana&fs=10&lnc=000000&hdc=000000';
 
 		ob_start();
 		?>
@@ -123,10 +130,10 @@ class PlgIrmAppContactcore extends JPlugin
 						<small>
 							<?php
 								if($item->created && $item->created != '0000-00-00 00:00:00') {
-									echo JText::_('PLG_IRMAPP_CONTACTCORE_CREATED') . ': ' . date(JText::_('DATE_FORMAT_LC2'), strtotime($item->created)) . '<br>';
+									echo JText::sprintf( 'PLG_IRMAPP_CONTACTCORE_CREATED_ON', date(JText::_('DATE_FORMAT_LC2'), strtotime($item->created)) ) . '<br>';
 								}
 								if($item->modified && $item->modified != '0000-00-00 00:00:00') {
-									echo JText::_('PLG_IRMAPP_CONTACTCORE_LAST_MODIFIED') . ': ' . date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified));
+									echo JText::sprintf('PLG_IRMAPP_CONTACTCORE_LAST_MODIFIED_ON_BY', date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)), NFWUser::getName($item->modified_by));
 								} else {
 									echo JText::_('PLG_IRMAPP_CONTACTCORE_NOT_MODIFIED');
 								}
@@ -134,11 +141,10 @@ class PlgIrmAppContactcore extends JPlugin
 						</small>
 					</div>
 				</div>
-				<div id="zip-search-widget" class="widget-body-inner">
-					<div class="widget-header" style="background: url(/images/system/widgets/logo_deutschepost.png) 95% 40% no-repeat #FC0; height: 31px;"></div>
-					<div class="widget-main">
-						<iframe id="plzsifr" name="plzsifr" src="<?php echo $plzUrl; ?>" style="width:100%; height:315px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" vspace="0"></iframe>
-					</div>
+			</div>
+			<div class="widget-body">
+				<div id="core-informations" class="widget-main padding-5">
+					<div id="map-canvas"></div>
 				</div>
 			</div>
 		</div>
@@ -165,6 +171,46 @@ class PlgIrmAppContactcore extends JPlugin
 		);
 
 		return $inMasterContainer;
+	}
+
+
+	/**
+	 * @param   object	&$item		The item referenced object which includes the system id of this contact
+	 *
+	 * @return  array			appKey = The tab identification, tabContent = Content of the Container
+	 *
+	 * @since   3.0
+	 */
+	public function htmlBuildWidgetBottom( &$item = null, &$params = null )
+	{
+//		$plzUrl = 'http://www.postdirekt.de/plzserver/PlzSearchServlet?app=miniapp&amp;w=350&amp;h=315&amp;fr=0&amp;frc=000000&amp;bg=FFFFFF&amp;hl2=A5A5A5&amp;fc=000000&amp;lc=000000&amp;ff=Arial&amp;fs=10&amp;lnc=000000&amp;hdc=000000&amp;app=miniapp&amp;loc=http%3A//plzkarte.com/plz-suche/';
+		$plzUrl = 'http://www.postdirekt.de/plzserver/PlzSearchServlet?app=miniapp&fr=0&bg=FFF&hl2=FC0&fc=000&lc=000000&ff=Verdana&fs=10&lnc=000000&hdc=000000';
+
+		ob_start();
+		?>
+		<!---------- Begin output buffering: <?php echo $this->appKey; ?> ---------->
+
+		<div class="extended">
+			<div id="zip-search-widget" class="widget-body-inner span12">
+				<div class="widget-header" style="background: url(/images/system/widgets/logo_deutschepost.png) 95% 40% no-repeat #FC0; height: 31px;"></div>
+				<div class="widget-main">
+					<iframe id="plzsifr" name="plzsifr" src="<?php echo $plzUrl; ?>" class="span12" style="height:315px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" vspace="0"></iframe>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+
+		<!---------- End output buffering: <?php echo $this->appKey; ?> ---------->
+		<?php
+
+		$html = ob_get_clean();
+
+		$inMasterContainer = array(
+			'appKey' => $this->appKey,
+			'html' => $html
+		);
+
+//		return $inMasterContainer;
 	}
 }
 ?>
