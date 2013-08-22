@@ -65,6 +65,10 @@ class PlgIrmAppMedicaldetails extends JPlugin
 		$this->appKey = 'medicaldetails';
 		$this->loadLanguage();
 
+		//Load admin language file
+		$lang = JFactory::getLanguage();
+		$lang->load('com_xivetranscorder', JPATH_SITE);
+
 		// Get the compoment registry object
 //		$registry = JFactory::getSession()->get('registry')->get('com_xiveirm');
 
@@ -115,6 +119,12 @@ class PlgIrmAppMedicaldetails extends JPlugin
 	 */
 	public function htmlBuildTab( &$item = null, &$params = null )
 	{
+		IRMHtmlSelect2::init('.select2-clearable');
+
+		// Get available transport device, transport type and order type options
+		$transportDeviceOptions = IRMFormList::getTransportDeviceOptions();
+		$transportTypeOptions = IRMFormList::getTransportTypeOptions();
+
 		ob_start();
 		?>
 
@@ -137,15 +147,41 @@ class PlgIrmAppMedicaldetails extends JPlugin
 						<div class="widget-body-inner">
 							<div class="widget-main">
 								<div class="control-group">
-									<label class="control-label">Transportmittel</label>
-									<div class="controls">
-										<input class="input-control span12" name="<?php echo $this->appKey; ?>[transport_type]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($this->appData->tab_value->transport_type) ? 'value="' . $this->appData->app_value->transport_type . '"' : ''; ?>>
+									<label class="control-label">
+										<?php echo JText::_('Transportmittel'); ?>
+									</label>
+									<div class="controls controls-row">
+										<select name="<?php echo $this->appKey; ?>[transport_device]" class="select2-clearable input-control span12" data-placeholder="<?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_TRANSPORT_DEVICE_PLEASE_SELECT'); ?>">
+											<option></option>
+											<?php
+												foreach ( $transportDeviceOptions as $key => $value ) {
+													if ( $this->appData->app_value->transport_device == $key ) {
+														echo '<option value="' . $key . '" selected>' . $value . '</option>';
+													} else {
+														echo '<option value="' . $key . '">' . $value . '</option>';
+													}
+												}
+											?>
+										</select>
 									</div>
 								</div>
 								<div class="control-group">
-									<label class="control-label">Transportart</label>
-									<div class="controls">
-										<input class="input-control span12" name="<?php echo $this->appKey; ?>[transport_properties]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($this->appData->app_value->transport_properties) ? 'value="' . $this->appData->app_value->transport_properties . '"' : ''; ?>>
+									<label class="control-label">
+										<?php echo JText::_('Transportart'); ?>
+									</label>
+									<div class="controls controls-row">
+										<select name="<?php echo $this->appKey; ?>[transport_type]" class="select2-clearable input-control span12" data-placeholder="<?php echo JText::_('COM_XIVETRANSCORDER_FORM_OPTIONLIST_TRANSPORT_TYPE_PLEASE_SELECT'); ?>">
+											<option></option>
+											<?php
+												foreach ( $transportTypeOptions as $key => $value ) {
+													if ( $this->appData->app_value->transport_type == $key ) {
+														echo '<option value="' . $key . '" selected>' . $value . '</option>';
+													} else {
+														echo '<option value="' . $key . '">' . $value . '</option>';
+													}
+												}
+											?>
+										</select>
 									</div>
 								</div>
 								<div class="control-group">
@@ -191,9 +227,8 @@ class PlgIrmAppMedicaldetails extends JPlugin
 								<div class="control-group">
 									<label class="control-label">Infections <i class="icon-tags red"></i></label>
 									<div class="controls">
-										<?php NFWHtmlJavaScript::setChosen('.chzn-select-infect', false, array('width' => '100%')); ?>
-										<select multiple name="<?php echo $this->appKey; ?>[infections][]" data-placeholder="Click here to select your choice!" class="chzn-select-infect input-control">
-											<option value=""></option>
+										<select multiple name="<?php echo $this->appKey; ?>[infections][]" data-placeholder="Click here to select your choice!" class="select2-clearable input-control">
+											<option></option>
 											<option value="mrsa" <?php echo isset($this->appData->app_value->infections_set->mrsa) ? 'selected' : ''; ?>>MRSA</option>
 											<option value="vre" <?php echo isset($this->appData->app_value->infections_set->vre) ? 'selected' : ''; ?>>VRE</option>
 											<option value="esbl" <?php echo isset($this->appData->app_value->infections_set->esbl) ? 'selected' : ''; ?>>ESBL</option>
@@ -217,7 +252,7 @@ class PlgIrmAppMedicaldetails extends JPlugin
 								<div class="control-group">
 									<label class="control-label">Sonstiges <i class="icon-tag red"></i></label>
 									<div class="controls">
-										<input class="input-control span12" name="<?php echo $this->appKey; ?>[other_infect]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($this->appData->app_value->other_infect) ? 'value="' . $this->appData->app_value->other_infect . '"' : ''; ?>>
+										<input class="input-control span12" name="<?php echo $this->appKey; ?>[other_infects]" type="text" placeholder="Enter Informations here to activate!" <?php echo isset($this->appData->app_value->other_infect) ? 'value="' . $this->appData->app_value->other_infect . '"' : ''; ?>>
 									</div>
 								</div>
 								<div class="control-group">
@@ -342,10 +377,9 @@ class PlgIrmAppMedicaldetails extends JPlugin
 			<div class="control-group">
 				<label class="control-label"><?php echo JText::_('PLG_IRMAPP_MEDICALDETAILS_FORM_LBL_NEW_ORDER'); ?></label>
 				<div class="controls">
-					<?php NFWHtmlJavaScript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 					<div class="span11">
-						<select id="selectCatId" class="chzn-select-category" data-placeholder="<?php echo JText::_('PLG_IRMAPP_MEDICALDETAILS_FORM_PLEASE_SELECT_TYPE'); ?>" onchange="setCategoryId()">
-							<option value=""></option>
+						<select id="selectCatId" class="select2-clearable" data-placeholder="<?php echo JText::_('PLG_IRMAPP_MEDICALDETAILS_FORM_PLEASE_SELECT_TYPE'); ?>" onchange="setCategoryId()">
+							<option></option>
 							<?php
 								if($options) {
 									foreach ($options as $key => $val) {
@@ -358,14 +392,14 @@ class PlgIrmAppMedicaldetails extends JPlugin
 				</div>
 			</div>
 		</div>
-			<script>
-				function setCategoryId() {
-					// Get value from select list and set catid in form "frm-new-order"
-					var catId = jQuery("#selectCatId").val();
-					jQuery("#setInputCatId").val(catId);
-					document.getElementById("frm-new-order").submit();
-				};
-			</script>
+		<script>
+			function setCategoryId() {
+				// Get value from select list and set catid in form "frm-new-order"
+				var catId = jQuery("#selectCatId").val();
+				jQuery("#setInputCatId").val(catId);
+				document.getElementById("frm-new-order").submit();
+			};
+		</script>
 		<?php else: ?>
 			<div class="alert alert-error center">
 				<p>You have to save this first before you can play with the action!</p>
@@ -401,7 +435,7 @@ class PlgIrmAppMedicaldetails extends JPlugin
 		?>
 
 		<!---------- Begin output buffering: <?php echo $this->tab_key; ?> ---------->
-		<?php if(isset($this->appData->app_value->infections_set)) { ?>
+		<?php if( isset($this->appData->app_value->infections_set)  || isset($this->appData->app_value->reserve_isolation) ) { ?>
 			<div class="widget-box light-border small-margin-top">
 				<div class="widget-header red">
 					<h5 class="smaller"><?php echo JText::_('PLG_IRMAPP_MEDICALDETAILS_TABNAME'); ?> Widget</h5>
@@ -495,7 +529,10 @@ class PlgIrmAppMedicaldetails extends JPlugin
 					</div>
 					<div class="widget-toolbox padding-5 clearfix">
 						<div class="center">
-							<small>Mehr kostenlose Widgets auf unserer Webseite: <a href="#">ZAD Northeim GmbH</a></small>
+							<small>
+								<small>Die hier dargestellten Informationen stellen keine rechtliche Grundlage dar und k&ouml;nnen regional abweichen!</small><br>
+								Mehr kostenlose Widgets auf unserer Webseite: <a href="#">Medical Marketing GmbH</a>
+							</small>
 						</div>
 					</div>
 				</div>
