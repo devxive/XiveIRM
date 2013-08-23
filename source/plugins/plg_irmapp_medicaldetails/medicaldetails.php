@@ -368,12 +368,28 @@ class PlgIrmAppMedicaldetails extends JPlugin
 		// Get options for the select list (ACL is already included in the requested list options!)
 		$options = IRMFormList::getCategoryOptions('com_xivetranscorder');
 
+		if ( $this->contactId == 0 ) {
+			// Set the script
+			$script = "
+				jQuery(document).ready(function() {
+					// If user click update/save button, we have to hide the input field and graphical stuff
+					$('#loading-btn-save').click(function() {
+						$(document).ajaxSuccess(function() {
+							$('#medical-action-buttons-new-creation').hide();
+							$('#medical-action-buttons').fadeIn('slow');
+						});
+					});
+				});
+			";
+			JFactory::getDocument()->addScriptDeclaration($script);
+		}
+
 		ob_start();
 		?>
 		<!---------- Start output buffering: <?php echo $this->appKey; ?> ---------->
 
-		<?php if( $appAcl->get('core.create') && $this->contactId != 0): ?>
-		<div class="row-fluid large-margin-top">
+		<?php if( $appAcl->get('core.create') ): ?>
+		<div id="medical-action-buttons" class="row-fluid large-margin-top" <?php echo $this->contactId != 0 ? '' : 'style="display:none;"'; ?>>
 			<div class="control-group">
 				<label class="control-label"><?php echo JText::_('PLG_IRMAPP_MEDICALDETAILS_FORM_LBL_NEW_ORDER'); ?></label>
 				<div class="controls">
@@ -391,19 +407,18 @@ class PlgIrmAppMedicaldetails extends JPlugin
 					</div>
 				</div>
 			</div>
+			<script>
+				function setCategoryId() {
+					// Get value from select list and set catid in form "frm-new-order"
+					var catId = jQuery("#selectCatId").val();
+					jQuery("#setInputCatId").val(catId);
+					document.getElementById("frm-new-order").submit();
+				};
+			</script>
 		</div>
-		<script>
-			function setCategoryId() {
-				// Get value from select list and set catid in form "frm-new-order"
-				var catId = jQuery("#selectCatId").val();
-				jQuery("#setInputCatId").val(catId);
-				document.getElementById("frm-new-order").submit();
-			};
-		</script>
-		<?php else: ?>
-			<div class="alert alert-error center">
-				<p>You have to save this first before you can play with the action!</p>
-			</div>
+		<div id="medical-action-buttons-new-creation" class="alert alert-error center" <?php echo $this->contactId != 0 ? 'style="display:none;"' : ''; ?>>
+			<p>You have to save this first before you can play with the action!</p>
+		</div>
 		<?php endif; ?>
 
 		<!---------- End output buffering: <?php echo $this->appKey; ?> ---------->
