@@ -19,6 +19,7 @@ NFWHtmlJavascript::loadAlertify();
 NFWHtmlJavascript::setPreventFormLeaveIfChanged('#form-contact');
 NFWHtmlJavascript::loadBootbox('.bootbox');
 IRMHtmlSelect2::init('.select2');
+NFWHtmlJavascript::loadEasyPie('.ep-chart', false, false);
 
 //Load admin language file
 $lang = JFactory::getLanguage();
@@ -240,15 +241,29 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 								</div>
 							</div>
 							
-							<div id="address-block-0" class="control-group address-block" data-direction="b" data-order="0">
+							<div class="control-group address-block" data-direction="b" data-order="1">
 								<label class="control-label">
 									<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_LABEL'); ?>
 									<div id="address-specific-options">
 										<span id="clear-address-icon-helper" class="help-button xpopover btn-danger pull-right" data-placement="top" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CLEAN_ADDRESS_DESC'); ?>" data-original-title="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CLEAN_ADDRESS_TITLE'); ?>" onClick="clearAddress()"<?php echo empty($this->item->id) ? '' : ' style="display:none;"'; ?>>!</span>
 										<span class="help-button btn-warning xpopover pull-right gverifier" data-trigger="hover" data-placement="top" data-content="Click here if you wish to check the address already filled out below" data-original-title="Geo Verification!"<?php echo empty($this->item->id) ? '' : ' style="display:none;"'; ?>>G</span>
+										<span class="icon-custom ep-chart xpopover pull-right easypie-progress" data-percent="100" data-size="21" data-line-width="3" data-animate="1500" data-color="#EBA450" style="top: 2px;" style="display:none;"></span>
 									</div>
 								</label>
-								<div id="inner-address-block">
+
+								<div class="controls controls-row address_auto_geocoder" style="display:none;">
+									<div class="alert" style="padding: 8px !important; margin-bottom: 10px;">
+										<input type="text" class="input-control span12 red" placeholder="Type in: Street HouseNo, City, State, Country" style="margin: 0 !important; float: none;" />
+										<div class="center geocode-input-helptext" style="margin-top: 10px; display: none;">
+											<small>
+												Type in here the address the geocoder should find and validate. This can take up to 5 seconds!<br>
+												<em><strong>Please note that this field will not save its values!</strong></em>
+											</small>
+										</div>
+									</div>
+								</div>
+
+								<div class="inner-address-block">
 									<div class="controls extended">
 										<input type="text" id="address_name" name="contacts[address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->address_name; ?>">
 									</div>
