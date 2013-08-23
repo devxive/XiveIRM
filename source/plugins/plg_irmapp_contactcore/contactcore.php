@@ -72,7 +72,12 @@ class PlgIrmAppContactcore extends JPlugin
 				cId = $('#customer_cid').val();
 
 				// Triggered on every change in the inner-address-block (this.value determines the actual field)
-				$('#inner-address-block input').on('inputchange', function() {
+				$('.inner-address-block input').on('inputchange', function() {
+					// Get the direction and order position
+					var ownDirection = $(this).parents('.address-block').data('direction');
+					var ownOrder = $(this).parents('.address-block').data('order');
+					var nameObserver = '.address-block[data-direction=\"' + ownDirection + '\"][data-order=\"' + ownOrder + '\"]';
+
 					// Get the live var on every change
 					var address_name     = ( $('#address_name').val() )     ? $('#address_name').val()     : '';
 					var address_name_add = ( $('#address_name_add').val() ) ? $('#address_name_add').val() : '';
@@ -88,6 +93,7 @@ class PlgIrmAppContactcore extends JPlugin
 					// Hashing the values
 					var address_hashEmpty = sha256_digest('');
 					var address_hash = sha256_digest(address_full);
+					$(nameObserver + ' input.hashfield').val();
 					$('#address_hash').val(address_hash);
 
 					// Check and set the hash ancor icon
@@ -117,6 +123,9 @@ class PlgIrmAppContactcore extends JPlugin
 						<span id="address-hash-verified" class="<?php echo $address_hash_verified? 'green' : 'red'; ?>" style="vertical-align: middle;">
 							<i class="icon-anchor" style="font-size: 17px;"></i> 
 						</span>
+						<span id="b-address-geo-verified-1" class="small-margin-left" style="vertical-align: middle; display: none;">
+							<i class="icon-globe" style="font-size: 18px;"></i>
+						</span>
 					<?php } else { ?>
 						<span id="verified-address" style="vertical-align: middle;">
 							<i class="icon-ok-sign" style="font-size: 18px;"></i>
@@ -143,8 +152,8 @@ class PlgIrmAppContactcore extends JPlugin
 				</div>
 			</div>
 			<div class="widget-body">
-				<div id="core-informations" class="widget-main padding-5">
-					<div id="map-canvas"></div>
+				<div id="map-body" class="widget-main padding-5" style="display:none;">
+					<div id="map-canvas" style="height: 250px; width: 100%;"></div>
 				</div>
 			</div>
 		</div>
