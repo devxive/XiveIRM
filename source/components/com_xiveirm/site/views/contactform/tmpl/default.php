@@ -271,8 +271,8 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 										<input type="hidden" id="address_lat" name="contacts[address_lat]" value="<?php echo $this->item->address_lat; ?>" />
 										<input type="hidden" id="address_lng" name="contacts[address_lng]" value="<?php echo $this->item->address_lng; ?>" />
 									</div>
-									<input type="hidden" id="address_hash" name="contacts[address_hash]" value="<?php echo $this->item->address_hash; ?>" />
 								</div>
+								<input type="hidden" id="address_hash" name="contacts[address_hash]" value="<?php echo $this->item->address_hash; ?>" />
 							</div>
 							
 							<!-- ---------- ---------- ---------- ---------- ---------- BEGIN INCORE-FORM RECOMMENDED FORMFIELDS ---------- ---------- ---------- ---------- ---------- -->
