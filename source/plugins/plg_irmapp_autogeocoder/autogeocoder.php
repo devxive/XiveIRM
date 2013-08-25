@@ -282,40 +282,6 @@ class PlgIrmAppAutogeocoder extends JPlugin
 			$this->acl = NFWAccessHelper::getActions('com_xiveirm', 'category', $item->catid);
 		}
 
-		// Build the input value address
-		$initAddress = '';
-		if(!empty($item->address_name)) {
-			$initAddress .= $item->address_name;
-		}
-		if(!empty($item->address_name_add)) {
-			$initAddress .= ' ' . $item->address_name_add;
-		}
-		if(!empty($item->address_street)) {
-			$initAddress .= ' ' . $item->address_street;
-		}
-		if(!empty($item->address_houseno)) {
-			$initAddress .= ' ' . $item->address_houseno;
-		}
-		if(!empty($item->address_zip)) {
-			$initAddress .= ' ' . $item->address_zip;
-		}
-		if(!empty($item->address_city)) {
-			$initAddress .= ' ' . $item->address_city;
-		}
-		if(!empty($item->address_region)) {
-			$initAddress .= ' ' . $item->address_region;
-		}
-		if(!empty($item->address_country)) {
-			$initAddress .= ' ' . $item->address_country;
-		}
-
-		// Check if we have geo coordinates in db to manipulate the script Declaration or the icon-globe class
-		if($item->address_lat && $item->address_lng) {
-			$address_geo_verified = true;
-		} else {
-			$address_geo_verified = false;
-		}
-
 		ob_start();
 		?>
 		<!---------- Begin output buffering: <?php echo $this->appKey; ?> ---------->
