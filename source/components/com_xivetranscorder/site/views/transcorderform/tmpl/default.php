@@ -67,6 +67,9 @@ $full_name = IRMFormName::formatContactName($contactObject->contact);
 IRMAppHelper::importPlugins('com_xivetranscorder', $this->item->catid);
 $dispatcher = JDispatcher::getInstance();
 
+// Import all PluginApps with onBeforeContent
+$dispatcher->trigger( 'onBeforeContent', array(&$this->item, &$this->params) );
+
 // Check for checked out item
 $checkoutParams = array(
 	'checkoutByOtherTitle' => 'COM_XIVEIRM_CONTACT_FORM_CHECKED_OUT_BY_OTHER_ALERT_ERROR_TITLE',
@@ -461,7 +464,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 				</form>
 
 				<!-- ########## ########## ########## ########## ##########  BEGIN FIRST TRANSPORT  ########## ########## ########## ########## ########## -->
-				<form id="form-transcorder-1">
+				<form id="form-transcorder-1" data-order="1">
 					<div id="torder-1" class="clonedTransport">
 						<div class="widget-box transparent">
 							<div class="widget-header">
@@ -502,12 +505,12 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 																	<input name="transcorders[f_poi_id]" class="select2-poi" id="f_poi_id-1" data-direction="f" data-order="1" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>" />
 																</span>
 															</div>
-	
+
 															<div id="f_address_helper_id-1" class="controls">
 																<input type="text" class="red span12 f_address_helper-1 input-control" id="f_address_helper-1" placeholder="<?php echo JText::_('COM_XIVEIRM_ADDRESS_HELPER'); ?>" data-direction="f" data-order="1" style="border: 1px solid darkorange;" />
 															</div>
-	
-															<div id="f_address_block-1" class="address_block">
+
+															<div id="f_address_block-1" class="address-block" data-direction="f" data-order="1">
 																<div class="controls">
 																	<input type="text" id="f_address_name-1" name="transcorders[f_address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->f_address_name; ?>" />
 																</div>
@@ -542,12 +545,12 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 																	<input name="transcorders[t_poi_id]" class="select2-poi" id="t_poi_id-1" data-direction="t" data-order="1" data-placeholder="<?php echo JText::_('COM_XIVEIRM_FORM_SELECT_POI'); ?>" />
 																</span>
 															</div>
-	
+
 															<div id="t_address_helper_id-1" class="controls">
 																<input type="text" class="red span12 t_address_helper-1 input-control" id="t_address_helper-1" placeholder="<?php echo JText::_('COM_XIVEIRM_ADDRESS_HELPER'); ?>" data-direction="t" data-order="1" style="border: 1px solid darkorange;" />
 															</div>
-	
-															<div id="t_address_block-1" class="address_block">
+
+															<div id="t_address_block-1" class="address-block" data-direction="t" data-order="1">
 																<div class="controls">
 																	<input type="text" id="t_address_name-1" name="transcorders[t_address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->t_address_name; ?>" />
 																</div>
@@ -1037,7 +1040,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 		 */
 		function buildContainer( torderId ) {
 			var htmlOut = '';
-			htmlOut += '<form id=\"form-transcorder-' + torderId + '\">';
+			htmlOut += '<form id=\"form-transcorder-' + torderId + '\"  data-order=\"' + torderId + '\">';
 			htmlOut += '<div id=\"torder-' + torderId + '\" class=\"clonedTransport\" style="display: none;">';
 				htmlOut += '<div class=\"widget-box transparent\">';
 
