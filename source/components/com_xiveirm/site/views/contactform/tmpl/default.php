@@ -207,12 +207,12 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 							<div class="control-group">
 								<label class="control-label"><?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_NAME_LABEL'); ?></label>
 								<div id="name-ext" class="controls controls-row extended">
-									<input type="text" name="contacts[company]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_COMPANY'); ?>" value="<?php echo $this->item->company; ?>">
-									<input type="text" name="contacts[title]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_NAME_TITLE'); ?>" value="<?php echo $this->item->title; ?>">
+									<input type="text" name="contacts[company]" class="input-control span6" id="contact_company_name" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_COMPANY'); ?>" value="<?php echo $this->item->company; ?>">
+									<input type="text" name="contacts[title]" class="input-control span6" id="contact_title" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_NAME_TITLE'); ?>" value="<?php echo $this->item->title; ?>">
 								</div>
 								<div class="controls controls-row">
-									<input type="text" name="contacts[last_name]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_LAST_NAME'); ?>" value="<?php echo $this->item->last_name; ?>" <?php echo empty($this->item->id) ? 'autofocus' : ''; ?>>
-									<input type="text" name="contacts[first_name]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_FIRST_NAME'); ?>" value="<?php echo $this->item->first_name; ?>">
+									<input type="text" name="contacts[last_name]" id="contact_last_name" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_LAST_NAME'); ?>" value="<?php echo $this->item->last_name; ?>" <?php echo empty($this->item->id) ? 'autofocus' : ''; ?>>
+									<input type="text" name="contacts[first_name]" id="contact_first_name" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_FIRST_NAME'); ?>" value="<?php echo $this->item->first_name; ?>">
 								</div>
 							</div>
 							
@@ -223,7 +223,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 								</label>
 								<div class="controls controls-row">
 									<div class="span6">
-										<select name="contacts[gender]" class="select2 input-control" data-placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_SELECT'); ?>" required>
+										<select name="contacts[gender]" class="select2 input-control" id="contact_gender" data-placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_GENDER_SELECT'); ?>" required>
 											<option></option>
 											<?php
 												$options = IRMFormList::getGenderOptions();
@@ -237,7 +237,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 											?>
 										</select>
 									</div>
-									<input type="date" name="contacts[dob]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_DOB'); ?>" value="<?php echo $this->item->dob; ?>" />
+									<input type="date" name="contacts[dob]" class="input-control span6" id="contact_dob" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_TRAIT_DOB'); ?>" value="<?php echo $this->item->dob; ?>" />
 								</div>
 							</div>
 							
@@ -246,7 +246,6 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 									<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_LABEL'); ?>
 									<div id="address-specific-options">
 										<span id="clear-address-icon-helper" class="help-button xpopover btn-danger pull-right" data-placement="top" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CLEAN_ADDRESS_DESC'); ?>" data-original-title="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CLEAN_ADDRESS_TITLE'); ?>" onClick="clearAddress()"<?php echo empty($this->item->id) ? '' : ' style="display:none;"'; ?>>!</span>
-										<span class="help-button btn-warning xpopover pull-right gverifier" data-trigger="hover" data-placement="top" data-content="Click here if you wish to check the address already filled out below" data-original-title="Geo Verification!"<?php echo empty($this->item->id) ? '' : ' style="display:none;"'; ?>>G</span>
 										<span class="icon-custom ep-chart xpopover pull-right easypie-progress" data-percent="100" data-size="21" data-line-width="3" data-animate="1500" data-color="#EBA450" style="top: 2px;" style="display:none;"></span>
 									</div>
 								</label>
@@ -282,12 +281,12 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 										<input type="text" id="address_region" name="contacts[address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->address_region; ?>">
 										<input type="text" id="address_country" name="contacts[address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->address_country; ?>">
 									</div>
-									<div id="geo-coords">
+									<div class="geo-coords">
 										<input type="hidden" id="address_lat" name="contacts[address_lat]" value="<?php echo $this->item->address_lat; ?>" />
 										<input type="hidden" id="address_lng" name="contacts[address_lng]" value="<?php echo $this->item->address_lng; ?>" />
 									</div>
 								</div>
-								<input type="hidden" id="address_hash" name="contacts[address_hash]" value="<?php echo $this->item->address_hash; ?>" />
+								<input type="hidden" id="address_hash" name="contacts[address_hash]" class="hashfield" value="<?php echo $this->item->address_hash; ?>" />
 							</div>
 							
 							<!-- ---------- ---------- ---------- ---------- ---------- BEGIN INCORE-FORM RECOMMENDED FORMFIELDS ---------- ---------- ---------- ---------- ---------- -->
@@ -507,7 +506,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 
 		$(editButton).addClass("btn-warning").button("loading");
 
-		jQuery.post('index.php?option=com_xiveirm&task=api.ajaxcheckout', {'irmapi[id]': $("#customer_cid").val(), 'irmapi[coreapp]': "contacts", <?php echo NFWSession::getToken(); ?>: 1},
+		jQuery.post('index.php?option=com_xiveirm&task=api.ajaxcheckout', {'irmapi[id]': $("#customer_cid").val(), 'irmapi[coreapp]': "contacts", '<?php echo NFWSession::getToken(); ?>': 1},
 			function(data){
 				// console.log(data);
 				if(data.status === true){
