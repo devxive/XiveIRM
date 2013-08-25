@@ -394,7 +394,7 @@ class PlgIrmAppMedicaldetails extends JPlugin
 				<label class="control-label"><?php echo JText::_('PLG_IRMAPP_MEDICALDETAILS_FORM_LBL_NEW_ORDER'); ?></label>
 				<div class="controls">
 					<div class="span11">
-						<select id="selectCatId" class="select2-clearable" data-placeholder="<?php echo JText::_('PLG_IRMAPP_MEDICALDETAILS_FORM_PLEASE_SELECT_TYPE'); ?>" onchange="setCategoryId()">
+						<select id="selectTransportCatId" class="select2-clearable" data-placeholder="<?php echo JText::_('PLG_IRMAPP_MEDICALDETAILS_FORM_PLEASE_SELECT_TYPE'); ?>" onchange="setCategoryId()">
 							<option></option>
 							<?php
 								if($options) {
@@ -410,9 +410,13 @@ class PlgIrmAppMedicaldetails extends JPlugin
 			<script>
 				function setCategoryId() {
 					// Get value from select list and set catid in form "frm-new-order"
-					var catId = jQuery("#selectCatId").val();
-					jQuery("#setInputCatId").val(catId);
-					document.getElementById("frm-new-order").submit();
+					var transportCatId = jQuery("#selectTransportCatId").val();
+					var transportContactId = jQuery("#form-contact  #customer_cid").val();
+
+					// Set the values
+					jQuery("#create-new-transport-order #setInputCatId").val(transportCatId);
+					jQuery("#create-new-transport-order #setInputContactId").val(transportContactId);
+					document.getElementById("create-new-transport-order").submit();
 				};
 			</script>
 		</div>
@@ -579,10 +583,10 @@ class PlgIrmAppMedicaldetails extends JPlugin
 		?>
 
 		<?php if(JFactory::getUser()->authorise('core.create','com_xivetranscorder')): ?>
-			<form id="frm-new-order" action="<?php echo JRoute::_('index.php?option=com_xivetranscorder&task=transcorderform.edit'); ?>">
+			<form id="create-new-transport-order" action="<?php echo JRoute::_('index.php?option=com_xivetranscorder&task=transcorderform.edit'); ?>">
 				<input type="hidden" name="id" value="0">
-				<input type="hidden" name="catid" id="setInputCatId" value="0">
-				<input type="hidden" name="contactid" value="<?php echo $this->contactId; ?>">
+				<input type="hidden" name="catid" id="setInputCatId" value>
+				<input type="hidden" name="contactid" id="setInputContactId" value="<?php echo $this->contactId; ?>">
 			</form>
 		<?php endif; ?>
 
