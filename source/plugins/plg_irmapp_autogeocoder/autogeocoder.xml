@@ -2,7 +2,7 @@
 <extension version="3.1" type="plugin" group="irmapp" method="upgrade">
 	<name>plg_irmapp_autogeocoder</name>
 	<author>devXive</author>
-	<creationDate>May 2013</creationDate>
+	<creationDate>2013-08-25</creationDate>
 	<copyright>(C) 1997 - 2013 devXive - research and development. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>support@devxive.com</authorEmail>
@@ -12,6 +12,7 @@
 	<files>
 		<filename plugin="autogeocoder">autogeocoder.php</filename>
 		<filename>index.html</filename>
+		<folder>assets</folder>
 	</files>
 	<languages folder="language">
 		<language tag="en-GB">en-GB/en-GB.plg_irmapp_autogeocoder.ini</language>

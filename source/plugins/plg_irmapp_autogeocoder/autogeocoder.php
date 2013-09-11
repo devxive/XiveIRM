@@ -60,43 +60,11 @@ class PlgIrmAppAutogeocoder extends JPlugin
 
 		// Set the script
 		$script = "
-			function callbackCodeAddress(results) {
-				if (results === 'ZERO_RESULTS') {
-					alertify.alert('<div class=\"modal-header\"><h3>Address verification failed!</h3></div><div class=\"modal-body\">Sorry, we can\'t verify the address you typed in! Please try the following:<ul><li>You have to type in a house number</li><li>Try to type in similar words for street or city</li><li>Try to type in the state or the country</li><li>Try to check the address on google maps</li></ul></div>');
-					return false;
-				}
-
-				var nameObserver = '.address-block[data-direction=\"' + results[0].transport.direction + '\"][data-order=\"' + results[0].transport.order + '\"]';
-
-				$(nameObserver + ' input[id*=\"address_street\"]').val(results[0].input_address.address_street);
-				$(nameObserver + ' input[id*=\"address_houseno\"]').val(results[0].input_address.address_houseno);
-				$(nameObserver + ' input[id*=\"address_zip\"]').val(results[0].input_address.address_zip);
-				$(nameObserver + ' input[id*=\"address_city\"]').val(results[0].input_address.address_city);
-				$(nameObserver + ' input[id*=\"address_region\"]').val(results[0].input_address.address_region);
-				$(nameObserver + ' input[id*=\"address_country\"]').val(results[0].input_address.address_country);
-
-				if( results[0].geometry.coords.lat && results[0].geometry.coords.lng && results[0].geometry.location_type === 'ROOFTOP') {
-					alertify.success('<i class=\"icon-globe\"></i> Valid address found!');
-					$('#b-address-geo-verified-1').addClass('green').removeClass('red');
-					$(nameObserver + ' input[id*=\"address_lat\"]').val(results[0].geometry.coords.lat);
-					$(nameObserver + ' input[id*=\"address_lng\"]').val(results[0].geometry.coords.lng);
-				} else {
-					alertify.warning = alertify.extend('warning');
-					alertify.warning('<i class=\"icon-globe red\"></i> There are only approximate geo coordinations for the given address. Pleasy try to type in more informations!');
-					$('#b-address-geo-verified-1').addClass('red').removeClass('green');
-					$(nameObserver + ' input[id*=\"address_lat\"]').val('');
-					$(nameObserver + ' input[id*=\"address_lng\"]').val('');
-				}
-
-				window.aaAutoGeocoder = results;
-			}
-
-
 			/*
 			 * Function to get the item cid (db id of the core item we are in. Should always ends --regex selector $-- with _cid)
 			 */
 			function getItemId() {
-				var itemId = jQuery('input[id$=_cid]').val();
+				var itemId = jQuery('form[data-order=\"1\"] input[id*=\"_cid-\"]').val();
 				if( itemId && itemId > 0 ) {
 					return itemId;
 				} else {
@@ -109,157 +77,32 @@ class PlgIrmAppAutogeocoder extends JPlugin
 			 * Global ready function
 			 */
 			jQuery(document).ready(function() {
-				/*
-				 * Checking section if we should or should not display any further options
-				 */
-				// If its an existing contact we have to hide the geocoder fields
+				// Do something on ajax success function
+				$(document).ajaxSuccess(function() {
+					// Do something on ajax success function
+				});
+
+				// Available for existing items
 				if( getItemId() ) {
-					$('#geocode-progress, #address_auto_geocoder').hide();
+					// Render the Map Route if estimated values are set else, show BIG verify button
+					var singleRoute = getRoute(1);
+					$('#map-body').addClass('widget-main').addClass('padding-5');
 
-					// Check for lat lng values, set the icon color and init the map
-					var iconLatLng = getAddress('b', 1);
-					if( iconLatLng.address_lat && iconLatLng.address_lng ) {
-						$('#b-address-geo-verified-1').show().addClass('green').removeClass('red');
+					if( singleRoute.estimated_time && singleRoute.estimated_distance ) {
+						$('#map-canvas').height('250px').width('100%');
 
-						// Initialize map with existing latlng (initLat, initLng, initZoom, initMarker)
-						$('#map-body').show();
-						initialize(iconLatLng.address_lat, iconLatLng.address_lng, 17, true);
+						renderRoute( singleRoute );
 					} else {
-						$('#b-address-geo-verified-1').show().addClass('red').removeClass('green');
-
-						// Initialize map on document ready function (initLat, initLng, initZoom, initMarker)
-						$('#map-body').show();
-						initialize(0, 0, 1, false);
+						var htmlButton = '<a onClick=\"verifyRoute( getRoute(1) )\" id=\"verifyroutebutton\" class=\"btn btn-large btn-block\" style=\"font-size: 200%;\">';
+							htmlButton += '<i class=\"icon-compass icon-spin\"></i> Verify Route';
+						htmlButton += '</a>';
+						$('#map-canvas').html(htmlButton);
 					}
 				} else {
-					$('#b-address-geo-verified-1').fadeIn(2500);
-					$('#b-address-geo-verified-1').show().addClass('red').removeClass('green');
-
-					// Initialize map on document ready function (initLat, initLng, initZoom, initMarker)
-					$('#map-body').show();
-					initialize(50, 9, 4, false);
-
-					// Show the geocoder field and the counter
-					$('.address_auto_geocoder, .easypie-progress').fadeIn('slow', function() {
-						$('.easypie-progress.ep-chart').data('easyPieChart').update(100);
-					});
-
 				}
-
-				// If user click edit button, we have to show the input field and graphical stuff
-				$('#loading-btn-edit').click(function() {
-					$(document).ajaxSuccess(function() {
-						$('.address_auto_geocoder, .easypie-progress').fadeIn('slow', function() {
-							$('.easypie-progress.ep-chart').data('easyPieChart').update(100);
-						});
-					});
-				});
-
-				// If user click update/save button, we have to hide the input field and graphical stuff
-				$('#loading-btn-save').click(function() {
-					$(document).ajaxSuccess(function() {
-						$('.address_auto_geocoder, .easypie-progress').hide();
-					});
-				});
-
-
-
-				// ##################### START OF TRIGGERED EVENTS TO THE GEOCODING PROCESS #########################
-				var timeoutId;
-
-				// Triggered on every change in the auto geocoder input field but only if its focused (this.value determines the actual field)
-				$('.address_auto_geocoder input').focus(function() {
-					// Get the direction and order position
-					var ownDirection = $(this).parents('.address-block').data('direction');
-					var ownOrder = $(this).parents('.address-block').data('order');
-					var nameObserver = '.address-block[data-direction=\"' + ownDirection + '\"][data-order=\"' + ownOrder + '\"]';
-
-					$(nameObserver + ' .geocode-input-helptext').slideToggle();
-
-					$(this).on('inputchange', function() {
-						window.clearTimeout(timeoutId);
-						var addressValue = $(nameObserver + ' .address_auto_geocoder input').val();
-
-						// Trigger only if at least 5 digits typed in
-						if( addressValue.length > 5 ) {
-							timeoutId = window.timeoutId = setTimeout(function() {
-								codeAddress(addressValue, ownDirection, ownOrder);
-							}, 1500);
-
-							// If anything in this field has changed play with the animation
-							$('.easypie-progress.ep-chart').data('easyPieChart').update(100);
-							$('.easypie-progress.ep-chart').data('easyPieChart').update(0);
-						}
-					});
-				}).focusout(function() {
-					// Get the direction and order position
-					var ownDirection = $(this).parents('.address-block').data('direction');
-					var ownOrder = $(this).parents('.address-block').data('order');
-					var nameObserver = '.address-block[data-direction=\"' + ownDirection + '\"][data-order=\"' + ownOrder + '\"]';
-
-					$(nameObserver + ' .geocode-input-helptext').slideToggle();
-				});
-
-
-				// Triggered on every change in the inner-address-block (this.value determines the actual field)
-				$('.inner-address-block input').on('inputchange', function() {
-					window.clearTimeout(timeoutId);
-
-					// Get the direction and order position
-					var ownDirection = $(this).parents('.address-block').data('direction');
-					var ownOrder = $(this).parents('.address-block').data('order');
-					var nameObserver = '.address-block[data-direction=\"' + ownDirection + '\"][data-order=\"' + ownOrder + '\"]';
-
-					// try workaround to could change the housenumber. we have to remove the latlng if houseno is removed and add cecks below: if houseno is empty, remove latlng, in check below: if all set houseno >= 0 and latlng empty then trigger new
-					var checkHouseNo = $(nameObserver + ' input[id*=\"address_houseno\"]').val();
-					if( !checkHouseNo ) {
-						$(nameObserver + ' input[id*=\"address_lat\"]').val('');
-						$(nameObserver + ' input[id*=\"address_lng\"]').val('');
-					}
-
-					var latHelp = $(nameObserver + ' input[id*=\"address_lat\"]').val(),
-					lngHelp = $(nameObserver + ' input[id*=\"address_lng\"]').val();
-					if(  !latHelp && !lngHelp ) {
-						var latlngHelper = true;
-					}
-
-					// Prevent double trigger if above function is used
-					var addressValue = $(nameObserver + ' .address_auto_geocoder input').val();
-					if( addressValue.length > 0 ) {
-						return;
-					} else {
-						// Get the address values from appropriate dir and order, returned as string
-						var address = getAddress(ownDirection, ownOrder);
-
-						timeoutId = window.timeoutId = setTimeout(function() {
-							// Send address values to codeAddress function to get a coded address in the callbackCodeAddress function above that do all the magic
-							if(
-								(address.address_street !== '' && address.address_street.length >= 3 &&
-								address.address_houseno !== '' && address.address_houseno.length >= 1 &&
-								address.address_zip !== '' && address.address_zip.length >= 4 &&
-								address.address_city === '')
-							||
-								(address.address_street !== '' && address.address_street.length >= 3 &&
-								address.address_houseno !== '' && address.address_houseno.length >= 1 &&
-								address.address_zip === '' &&
-								address.address_city !== '' && address.address_city.length >= 2)
-							||
-								(address.address_street !== '' && address.address_street.length >= 3 &&
-								address.address_zip !== '' && address.address_zip.length >= 4 &&
-								address.address_city !== '' && address.address_city.length >= 2) && (address.address_houseno.length >= 0 && latlngHelper)
-							) {
-									codeAddress(address.string_name, ownDirection, ownOrder);
-							}
-						}, 1500);
-
-						$('.easypie-progress.ep-chart').data('easyPieChart').update(100);
-						$('.easypie-progress.ep-chart').data('easyPieChart').update(0);
-					}
-				});
 			});
 		";
 		JFactory::getDocument()->addScriptDeclaration($script);
-
 	}
 
 
@@ -286,8 +129,6 @@ class PlgIrmAppAutogeocoder extends JPlugin
 		?>
 		<!---------- Begin output buffering: <?php echo $this->appKey; ?> ---------->
 
-		<a onClick="clearMarker()">clicky</a>
-
 		<!---------- End output buffering: <?php echo $this->appKey; ?> ---------->
 		<?php
 
@@ -299,6 +140,73 @@ class PlgIrmAppAutogeocoder extends JPlugin
 		);
 
 		return $inMasterContainer;
+	}
+
+
+	/**
+	 * Method to inject a tab with form fields to extend the core form. The position of this tab is the same as the buttons, based on the plugin position.
+	 *
+	 * @param     object    &$item      The item referenced object which includes the system id of this contact
+	 * @param     object    &$params    The params referenced object
+	 *
+	 * @return    array                 Array with the $appKey, the $html data for rendering and the $tabButton to show at the top.
+	 *                                  tabButton - Use either a name and/or a translatable string with or without an icon
+	 *
+	 * @since     6.0
+	 */
+	public function htmlBuildTab( &$item = null, &$params = null )
+	{
+		$googleMapIcon = '/plugins/irmapp/autogeocoder/assets/img/googlemaps-icon.png';
+
+		ob_start();
+		?>
+		<script>
+			/*
+			 * Render map on the large tab view
+			 */
+			var mapClickCounter = 0;
+			jQuery('.autogeocoder_tabbutton').click(function() {
+				if( mapClickCounter == 0 ) {
+					renderRouteDirection('tabmap-canvas', 1, 'direction-canvas');
+				}
+				mapClickCounter++;
+			});
+		</script>
+
+		<!---------- Begin output buffering: <?php echo $this->appKey; ?> ---------->
+
+		<div class="row-fluid">
+			<div class="span7">
+				<div id="tabmap-canvas" style="height: 500px; width: 100%;"></div>
+			</div>
+			<div class="span5">
+				<div id="direction-canvas" class="googlemap" style="width: 100%;"></div>
+			</div>
+
+			<div class="hr"></div>
+
+			<center>
+				<span class="help-button xpopover" data-trigger="hover" data-placement="top" data-content="Informations given here are used in other applications, such as the despatching app => order form. Use this as help to minimize inputs during remaining phone orders." data-original-title="Info about cross referencing!"><i class="icon-random"></i></span>
+			</center>
+		</div>
+
+		<!---------- End output buffering: <?php echo $this->appKey; ?> ---------->
+
+		<?php
+		$html = ob_get_clean();
+
+		// Create the tabbed button
+		$tabButton = '<img src="' . $googleMapIcon . '" style="height: 15px; margin-top: -2px;"> ' . JText::_('Google Maps');
+
+		$eventArray = array(
+			'appKey'    => $this->appKey,
+			'tabButton' => $tabButton,
+			'tabBody'   => $html
+		);
+
+		if ( $item->id ) {
+			return $eventArray;
+		}
 	}
 }
 ?>
