@@ -149,7 +149,7 @@ class IRMAppHelper
 		}
 
 		$plugins = self::getPlugins($app, $catid);
-
+		
 		foreach( $plugins as $plugin ) {
 			JPluginHelper::importPlugin( $plugin->folder, $plugin->plugin );
 		}

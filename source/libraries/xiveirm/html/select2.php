@@ -247,7 +247,7 @@ abstract class IRMHtmlSelect2
 						$('#' + dataDirection + '_address_block-' + dataOrder + ' .input-control').attr('readonly', false);
 
 						// Clear the input fields
-						$('#' + dataDirection + '_address_block-' + dataOrder + ' input').val('');
+//						$('#' + dataDirection + '_address_block-' + dataOrder + ' input').val('');
 						$('#' + dataDirection + '_address_lat-' + dataOrder).val('');
 						$('#' + dataDirection + '_address_lng-' + dataOrder).val('');
 						$('#' + dataDirection + '_address_hash-' + dataOrder).val('');
