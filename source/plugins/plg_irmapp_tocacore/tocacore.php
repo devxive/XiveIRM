@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     IRM.Plugin
- * @subpackage  IRMApp.contactcore
+ * @subpackage  IRMApp.tocacore
  *
  * @copyright   Copyright (C) 1997 - 2013 devXive - research and development. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -9,14 +9,7 @@
 
 defined('JPATH_BASE') or die;
 
-/**
- * An example custom profile plugin.
- *
- * @package     IRM.Plugin
- * @subpackage  IRMApp.contactcore
- * @since       6.0
- */
-class PlgIrmAppContactcore extends JPlugin
+class PlgIrmAppTocacore extends JPlugin
 {
 	/**
 	 * Stores the app name
@@ -33,7 +26,7 @@ class PlgIrmAppContactcore extends JPlugin
 	{
 		parent::__construct($subject, $config);
 
-		$this->appKey = 'contactcore';
+		$this->appKey = 'tocacore';
 		$this->loadLanguage();
 
 	}
@@ -61,44 +54,20 @@ class PlgIrmAppContactcore extends JPlugin
 		NFWHtmlJavascript::detectChanges();
 		$script = "
 			jQuery(document).ready(function() {
-				var hashInitial = $('#address_hash').val(),
-				cId = $('#customer_cid').val();
+				// Date-Time Observer
+				var datetimeTimeout;
+				$('input[name*=\"date\"], input[name*=\"time\"]').on('inputchange', function() {
+					// Get the order position and usher
+					var ownOrder = $(this).parents('form').data('order');
+
+					window.clearTimeout(datetimeTimeout);
+					datetimeTimeout = window.datetimeTimeout = setTimeout(function() {
+						checkFormatTime( ownOrder );
+					}, 500);
+				});
 
 				// Triggered on every change in the inner-address-block (this.value determines the actual field)
 				$('.inner-address-block input').on('inputchange', function() {
-					// Get the direction and order position
-					var ownDirection = $(this).parents('.address-block').data('direction');
-					var ownOrder = $(this).parents('.address-block').data('order');
-					var nameObserver = '.address-block[data-direction=\"' + ownDirection + '\"][data-order=\"' + ownOrder + '\"]';
-
-					// Get the live var on every change
-					var address_name     = ( $('#address_name').val() )     ? $('#address_name').val()     : '';
-					var address_name_add = ( $('#address_name_add').val() ) ? $('#address_name_add').val() : '';
-					var address_street   = ( $('#address_street').val() )   ? $('#address_street').val()   : '';
-					var address_houseno  = ( $('#address_houseno').val() )  ? $('#address_houseno').val()  : '';
-					var address_zip      = ( $('#address_zip').val() )      ? $('#address_zip').val()      : '';
-					var address_city     = ( $('#address_city').val() )     ? $('#address_city').val()     : '';
-					var address_region   = ( $('#address_region').val() )   ? $('#address_region').val()   : '';
-					var address_country  = ( $('#address_country').val() )  ? $('#address_country').val()  : '';
-
-					var address_full = address_name + address_name_add + address_street + address_houseno + address_zip + address_city + address_region + address_country;
-
-					// Hashing the values
-					var address_hashEmpty = sha256_digest('');
-					var address_hash = sha256_digest(address_full);
-					$(nameObserver + ' input.hashfield').val();
-					$('#address_hash').val(address_hash);
-
-					// Check and set the hash ancor icon
-					if( address_hash != '' && address_hash != address_hashEmpty ) {
-						if( cId > 0 && hashInitial != address_hash ) {
-							$('#address-hash-verified').removeClass('green').addClass('red');
-						} else {
-							$('#address-hash-verified').removeClass('red').addClass('green');
-						}
-					} else {
-						$('#address-hash-verified').removeClass('green').addClass('red');
-					}
 				});
 			});
 		";
@@ -108,52 +77,64 @@ class PlgIrmAppContactcore extends JPlugin
 		?>
 		<!---------- Begin output buffering: <?php echo $this->appKey; ?> ---------->
 
-		<div class="widget-box light-border small-margin-top">
-			<div class="widget-header header-color-dark">
-				<h5 class="smaller">Core Widget</h5>
+		<div class="widget-box widget-box-tabapps light-border small-margin-top">
+			<div class="widget-header blue">
+				<h5 class="smaller">Toolbar</h5>
  				<div class="widget-toolbar">
-					<span id="address-hash-verified" class="" style="vertical-align: middle;">
-						<i class="icon-anchor" style="font-size: 17px;"></i> 
-					</span>
-					<span id="b-address-geo-verified-1" class="small-margin-left" style="vertical-align: middle; display: none;">
-						<i class="icon-globe" style="font-size: 18px;"></i>
-					</span>
+					<label>
+						<span class="btn-group">
+							<a href="javascript:alert('Refresh: In sandbox not available at present')" class="link-control btn btn-mini btn-light"><i class="icon-refresh icon-only"></i></a>
+							<a href="javascript:alert('PrintPDF: In sandbox not available at present');" class="link-control btn btn-mini btn-light"><i class="icon-print icon-only"></i></a>
+							<a href="javascript:alert('DocUpload: In sandbox not available at present');" class="link-control btn btn-mini btn-light"><i class="icon-cloud-upload icon-only"></i></a>
+							<a href="javascript:alert('ShareIt: In sandbox not available at present');" class="link-control btn btn-mini btn-light"><i class="icon-share-alt icon-only"></i></a>
+						</span>
+					</label>
 	 			</div>
 			</div>
 			<div class="widget-body">
-				<div id="core-informations" class="widget-main padding-5">
-					<div id="short_info_block" class="alert alert-warning center extended">
+				<div id="core-informations" class="widget-main padding-5 extended">
+					<div id="short_info_block" class="alert alert-warning center">
 						<small>
 							<?php
 								if($item->created && $item->created != '0000-00-00 00:00:00') {
-									echo JText::sprintf( 'PLG_IRMAPP_CONTACTCORE_CREATED_ON', date(JText::_('DATE_FORMAT_LC2'), strtotime($item->created)) ) . '<br>';
+									echo JText::sprintf( 'PLG_IRMAPP_TOCACORE_CREATED_ON', date(JText::_('DATE_FORMAT_LC2'), strtotime($item->created)) ) . '<br>';
 								}
 								if($item->modified && $item->modified != '0000-00-00 00:00:00') {
-									echo JText::sprintf('PLG_IRMAPP_CONTACTCORE_LAST_MODIFIED_ON_BY', date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)), NFWUser::getName($item->modified_by));
+									echo JText::sprintf('PLG_IRMAPP_TOCACORE_LAST_MODIFIED_ON_BY', date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)), NFWUser::getName($item->modified_by));
 								} else {
-									echo JText::_('PLG_IRMAPP_CONTACTCORE_NOT_MODIFIED');
+									echo JText::_('PLG_IRMAPP_TOCACORE_NOT_MODIFIED');
 								}
 							?>
 						</small>
 					</div>
 				</div>
-			</div>
-			<div class="widget-body">
-				<div id="map-body" class="widget-main padding-5" style="display:none;">
-					<div id="map-canvas" style="height: 250px; width: 100%;"></div>
+
+				<div id="map-body">
+					<div id="map-canvas"></div>
+				</div>
+
+				<div id="order-body" class="widget-main padding-5">
+					<div id="order-canvas"><center class="alert alert-info">No similar orders detected!</center></div>
+				</div>
+
+				<div id="icon-descriptions" class="widget-main padding-5 extended small-margin-bottom center grey">
+					<span class="xpopover margin-right" data-original-title="Geocoder Verification" data-content="Color based service availability:<br><i class='icon-globe green'></i> Full geo coordinates<br><i class='icon-globe orange'></i> Partially geo coordinates<br><i class='icon-globe red'></i> No geo coordinates<br><small>Geo service works only in full mode.</small>" data-placement="top">
+						<i class="icon-globe"></i> 
+					</span>
+					<span class="xpopover margin-right" data-original-title="Hash Verification" data-content="Color based service availability:<br><i class='icon-anchor green'></i> Full address hashes<br><i class='icon-globe orange'></i> Partially address hashes<br><i class='icon-anchor red'></i> No address hashes<br><small>Hash service works only in full mode.</small>" data-placement="top">
+						<i class="icon-anchor"></i> 
+					</span>
+					<span class="xpopover margin-right" data-original-title="<?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_ESTIMATED_TIME'); ?>" data-content="If available, the estimated duration of the route is displayed." data-placement="top">
+						<i class="icon-time"></i>
+					</span>
+					<span class="xpopover margin-right" data-original-title="<?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_ESTIMATED_DISTANCE'); ?>" data-content="If available, the estimated distance of the route is displayed." data-placement="top">
+						<i class="icon-road"></i>
+					</span>
+					<span class="xpopover" data-original-title="<?php echo JText::_('COM_XIVETRANSCORDER_FORM_LBL_TRANSCORDER_ORDER_ID'); ?>" data-content="If set, an order id based on the date of execution is displayed. Note: This is not a system id." data-placement="top">
+						<span>#</span>
+					</span>
 				</div>
 			</div>
-		</div>
-		<div id="icon-descriptions" class="extended small-margin-top center">
-			<span class="xpopover margin-right" data-original-title="Geocoder Verification" data-content="<i class='icon-globe red'></i> No verified Geo-Coordinates<br><i class='icon-globe green'></i> Verified Geo-Coordinates" data-placement="top">
-				<i class="icon-globe"></i> 
-			</span>
-			<span class="xpopover margin-right" data-original-title="Hash Verification" data-content="<i class='icon-anchor red'></i> Not Hashed Geolocation<br><i class='icon-anchor green'></i> Hashed Geolocation" data-placement="top">
-				<i class="icon-anchor"></i> 
-			</span>
-			<span class="xpopover" data-original-title="Verified Address" data-content="This address is verified by the System. You can not edit this item because all of its values are proofed! If you wish do fit values to your own, you have to copy it!" data-placement="top">
-				<i class="icon-ok-sign"></i>
-			</span>
 		</div>
 
 		<!---------- End output buffering: <?php echo $this->appKey; ?> ---------->
