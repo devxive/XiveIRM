@@ -16,10 +16,9 @@ NFWHtmlJavascript::setTooltip( '.xtooltip' );
 NFWHtmlJavascript::setPopover( '.xpopover', array('html' => true) );
 NFWHtmlJavascript::setPreventFormSubmitByKey();
 NFWHtmlJavascript::loadAlertify();
-NFWHtmlJavascript::setPreventFormLeaveIfChanged('#form-contact');
+// NFWHtmlJavascript::setPreventFormLeaveIfChanged('#form-contact');
 NFWHtmlJavascript::loadBootbox('.bootbox');
 IRMHtmlSelect2::init('.select2');
-NFWHtmlJavascript::loadEasyPie('.ep-chart', false, false);
 
 //Load admin language file
 $lang = JFactory::getLanguage();
@@ -111,7 +110,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 	?>
 	<!-- ---------- ---------- ---------- ---------- ---------- END CHECK_OUT MESSAGE ---------- ---------- ---------- ---------- ---------- -->
 
-	<form id="form-contact" class="form-validate form-horizontal">
+	<form id="form-contact" class="form-validate form-horizontal" data-order="1">
 
 		<!-- ---------- ---------- ---------- ---------- ---------- BEGIN MASTER_TAP_PANE_PLUGINSTYLED ---------- ---------- ---------- ---------- ---------- -->
 		<div class="tabbable">
@@ -241,52 +240,38 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 								</div>
 							</div>
 							
-							<div class="control-group address-block" data-direction="b" data-order="1">
+							<div class="control-group address-block">
 								<label class="control-label">
 									<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_LABEL'); ?>
-									<div id="address-specific-options">
-										<span id="clear-address-icon-helper" class="help-button xpopover btn-danger pull-right" data-placement="top" data-content="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CLEAN_ADDRESS_DESC'); ?>" data-original-title="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_CLEAN_ADDRESS_TITLE'); ?>" onClick="clearAddress()"<?php echo empty($this->item->id) ? '' : ' style="display:none;"'; ?>>!</span>
-										<span class="icon-custom ep-chart xpopover pull-right easypie-progress" data-percent="100" data-size="21" data-line-width="3" data-animate="1500" data-color="#EBA450" style="top: 2px;" style="display:none;"></span>
-									</div>
 								</label>
 
-								<div class="controls controls-row address_auto_geocoder" style="display:none;">
-									<div class="alert" style="padding: 8px !important; margin-bottom: 10px;">
-										<input type="text" class="input-control span12 red" placeholder="Type in: Street HouseNo, City, State, Country" style="margin: 0 !important; float: none;" />
-										<div class="center geocode-input-helptext" style="margin-top: 10px; display: none;">
-											<small>
-												Type in here the address the geocoder should find and validate. This can take up to 5 seconds!<br>
-												<em><strong>Please note that this field will not save its values!</strong></em>
-											</small>
+								<div class="address-block" data-direction="b">
+									<div class="inner-address-block">
+										<div class="controls extended">
+											<input type="text" id="address_name" name="contacts[address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->address_name; ?>">
 										</div>
+										<div class="controls extended">
+											<input type="text" id="address_name_add" name="contacts[address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->address_name_add; ?>">
+										</div>
+										<div class="controls controls-row">
+											<input type="text" id="address_street" name="contacts[address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->address_street; ?>">
+											<input type="text" id="address_houseno" name="contacts[address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->address_houseno; ?>">
+										</div>
+										<div class="controls controls-row">
+											<input type="text" id="address_zip" name="contacts[address_zip]" class="input-control span4" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->address_zip; ?>">
+											<input type="text" id="address_city" name="contacts[address_city]" class="input-control span8" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->address_city; ?>">
+										</div>
+										<div class="controls controls-row extended">
+											<input type="text" id="address_region" name="contacts[address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->address_region; ?>">
+											<input type="text" id="address_country" name="contacts[address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->address_country; ?>">
+										</div>
+										<div class="geo-coords">
+											<input type="hidden" id="address_lat" name="contacts[address_lat]" value="<?php echo $this->item->address_lat; ?>" />
+											<input type="hidden" id="address_lng" name="contacts[address_lng]" value="<?php echo $this->item->address_lng; ?>" />
+										</div>
+										<input type="hidden" id="address_hash" name="contacts[address_hash]" class="hashfield" value="<?php echo $this->item->address_hash; ?>" />
 									</div>
 								</div>
-
-								<div class="inner-address-block">
-									<div class="controls extended">
-										<input type="text" id="address_name" name="contacts[address_name]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME'); ?>" maxlength="150" value="<?php echo $this->item->address_name; ?>">
-									</div>
-									<div class="controls extended">
-										<input type="text" id="address_name_add" name="contacts[address_name_add]" class="input-control span12" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_NAME_ADD'); ?>" maxlength="100" value="<?php echo $this->item->address_name_add; ?>">
-									</div>
-									<div class="controls controls-row">
-										<input type="text" id="address_street" name="contacts[address_street]" class="input-control span9" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_STREET'); ?>" maxlength="100" value="<?php echo $this->item->address_street; ?>">
-										<input type="text" id="address_houseno" name="contacts[address_houseno]" class="input-control span3" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_HOUSENO'); ?>" maxlength="10" value="<?php echo $this->item->address_houseno; ?>">
-									</div>
-									<div class="controls controls-row">
-										<input type="text" id="address_zip" name="contacts[address_zip]" class="input-control span4" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_ZIP'); ?>" maxlength="10" value="<?php echo $this->item->address_zip; ?>">
-										<input type="text" id="address_city" name="contacts[address_city]" class="input-control span8" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_CITY'); ?>" maxlength="100" value="<?php echo $this->item->address_city; ?>">
-									</div>
-									<div class="controls controls-row extended">
-										<input type="text" id="address_region" name="contacts[address_region]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_REGION'); ?>" value="<?php echo $this->item->address_region; ?>">
-										<input type="text" id="address_country" name="contacts[address_country]" class="input-control span6" placeholder="<?php echo JText::_('COM_XIVEIRM_CONTACT_FORM_ADDRESS_COUNTRY'); ?>" value="<?php echo $this->item->address_country; ?>">
-									</div>
-									<div class="geo-coords">
-										<input type="hidden" id="address_lat" name="contacts[address_lat]" value="<?php echo $this->item->address_lat; ?>" />
-										<input type="hidden" id="address_lng" name="contacts[address_lng]" value="<?php echo $this->item->address_lng; ?>" />
-									</div>
-								</div>
-								<input type="hidden" id="address_hash" name="contacts[address_hash]" class="hashfield" value="<?php echo $this->item->address_hash; ?>" />
 							</div>
 							
 							<!-- ---------- ---------- ---------- ---------- ---------- BEGIN INCORE-FORM RECOMMENDED FORMFIELDS ---------- ---------- ---------- ---------- ---------- -->
@@ -403,7 +388,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 				?>
 				<!-- ---------- ---------- ---------- ---------- ---------- END TAB.PLUGINS_CONTENT ---------- ---------- ---------- ---------- ---------- -->
 
-				<input type="hidden" name="contacts[id]" id="customer_cid" value="<?php echo isset($this->item->id) ? $this->item->id : '0'; ?>" />
+				<input type="hidden" name="contacts[id]" id="contact_cid" value="<?php echo isset($this->item->id) ? $this->item->id : '0'; ?>" />
 				<input type="hidden" name="contacts[created_by]" value="<?php echo isset($this->item->created_by) ? $this->item->created_by : NFWUser::getId(); ?>" />
 
 				<?php echo IRMHtmlBuilder::getClientId($this->item->client_id, $options = array('name' => 'contacts[client_id]')); ?>
@@ -450,6 +435,8 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 </div>
 
 <script>
+	<?php require_once(__DIR__ . '/addressjshelper.php'); ?>
+
 	function clearAddress() {
 		jQuery('#inner-address-block input').val('');
 	}
@@ -462,51 +449,61 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 		}
 	});
 
-	jQuery(function(){
-		$("#form-contact").submit(function(e){
-			e.preventDefault();
 
-			// Add the button loading style to prevent clicks on save
-			$("#loading-btn-save").addClass("btn-warning").button("loading");
-
-			$.post('index.php?option=com_xiveirm&task=api.ajaxsave', $("#form-contact").serialize(),
-			function(data){
-				console.log(data);
-				if(data.status === true){
-					// Throw out the message
-					alertify.success('<i class="icon-check"></i> <?php echo isset($this->item->id) ? JText::_('Successfully updated') : JText::_('Successfully saved'); ?>');
-
-					// Set the id for the customer to work with further
-					$("#customer_cid").val(data.id);
-
-					// Activate the edit button, activate the .link-control, disable all input fields, disable save form buttons and icon address helper
-					$("#loading-btn-edit").fadeIn().button("complete").button("reset");
-					$(".link-control").attr("disabled", false);
-					$("#form-contact .input-control").attr("disabled", true).trigger("liszt:updated");
-					$("#form-buttons, #clear-address-icon-helper").hide();
-
-					// Reset the save button for edit again
-					$("#loading-btn-save").removeClass("btn-warning").button("complete").button("reset");
-
-					<?php if(!$this->item->catid) { ?>
-						window.location.href = "<?php echo JRoute::_('index.php?task=contactform.edit&id='); ?>" + data.id;
-					<?php } ?>
-
-				} else {
-					alertify.error('<i class="icon-warning-sign"></i> Error code: ' + data.code + '<br><br>error message: ' + data.message + '<br><br>If this error persists, please contact the support immediately with the given error!');
-					// Remove the warning and add the error style button
-					$("#loading-btn-save").removeClass("btn-warning").button("error").addClass("btn-danger");
-				}
-			}, "json");
-		});
+	jQuery("#loading-btn-save").click(function(e){
+		e.preventDefault();
+		saveCheck();
 	});
+
+//	jQuery(function(){
+//		$("#form-contact").submit(function(e){
+//			e.preventDefault();
+//			saveCheck();
+//		});
+//	});
+
+
+	function saveForm() {
+		// Add the button loading style to prevent clicks on save
+		$("#loading-btn-save").addClass("btn-warning").button("loading");
+
+		$.post('index.php?option=com_xiveirm&task=api.ajaxsave', $("#form-contact").serialize(),
+		function(data){
+			console.log(data);
+			if(data.status === true){
+				// Throw out the message
+				alertify.success('<i class="icon-check"></i> <?php echo isset($this->item->id) ? JText::_('Successfully updated') : JText::_('Successfully saved'); ?>');
+
+				// Set the id for the customer to work with further
+				$("#contact_cid").val(data.id);
+
+				// Activate the edit button, activate the .link-control, disable all input fields, disable save form buttons and icon address helper
+				$("#loading-btn-edit").fadeIn().button("complete").button("reset");
+				$(".link-control").attr("disabled", false);
+				$("#form-contact .input-control").attr("disabled", true).trigger("liszt:updated");
+				$("#form-buttons, #clear-address-icon-helper").hide();
+
+				// Reset the save button for edit again
+				$("#loading-btn-save").removeClass("btn-warning").button("complete").button("reset");
+
+				<?php if(!$this->item->catid || !$this->item->id) { ?>
+					window.location.href = "<?php echo JRoute::_('index.php?task=contactform.edit&id='); ?>" + data.id;
+				<?php } ?>
+
+			} else {
+				alertify.error('<i class="icon-warning-sign"></i> Error code: ' + data.code + '<br><br>error message: ' + data.message + '<br><br>If this error persists, please contact the support immediately with the given error!');
+				// Remove the warning and add the error style button
+				$("#loading-btn-save").removeClass("btn-warning").button("error").addClass("btn-danger");
+			}
+		}, "json");
+	}
 
 	$("#loading-btn-edit").click(function() {
 		var editButton = this;
 
 		$(editButton).addClass("btn-warning").button("loading");
 
-		jQuery.post('index.php?option=com_xiveirm&task=api.ajaxcheckout', {'irmapi[id]': $("#customer_cid").val(), 'irmapi[coreapp]': "contacts", '<?php echo NFWSession::getToken(); ?>': 1},
+		jQuery.post('index.php?option=com_xiveirm&task=api.ajaxcheckout', {'irmapi[id]': $("#contact_cid").val(), 'irmapi[coreapp]': "contacts", '<?php echo NFWSession::getToken(); ?>': 1},
 			function(data){
 				// console.log(data);
 				if(data.status === true){
