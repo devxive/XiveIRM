@@ -64,48 +64,22 @@ class PlgIrmAppContactcore extends JPlugin
 			$address_hash_verified = false;
 		}
 
+		// Check if we have hash values in db to manipulate the script Declaration or the icon-globe class
+		if( $item->address_hash && $item->address_hash != hash('sha256', '') ) {
+			$address_geo_verified = true;
+		} else {
+			$address_geo_verified = false;
+		}
+
 		NFWPluginsSha256::loadSHA256();
 		NFWHtmlJavascript::detectChanges();
 		$script = "
 			jQuery(document).ready(function() {
-				var hashInitial = $('#address_hash').val(),
-				cId = $('#customer_cid').val();
-
 				// Triggered on every change in the inner-address-block (this.value determines the actual field)
-				$('.inner-address-block input').on('inputchange', function() {
-					// Get the direction and order position
-					var ownDirection = $(this).parents('.address-block').data('direction');
-					var ownOrder = $(this).parents('.address-block').data('order');
-					var nameObserver = '.address-block[data-direction=\"' + ownDirection + '\"][data-order=\"' + ownOrder + '\"]';
-
-					// Get the live var on every change
-					var address_name     = ( $('#address_name').val() )     ? $('#address_name').val()     : '';
-					var address_name_add = ( $('#address_name_add').val() ) ? $('#address_name_add').val() : '';
-					var address_street   = ( $('#address_street').val() )   ? $('#address_street').val()   : '';
-					var address_houseno  = ( $('#address_houseno').val() )  ? $('#address_houseno').val()  : '';
-					var address_zip      = ( $('#address_zip').val() )      ? $('#address_zip').val()      : '';
-					var address_city     = ( $('#address_city').val() )     ? $('#address_city').val()     : '';
-					var address_region   = ( $('#address_region').val() )   ? $('#address_region').val()   : '';
-					var address_country  = ( $('#address_country').val() )  ? $('#address_country').val()  : '';
-
-					var address_full = address_name + address_name_add + address_street + address_houseno + address_zip + address_city + address_region + address_country;
-
-					// Hashing the values
-					var address_hashEmpty = sha256_digest('');
-					var address_hash = sha256_digest(address_full);
-					$(nameObserver + ' input.hashfield').val();
-					$('#address_hash').val(address_hash);
-
-					// Check and set the hash ancor icon
-					if( address_hash != '' && address_hash != address_hashEmpty ) {
-						if( cId > 0 && hashInitial != address_hash ) {
-							$('#address-hash-verified').removeClass('green').addClass('red');
-						} else {
-							$('#address-hash-verified').removeClass('red').addClass('green');
-						}
-					} else {
-						$('#address-hash-verified').removeClass('green').addClass('red');
-					}
+				$('.inner-address-block input').on('keyup', function() {
+					$('#address_hash').val('');
+					$('#address_lat').val('');
+					$('#address_lng').val('');
 				});
 			});
 		";
@@ -120,10 +94,10 @@ class PlgIrmAppContactcore extends JPlugin
 				<h5 class="smaller">Core Widget</h5>
  				<div class="widget-toolbar">
 					<?php if(!$item->address_system_checked) { ?>
-						<span id="address-hash-verified" class="<?php echo $address_hash_verified? 'green' : 'red'; ?>" style="vertical-align: middle;">
+						<span id="address-hash-verified" class="<?php echo $address_hash_verified ? 'green' : 'red'; ?>" style="vertical-align: middle;">
 							<i class="icon-anchor" style="font-size: 17px;"></i> 
 						</span>
-						<span id="b-address-geo-verified-1" class="small-margin-left" style="vertical-align: middle; display: none;">
+						<span id="address-geo-verified" class="small-margin-left <?php echo $address_geo_verified ? 'green' : 'red'; ?>" style="vertical-align: middle; display: none;">
 							<i class="icon-globe" style="font-size: 18px;"></i>
 						</span>
 					<?php } else { ?>
@@ -180,46 +154,6 @@ class PlgIrmAppContactcore extends JPlugin
 		);
 
 		return $inMasterContainer;
-	}
-
-
-	/**
-	 * @param   object	&$item		The item referenced object which includes the system id of this contact
-	 *
-	 * @return  array			appKey = The tab identification, tabContent = Content of the Container
-	 *
-	 * @since   3.0
-	 */
-	public function htmlBuildWidgetBottom( &$item = null, &$params = null )
-	{
-//		$plzUrl = 'http://www.postdirekt.de/plzserver/PlzSearchServlet?app=miniapp&amp;w=350&amp;h=315&amp;fr=0&amp;frc=000000&amp;bg=FFFFFF&amp;hl2=A5A5A5&amp;fc=000000&amp;lc=000000&amp;ff=Arial&amp;fs=10&amp;lnc=000000&amp;hdc=000000&amp;app=miniapp&amp;loc=http%3A//plzkarte.com/plz-suche/';
-		$plzUrl = 'http://www.postdirekt.de/plzserver/PlzSearchServlet?app=miniapp&fr=0&bg=FFF&hl2=FC0&fc=000&lc=000000&ff=Verdana&fs=10&lnc=000000&hdc=000000';
-
-		ob_start();
-		?>
-		<!---------- Begin output buffering: <?php echo $this->appKey; ?> ---------->
-
-		<div class="extended">
-			<div id="zip-search-widget" class="widget-body-inner span12">
-				<div class="widget-header" style="background: url(/images/system/widgets/logo_deutschepost.png) 95% 40% no-repeat #FC0; height: 31px;"></div>
-				<div class="widget-main">
-					<iframe id="plzsifr" name="plzsifr" src="<?php echo $plzUrl; ?>" class="span12" style="height:315px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" vspace="0"></iframe>
-				</div>
-			</div>
-			<div class="clearfix"></div>
-		</div>
-
-		<!---------- End output buffering: <?php echo $this->appKey; ?> ---------->
-		<?php
-
-		$html = ob_get_clean();
-
-		$inMasterContainer = array(
-			'appKey' => $this->appKey,
-			'html' => $html
-		);
-
-//		return $inMasterContainer;
 	}
 }
 ?>
