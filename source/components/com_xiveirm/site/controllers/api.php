@@ -238,7 +238,7 @@ class XiveirmControllerApi extends XiveirmController
 							// Nothing in here. May we could delete app value item from db
 						}
 					} else {
-						self::closeOnError(1100, 'Controller: Please Note: You have insufficient permissions to save the <strong>' . $coreApp . ' (' . $tabApp->plugin . '-datas)</strong>! Please contact the support or your administrator to get further informations!');
+						self::closeOnError(1101, 'Controller: Please Note: You have insufficient permissions to save the <strong>' . $coreApp . ' (' . $tabApp->plugin . '-datas)</strong>! Please contact the support or your administrator to get further informations!');
 					}
 				}
 			} else {
