@@ -63,8 +63,8 @@ class PlgIrmAppAutogeocoder extends JPlugin
 			/*
 			 * Function to get the item cid (db id of the core item we are in. Should always ends --regex selector $-- with _cid)
 			 */
-			function getItemId() {
-				var itemId = jQuery('form[data-order=\"1\"] input[id*=\"_cid-\"]').val();
+			function getOrderId() {
+				var itemId = jQuery('form[data-order=\"1\"] input[id*=\"order_cid\"]').val();
 				if( itemId && itemId > 0 ) {
 					return itemId;
 				} else {
@@ -72,6 +72,14 @@ class PlgIrmAppAutogeocoder extends JPlugin
 				}
 			}
 
+			function getContactId() {
+				var itemId = jQuery('form[data-order=\"1\"] input[id*=\"contact_cid\"]').val();
+				if( itemId && itemId > 0 ) {
+					return itemId;
+				} else {
+					return false;
+				}
+			}
 
 			/*
 			 * Global ready function
@@ -83,7 +91,7 @@ class PlgIrmAppAutogeocoder extends JPlugin
 				});
 
 				// Available for existing items
-				if( getItemId() ) {
+				if( getOrderId() ) {
 					// Render the Map Route if estimated values are set else, show BIG verify button
 					var singleRoute = getRoute(1);
 					$('#map-body').addClass('widget-main').addClass('padding-5');
@@ -92,6 +100,28 @@ class PlgIrmAppAutogeocoder extends JPlugin
 						$('#map-canvas').height('250px').width('100%');
 
 						renderRoute( singleRoute );
+					} else {
+						var htmlButton = '<a onClick=\"verifyRoute( getRoute(1) )\" id=\"verifyroutebutton\" class=\"btn btn-large btn-block\" style=\"font-size: 200%;\">';
+							htmlButton += '<i class=\"icon-compass icon-spin\"></i> Verify Route';
+						htmlButton += '</a>';
+						$('#map-canvas').html(htmlButton);
+					}
+				} else {
+				}
+
+				// Available for existing items
+				if( getContactId() ) {
+					$('#address-geo-verified').show();
+
+					// Render the Map Address if LatLng values are set
+					var addr = getAddress( 1, 'b' );
+
+					if( addr.address_lat && addr.address_lng ) {
+						$('#map-body').addClass('widget-main').addClass('padding-5');
+						$('#map-body').show();
+						$('#map-canvas').height('250px').width('100%');
+
+						initialize(addr.address_lat, addr.address_lng, 15, true);
 					} else {
 						var htmlButton = '<a onClick=\"verifyRoute( getRoute(1) )\" id=\"verifyroutebutton\" class=\"btn btn-large btn-block\" style=\"font-size: 200%;\">';
 							htmlButton += '<i class=\"icon-compass icon-spin\"></i> Verify Route';
@@ -156,56 +186,59 @@ class PlgIrmAppAutogeocoder extends JPlugin
 	 */
 	public function htmlBuildTab( &$item = null, &$params = null )
 	{
-		$googleMapIcon = '/plugins/irmapp/autogeocoder/assets/img/googlemaps-icon.png';
+		// Only show Google Map Tab on XiveTOCA
+		if ( JRequest::getVar('option') == 'com_xivetranscorder' ) {
+			$googleMapIcon = '/plugins/irmapp/autogeocoder/assets/img/googlemaps-icon.png';
 
-		ob_start();
-		?>
-		<script>
-			/*
-			 * Render map on the large tab view
-			 */
-			var mapClickCounter = 0;
-			jQuery('.autogeocoder_tabbutton').click(function() {
-				if( mapClickCounter == 0 ) {
-					renderRouteDirection('tabmap-canvas', 1, 'direction-canvas');
-				}
-				mapClickCounter++;
-			});
-		</script>
+			ob_start();
+			?>
+			<script>
+				/*
+				 * Render map on the large tab view
+				 */
+				var mapClickCounter = 0;
+				jQuery('.autogeocoder_tabbutton').click(function() {
+					if( mapClickCounter == 0 ) {
+						renderRouteDirection('tabmap-canvas', 1, 'direction-canvas');
+					}
+					mapClickCounter++;
+				});
+			</script>
 
-		<!---------- Begin output buffering: <?php echo $this->appKey; ?> ---------->
+			<!---------- Begin output buffering: <?php echo $this->appKey; ?> ---------->
 
-		<div class="row-fluid">
-			<div class="span7">
-				<div id="tabmap-canvas" style="height: 500px; width: 100%;"></div>
+			<div class="row-fluid">
+				<div class="span7">
+					<div id="tabmap-canvas" style="height: 500px; width: 100%;"></div>
+				</div>
+				<div class="span5">
+					<div id="direction-canvas" class="googlemap" style="width: 100%;"></div>
+				</div>
+
+				<div class="hr"></div>
+
+				<center>
+					<span class="help-button xpopover" data-trigger="hover" data-placement="top" data-content="Informations given here are used in other applications, such as the despatching app => order form. Use this as help to minimize inputs during remaining phone orders." data-original-title="Info about cross referencing!"><i class="icon-random"></i></span>
+				</center>
 			</div>
-			<div class="span5">
-				<div id="direction-canvas" class="googlemap" style="width: 100%;"></div>
-			</div>
 
-			<div class="hr"></div>
+			<!---------- End output buffering: <?php echo $this->appKey; ?> ---------->
 
-			<center>
-				<span class="help-button xpopover" data-trigger="hover" data-placement="top" data-content="Informations given here are used in other applications, such as the despatching app => order form. Use this as help to minimize inputs during remaining phone orders." data-original-title="Info about cross referencing!"><i class="icon-random"></i></span>
-			</center>
-		</div>
+			<?php
+			$html = ob_get_clean();
 
-		<!---------- End output buffering: <?php echo $this->appKey; ?> ---------->
+			// Create the tabbed button
+			$tabButton = '<img src="' . $googleMapIcon . '" style="height: 15px; margin-top: -2px;"> ' . JText::_('Google Maps');
 
-		<?php
-		$html = ob_get_clean();
+			$eventArray = array(
+				'appKey'    => $this->appKey,
+				'tabButton' => $tabButton,
+				'tabBody'   => $html
+			);
 
-		// Create the tabbed button
-		$tabButton = '<img src="' . $googleMapIcon . '" style="height: 15px; margin-top: -2px;"> ' . JText::_('Google Maps');
-
-		$eventArray = array(
-			'appKey'    => $this->appKey,
-			'tabButton' => $tabButton,
-			'tabBody'   => $html
-		);
-
-		if ( $item->id ) {
-			return $eventArray;
+			if ( $item->id ) {
+				return $eventArray;
+			}
 		}
 	}
 }

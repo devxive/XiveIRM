@@ -24,7 +24,7 @@ the specific language governing permissions and limitations under the devXive Li
 	/* 
 	 * Function to check wether or not if all sets are ok. This is the main to check for everything!
 	 */
-	function geoSolver( order, copyCheck ) {
+	function geoSolver( order, copyCheck, returnedCheckBack ) {
 		// set validRouteAddresses to true, they will be overwritten by the addr_latlng check below (prevents the execution of the verifyRoute function until both are valid)
 		var validRouteAddresses = true,
 		    checkBack = {},
@@ -51,7 +51,11 @@ the specific language governing permissions and limitations under the devXive Li
 				checkBack.direction = tocaQuery.directions[i];
 
 				setTimeout(function() {
-					verifyAddress( checkBack, copyCheck );
+					if( dirHelper === 'ROUTE' ) {
+						verifyAddress( checkBack, copyCheck );
+					} else {
+						verifySingleAddress( checkBack );
+					}
 				}, 500);
 				break;
 			}
@@ -92,12 +96,146 @@ the specific language governing permissions and limitations under the devXive Li
 				}
 			} else {
 				// ##### SINGLE ADDRESS #####
-				console.log('Weiter zum Speichern');
-
-				// Goto saveCheck function for trashing the orderKey/position/id...
-			//	saveCheck( order );
+				// Goto back to saveCheck function determine its all ok
+				if( returnedCheckBack ) {
+					saveCheck( returnedCheckBack );
+				} else {
+					saveCheck( true );
+				}
 			}
 		}
+	}
+
+
+	function setGeoIcon( order, route ) {
+		var usher = getUsher ( order, null );
+
+		if( (route.origin.address_lat && route.origin.address_lng) && (route.destination.address_lat && route.destination.address_lng) ) {
+			jQuery(usher.order + ' span.geo-icon').removeClass('btn-danger').removeClass('btn-warning').addClass('btn-success');
+		} else if( (route.origin.address_lat && route.origin.address_lng) || (route.destination.address_lat && route.destination.address_lng) ) {
+			jQuery(usher.order + ' span.geo-icon').removeClass('btn-danger').removeClass('btn-success').addClass('btn-warning');
+		} else {
+			jQuery(usher.order + ' span.geo-icon').removeClass('btn-warning').removeClass('btn-success').addClass('btn-danger');
+		}
+	}
+
+
+
+
+	/*******************************************
+			Map Functions
+	*******************************************/
+	/*
+	 * Funtion to verify the address right from the gmap3 source code to catch and validate address components and also the geo latlng
+	 */
+	function verifySingleAddress( checkBack ) {
+		alertify.log('<i class="icon-globe icon-large"></i> Checking Home address...');
+
+		$('#map-canvas').gmap3({
+			getlatlng: {
+				address: checkBack.address.string_name,
+				callback: function(results, status) {
+					if( status == google.maps.GeocoderStatus.OK ) {
+						var addressHelper = {},
+						    addressArray  = {};
+
+						var geometry = results[0].geometry,
+						    position = geometry.location,
+						    address  = results[0].address_components;
+
+						 var   positions = results[0].geometry.location
+
+						// Format latlng and reject to object
+						var posCounter = 0, posHelper = {};
+						for ( var i in positions ) {
+							if( i.match(/^.b$/) ) {
+								posHelper[posCounter] = positions[i];
+								posCounter++;
+							}
+						}
+
+						// Set the lat (from Format latlng and reject to object)
+						addressArray.address_lat = posHelper[0];
+						// Set the lng (from Format latlng and reject to object)
+						addressArray.address_lng = posHelper[1];
+
+						// Preformat the new address, we need to throw in input fields and for address comparison
+						jQuery.each(address, function(key, val) {
+							$.each(val.types, function(key2, val2) {
+								addressHelper[val2] = val.long_name;
+							});
+						});
+						// Set the street ( route ) if given
+						addressArray.address_street = (addressHelper.route) ? addressHelper.route : '';
+						// Set the street ( street_number ) if given
+						addressArray.address_houseno = (addressHelper.street_number) ? addressHelper.street_number : '';
+						// Set the zip ( postal_code ) if given
+						addressArray.address_zip = (addressHelper.postal_code) ? addressHelper.postal_code : '';
+						// Set the city ( locality, political ) if given
+						addressArray.address_city = (addressHelper.locality) ? addressHelper.locality : '';
+						// Set the region ( administrative_area_level_1, political ) if given
+						addressArray.address_region = (addressHelper.administrative_area_level_1) ? addressHelper.administrative_area_level_1 : '';
+						// Set the country ( country, political ) if given
+						addressArray.address_country = (addressHelper.country) ? addressHelper.country : '';
+
+						// Add new address
+						checkBack.newAddress = addressArray;
+
+						// Compare addresses
+						var comparisonCheck = compareAddress( checkBack.address, addressArray, checkBack.direction );
+						if( comparisonCheck != true ) {
+							alertify.set({
+								buttonFocus : 'none'
+							});
+							alertify.confirm(comparisonCheck, function(e) {
+								if( e ) {
+									// User click ok
+									setNewAddress( checkBack.order, checkBack.direction, addressArray, true );
+
+									// Show Map with new Address
+									jQuery('#map-body').show();
+									initialize(addressArray.address_lat, addressArray.address_lng, 15, true);
+
+									// Set GeoCoder Icon
+									jQuery('#address-geo-verified').removeClass('red').removeClass('orange').addClass('green').show();
+
+									// Move back to the solver
+									saveCheck( checkBack );
+								} else {
+									// User click cancel inject 0 as geopos for latLng to prevent further checks
+									checkBack.address.address_lat = 0;
+									checkBack.address.address_lng = 0;
+									setNewAddress( checkBack.order, checkBack.direction, checkBack.address, false );
+
+									// Hide Map
+									jQuery('#map-body').fadeOut();
+
+									// Set GeoCoder Icon
+									jQuery('#address-geo-verified').removeClass('red').removeClass('green').addClass('orange').show();
+
+									// Do nothing, because user may want to edit the address again
+									return;
+								}
+							});
+						} else {
+							setNewCoordinates( checkBack.order, checkBack.direction, addressArray );
+
+							// Set GeoCoder Icon
+							jQuery('#address-geo-verified').removeClass('red').removeClass('orange').addClass('green').show();
+
+							setTimeout(function() {
+								saveCheck( checkBack );
+							}, 500);
+						}
+					} else {
+						alertify.error( '<i class=\"icon-warning-sign icon-large\"></i> Transport: ' + checkBack.order + ' An error occured on geocoding. May the service is temporary unavailable. Automatic retry in 30 seconds!' );
+						setTimeout(function() {
+							geoSolver( checkBack.order, copyCheck );
+						}, 30000);
+					}
+				}
+			}
+		});
 	}
 
 
@@ -162,6 +300,9 @@ the specific language governing permissions and limitations under the devXive Li
 						// Set the country ( country, political ) if given
 						addressArray.address_country = (addressHelper.country) ? addressHelper.country : '';
 
+						// Add new address
+						checkBack.newAddress = addressArray;
+
 						// Compare addresses
 						var comparisonCheck = compareAddress( checkBack.address, addressArray, checkBack.direction );
 						if( comparisonCheck != true ) {
@@ -174,7 +315,7 @@ the specific language governing permissions and limitations under the devXive Li
 									setNewAddress( checkBack.order, checkBack.direction, addressArray );
 
 									// Move back to the solver
-									geoSolver( checkBack.order, copyCheck );
+									geoSolver( checkBack.order, copyCheck, checkBack );
 								} else {
 									// User click cancel inject 0 as geopos for latLng to prevent further checks
 									checkBack.address.address_lat = 0;
@@ -182,13 +323,13 @@ the specific language governing permissions and limitations under the devXive Li
 									setNewAddress( checkBack.order, checkBack.direction, checkBack.address );
 
 									// Move back to the solver
-									geoSolver( checkBack.order, copyCheck );
+									geoSolver( checkBack.order, copyCheck, checkBack );
 								}
 							});
 						} else {
 							setNewCoordinates( checkBack.order, checkBack.direction, addressArray );
 							setTimeout(function() {
-								geoSolver( checkBack.order, copyCheck );
+								geoSolver( checkBack.order, copyCheck, checkBack );
 							}, 500);
 						}
 					} else {
@@ -281,16 +422,85 @@ the specific language governing permissions and limitations under the devXive Li
 	}
 
 
-	function setGeoIcon( order, route ) {
-		var usher = getUsher ( order, null );
+	function visualVerifyAddress(addr, direction, order) {
+		$('#map-canvas').gmap3({
+			getlatlng: {
+				address: addr,
+				callback: function(results, status) {
+					if( status == google.maps.GeocoderStatus.OK ) {
+						// Adding direction and order to results
+						var transport = {direction: direction, order: order};
+						results[0].transport = transport;
 
-		if( (route.origin.address_lat && route.origin.address_lng) && (route.destination.address_lat && route.destination.address_lng) ) {
-			jQuery(usher.order + ' span.geo-icon').removeClass('btn-danger').removeClass('btn-warning').addClass('btn-success');
-		} else if( (route.origin.address_lat && route.origin.address_lng) || (route.destination.address_lat && route.destination.address_lng) ) {
-			jQuery(usher.order + ' span.geo-icon').removeClass('btn-danger').removeClass('btn-success').addClass('btn-warning');
-		} else {
-			jQuery(usher.order + ' span.geo-icon').removeClass('btn-warning').removeClass('btn-success').addClass('btn-danger');
-		}
+						var geometry = results[0].geometry,
+						position     = geometry.location,
+						address      = results[0].address_components;
+
+						// Format latlng and reject to object
+						var posCounter = 0, posHelper = new Object();
+						jQuery.each(results[0].geometry.location, function(key, val) {
+							if( key.match(/^.b$/) ) {
+								posHelper[posCounter] = val;
+								posCounter++;
+							}
+						});
+						results[0].geometry.coords = {lat: posHelper[0], lng: posHelper[1]};
+
+						// Preformat the new address, we need to throw in input fields
+						var addressHelper = new Object();
+						var address = results[0].address_components;
+						jQuery.each(address, function(key, val) {
+							$.each(val.types, function(key2, val2) {
+								addressHelper[val2] = val.long_name;
+							});
+						});
+						var addressArray = new Object();
+						// Set the street ( route ) if given
+						addressArray.address_street = (addressHelper.route) ? addressHelper.route : '';
+						// Set the street ( street_number ) if given
+						addressArray.address_houseno = (addressHelper.street_number) ? addressHelper.street_number : '';
+						// Set the zip ( postal_code ) if given
+						addressArray.address_zip = (addressHelper.postal_code) ? addressHelper.postal_code : '';
+						// Set the city ( locality, political ) if given
+						addressArray.address_city = (addressHelper.locality) ? addressHelper.locality : '';
+						// Set the region ( administrative_area_level_1, political ) if given
+						addressArray.address_region = (addressHelper.administrative_area_level_1) ? addressHelper.administrative_area_level_1 : '';
+						// Set the country ( country, political ) if given
+						addressArray.address_country = (addressHelper.country) ? addressHelper.country : '';
+						results[0]['input_address'] = addressArray;
+
+						// Clear the last and set the new marker
+						$(this).gmap3({
+							clear:{
+								name:['marker'],
+								last: true
+							},
+							marker:{
+								values:[
+									{latLng: position}
+								],
+								options:{
+									animation: google.maps.Animation.BOUNCE
+								}
+							},
+							map:{
+								options:{
+									center: position,
+									zoom: 17
+								}
+							}
+						});
+
+						// Throw the callback
+						callbackCodeAddress(results);
+					} else {
+						console.log('Geocode was not successful for the following reason: ' + status);
+						// Throw the callback
+						callbackCodeAddress(status);
+					}
+				}
+			}
+		});
 	}
 
 
@@ -298,20 +508,31 @@ the specific language governing permissions and limitations under the devXive Li
 
 
 	/*******************************************
-			Map Functions
+			Render Map Functions
 	*******************************************/
-	// Function to initialise the map with optional marker and a rendered address
 	function initialize(initLat, initLng, initZoom, initMarker) {
+		// Clear the marker if initMarker == false
+		jQuery('#map-canvas').gmap3({
+			clear:{
+				name:['marker'],
+				last: true
+			}
+		});
+
 		jQuery('#map-canvas').gmap3({
 			marker:{
-				latLng: (initMarker) ? [initLat, initLng] : false
+				latLng: (initMarker) ? [initLat, initLng] : false,
+				options:{
+					animation: google.maps.Animation.BOUNCE
+				}
+
 			},
 			map:{
 				options: {
 					zoom                   : initZoom,
 					center                 : [initLat, initLng],
 					mapTypeId              : google.maps.MapTypeId.ROADMAP,
-					draggable              : true,
+					draggable              : false,
 					scrollwheel            : false,
 					disableDefaultUI       : true,
 					disableDoubleClickZoom : true
@@ -319,7 +540,7 @@ the specific language governing permissions and limitations under the devXive Li
 			}
 		});
 
-		// Clear the marker if initMarker == false or not set
+		// Clear the marker if initMarker == false
 		if (!initMarker) {
 			jQuery('#map-canvas').gmap3({
 				clear:{
@@ -370,105 +591,6 @@ the specific language governing permissions and limitations under the devXive Li
 			});
 		}
 	}
-
-
-	// Function to render a address and get back an object with formatted values. Also renders the new point on the map
-	function renderAddress_OLD(mapSelector, addr, direction, order) {
-		$('#' + mapSelector).gmap3({
-			getlatlng: {
-				address: addr,
-				callback: function(results, status) {
-					if( status == google.maps.GeocoderStatus.OK ) {
-						// Adding direction and order to results
-						var transport = {direction: direction, order: order};
-						results[0].transport = transport;
-
-						var geometry = results[0].geometry,
-						position     = geometry.location,
-						address      = results[0].address_components;
-
-						// Format latlng and reject to object
-						var posCounter = 0, posHelper = {};
-						jQuery.each(results[0].geometry.location, function(key, val) {
-							if( key.match(/^.b$/) ) {
-								posHelper[posCounter] = val;
-								posCounter++;
-							}
-						});
-						results[0].geometry.coords = {lat: posHelper[0], lng: posHelper[1]};
-
-						// Preformat the new address, we need to throw in input fields
-						var addressHelper = {};
-						jQuery.each(address, function(key, val) {
-							$.each(val.types, function(key2, val2) {
-								addressHelper[val2] = val.long_name;
-							});
-						});
-
-						var addressArray = {};
-						// Set the street ( route ) if given
-						addressArray.address_street = (addressHelper.route) ? addressHelper.route : '';
-						// Set the street ( street_number ) if given
-						addressArray.address_houseno = (addressHelper.street_number) ? addressHelper.street_number : '';
-						// Set the zip ( postal_code ) if given
-						addressArray.address_zip = (addressHelper.postal_code) ? addressHelper.postal_code : '';
-						// Set the city ( locality, political ) if given
-						addressArray.address_city = (addressHelper.locality) ? addressHelper.locality : '';
-						// Set the region ( administrative_area_level_1, political ) if given
-						addressArray.address_region = (addressHelper.administrative_area_level_1) ? addressHelper.administrative_area_level_1 : '';
-						// Set the country ( country, political ) if given
-						addressArray.address_country = (addressHelper.country) ? addressHelper.country : '';
-						results[0].input_address = addressArray;
-
-						// Clear the last and set the new marker
-						$(this).gmap3({
-							clear:{
-								name:['marker'],
-								last: true
-							},
-							marker:{
-								values:[
-									{latLng: position}
-								],
-								options:{
-									animation: google.maps.Animation.BOUNCE
-								}
-							},
-							map:{
-								options:{
-									center: position,
-									zoom: 17
-								}
-							}
-						});
-
-						// Throw the callback
-						callbackCodeAddress(results);
-					} else {
-						console.log('Geocode was not successful for the following reason: ' + status);
-						// Throw the callback
-						callbackCodeAddress(status);
-					}
-				}
-			}
-		});
-	}
-
-
-
-
-
-
-
-
-	/*******************************************
-			Render Map Functions
-	*******************************************/
-
-
-
-
-
 
 
 	/*
