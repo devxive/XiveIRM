@@ -173,4 +173,47 @@ class IRMItemHelper
 
 		return $results;
 	}
+
+
+	/*
+	 * Method to calcutale the time based on total of seconds.
+	 *
+	 * @since 6.1
+	 */
+	public function translateDuration($duration)
+	{
+		$time = new stdClass();
+		$timeOut = '';
+
+		$time->hours = floor($duration / 3600);
+		$time->minutes = floor( ($duration / 60) % 60);
+		$time->seconds = floor($duration % 60);
+
+		if ( $time->seconds >= 30 ) {
+			$time->minutes = $time->minutes + 1;
+		}
+
+		if ( $time->hours != 0 ) {
+			$timeOut .= $time->hours . ' ' . JText::_('COM_XIVEIRM_HOURS') . ' & ';
+		}
+
+		if ( $time->minutes != 0 ) {
+			$timeOut .= $time->minutes . ' ' . JText::_('COM_XIVEIRM_MINUTES');
+		}
+
+		return $timeOut;
+	}
+
+	/*
+	 * Method to calculate the distance based on total of meters.
+	 *
+	 * @since 6.1
+	 */
+	public function translateDistance($distance)
+	{
+		$formattedDistance = number_format( ($distance / 1000), 2, ',', '.') . ' ' . JText::_('COM_XIVEIRM_KM');
+
+		return $formattedDistance;
+	}
+
 }
