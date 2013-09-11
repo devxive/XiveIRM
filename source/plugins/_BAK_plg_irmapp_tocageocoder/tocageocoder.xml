@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.1" type="plugin" group="irmapp" method="upgrade">
+	<name>plg_irmapp_tocageocoder</name>
+	<author>devXive</author>
+	<creationDate>2013-08-25</creationDate>
+	<copyright>(C) 1997 - 2013 devXive - research and development. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>support@devxive.com</authorEmail>
+	<authorUrl>www.devxive.com</authorUrl>
+	<version>6.0.0</version>
+	<description>PLG_IRMAPP_TOCAGEOCODER_XML_DESC</description>
+	<files>
+		<filename plugin="tocageocoder">tocageocoder.php</filename>
+		<filename>index.html</filename>
+		<folder>assets</folder>
+	</files>
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.plg_irmapp_tocageocoder.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_irmapp_tocageocoder.sys.ini</language>
+	</languages>
+	<config>
+		<fields name="params">
+
+			<fieldset name="basic">
+
+			</fieldset>
+		</fields>
+	</config>
+</extension>
