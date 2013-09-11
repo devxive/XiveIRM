@@ -31,7 +31,6 @@
 		<folder>models</folder>
 		<folder>controllers</folder>
 		<folder>helpers</folder>
-		<folder>assets</folder>
 	</files>
 
 	<languages folder="site">
