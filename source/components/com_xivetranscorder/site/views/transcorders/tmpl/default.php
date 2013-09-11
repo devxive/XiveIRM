@@ -11,16 +11,13 @@ defined('_JEXEC') or die;
 
 $app = JFactory::getApplication();
 
-// Import HTML and Helper Classes
-nimport('NHtml.JavaScript');
-nimport('NHtml.DataTables');
-nimport('NItem.Helper', false);
+IRMComponentHelper::loadLanguage();
 
-NHtmlJavaScript::setAutoRemove();
-NHtmlJavaScript::setToggle('extended', 'toggleExtend');
-NHtmlJavaScript::setTooltip('.xtooltip');
-NHtmlJavaScript::setPopover('.xpopover');
-NHtmlJavaScript::loadMoment();
+NFWHtmlJavascript::setAutoRemove();
+NFWHtmlJavascript::setToggle('extended', 'toggleExtend');
+NFWHtmlJavascript::setTooltip('.xtooltip');
+NFWHtmlJavascript::setPopover('.xpopover');
+NFWHtmlJavascript::loadMoment();
 
 // Init the dataTable
 $tableParams = '
@@ -60,7 +57,7 @@ $tableParams = '
 //	"aaSorting": [[1, 'asc']]
 
 
-NHtmlDataTables::loadDataTable('table_contacts', $tableParams, true);
+NFWHtmlDatatables::loadDataTable('table_contacts', $tableParams, true);
 
 // Load the XiveIRMSystem Session Data (Performed by the XiveIRM System Plugin)
 $xsession = JFactory::getSession()->get('XiveIRMSystem');
@@ -70,20 +67,7 @@ $filter = $app->getUserState('com_xiveirm.contacts.filter');
 $filter_global = isset($filter['global']) ? $filter['global'] : null;
 $filter_catid = isset($filter['catid']) ? $filter['catid'] : null;
 $filter_pdk = isset($filter['pdk']) ? $filter['pdk'] : null;
-
-
-	$menuId = JFactory::getApplication()->input->getCmd('Itemid', '');
-
-	echo '<pre>Current $menuId = ';
-	print_r($menuId);
-	echo '</pre>';
 ?>
-<script>
-// Set the classes that TableTools uses to something suitable for Bootstrap
-jQuery(function() {
-});
-</script>
-
 <div class="row-fluid">
 	<div class="header smaller lighter green">
 		<h1>
@@ -93,7 +77,7 @@ jQuery(function() {
 				<span><?php echo JText::_('COM_XIVETRANSCORDER_ORDER_LIST_TODAY'); ?></span>
 			<?php } else if($filter_catid) { ?>
 				<span><?php echo JText::_('COM_XIVETRANSCORDER_ORDER_LIST_CAT'); ?></span>
-				<?php echo NItemHelper::getTitleById('category', $filter_catid); ?>
+				<?php echo NFWItemHelper::getTitleById('category', $filter_catid); ?>
 			<?php } else if($filter_pdk) { ?>
 				<span><span class="hidden-phone"><?php echo JText::_('COM_XIVEIRM_CONTACT_LIST_CONTACTS_FILTER_PDK'); ?></span> <?php echo JText::_('COM_XIVEIRM_CONTACT_LIST_CONTACTS_FILTER_' . strtoupper($filter_pdk)); ?></span>
 			<?php } else if($filter_global) { ?>
@@ -115,25 +99,16 @@ jQuery(function() {
 				<div class="pull-right">
 					<?php if( JFactory::getUser()->authorise('core.create','com_xivetranscorder') && JFactory::getUser()->authorise('core.delete','com_xivetranscorder') ): ?>
 						<form action="<?php echo JRoute::_('index.php?option=com_xivetranscorder&task=transcorderform.edit'); ?>" class="inline">
-							<?php NHtmlJavaScript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
+							<?php NFWHtmlJavascript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 							<div class="input-xlarge">
 								<select name="catid" class="chzn-select-category" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_NEW_CONTACT'); ?>" onchange="this.form.submit()">
 									<option value=""></option>
 									<?php
-										$options = IRMSystem::getListOptions('categories', false, 'com_xivetranscorder.transcorders');
-										if($options->client) {
-											echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
-												foreach ($options->client as $key => $val) {
-													echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-												}
-											echo '</optgroup>';
-										}
-										if($options->global) {
-											echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
-												foreach ($options->global as $key => $val) {
-													echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-												}
-											echo '</optgroup>';
+										$options = IRMFormList::getCategoryOptions('com_xivetranscorder');
+										if($options) {
+											foreach ($options as $key => $val) {
+												echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+											}
 										}
 									?>
 								</select>
@@ -160,25 +135,16 @@ jQuery(function() {
 						<div class="control-group">
 							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_FILTER_CATEGORY_LBL'); ?></label>
 							<div class="controls controls-row">
-								<?php NHtmlJavaScript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
+								<?php NFWHtmlJavascript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 								<div class="span12">
 									<select name="search_catid" class="chzn-select-category" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" onchange="this.form.submit()">
 										<option value=""></option>
 										<?php
-											$options = IRMSystem::getListOptions('categories', false);
-											if($options->client) {
-												echo '<optgroup label="' . JText::sprintf('COM_XIVEIRM_SELECT_CATEGORY_SPECIFIC', NItemHelper::getTitleById('usergroup', $xsession->client_id)) . '">';
-													foreach ($options->client as $key => $val) {
-														echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-													}
-												echo '</optgroup>';
-											}
-											if($options->global) {
-												echo '<optgroup label="' . JText::_('COM_XIVEIRM_SELECT_GLOBAL') . '">';
-													foreach ($options->global as $key => $val) {
-														echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
-													}
-												echo '</optgroup>';
+											$options = IRMFormList::getCategoryOptions('com_xivetranscorder');
+											if($options) {
+												foreach ($options as $key => $val) {
+													echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+												}
 											}
 										?>
 									</select>
@@ -200,10 +166,10 @@ jQuery(function() {
 							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_LBL'); ?></label>
 							<div class="controls controls-row">
 								<div class="btn-group row-fluid">
-									<span><a class="span6 btn btn-mini btn-yellow" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter&search_pdk=pdk_no_customer_id'); ?>"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_BTN_NO_CUSTOMER_ID'); ?></a></span>
-									<span><a class="span6 btn btn-mini btn-purple" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter&search_pdk=pdk_special'); ?>"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_BTN_SPECIAL_CHARS'); ?></a></span>
-									<span><a class="span6 btn btn-mini btn-primary" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter&search_pdk=pdk_in_country'); ?>"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_BTN_IN_COUNTRY'); ?></a></span>
-									<span><a class="span6 btn btn-mini btn-info" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter&search_pdk=pdk_not_in_country'); ?>"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_BTN_NOT_IN_COUNTRY'); ?></a></span>
+									<span><a class="span6 btn btn-mini btn-yellow" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=transcorders.filter&search_pdk=pdk_no_customer_id'); ?>"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_BTN_NO_CUSTOMER_ID'); ?></a></span>
+									<span><a class="span6 btn btn-mini btn-purple" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=transcorders.filter&search_pdk=pdk_special'); ?>"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_BTN_SPECIAL_CHARS'); ?></a></span>
+									<span><a class="span6 btn btn-mini btn-primary" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=transcorders.filter&search_pdk=pdk_in_country'); ?>"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_BTN_IN_COUNTRY'); ?></a></span>
+									<span><a class="span6 btn btn-mini btn-info" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=transcorders.filter&search_pdk=pdk_not_in_country'); ?>"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_BTN_NOT_IN_COUNTRY'); ?></a></span>
 
 
 
@@ -296,7 +262,7 @@ jQuery(function() {
 		?>
 			<?php if($item->state == 1 || ($item->state == 0 && JFactory::getUser()->authorise('core.edit.own',' com_xiveirm'))) : $show = true; ?>
 			<tr>
-				<td><?php echo NItemHelper::getTitleById('category', $item->catid); ?></td>
+				<td><?php echo NFWItemHelper::getTitleById('category', $item->catid); ?></td>
 				<td class="center hidden-phone">
 					<?php if($item->checked_out):
 						echo '<div style="font-size: 20px;"><i class="icon-lock red"></i></div>';
@@ -319,7 +285,7 @@ jQuery(function() {
 
 				<td>
 					<a href="<?php echo JRoute::_('index.php?task=transcorderform.edit&id='.$item->id); ?>">
-						<?php echo NItemHelper::getNameById($item->contact_id, 'xiveirm_contacts', true, true); ?>
+						<?php echo NFWItemHelper::getNameById($item->contact_id, 'xiveirm_contacts', true, true); ?>
 					</a>
 				</td>
 				<td>
@@ -379,8 +345,7 @@ jQuery(function() {
 				</td>
 				<td class="hide">
 					<?php if ($item->modified != '0000-00-00 00:00:00') { ?>
-						<i class="icon-time orange"></i> <?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)); ?> <span class="small-margin-left hidden-phone"></span><i class="icon-user orange"></i> <a href="#" target="_blank">Rosalinda Garcia</a>
-						<br><em>TODO: New data have to come from user activity app!</em>
+						<i class="icon-time orange"></i> <?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($item->modified)); ?> <span class="small-margin-left hidden-phone"></span><i class="icon-user orange"></i> <a href="#" target="_blank"><?php echo $item->modified_by; ?></a>
 					<?php } ?>
 				</td>
 				<td class="hide">
@@ -460,219 +425,13 @@ function fnFormatDetails ( oTable, nTr )
 
 
 
-<h3 class="header lighter pink">Tests</h3>
 
-<a onClick="alert('Dieser Eintrag wurde Archiviert --> Achtung DEMO!!!')" class="btn btn-small btn-app radius-4 <?php echo $item->state == 0 ? 'btn-light' : ''; ?>">
-	<i class="icon-archive"></i>
-	<?php echo $item->state == 0 ? JText::_("COM_XIVEIRM_PUBLISH_ITEM") : JText::_("COM_XIVEIRM_UNPUBLISH_ITEM"); ?>
-</a>
-<br>
-<br>
-<hr>
-<?php $testDate = '07/15/2013 10:38'; ?>
-<abbr class="xtooltip ntime-fromnow" data-calendar="<?php echo $testDate; ?>" title="<?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($testDate)); ?>" data-content-prefix="Termin:" data-icon-class="icon-calendar">WIRD UEBERSCHRIEBEN</abbr>
-<br>
-<br>
+
+
+
+
+
+
 <pre class="prettify">
-<?php
-echo '<strong><em>devXive - Nawala Framework 4.2.8alpha -> abstract class NHtmlJavaScript::loadMoment() (( nimport(\'NHtml.JavaScript\'); ))</em></strong>';
-echo '<br>';
-echo '<br>';
-	echo htmlentities(" <?php \$testDate = '07/15/2013 10:38'; ?> ");
-echo '<br>';
-echo '<br>';
-
-echo '<strong><em>abbr tag => timeago (javascript supported)</em></strong>';
-	echo htmlentities('
-	<abbr
-		class="xtooltip ntime-fromnow"
-		data-time="2013-07-15 10:38"
-		title="Monday, 15 July 2013 10:38"
-		data-content-prefix="Termin:"
-		data-icon-class="icon-calendar">
-			WIRD UEBERSCHRIEBEN
-	</abbr>
-	');
-echo '<br>';
-echo '<br>';
-
-echo '<strong><em>abbr tag => calendar (javascript supported)</em></strong>';
-	echo htmlentities('
-	<abbr
-		class="xtooltip ntime-fromnow"
-		data-calendar="2013-07-15 10:38"
-		title="Monday, 15 July 2013 10:38"
-		data-content-prefix="Termin:"
-		data-icon-class="icon-calendar">
-			WIRD UEBERSCHRIEBEN
-	</abbr>
-	');
-echo '<br>';
-echo '<br>';
-
-echo '<strong><em>span tag => none (bootstrap supported)</em></strong>';
-	echo htmlentities('
-	<span class="xtooltip" data-original-title="Monday, 15 July 2013 10:38">
-		<i class="icon-clock"></i> 2013-07-15 10:38
-	</span>
-	');
-?>
+	<?php print_r($test); ?>
 </pre>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-?>
-
-<div class="items">
-    <ul class="items_list">
-<?php $show = false; ?>
-        <?php foreach ($this->items as $item) : ?>
-
-            
-				<?php
-					if($item->state == 1 || ($item->state == 0 && JFactory::getUser()->authorise('core.edit.own',' com_xivetranscorder'))):
-						$show = true;
-						?>
-							<li>
-								<a href="<?php echo JRoute::_('index.php?option=com_xivetranscorder&view=transcorder&id=' . (int)$item->id); ?>"><?php echo $item->client_id; ?></a>
-								<?php
-									if(JFactory::getUser()->authorise('core.edit.state','com_xivetranscorder')):
-									?>
-										<a href="javascript:document.getElementById('form-transcorder-state-<?php echo $item->id; ?>').submit()"><?php if($item->state == 1): echo JText::_("COM_XIVETRANSCORDER_UNPUBLISH_ITEM"); else: echo JText::_("COM_XIVETRANSCORDER_PUBLISH_ITEM"); endif; ?></a>
-										<form id="form-transcorder-state-<?php echo $item->id ?>" style="display:inline" action="<?php echo JRoute::_('index.php?option=com_xivetranscorder&task=transcorder.save'); ?>" method="post" class="form-validate" enctype="multipart/form-data">
-											<input type="hidden" name="jform[id]" value="<?php echo $item->id; ?>" />
-											<input type="hidden" name="jform[client_id]" value="<?php echo $item->client_id; ?>" />
-											<input type="hidden" name="jform[state]" value="<?php echo (int)!((int)$item->state); ?>" />
-											<input type="hidden" name="jform[created]" value="<?php echo $item->created; ?>" />
-											<input type="hidden" name="jform[checked_out]" value="<?php echo $item->checked_out; ?>" />
-											<input type="hidden" name="jform[checked_out_time]" value="<?php echo $item->checked_out_time; ?>" />
-											<input type="hidden" name="jform[modified]" value="<?php echo $item->modified; ?>" />
-											<input type="hidden" name="jform[catid]" value="<?php echo $item->catid; ?>" />
-											<input type="hidden" name="jform[contact_id]" value="<?php echo $item->contact_id; ?>" />
-											<input type="hidden" name="jform[order_id]" value="<?php echo $item->order_id; ?>" />
-											<input type="hidden" name="jform[transport_timestamp]" value="<?php echo $item->transport_timestamp; ?>" />
-											<input type="hidden" name="jform[f_poi_id]" value="<?php echo $item->f_poi_id; ?>" />
-											<input type="hidden" name="jform[f_address_name]" value="<?php echo $item->f_address_name; ?>" />
-											<input type="hidden" name="jform[f_address_name_add]" value="<?php echo $item->f_address_name_add; ?>" />
-											<input type="hidden" name="jform[f_address_street]" value="<?php echo $item->f_address_street; ?>" />
-											<input type="hidden" name="jform[f_address_houseno]" value="<?php echo $item->f_address_houseno; ?>" />
-											<input type="hidden" name="jform[f_address_zip]" value="<?php echo $item->f_address_zip; ?>" />
-											<input type="hidden" name="jform[f_address_city]" value="<?php echo $item->f_address_city; ?>" />
-											<input type="hidden" name="jform[f_address_region]" value="<?php echo $item->f_address_region; ?>" />
-											<input type="hidden" name="jform[f_address_country]" value="<?php echo $item->f_address_country; ?>" />
-											<input type="hidden" name="jform[f_address_lat]" value="<?php echo $item->f_address_lat; ?>" />
-											<input type="hidden" name="jform[f_address_long]" value="<?php echo $item->f_address_long; ?>" />
-											<input type="hidden" name="jform[f_address_hash]" value="<?php echo $item->f_address_hash; ?>" />
-											<input type="hidden" name="jform[t_poi_id]" value="<?php echo $item->t_poi_id; ?>" />
-											<input type="hidden" name="jform[t_address_name]" value="<?php echo $item->t_address_name; ?>" />
-											<input type="hidden" name="jform[t_address_name_add]" value="<?php echo $item->t_address_name_add; ?>" />
-											<input type="hidden" name="jform[t_address_street]" value="<?php echo $item->t_address_street; ?>" />
-											<input type="hidden" name="jform[t_address_houseno]" value="<?php echo $item->t_address_houseno; ?>" />
-											<input type="hidden" name="jform[t_address_zip]" value="<?php echo $item->t_address_zip; ?>" />
-											<input type="hidden" name="jform[t_address_city]" value="<?php echo $item->t_address_city; ?>" />
-											<input type="hidden" name="jform[t_address_country]" value="<?php echo $item->t_address_country; ?>" />
-											<input type="hidden" name="jform[t_address_lat]" value="<?php echo $item->t_address_lat; ?>" />
-											<input type="hidden" name="jform[t_address_long]" value="<?php echo $item->t_address_long; ?>" />
-											<input type="hidden" name="jform[t_address_hash]" value="<?php echo $item->t_address_hash; ?>" />
-											<input type="hidden" name="jform[distcalc_device]" value="<?php echo $item->distcalc_device; ?>" />
-											<input type="hidden" name="jform[estimated_distance]" value="<?php echo $item->estimated_distance; ?>" />
-											<input type="hidden" name="jform[estimated_time]" value="<?php echo $item->estimated_time; ?>" />
-											<input type="hidden" name="option" value="com_xivetranscorder" />
-											<input type="hidden" name="task" value="transcorder.save" />
-											<?php echo JHtml::_('form.token'); ?>
-										</form>
-									<?php
-									endif;
-									if(JFactory::getUser()->authorise('core.delete','com_xivetranscorder')):
-									?>
-										<a href="javascript:document.getElementById('form-transcorder-delete-<?php echo $item->id; ?>').submit()"><?php echo JText::_("COM_XIVETRANSCORDER_DELETE_ITEM"); ?></a>
-										<form id="form-transcorder-delete-<?php echo $item->id; ?>" style="display:inline" action="<?php echo JRoute::_('index.php?option=com_xivetranscorder&task=transcorder.remove'); ?>" method="post" class="form-validate" enctype="multipart/form-data">
-											<input type="hidden" name="jform[id]" value="<?php echo $item->id; ?>" />
-											<input type="hidden" name="jform[client_id]" value="<?php echo $item->client_id; ?>" />
-											<input type="hidden" name="jform[state]" value="<?php echo $item->state; ?>" />
-											<input type="hidden" name="jform[created]" value="<?php echo $item->created; ?>" />
-											<input type="hidden" name="jform[created_by]" value="<?php echo $item->created_by; ?>" />
-											<input type="hidden" name="jform[checked_out]" value="<?php echo $item->checked_out; ?>" />
-											<input type="hidden" name="jform[checked_out_time]" value="<?php echo $item->checked_out_time; ?>" />
-											<input type="hidden" name="jform[modified]" value="<?php echo $item->modified; ?>" />
-											<input type="hidden" name="jform[catid]" value="<?php echo $item->catid; ?>" />
-											<input type="hidden" name="jform[contact_id]" value="<?php echo $item->contact_id; ?>" />
-											<input type="hidden" name="jform[order_id]" value="<?php echo $item->order_id; ?>" />
-											<input type="hidden" name="jform[transport_timestamp]" value="<?php echo $item->transport_timestamp; ?>" />
-											<input type="hidden" name="jform[f_poi_id]" value="<?php echo $item->f_poi_id; ?>" />
-											<input type="hidden" name="jform[f_address_name]" value="<?php echo $item->f_address_name; ?>" />
-											<input type="hidden" name="jform[f_address_name_add]" value="<?php echo $item->f_address_name_add; ?>" />
-											<input type="hidden" name="jform[f_address_street]" value="<?php echo $item->f_address_street; ?>" />
-											<input type="hidden" name="jform[f_address_houseno]" value="<?php echo $item->f_address_houseno; ?>" />
-											<input type="hidden" name="jform[f_address_zip]" value="<?php echo $item->f_address_zip; ?>" />
-											<input type="hidden" name="jform[f_address_city]" value="<?php echo $item->f_address_city; ?>" />
-											<input type="hidden" name="jform[f_address_region]" value="<?php echo $item->f_address_region; ?>" />
-											<input type="hidden" name="jform[f_address_country]" value="<?php echo $item->f_address_country; ?>" />
-											<input type="hidden" name="jform[f_address_lat]" value="<?php echo $item->f_address_lat; ?>" />
-											<input type="hidden" name="jform[f_address_long]" value="<?php echo $item->f_address_long; ?>" />
-											<input type="hidden" name="jform[f_address_hash]" value="<?php echo $item->f_address_hash; ?>" />
-											<input type="hidden" name="jform[t_poi_id]" value="<?php echo $item->t_poi_id; ?>" />
-											<input type="hidden" name="jform[t_address_name]" value="<?php echo $item->t_address_name; ?>" />
-											<input type="hidden" name="jform[t_address_name_add]" value="<?php echo $item->t_address_name_add; ?>" />
-											<input type="hidden" name="jform[t_address_street]" value="<?php echo $item->t_address_street; ?>" />
-											<input type="hidden" name="jform[t_address_houseno]" value="<?php echo $item->t_address_houseno; ?>" />
-											<input type="hidden" name="jform[t_address_zip]" value="<?php echo $item->t_address_zip; ?>" />
-											<input type="hidden" name="jform[t_address_city]" value="<?php echo $item->t_address_city; ?>" />
-											<input type="hidden" name="jform[t_address_country]" value="<?php echo $item->t_address_country; ?>" />
-											<input type="hidden" name="jform[t_address_lat]" value="<?php echo $item->t_address_lat; ?>" />
-											<input type="hidden" name="jform[t_address_long]" value="<?php echo $item->t_address_long; ?>" />
-											<input type="hidden" name="jform[t_address_hash]" value="<?php echo $item->t_address_hash; ?>" />
-											<input type="hidden" name="jform[distcalc_device]" value="<?php echo $item->distcalc_device; ?>" />
-											<input type="hidden" name="jform[estimated_distance]" value="<?php echo $item->estimated_distance; ?>" />
-											<input type="hidden" name="jform[estimated_time]" value="<?php echo $item->estimated_time; ?>" />
-											<input type="hidden" name="option" value="com_xivetranscorder" />
-											<input type="hidden" name="task" value="transcorder.remove" />
-											<?php echo JHtml::_('form.token'); ?>
-										</form>
-									<?php
-									endif;
-								?>
-							</li>
-						<?php endif; ?>
-
-<?php endforeach; ?>
-        <?php
-        if (!$show):
-            echo JText::_('COM_XIVETRANSCORDER_NO_ITEMS');
-        endif;
-        ?>
-    </ul>
-</div>
-<?php if ($show): ?>
-    <div class="pagination">
-        <p class="counter">
-            <?php echo $this->pagination->getPagesCounter(); ?>
-        </p>
-        <?php echo $this->pagination->getPagesLinks(); ?>
-    </div>
-<?php endif; ?>
-
-
-	<?php if(JFactory::getUser()->authorise('core.create','com_xivetranscorder')): ?><a href="<?php echo JRoute::_('index.php?option=com_xivetranscorder&task=transcorder.edit&id=0'); ?>"><?php echo JText::_("COM_XIVETRANSCORDER_ADD_ITEM"); ?></a>
-	<?php endif; ?>
