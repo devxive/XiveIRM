@@ -411,7 +411,7 @@ class PlgIrmAppMedicaldetails extends JPlugin
 				function setCategoryId() {
 					// Get value from select list and set catid in form "frm-new-order"
 					var transportCatId = jQuery("#selectTransportCatId").val();
-					var transportContactId = jQuery("#form-contact  #customer_cid").val();
+					var transportContactId = jQuery("#form-contact #contact_cid").val();
 
 					// Set the values
 					jQuery("#create-new-transport-order #setInputCatId").val(transportCatId);
