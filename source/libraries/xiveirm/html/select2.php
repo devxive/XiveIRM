@@ -66,9 +66,9 @@ abstract class IRMHtmlSelect2
 	 *
 	 * @since   6.0
 	 */
-	public function init($selector = '.select2', $params = array())
+	public function init($selector = '.select2', $clear = 'false')
 	{
-		$sig = md5( serialize( array($selector) ) );
+		$sig = md5( serialize( array($selector, $clear) ) );
 
 		// Only load once
 		if ( isset(self::$loaded[__METHOD__][$sig]) )
@@ -82,23 +82,20 @@ abstract class IRMHtmlSelect2
 		// Include dependencies
 		self::dependencies('jquery.select2');
 
-		// Setup options object
-		$opt['disable_search_threshold'] = isset($params['disable_search_threshold']) ? $params['disable_search_threshold'] : null;
-		$opt['disable_search'] = isset($params['disable_search']) ? $params['disable_search'] : null;
-		$opt['no_results_text'] = isset($params['no_results_text']) ? $params['no_results_text'] : null;
-		$opt['max_selected_options'] = isset($params['max_selected_options']) ? $params['max_selected_options'] : null;
-		$opt['allow_single_deselect'] = isset($params['allow_single_deselect']) ? $params['allow_single_deselect'] : null;
-		$opt['width'] = isset($params['width']) ? $params['width'] : null;
-
-		$options = NFWHtml::getJSObject($opt);
+		if ( $clear ) {
+			$optClear = 'true';
+		} else {
+			$optClear = 'false';
+		}
 
 		// Build the scriptDeclaration
 		$srciptDec = 
 			"jQuery(document).ready(function() {
 				$('" . $selector . "').select2({
-					width: '100%',
+					placeholder: 'Please Select',
 					minimumResultsForSearch: 10,
-					placeholder: 'Please select'
+					width: '100%',
+					allowClear: " . $optClear . "
 				});
 			});\n";
 
@@ -219,44 +216,43 @@ abstract class IRMHtmlSelect2
 
 				// EVENT: if changing selection ( even from init to change ) // Removed -select2-removed- event because we handle it via the change event
 				$('" . $selector . "').on('change', function(e) {
-					var dataDirection = e.currentTarget.dataset.direction,
-					dataOrder = e.currentTarget.dataset.order,
-					data = e.added;
+					var ownOrder = $(this).parents('form').data('order'),
+					    ownDirection = $(this).parents('.address-block').data('direction'),
+					    orderUsher = 'form[data-order=\"' + ownOrder + '\"]',
+					    deepUsher = orderUsher + ' .address-block[data-direction=\"' + ownDirection + '\"]',
+					    innerUsher = orderUsher + ' .address-block[data-direction=\"' + ownDirection + '\"] .inner-address-block';
+
+					var data = e.added;
 
 					if( data ) {
-						$.each(data, function ( key, value ) {
+						// Set the values
+						$.each(data, function( key, value ) {
 							// console.log(key + ' - ' + value);
-							$('#' + dataDirection + '_' + key + '-' + dataOrder).val(value);
+							$(innerUsher + ' input[id*=\"' + key + '\"]').val(value);
 						});
 
-						if(data.system_checked == '1' || data.client_checked == '1') {
-							$('#' + dataDirection + '_address_block-' + dataOrder + ' .input-control').attr('readonly', true);
-							$('#' + dataDirection + '_address_helper_id-' + dataOrder).hide();
+						$(deepUsher + ' .input-control').attr('readonly', true);
 
-								if( data.system_checked == '1' ) {
-									alertify.success('<i class=\"icon-ok-sign\"></i> You\'ve selected a <strong>verified</strong> address');
-								} else {
-									alertify.log('<strong>*</strong> You\'ve selected a <strong>self-signed</strong> address');
-								}
+						if(data.system_checked == '1' || data.client_checked == '1') {
+							if( data.system_checked == '1' ) {
+								alertify.success('<i class=\"icon-ok-sign\"></i> <strong>Verified</strong> address selected');
+							} else {
+								alertify.log('<strong>*</strong> <strong>Self-signed</strong> address selected');
+							}
 						} else {
 							alertify.warning = alertify.extend('warning');
-							alertify.warning('<i class=\"icon-warning-sign\"></i> This address is <strong> not verified</strong>');
+							alertify.warning('<i class=\"icon-warning-sign\"></i> <strong> None verified</strong> address selected');
 						}
 					} else {
 						// Remove readonly from address block
-						$('#' + dataDirection + '_address_block-' + dataOrder + ' .input-control').attr('readonly', false);
+						$(deepUsher + ' .input-control').attr('readonly', false);
 
 						// Clear the input fields
-//						$('#' + dataDirection + '_address_block-' + dataOrder + ' input').val('');
-						$('#' + dataDirection + '_address_lat-' + dataOrder).val('');
-						$('#' + dataDirection + '_address_lng-' + dataOrder).val('');
-						$('#' + dataDirection + '_address_hash-' + dataOrder).val('');
-
-						// Fade in the address helper field
-						$('#' + dataDirection + '_address_helper_id-' + dataOrder).fadeIn('slow');
+//						$(deepUsher + ' input').val('');
+						$(deepUsher + ' input[id*=\"address_lat\"]').val('');
+						$(deepUsher + ' input[id*=\"address_lng\"]').val('');
+						$(deepUsher + ' input[id*=\"address_hash\"]').val('');
 					}
-
-//					console.log( e );
 				});
 			});\n";
 
