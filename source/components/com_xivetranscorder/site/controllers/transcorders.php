@@ -26,4 +26,37 @@ class XivetranscorderControllerTranscorders extends XivetranscorderController
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
 		return $model;
 	}
+
+
+	/**
+	 * Function to set a filter.
+	 * What it does?
+	 * 		Get the filter from a form GET or POST or an url and set the vale in the userState object
+	 *		After that, redirects to the contacts list, where before the list is rendered, the model is called
+	 *		In the model we get the userState object and set the where clause for the filter
+	 *
+	 * @since	4.0
+	 */
+	public function filter($search_global = null, $search_catid = null, $search_task = null)
+	{
+		$app = JFactory::getApplication();
+
+		// Get and set the search filter for the filter query (in model)
+		$search = array();
+		if ( !$search['global'] = $app->input->get('search_global', null, 'string') ) { unset($search['global']); };
+		if ( !$search['catid'] = $app->input->get('search_catid', null, 'string') ) { unset($search['catid']); };
+		if ( !$search['pdk'] = $app->input->get('search_pdk', null, 'string') ) { unset($search['pdk']); };
+		if ( !$search['daterange'] = json_decode($app->input->get('search_daterange', null, 'string')) ) { unset($search['daterange']); };
+		if ( !$search['contact'] = $app->input->get('search_contact', null, 'INT') ) { unset($search['contact']); };
+
+		$app->setUserState('com_xivetranscorder.transcorders.filter', $search);
+
+		// Redirect to the list.
+		$this->setRedirect(JRoute::_('index.php?option=com_xivetranscorder', false));
+
+$userState = $app->getUserState('com_xivetranscorder.transcorders');
+echo '<pre>';
+print_r($userState);
+echo '</pre>';
+	}
 }
