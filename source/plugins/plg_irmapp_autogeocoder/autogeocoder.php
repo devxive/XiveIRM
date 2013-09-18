@@ -57,7 +57,6 @@ class PlgIrmAppAutogeocoder extends JPlugin
 		JHtml::_('script', 'plugins/irmapp/autogeocoder/assets/js/geo-helper.js', false, false, false, false);
 
 		NFWHtmlJavascript::detectChanges();
-
 		// Set the script
 		$script = "
 			/*
