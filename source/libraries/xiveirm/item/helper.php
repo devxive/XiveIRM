@@ -140,6 +140,10 @@ class IRMItemHelper
 		$query->select('flags.flag AS flagged');
 		$query->join('LEFT', '#__xiveirm_flags AS flags ON flags.item = CONCAT(\'contacts.\', a.id)');
 
+		// Join over the verify table
+		$query->select('verify.*');
+		$query->join('LEFT', '#__xiveirm_contacts_verified AS verify ON verify.contacts_id = a.id');
+
 		// Join over the tabapps
 //		$query->select(array('tabapps.app_key as app_key', 'tabapps.app_value AS app_value'));
 //		$query->join('LEFT', '#__xiveirm_contacts_appvalues AS tabapps ON tabapps.contacts_id = a.id');
