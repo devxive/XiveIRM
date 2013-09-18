@@ -20,29 +20,53 @@ class XiveirmHelper
 	 */
 	public static function addSubmenu($vName = '')
 	{
-		JHtmlSidebar::addEntry(
-			JText::_('COM_XIVEIRM_TITLE_CONTACTS'),
-			'index.php?option=com_xiveirm&view=contacts',
-			$vName == 'contacts'
-		);
+		$lang = JFactory::getLanguage();
+		$lang->load('com_xivetranscorder', JPATH_ADMINISTRATOR);
 
-		JHtmlSidebar::addEntry(
-			JText::_('COM_XIVEIRM_TITLE_OPTIONS'),
-			'index.php?option=com_xiveirm&view=options',
-			$vName == 'options'
-		);
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
 
-		JHtmlSidebar::addEntry(
-			JText::_('COM_XIVEIRM_CATEGORIES'),
-			"index.php?option=com_categories&extension=com_xiveirm",
-			$vName == 'categories'
-		);
+		$query
+			->select( array('*') )
+			->from( '#__menu' )
+			->where( 'menutype = \'main\' AND path LIKE \'com-xive%\' AND parent_id != \'1\' AND alias != \'com-xivetranscorder\'' )
+			->order( 'rgt ASC' );
 
-		JHtmlSidebar::addEntry(
-			JText::_('COM_XIVEIRM_TITLE_PLUGINS'),
-			'index.php?option=com_xiveirm&view=plugins',
-			$vName == 'plugins'
-		);
+		$db->setQuery($query);
+		$results = $db->loadObjectList();
+
+		foreach($results AS $result) {
+			$img = '<img src="' . $result->img . '">';
+			JHtmlSidebar::addEntry(
+				$img . ' ' . JText::_($result->title),
+				$result->link,
+				$vName == $result->alias
+			);
+		}
+
+//		JHtmlSidebar::addEntry(
+//			JText::_('COM_XIVEIRM_TITLE_CONTACTS'),
+//			'index.php?option=com_xiveirm&view=contacts',
+//			$vName == 'contacts'
+//		);
+
+//		JHtmlSidebar::addEntry(
+//			JText::_('COM_XIVEIRM_TITLE_OPTIONS'),
+//			'index.php?option=com_xiveirm&view=options',
+//			$vName == 'options'
+//		);
+
+//		JHtmlSidebar::addEntry(
+//			JText::_('COM_XIVEIRM_CATEGORIES'),
+//			"index.php?option=com_categories&extension=com_xiveirm",
+//			$vName == 'categories'
+//		);
+
+//		JHtmlSidebar::addEntry(
+//			JText::_('COM_XIVEIRM_TITLE_PLUGINS'),
+//			'index.php?option=com_xiveirm&view=plugins',
+//			$vName == 'plugins'
+//		);
 	}
 
 	/**
