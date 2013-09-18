@@ -29,11 +29,11 @@ class XivetranscorderControllerTranscorderForm extends XivetranscorderController
 		// Get the previous edit id (if any) and get and set the current edit id for the user to edit in the session.
 //		$previousId = (int) $app->getUserState('com_xivetranscorder.edit.transcorder.id');
 		$editId = $app->input->getInt('id', null, 'array');
+
 		$app->setUserState('com_xivetranscorder.edit.transcorder.id', $editId);
 
 		// Get and set the category id for the user if its a new contact to edit in the session if we get one, else return to list
 		if($editId == 0) {
-//			$catId = (int) $app->getUserState('com_xivetranscorder.edit.transcorder.catid'); // getUserState is much better than getInt
 			$catId = $app->input->getInt('catid', null, 'array');
 			if($catId >= 0 && (int) $catId) {
 				$app->setUserState('com_xivetranscorder.edit.transcorder.catid', $catId);
@@ -46,7 +46,6 @@ class XivetranscorderControllerTranscorderForm extends XivetranscorderController
 
 		// Get and set the contactId for the order if its a new order to edit in the session if we get one, else return to list
 		if($editId == 0) {
-//			$contactId = (int) $app->getUserState('com_xivetranscorder.edit.transcorder.catid'); // getUserState is much better than getInt
 			$contactId = $app->input->getInt('contactid', null, 'array');
 			if($catId >= 0 && (int) $catId) {
 				$app->setUserState('com_xivetranscorder.edit.transcorder.contactid', $contactId);
