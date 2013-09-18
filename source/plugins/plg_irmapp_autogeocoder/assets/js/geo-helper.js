@@ -521,11 +521,7 @@ the specific language governing permissions and limitations under the devXive Li
 
 		jQuery('#map-canvas').gmap3({
 			marker:{
-				latLng: (initMarker) ? [initLat, initLng] : false,
-				options:{
-					animation: google.maps.Animation.BOUNCE
-				}
-
+				latLng: (initMarker) ? [initLat, initLng] : false
 			},
 			map:{
 				options: {
