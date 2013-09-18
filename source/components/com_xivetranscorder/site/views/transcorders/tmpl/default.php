@@ -18,10 +18,12 @@ NFWHtmlJavascript::setToggle('extended', 'toggleExtend');
 NFWHtmlJavascript::setTooltip('.xtooltip');
 NFWHtmlJavascript::setPopover('.xpopover');
 NFWHtmlJavascript::loadMoment();
+NFWHtmlJavascript::loadDateRangePicker();
+IRMHtmlSelect2::init('.select2');
 
 // Init the dataTable
-$tableParams = '
-	{"bProcessing": true,
+$tableParams = '{
+	"bProcessing": true,
 	"bAutoWidth": false,
 	"bLengthChange": true,
 	"bStateSave": false,
@@ -50,42 +52,76 @@ $tableParams = '
 	"sDom": "<\'row-fluid\'<\'span6\'T<\'#dt-table_category_filter\'>l><\'span6\'f>r>t<\'row-fluid\'<\'span6\'i><\'span6\'p>>"
 }
 ';
-
-//	"aoColumnDefs": [
-//		{ "bSortable": false, "aTargets": [ 0 ] }
-//	],
-//	"aaSorting": [[1, 'asc']]
-
-
 NFWHtmlDatatables::loadDataTable('table_contacts', $tableParams, true);
+
+
+// TODO: CUSTOM DATEPICKER => Build a function/helper method for the daterangepicker
+	JFactory::getDocument()->addScriptDeclaration("
+		jQuery(document).ready(function() {
+			// Set Variables
+			var dateObject            = {};
+
+			    dateObject.cDate          = new Date();
+			    dateObject.cDay           = dateObject.cDate.getDate();
+			    dateObject.cMonth         = dateObject.cDate.getMonth();
+			    dateObject.cYear          = dateObject.cDate.getFullYear();
+			    dateObject.cMonthFirstDay = new Date( dateObject.cYear, dateObject.cMonth, 1 ).getDate();
+			    dateObject.cMonthLastDay  = new Date( dateObject.cYear, dateObject.cMonth + 1, 0 ).getDate();
+
+			$('#daterangepicker').daterangepicker(
+				{
+					ranges: {
+						'Today': [new Date(), new Date()],
+						'Tomorrow': [moment().add('days', 1), moment().add('days', 1)],
+						'Last 7 Days': [moment().subtract('days', 6), new Date()],
+						'Last 30 Days': [moment().subtract('days', 29), new Date()],
+						'This Month': [moment().startOf('month'), moment().endOf('month')],
+						'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
+					},
+					startDate: moment().subtract('days', 29),
+					endDate: new Date()
+				},
+				function(start, end) {
+					var startDate = start.format('YYYY.MM.D H:m:s'),
+					    endDate   = end.format('YYYY.MM.D H:m:s'),
+					    startX    = moment( startDate ).format('X'),
+					    endX      = moment( endDate ).format('X');
+
+					var dateArray = [startX, endX];
+
+					$('input[name=\"search_daterange\"').val( JSON.stringify(dateArray) );
+					$('#daterangepicker span').html( start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY') );
+				}
+			);
+		});\n"
+	);
 
 // Load the XiveIRMSystem Session Data (Performed by the XiveIRM System Plugin)
 $xsession = JFactory::getSession()->get('XiveIRMSystem');
 
 // Check for filters
-$filter = $app->getUserState('com_xiveirm.contacts.filter');
+$filter = $app->getUserState('com_xivetranscorder.transcorders.filter');
 $filter_global = isset($filter['global']) ? $filter['global'] : null;
 $filter_catid = isset($filter['catid']) ? $filter['catid'] : null;
+$filter_daterange = isset($filter['daterange']) ? $filter['daterange'] : null;
 $filter_pdk = isset($filter['pdk']) ? $filter['pdk'] : null;
+$filter_contactid = isset($filter['contact']) ? $filter['contact'] : null;
+
+// Get TOCA Category Options
+$toca_options = IRMFormList::getCategoryOptions('com_xivetranscorder');
+
+$toca_filter_contacts = IRMFormList::getContactFilterOptions($filter_daterange);
 ?>
 <div class="row-fluid">
 	<div class="header smaller lighter green">
 		<h1>
 			<div>
 				<i class="icon-list-alt"></i>
-			<?php if(!$filter) { ?>
-				<span><?php echo JText::_('COM_XIVETRANSCORDER_ORDER_LIST_TODAY'); ?></span>
-			<?php } else if($filter_catid) { ?>
-				<span><?php echo JText::_('COM_XIVETRANSCORDER_ORDER_LIST_CAT'); ?></span>
-				<?php echo NFWItemHelper::getTitleById('category', $filter_catid); ?>
-			<?php } else if($filter_pdk) { ?>
-				<span><span class="hidden-phone"><?php echo JText::_('COM_XIVEIRM_CONTACT_LIST_CONTACTS_FILTER_PDK'); ?></span> <?php echo JText::_('COM_XIVEIRM_CONTACT_LIST_CONTACTS_FILTER_' . strtoupper($filter_pdk)); ?></span>
-			<?php } else if($filter_global) { ?>
-				<span><?php echo JText::sprintf('COM_XIVEIRM_CONTACT_LIST_CONTACTS_CUSTOM', $filter_global); ?></span>
-				<?php $addLastName = $filter_global; ?>
-			<?php } else { ?>
-				<span><?php echo JText::_('COM_XIVEIRM_CONTACT_LIST_CONTACTS_FILTER_UNKNOWN'); ?></span>
-			<?php } ?>
+				<?php if(!$filter) { ?>
+					<span><?php echo JText::_('COM_XIVETRANSCORDER_ORDER_LIST_TODAY'); ?></span>
+				<?php } else { ?>
+					<span><?php echo JText::_('COM_XIVETRANSCORDER_ORDER_LIST_FILTER'); ?></span>
+				<?php } ?>
 			</div>
 		</h1>
 	</div><!--/page-header-->
@@ -99,14 +135,12 @@ $filter_pdk = isset($filter['pdk']) ? $filter['pdk'] : null;
 				<div class="pull-right">
 					<?php if( JFactory::getUser()->authorise('core.create','com_xivetranscorder') && JFactory::getUser()->authorise('core.delete','com_xivetranscorder') ): ?>
 						<form action="<?php echo JRoute::_('index.php?option=com_xivetranscorder&task=transcorderform.edit'); ?>" class="inline">
-							<?php NFWHtmlJavascript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 							<div class="input-xlarge">
-								<select name="catid" class="chzn-select-category" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_NEW_CONTACT'); ?>" onchange="this.form.submit()">
+								<select name="catid" class="select2" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_NEW_CONTACT'); ?>" onchange="this.form.submit()">
 									<option value=""></option>
 									<?php
-										$options = IRMFormList::getCategoryOptions('com_xivetranscorder');
-										if($options) {
-											foreach ($options as $key => $val) {
+										if($toca_options) {
+											foreach ($toca_options as $key => $val) {
 												echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
 											}
 										}
@@ -119,7 +153,7 @@ $filter_pdk = isset($filter['pdk']) ? $filter['pdk'] : null;
 					<div class="btn-group">
 						<a id="toggleExtend" class="btn btn-small btn-success inline"><i class="icon-double-angle-down"></i><span class="hidden-phone hidden-480"> <?php echo JText::_('COM_XIVEIRM_MORE'); ?></span></a>
 						<?php if(!empty($filter)) { ?>
-							<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=contacts.filter'); ?>" class="btn btn-small btn-danger inline"><i class="icon-undo"></i><span class="hidden-phone hidden-480"> <?php echo JText::_('COM_XIVEIRM_RESET_FILTER'); ?></span></a>
+							<a href="<?php echo JRoute::_('index.php?option=com_xivetranscorder&task=transcorders.filter'); ?>" class="btn btn-small btn-danger inline"><i class="icon-undo"></i><span class="hidden-phone hidden-480"> <?php echo JText::_('COM_XIVEIRM_RESET_FILTER'); ?></span></a>
 						<?php } ?>
 					</div>
 				</div>
@@ -129,21 +163,23 @@ $filter_pdk = isset($filter['pdk']) ? $filter['pdk'] : null;
 			<div class="header smaller lighter green">
 				<h3>Extended search options</h3>
 			</div>
-			<form class="form-horizontal" action="<?php echo JRoute::_('index.php?option=com_xivetranscorder&task=orders.filter'); ?>" class="inline">
+			<form class="form-horizontal" action="<?php echo JRoute::_('index.php?option=com_xivetranscorder&task=transcorders.filter'); ?>" class="inline">
 				<div class="row-fluid">
 					<div class="span6">
 						<div class="control-group">
 							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_FILTER_CATEGORY_LBL'); ?></label>
 							<div class="controls controls-row">
-								<?php NFWHtmlJavascript::setChosen('.chzn-select-category', false, array('disable_search_threshold' => '15', 'no_results_text' => 'Oops, nothing found!', 'width' => '100%')); ?>
 								<div class="span12">
-									<select name="search_catid" class="chzn-select-category" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>" onchange="this.form.submit()">
+									<select name="search_catid" class="select2" data-placeholder="<?php echo JText::_('COM_XIVEIRM_SELECT_CATEGORY'); ?>">
 										<option value=""></option>
 										<?php
-											$options = IRMFormList::getCategoryOptions('com_xivetranscorder');
-											if($options) {
-												foreach ($options as $key => $val) {
-													echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+											if($toca_options) {
+												foreach ($toca_options as $key => $val) {
+													if ( $filter_catid == $key ) {
+														echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
+													} else {
+														echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+													}
 												}
 											}
 										?>
@@ -152,46 +188,47 @@ $filter_pdk = isset($filter['pdk']) ? $filter['pdk'] : null;
 							</div>
 						</div>
 						<div class="control-group">
-							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_FILTER_SEARCH_LBL'); ?></label>
+							<label class="control-label"><?php echo JText::_('COM_XIVETRANSCORDER_ORDER_LIST_FILTER_DATERANGE'); ?></label>
 							<div class="controls controls-row">
-								<span class="input-icon">
-									<input class="span12" type="text" name="search_global" placeholder="<?php echo JText::_('COM_XIVEIRM_FILTER_SEARCH_PHOLD'); ?>"/>
-									<i class="icon-search"></i>
+								<span id="daterangepicker" class="btn span12">
+									<i class="icon-calendar icon-large"></i>
+									<?php if ( $filter_daterange ): ?>
+										<span><?php echo date("F j, Y", $filter_daterange[0]); ?> - <?php echo date("F j, Y", $filter_daterange[1]); ?></span> <b class="caret"></b>
+									<? else: ?>
+										<span><?php echo date("F j, Y"); ?> - <?php echo date("F j, Y"); ?></span> <b class="caret"></b>
+									<?php endif; ?>
 								</span>
+							</div>
+							<input type="hidden" name="search_daterange" value='<?php echo $filter_daterange ? json_encode($filter_daterange) : '' ; ?>' />
+						</div>
+						<div class="control-group">
+							<label class="control-label"><?php echo JText::_('COM_XIVETRANSCORDER_ORDER_LIST_FILTER_CONTACTS'); ?></label>
+							<div class="controls controls-row">
+								<div class="span12">
+									<select name="search_contact" class="select2">
+										<option value=""></option>
+										<?php
+											foreach ($toca_filter_contacts as $key => $val) {
+												if ( $filter_contactid == $key ) {
+													echo '<option value="' . $key . '" selected>' . JText::_($val) . '</option>';
+												} else {
+													echo '<option value="' . $key . '">' . JText::_($val) . '</option>';
+												}
+											}
+										?>
+									</select>
+								</div>
 							</div>
 						</div>
 					</div>
 					<div class="span6">
 						<div class="control-group">
-							<label class="control-label"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_LBL'); ?></label>
+							<label class="control-label"><?php echo JText::_('COM_XIVETRANSCORDER_ORDER_LIST_FILTER_PDK'); ?></label>
 							<div class="controls controls-row">
 								<div class="btn-group row-fluid">
-									<span><a class="span6 btn btn-mini btn-yellow" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=transcorders.filter&search_pdk=pdk_no_customer_id'); ?>"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_BTN_NO_CUSTOMER_ID'); ?></a></span>
-									<span><a class="span6 btn btn-mini btn-purple" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=transcorders.filter&search_pdk=pdk_special'); ?>"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_BTN_SPECIAL_CHARS'); ?></a></span>
-									<span><a class="span6 btn btn-mini btn-primary" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=transcorders.filter&search_pdk=pdk_in_country'); ?>"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_BTN_IN_COUNTRY'); ?></a></span>
-									<span><a class="span6 btn btn-mini btn-info" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=transcorders.filter&search_pdk=pdk_not_in_country'); ?>"><?php echo JText::_('COM_XIVEIRM_FILTER_PDK_BTN_NOT_IN_COUNTRY'); ?></a></span>
-
-
-
-
-
-
-									<span><a class="span6 btn btn-mini btn-danger" href="#">DateRangePicker to select a range</a></span>
-									<span><a class="span6 btn btn-mini btn-danger" href="#">Liste der Unternehmer oder Fahrzeuge!!</a></span>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+									<span>
+										<a class="span6 btn btn-mini btn-yellow" href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=transcorders.filter&search_pdk=pdk_no_order_id'); ?>"><?php echo JText::_('COM_XIVETRANSCORDER_ORDER_LIST_FILTER_PDK_NO_ORDER_ID'); ?></a>
+									</span>
 								</div>
 							</div>
 						</div>
@@ -288,10 +325,15 @@ $filter_pdk = isset($filter['pdk']) ? $filter['pdk'] : null;
 						<?php echo NFWItemHelper::getNameById($item->contact_id, 'xiveirm_contacts', true, true); ?>
 					</a>
 				</td>
-				<td>
-					<abbr class="xtooltip" title="<?php echo date(JText::_('DATE_FORMAT_LC2'), strtotime($item->transport_timestamp)); ?>">
-						<?php echo date('H:i', $item->transport_timestamp); ?>
-					</abbr>
+				<td class="center">
+					<?php
+						if ( !$filter_daterange ) {
+							echo date('H:i', $item->transport_timestamp);
+						} else {
+							echo date('d.m.Y', $item->transport_timestamp) . '<br>';
+							echo date('H:i', $item->transport_timestamp);
+						}
+					?>
 				</td>
 
 				<td>
@@ -299,7 +341,7 @@ $filter_pdk = isset($filter['pdk']) ? $filter['pdk'] : null;
 					<?php echo $item->f_address_name_add; ?><br>
 					<?php echo $item->f_address_street; ?> <?php echo $item->f_address_houseno; ?><br>
 					<?php echo $item->f_address_zip; ?> <?php echo $item->f_address_city; ?><br>
-					<em>(<?php echo $item->f_address_country; ?> / <?php echo $item->f_address_country; ?>)</em>
+					<em>(<?php echo $item->f_address_region; ?> / <?php echo $item->f_address_country; ?>)</em>
 				</td>
 				<td>
 					<?php echo $item->t_address_name ? $item->t_address_name . '<br>' : ''; ?>
@@ -322,7 +364,7 @@ $filter_pdk = isset($filter['pdk']) ? $filter['pdk'] : null;
 							<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=transcorderform.remove&id=' . $item->id); ?>').submit()" class="btn btn-mini btn-danger" title="<?php echo JText::_("COM_XIVEIRM_DELETE_ITEM"); ?>"><i class="icon-trash icon-only"></i></a>
 						<?php endif; ?>
 						<a href="<?php echo JRoute::_('index.php?option=com_xiveirm&task=transcorderform.edit&id=' . $item->id); ?>" class="btn btn-mini btn-info"><i class="icon-edit icon-only"></i></a>
-						<a id="rowToggle" class="btn btn-mini btn-light"><i class="icon-eye-close icon-only"></i></a>
+						<a class="rowToggle btn btn-mini btn-light"><i class="icon-eye-close icon-only"></i></a>
 					</div>
 					<div class="hidden-desktop visible-phone">
 						<div class="inline position-relative">
@@ -422,16 +464,3 @@ function fnFormatDetails ( oTable, nTr )
 	return sOut;
 }
 </script>
-
-
-
-
-
-
-
-
-
-
-<pre class="prettify">
-	<?php print_r($test); ?>
-</pre>
