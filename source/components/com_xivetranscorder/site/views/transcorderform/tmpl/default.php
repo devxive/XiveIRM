@@ -57,6 +57,16 @@ IRMHtmlSelect2::initAjaxPoi('.select2-poi', 'index.php?option=com_xivetranscorde
 // Get the contact Object
 $contactObject = IRMItemHelper::getContactObject($this->item->contact_id);
 
+// Check if we have transport device and type set in contactObject to inject in this->item
+if( !$this->item->id ) {
+	if( !$this->item->transport_device && $contactObject->tabs->medicaldetails->transport_device ) {
+		$this->item->transport_device = $contactObject->tabs->medicaldetails->transport_device;
+	}
+	if( !$this->item->transport_type && $contactObject->tabs->medicaldetails->transport_type ) {
+		$this->item->transport_type = $contactObject->tabs->medicaldetails->transport_type;
+	}
+}
+
 // used for Javascript processed messages
 $full_name = IRMFormName::formatContactName($contactObject->contact);
 
