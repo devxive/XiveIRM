@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset>
+
+              <field name="id" type="text" default="0" label="COM_XIVETRANSCORDER_FORM_LBL_VEHICLE_ID"
+            readonly="true" class="readonly"
+            description="JGLOBAL_FIELD_ID_DESC" /> 
+
+       <field name="created_by" type="createdby" default="" 
+            label="COM_XIVETRANSCORDER_FORM_LBL_VEHICLE_CREATED_BY"
+            description="COM_XIVETRANSCORDER_FORM_DESC_VEHICLE_CREATED_BY"  /> 
+
+       <field name="contact_id" type="text" size="40" class="inputbox"
+        
+            label="COM_XIVETRANSCORDER_FORM_LBL_VEHICLE_CONTACT_ID"
+            description="COM_XIVETRANSCORDER_FORM_DESC_VEHICLE_CONTACT_ID" 
+        
+        
+        
+        filter="safehtml" /> 
+
+       <field name="listname" type="text" size="40" class="inputbox"
+        
+            label="COM_XIVETRANSCORDER_FORM_LBL_VEHICLE_LISTNAME"
+            description="COM_XIVETRANSCORDER_FORM_DESC_VEHICLE_LISTNAME" 
+        
+        
+         required="true" 
+        filter="safehtml" /> 
+
+       <field name="callname" type="text" size="40" class="inputbox"
+        
+            label="COM_XIVETRANSCORDER_FORM_LBL_VEHICLE_CALLNAME"
+            description="COM_XIVETRANSCORDER_FORM_DESC_VEHICLE_CALLNAME" 
+        
+        
+        
+        filter="safehtml" /> 
+
+       <field name="mobile" type="text" size="40" class="inputbox"
+        
+            label="COM_XIVETRANSCORDER_FORM_LBL_VEHICLE_MOBILE"
+            description="COM_XIVETRANSCORDER_FORM_DESC_VEHICLE_MOBILE" 
+        
+        
+        
+        filter="safehtml" /> 
+
+       <field name="navi_id" type="text" size="40" class="inputbox"
+        
+            label="COM_XIVETRANSCORDER_FORM_LBL_VEHICLE_NAVI_ID"
+            description="COM_XIVETRANSCORDER_FORM_DESC_VEHICLE_NAVI_ID" 
+        
+        
+        
+        filter="safehtml" /> 
+
+       <field name="fleet_car" type="radio"
+                
+            label="COM_XIVETRANSCORDER_FORM_LBL_VEHICLE_FLEET_CAR"
+            description="COM_XIVETRANSCORDER_FORM_DESC_VEHICLE_FLEET_CAR" 
+                 default="0" 
+                
+                
+            filter="raw">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+        </field> 
+
+ 
+		<field name="filter_fleet_car" type="list" onchange="this.form.submit();">
+			<option value="">COM_XIVETRANSCORDER_VEHICLES_FLEET_CAR_FILTER</option>
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</field> 
+
+       <field name="fittings" type="text" size="40" class="inputbox"
+        
+            label="COM_XIVETRANSCORDER_FORM_LBL_VEHICLE_FITTINGS"
+            description="COM_XIVETRANSCORDER_FORM_DESC_VEHICLE_FITTINGS" 
+        
+        
+         required="true" 
+        filter="safehtml" /> 
+
+       <field name="license_plate" type="text" size="40" class="inputbox"
+        
+            label="COM_XIVETRANSCORDER_FORM_LBL_VEHICLE_LICENSE_PLATE"
+            description="COM_XIVETRANSCORDER_FORM_DESC_VEHICLE_LICENSE_PLATE" 
+        
+        
+         required="true" 
+        filter="safehtml" /> 
+
+       <field name="insurance_id" type="text" size="40" class="inputbox"
+        
+            label="COM_XIVETRANSCORDER_FORM_LBL_VEHICLE_INSURANCE_ID"
+            description="COM_XIVETRANSCORDER_FORM_DESC_VEHICLE_INSURANCE_ID" 
+        
+        
+        
+        filter="safehtml" /> 
+
+       <field name="insurance_no" type="text" size="40" class="inputbox"
+        
+            label="COM_XIVETRANSCORDER_FORM_LBL_VEHICLE_INSURANCE_NO"
+            description="COM_XIVETRANSCORDER_FORM_DESC_VEHICLE_INSURANCE_NO" 
+        
+        
+        
+        filter="safehtml" /> 
+
+         <field
+        name="state"
+        type="list"
+        label="JSTATUS"
+        description="JFIELD_PUBLISHED_DESC"
+        class="inputbox"
+        size="1"
+        default="1">
+        <option value="1">JPUBLISHED</option>
+        <option value="0">JUNPUBLISHED</option>
+    </field>
+
+	</fieldset>
+
+</form>

@@ -17,7 +17,7 @@ defined('_JEXEC') or die;
 function XivetranscorderBuildRoute(&$query)
 {
 	$segments = array();
-    
+
 	if (isset($query['task'])) {
 		$segments[] = implode('/',explode('.',$query['task']));
 		unset($query['task']);
@@ -43,26 +43,24 @@ function XivetranscorderBuildRoute(&$query)
 function XivetranscorderParseRoute($segments)
 {
 	$vars = array();
-    
+
 	// view is always the first element of the array
 	$count = count($segments);
-    
-    if ($count)
-	{
+
+	if ($count) {
 		$count--;
 		$segment = array_pop($segments) ;
 		if (is_numeric($segment)) {
 			$vars['id'] = $segment;
+		} else {
+			$count--;
+			$vars['task'] = array_pop($segments) . '.' . $segment;
 		}
-        else{
-            $count--;
-            $vars['task'] = array_pop($segments) . '.' . $segment;
-        }
 	}
 
-	if ($count)
-	{   
-        $vars['task'] = implode('.',$segments);
+	if ($count) {
+		$vars['task'] = implode('.',$segments);
 	}
+
 	return $vars;
 }
