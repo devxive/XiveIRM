@@ -30,7 +30,6 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_contacts` (
 `address_lat` VARCHAR(20) NOT NULL,
 `address_lng` VARCHAR(20) NOT NULL,
 `address_hash` VARCHAR(100) NOT NULL,
-`address_system_checked` TINYINT(1) NOT NULL DEFAULT '0',
 `phone` VARCHAR(25) NOT NULL,
 `fax` VARCHAR(25) NOT NULL,
 `mobile` VARCHAR(25) NOT NULL,
