@@ -51,23 +51,14 @@ class PlgIrmAppTocacore extends JPlugin
 		}
 
 		NFWPluginsSha256::loadSHA256();
-		NFWHtmlJavascript::detectChanges();
 		$script = "
 			jQuery(document).ready(function() {
-				// Date-Time Observer
-				var datetimeTimeout;
-				$('input[name*=\"date\"], input[name*=\"time\"]').on('inputchange', function() {
-					// Get the order position and usher
-					var ownOrder = $(this).parents('form').data('order');
-
-					window.clearTimeout(datetimeTimeout);
-					datetimeTimeout = window.datetimeTimeout = setTimeout(function() {
-						checkFormatTime( ownOrder );
-					}, 500);
-				});
-
 				// Triggered on every change in the inner-address-block (this.value determines the actual field)
-				$('.inner-address-block input').on('inputchange', function() {
+				$('.inner-address-block input').on('focus', function() {
+					var orderDir = $(this).parents('.address-block').attr('data-direction');
+					var usher = getUsher( 1, orderDir );
+
+					$('.geo-coords input').val('');
 				});
 			});
 		";
