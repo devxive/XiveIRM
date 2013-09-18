@@ -88,7 +88,10 @@ $document->addStyleSheet('components/com_xivetranscorder/assets/css/xivetranscor
 				<div class="control-label"><?php echo $this->form->getLabel('fittings'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('fittings'); ?></div>
 			</div>
-				<input type="hidden" name="jform[license_plate]" value="<?php echo $this->item->license_plate; ?>" />
+			<div class="control-group">
+				<div class="control-label"><?php echo $this->form->getLabel('license_plate'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('license_plate'); ?></div>
+			</div>
 			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('insurance_id'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('insurance_id'); ?></div>

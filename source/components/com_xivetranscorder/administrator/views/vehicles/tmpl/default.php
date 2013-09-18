@@ -111,9 +111,6 @@ if (!empty($this->extra_sidebar)) {
                 <?php endif; ?>
                     
 				<th class='left'>
-				<?php echo JHtml::_('grid.sort',  'COM_XIVETRANSCORDER_VEHICLES_CREATED_BY', 'a.created_by', $listDirn, $listOrder); ?>
-				</th>
-				<th class='left'>
 				<?php echo JHtml::_('grid.sort',  'COM_XIVETRANSCORDER_VEHICLES_CONTACT_ID', 'a.contact_id', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left'>
@@ -194,10 +191,6 @@ if (!empty($this->extra_sidebar)) {
 					</td>
                 <?php endif; ?>
                     
-				<td>
-
-					<?php echo $item->created_by; ?>
-				</td>
 				<td>
 
 					<?php echo $item->contact_id; ?>

@@ -144,7 +144,6 @@ class XivetranscorderViewVehicles extends JViewLegacy
 		return array(
 		'a.id' => JText::_('JGRID_HEADING_ID'),
 		'a.ordering' => JText::_('JGRID_HEADING_ORDERING'),
-		'a.created_by' => JText::_('COM_XIVETRANSCORDER_VEHICLES_CREATED_BY'),
 		'a.state' => JText::_('JSTATUS'),
 		'a.contact_id' => JText::_('COM_XIVETRANSCORDER_VEHICLES_CONTACT_ID'),
 		'a.listname' => JText::_('COM_XIVETRANSCORDER_VEHICLES_LISTNAME'),

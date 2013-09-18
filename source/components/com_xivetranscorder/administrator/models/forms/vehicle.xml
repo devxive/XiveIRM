@@ -89,7 +89,7 @@
             description="COM_XIVETRANSCORDER_FORM_DESC_VEHICLE_LICENSE_PLATE" 
         
         
-        
+         required="true" 
         filter="safehtml" /> 
 
        <field name="insurance_id" type="text" size="40" class="inputbox"
