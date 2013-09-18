@@ -41,6 +41,7 @@
 		<submenu>
 			<menu link="option=com_xivetranscorder&amp;view=transcorders" view="transcorders" img="components/com_xivetranscorder/assets/images/s_transcorders.png" alt="Xivetranscorder/Transcorders">COM_XIVETRANSCORDER_TITLE_TRANSCORDERS</menu>
 			<menu link="option=com_categories&amp;extension=com_xivetranscorder.transcorders" view="categories" img="components/com_xivetranscorder/assets/images/s_transcorders.png" alt="Xivetranscorder/Categories">COM_XIVETRANSCORDER_TRANSCORDERS_CATID</menu>
+			<menu link="option=com_xivetranscorder&amp;view=vehicles" view="vehicles" img="components/com_xivetranscorder/assets/images/s_vehicles.png" alt="Xivetranscorder/Vehicles">COM_XIVETRANSCORDER_TITLE_VEHICLES</menu>
 		</submenu>
 
 		<files folder="administrator">

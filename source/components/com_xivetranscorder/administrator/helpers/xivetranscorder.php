@@ -25,6 +25,11 @@ class XivetranscorderHelper
 			'index.php?option=com_xivetranscorder&view=transcorders',
 			$vName == 'transcorders'
 		);
+		JHtmlSidebar::addEntry(
+			JText::_('COM_XIVETRANSCORDER_TITLE_VEHICLES'),
+			'index.php?option=com_xivetranscorder&view=vehicles',
+			$vName == 'vehicles'
+		);
 	}
 
 	/**

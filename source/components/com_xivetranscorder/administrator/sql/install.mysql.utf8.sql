@@ -72,3 +72,21 @@ CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorders_revisions` (
 `app_value` MEDIUMTEXT NOT NULL,
 UNIQUE KEY `idx_transcorders_id_app_key` (`transcorders_id`,`app_key`)
 ) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Enhanced and complex transcorders data storage table';
+
+CREATE TABLE IF NOT EXISTS `#__xiveirm_transcorders_vehicles` (
+`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+`ordering` INT(11) NOT NULL,
+`created_by` INT(11) NOT NULL,
+`state` TINYINT(1) NOT NULL,
+`contact_id` INT(11) NOT NULL COMMENT '#__contacts id',
+`listname` VARCHAR(255) NOT NULL,
+`callname` VARCHAR(100) NOT NULL,
+`mobile` VARCHAR(50) NOT NULL,
+`navi_id` VARCHAR(255) NOT NULL,
+`fleet_car` TINYINT(1) NOT NULL DEFAULT '0',
+`fittings` VARCHAR(255) NOT NULL,
+`license_plate` VARCHAR(15) NOT NULL,
+`insurance_id` INT(11) NOT NULL COMMENT '#__contacts id',
+`insurance_no` VARCHAR(255) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT COLLATE=utf8_general_ci COMMENT='Table to store core vehicle datas';
