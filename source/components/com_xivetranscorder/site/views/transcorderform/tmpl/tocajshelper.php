@@ -542,10 +542,12 @@ defined('_JEXEC') or die;
 		jQuery(usher.order + ' input[name*=\"f_address_hash\"]').val('');
 		jQuery(usher.order + ' input[name*=\"f_address_lat\"]').val('');
 		jQuery(usher.order + ' input[name*=\"f_address_lng\"]').val('');
+		jQuery(usher.order + ' input[name*=\"f_poi_id\"]').val('');
 
 		jQuery(usher.order + ' input[name*=\"t_address_hash\"]').val('');
 		jQuery(usher.order + ' input[name*=\"t_address_lat\"]').val('');
 		jQuery(usher.order + ' input[name*=\"t_address_lng\"]').val('');
+		jQuery(usher.order + ' input[name*=\"t_poi_id\"]').val('');
 	}
 
 
@@ -876,7 +878,8 @@ defined('_JEXEC') or die;
 						// Runs only once ( we have to add the popped id for this initial check )
 						if ( (tocaQuery.orderArray.length + 1) === tocaQuery.formsTotal.length ) {
 							// Show the siteready-overlay and override the standard spinner
-							jQuery('#siteready-overlay').html('<div style="width: 375px; margin: 50px auto; color: whitesmoke;" class="center"><img src="/media/nawala/images/loader.gif"><br><br><br><br><span id="spaceCounter" style="font-size: 75px; font-weight: bold;">' + tocaQuery.orderArray.length + ' / ' + tocaQuery.formsTotal.length + '</span></div>');
+							var displayInitCountHelper = tocaQuery.orderArray.length + 1;
+							jQuery('#siteready-overlay').html('<div style="width: 375px; margin: 50px auto; color: whitesmoke;" class="center"><img src="/media/nawala/images/loader.gif"><br><br><br><br><span id="spaceCounter" style="font-size: 75px; font-weight: bold;">' + displayInitCountHelper + ' / ' + tocaQuery.formsTotal.length + '</span></div>');
 							jQuery('#siteready-overlay').css('position', 'fixed');
 							jQuery('#siteready-overlay').show();
 						}
@@ -933,6 +936,10 @@ defined('_JEXEC') or die;
 
 							jQuery('#siteready-overlay').hide();
 
+							// Hide the buttons
+							jQuery('#form-buttons').fadeOut();
+							jQuery('#loading-btn-edit').button('complete').button('reset').fadeIn();
+
 							var formPosition       = $('#form-transcorder-core'),
 //							var formPosition       = $('form[data-order=\"' + orderPos + '\"]'),
 							    formPositionOffset = formPosition.offset().top + -50;
@@ -957,6 +964,15 @@ defined('_JEXEC') or die;
 	$("#loading-btn-edit").click(function() {
 		var editButton = this;
 
+		// TODO: Better comments for this :)
+
+		// If we added more than one transport we shoud delete all the copied transports from the DOM to prevent verwirrung, but we have to ask the user before, if he want really to edit the transport and remove the list of other transports. Show him that he have to join all transports manually!
+
+		// Check and make sure if the transport 1 is blown away from save function, while user still clicks edit -> save, edit -> save, edit -> save that the first transport is still there
+		// Should only be used if the user want to edit the first transport for existing items/orders!
+		if( !tocaQuery.orderArray[0] ) { tocaQuery.orderArray.push(1); }
+		if( !tocaQuery.checkArray[0] ) { tocaQuery.checkArray.push(1); }
+
 		$(editButton).addClass("btn-warning").button("loading");
 
 		jQuery.post('index.php?option=com_xiveirm&task=api.ajaxcheckout', {'irmapi[id]': $("#order_cid-1").val(), 'irmapi[coreapp]': "transcorders", '<?php echo NFWSession::getToken(); ?>': 1},
@@ -977,7 +993,8 @@ defined('_JEXEC') or die;
 					$(".link-control").attr("disabled", true);
 
 					// Remove all disabled from fields with .input-control
-					$(".input-control").attr("disabled", false).trigger("liszt:updated");
+					$(".input-control").attr("disabled", false);
+					$(".input-control").attr("readonly", false);
 				} else {
 					alertify.error('<i class="icon-warning-sign"></i> An error occured: <br> Error code: ' + data.code + '<br><br>error message: ' + data.message + '<br><br>If this error persists, please contact the support immediately with the given error!');
 

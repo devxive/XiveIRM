@@ -17,7 +17,7 @@ JHtml::_('stylesheet', 'nawala/nawala.import.css', false, true, false, false);
 NFWHtmlJavascript::setToggle('extended', 'toggleExtend');
 NFWHtmlJavascript::setTooltip('.xtooltip');
 NFWHtmlJavascript::setPopover('.xpopover', array('html' => true) );
-NFWHtmlJavascript::loadGritter();
+// NFWHtmlJavascript::loadGritter();
 NFWHtmlJavascript::loadAlertify();
 IRMHtmlSelect2::init('.select2');
 
@@ -672,7 +672,7 @@ foreach($dispatcher->trigger( 'htmlBuildTab', array(&$this->item, &$this->params
 	<div class="form-actions">
 		<span id="form-buttons"<?php echo empty($this->item->id) ? '' : ' style="display:none;"'; ?>>
 			<div class="btn-group">
-				<button id="coreCheckSave" data-loading-text="<?php echo JText::_('COM_XIVEIRM_API_PLEASE_WAIT_BUTTON'); ?>" data-complete-text="<?php echo isset($this->item->id) ? JText::_('COM_XIVEIRM_UPDATE_ITEM') : JText::_('COM_XIVEIRM_SAVE_ITEM'); ?>" data-error-text="<?php echo JText::_('COM_XIVEIRM_API_ERROR_TRY_AGAIN_BUTTON'); ?>" class="validate btn btn-info" type="submit"><i class="icon-ok"></i> <?php echo isset($this->item->id) ? JText::_('COM_XIVEIRM_CHECKUPDATE_ITEM') : JText::_('COM_XIVETRANSCORDER_CHECKSAVE_ITEM'); ?></button>
+				<button id="coreCheckSave" data-loading-text="<?php echo JText::_('COM_XIVEIRM_API_PLEASE_WAIT_BUTTON'); ?>" data-complete-text="<?php echo isset($this->item->id) ? JText::_('COM_XIVEIRM_UPDATE_ITEM') : JText::_('COM_XIVEIRM_SAVE_ITEM'); ?>" data-error-text="<?php echo JText::_('COM_XIVEIRM_API_ERROR_TRY_AGAIN_BUTTON'); ?>" class="validate btn btn-info" type="submit"><i class="icon-ok"></i> <?php echo isset($this->item->id) ? JText::_('COM_XIVETRANSCORDER_CHECKUPDATE_ITEM') : JText::_('COM_XIVETRANSCORDER_CHECKSAVE_ITEM'); ?></button>
 				<button class="btn btn-info dropdown-toggle" data-toggle="dropdown">
 					<span class="caret"></span>
 				</button>
