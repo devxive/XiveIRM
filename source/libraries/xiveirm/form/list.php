@@ -118,6 +118,8 @@ class IRMFormList
 
 			$opt_name = '';
 
+//			$title = IRMFormName::formatPoiName($option);
+
 			// Build the placeholder between
 			if ( $company ) {
 				if ( $customer_id ) {
@@ -300,5 +302,47 @@ class IRMFormList
 		}
 
 		return $list;
+	}
+
+
+	/*
+	 * Method to get the id and formatted (contact) names for list usage, extracted from orders between the given daterange.
+	 *
+	 * @param     int    $catid    The id of the appropriate category
+	 *
+	 * @return    object           Return the list values
+	 */
+	public function getContactFilterOptions( $filter_daterange = false )
+	{
+		$returnObject = array();
+
+		if ( !$filter_daterange ) {
+			// Use Todays values for daterange if nothing is set
+			$startTime = strtotime( date('d.m.Y') . ' 00:00:00' );
+			$endTime = strtotime( date('d.m.Y') . ' 23:59:59' );
+		} else {
+			$startTime = $filter_daterange[0];
+			$endTime = $filter_daterange[1];
+		}
+
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query
+			->select( array('a.contact_id', 'b.*') )
+			->from( '#__xiveirm_transcorders AS a' )
+			->join( 'INNER', '#__xiveirm_contacts AS b ON (a.contact_id = b.id)' )
+			->where( 'a.transport_timestamp >= ' . $startTime . ' AND a.transport_timestamp <= ' . $endTime . '' );
+
+		$db->setQuery($query);
+
+		$results = $db->loadObjectList();
+
+		foreach( $results as $result ) {
+			$result->id = $result->contact_id;
+			$returnObject[$result->id] = IRMFormName::formatContactName( $result );
+		}
+
+		return $returnObject;
 	}
 }
