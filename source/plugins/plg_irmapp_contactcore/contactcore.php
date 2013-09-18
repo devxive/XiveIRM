@@ -25,7 +25,6 @@ class PlgIrmAppContactcore extends JPlugin
 	 */
 	var $appKey;
 
-
 	/**
 	 * INITIATE THE CONSTRUCTOR
 	 */
@@ -35,7 +34,6 @@ class PlgIrmAppContactcore extends JPlugin
 
 		$this->appKey = 'contactcore';
 		$this->loadLanguage();
-
 	}
 
 
@@ -48,6 +46,8 @@ class PlgIrmAppContactcore extends JPlugin
 	 */
 	public function htmlBuildWidgetTop( &$item = null, &$params = null )
 	{
+		$itemHelper = IRMItemHelper::getContactObject($item->id);
+
 		// Get Permissions based on category
 		if ( !$item->catid ) {
 			// We have no category id and use the components acl
@@ -93,7 +93,7 @@ class PlgIrmAppContactcore extends JPlugin
 			<div class="widget-header header-color-dark">
 				<h5 class="smaller">Core Widget</h5>
  				<div class="widget-toolbar">
-					<?php if(!$item->address_system_checked) { ?>
+					<?php if(!$itemHelper->contact->system_checked) { ?>
 						<span id="address-hash-verified" class="<?php echo $address_hash_verified ? 'green' : 'red'; ?>" style="vertical-align: middle;">
 							<i class="icon-anchor" style="font-size: 17px;"></i> 
 						</span>
